@@ -1,0 +1,117 @@
+.footer
+{
+    background: rgb(1,41,111);
+    background: -moz-linear-gradient(125deg, rgba(1,41,111,1) 0%, rgba(0,13,36, 1) 100%);
+    background: -webkit-linear-gradient(125deg, rgba(1,41,111,1) 0%, rgba(0,13,36, 1) 100%);
+    background: linear-gradient(125deg, rgba(1,41,111,1) 0%, rgba(0,13,36,.95) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#01296f",endColorstr="#000d24",GradientType=1);
+    background-size: cover;
+    padding: 75px 0;
+    color: white;
+    
+}
+
+.socialLinks {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.fbIcon, .instaIcon, .tiktokIcon, .ytIcon, .linkedInIcon > svg{
+    transform: scale(150%);
+}
+
+.footerContent{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 80%;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.fInfo
+{
+    padding: 5px 0;
+}
+
+.fc40
+{
+    width: 40%;
+}
+
+.fc30
+{
+    width: 30%;
+}
+
+.fcFlex
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.fcCenter
+{
+    align-items: center;
+}
+
+.fcRight
+{
+    align-items: flex-end;
+}
+
+.subFooter
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 60%;
+    margin: 0 auto;
+    padding: 25px 0;   
+    color: #999999;
+    font-size: 12px;
+    letter-spacing: .0em;
+}
+
+
+@media screen and (max-width: 1440px)
+{
+    .footerContent
+    {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 778px) {
+    .footerContent{
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+    
+    .fc40, .fc30
+    {
+        align-items: center;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .fcWs
+    {
+        margin: 25px;
+    }
+    
+    .title
+    {
+        font-size: 1.15em;
+        letter-spacing: 1px;
+    }
+
+    .subFooter
+    {
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+}

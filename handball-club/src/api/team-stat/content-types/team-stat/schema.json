@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "team_stats",
+  "info": {
+    "singularName": "team-stat",
+    "pluralName": "team-stats",
+    "displayName": "TeamStat",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "leaderboard": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::leaderboard.leaderboard"
+    },
+    "team": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::team.team"
+    },
+    "wins": {
+      "type": "integer"
+    },
+    "draws": {
+      "type": "integer"
+    },
+    "losses": {
+      "type": "integer"
+    },
+    "gamesPlayed": {
+      "type": "integer"
+    },
+    "goalsFor": {
+      "type": "integer"
+    },
+    "goalsAgainst": {
+      "type": "integer"
+    },
+    "goalDifference": {
+      "type": "integer"
+    },
+    "points": {
+      "type": "integer"
+    }
+  }
+}

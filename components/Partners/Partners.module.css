@@ -1,0 +1,47 @@
+.container{
+    max-width: 1280px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 50px 70px;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.partnerRow {
+    display: flex;
+    flex-flow: row wrap;
+    -webkit-box-pack: center;
+    justify-content: center;
+}
+
+.partnerLink {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    margin: 0px 15px;
+    opacity: 1;
+    z-index: 10;
+    width: 90px;
+    height: 95px;
+}
+
+.partnerLogo {
+    max-width: 90%;
+    max-height: 90%;
+    z-index: 9;
+    vertical-align: top;
+}
+
+.divider {
+    width: 505px;
+    margin: 10px auto;
+    border-color: 'black'
+}

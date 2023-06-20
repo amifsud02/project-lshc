@@ -1,0 +1,128 @@
+.tableContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 1140px;
+  padding: 50px 70px;
+  margin: auto;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.tableWrapper:first-of-type {
+  margin-top: 0px;
+}
+
+.tableWrapper {
+  margin-top: 20px;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.tableRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.tableHeaderRow {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.tableCell {
+  display: flex;
+  flex: 0 0 8%;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  padding: 15px 5px;
+  min-width: 30px;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.tableBodyRow {
+  background-color: transparent;
+  color: inherit;
+}
+
+.tablePrimaryRow {
+  background-color: rgba(1, 41, 111, 0.05);
+  color: black;
+}
+
+.tableBodyCell {
+  flex: 0 0 8%;
+  padding: 15px 10px;
+  min-width: 35px;
+}
+
+.tableBodyCell:nth-child(1),
+.tableBodyCell:nth-child(2),
+.tableBodyCell:nth-child(10) {
+  font-weight: 700;
+}
+
+.tableCell:nth-child(2) {
+  flex: 1 1 0%;
+  text-align: left;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  word-break: break-work;
+}
+
+.team {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+}
+
+.team > img {
+  width: 30px;
+  height: 30px;
+  margin-right: 30px;
+}
+
+@media screen and (min-width: 375px) {
+  .tableContainer {
+    padding: 10px;
+  }
+
+  .tableCell:nth-child(7),
+  .tableCell:nth-child(8),
+  .tableCell:nth-child(9) {
+    display: none;
+  }
+}
+
+@media (min-width: 600px) {
+  .tableContainer {
+    padding: 40px;
+    max-width: 1140px;
+    margin: auto;
+  }
+}
+
+@media (min-width: 800px) {
+  .tableCell:nth-child(4),
+  .tableCell:nth-child(5),
+  .tableCell:nth-child(6),
+  .tableCell:nth-child(7),
+  .tableCell:nth-child(8),
+  .tableCell:nth-child(9) {
+    display: flex;
+  }
+}
+
+@media (min-width: 1280px) {
+  .tableContainer {
+    padding: 50px 70px;
+  }
+}

@@ -1,0 +1,58 @@
+.parent {
+  width: 80%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  /* position: fixed;
+    top: 0; */
+  width: 100%;
+  height: 400px;
+  z-index: -1;
+  background: rgb(1, 41, 111), url("/template.svg") no-repeat center;
+  background: -moz-linear-gradient(
+      125deg,
+      rgba(1, 41, 111, 1) 0%,
+      rgba(0, 13, 36, 0.95) 100%
+    ),
+    url("/template.svg") no-repeat center;
+  background: -webkit-linear-gradient(
+      125deg,
+      rgba(1, 41, 111, 1) 0%,
+      rgba(0, 13, 36, 0.95) 100%
+    ),
+    url("/template.svg") no-repeat center;
+  background: linear-gradient(
+      125deg,
+      rgba(1, 41, 111, 1) 0%,
+      rgba(0, 13, 36, 0.95) 100%
+    ),
+    url("/template.svg") no-repeat center;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#01296f",endColorstr="#000d24",GradientType=1);
+
+  background: linear-gradient(
+      125deg,
+      rgba(1, 41, 111, 1) 0%,
+      rgba(0, 13, 36, 0.95) 100%
+    ),
+    url("/template.svg") no-repeat center;
+  background-size: cover;
+}
+
+.pageHeaderInfo {
+  padding-top: 50px;
+}
+
+.pageTitle {
+  color: white;
+  text-transform: uppercase;
+  font-size: clamp(40px, 4vw, 4em);
+  letter-spacing: 1.5px;
+  font-weight: 800;
+}
+
+.pageMap {
+  color: white;
+  text-transform: uppercase;
+}
