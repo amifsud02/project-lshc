@@ -66,11 +66,11 @@ const navItems: NavItem[] = [
     },
     {
         label: "Season",
-        href: "/season",
+        href: "/season/2023/schedule/men/national-league",
         dropdown: [
             {
                 label: "Schedule",
-                href: "/season/2023/schedule/men-national-league"
+                href: "/season/2023/schedule/men/national-league"
             },
             {
                 label: "Standings",
