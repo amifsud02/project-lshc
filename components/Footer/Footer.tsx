@@ -8,7 +8,7 @@ const Footer: React.FC<{}> = () => {
                 <div className={styles.footerContent}>
                     <div className={`${styles.fc40} ${styles.fcFlex} ${styles.fcWs}`}>
                         <div className="title">La Salle Handball Club</div>
-                        <div>An amature club with a professional mentality.</div>                        
+                        <div>An amateur club with a professional mentality.</div>                        
                             
                         <div className={styles.socialLinks}>
                             <a className={styles.fbIcon} href="https://www.facebook.com">
@@ -27,7 +27,6 @@ const Footer: React.FC<{}> = () => {
                         <div className="title">Contact Us</div>
                         <div className="fInfo"><a href="mailto:info@lasallehandball.com">info@lasallehandball.com</a></div>
                         <div className="fInfo">Mobile</div>
-                        <div className="fInfo">Address</div>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
-export type Team = {
-    _id: string;
-    teamId: number;
+import { ILogo } from "./logo.type";
+
+export type ITeam = {
     teamName: string;
-    teamLogo: string;
-}
+    teamLogo: ILogo;
+  }

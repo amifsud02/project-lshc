@@ -1,0 +1,37 @@
+.joinUsContainer{ 
+    width: 100%;
+    background: var(--gradient);
+    padding: 55px 0;
+}
+
+.joinUsWrapper {
+    width: 60%;
+    max-width: 1280px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.joinUsTitle {
+    font-size: 1.25em;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: 0.05em;
+}
+
+.joinUsButton{
+    padding: 0 10px;
+    width: fit-content;
+    color: var(--secondary-color);
+    border: 2px solid var(--primary-color);
+    background-color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+
+.joinUsButton:hover{
+    background-color: transparent;
+    color: var(--primary-color);
+}

@@ -35,7 +35,7 @@ const TeamCarousel = () => {
 
 
     return (
-        <section style={{ width: '80%', maxWidth: '1280px', margin: '0 auto', padding: '100px 0' }}>
+        <section style={{ width: '60%', maxWidth: '1280px', margin: '0 auto', padding: '100px 0' }}>
             <Carousel
                 infiniteLoop={true}
                 showStatus={false}

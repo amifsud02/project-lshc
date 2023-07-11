@@ -1,6 +1,11 @@
+import PageHeader from "@/components/PageHeader/PageHeader";
+
 const History = () => {
     return (
-        <h1>List Of History</h1>
+        <>
+            <PageHeader pageName='Our History'/>
+            <section className="parent"></section>
+        </>
     )
 }
 

@@ -5,7 +5,7 @@ import { NextResponse, NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const season = request.nextUrl.searchParams.get("season")
   const competitionTypeName = request.nextUrl.searchParams.get('competitiontypename')
-  // const competitionTypeName = "U21 Men's National League"
+  const limit = request.nextUrl.searchParams.get("limit")
 
   const query = groq`
     *[_type == "fixture" && competition->season == $season && competition->competitionType->competitionTypeName == $competitionTypeName]{
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         startDate,
         venue
         
-    }`;
+    } | order(startDate desc)[0..${limit}-1]`;
 
   const fixtures = await client.fetch(query, { season, competitionTypeName });
 

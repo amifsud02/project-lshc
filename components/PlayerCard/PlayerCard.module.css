@@ -1,0 +1,70 @@
+.playerContainer {
+    background-color: rgb(29, 32, 34);
+    background-image: '';
+    background-size: cover;
+    width: 220px;
+    height: 300px;
+    position: relative;
+    margin: 0 20px 20px 0;
+    color: white;
+    letter-spacing: 0.21px;
+}
+
+.playerContainerLink {
+    color: white;
+}
+
+.playerText {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 15;
+    color: white;
+}
+
+.playerNumber {
+    margin: 0;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.playerNoMargin {
+    margin: 0;
+}
+
+.playerDivider{
+    height: 2px;
+    width: 21px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.playerFirstName {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.playerLastName {
+    font-size: 22px;
+}
+
+.playerPhoto {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}
+
+.playerOverlay {
+    background-color: linear-gradient(rgba(0, 0, 0, 0) 44%, rgb(0, 0, 0) 84%);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+

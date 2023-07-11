@@ -1,9 +1,9 @@
 .footer
 {
-    background: rgb(1,41,111);
-    background: -moz-linear-gradient(125deg, rgba(1,41,111,1) 0%, rgba(0,13,36, 1) 100%);
-    background: -webkit-linear-gradient(125deg, rgba(1,41,111,1) 0%, rgba(0,13,36, 1) 100%);
-    background: linear-gradient(125deg, rgba(1,41,111,1) 0%, rgba(0,13,36,.95) 100%);
+    background: var(--gradient);
+    background: -moz-linear-gradient(to right,rgba(1,41,111,1) 0%, rgba(0,13,36, 1) 100%);
+    background: -webkit-linear-gradient(to right,rgba(1,41,111,1) 0%, rgba(0,13,36, 1) 100%);
+    background: linear-gradient(to right,rgba(1,41,111,1) 0%, rgba(0,13,36,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#01296f",endColorstr="#000d24",GradientType=1);
     background-size: cover;
     padding: 75px 0;

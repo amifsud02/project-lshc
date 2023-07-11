@@ -70,7 +70,7 @@ const navItems: NavItem[] = [
         dropdown: [
             {
                 label: "Schedule",
-                href: "/"
+                href: "/season/2023/schedule/men-national-league"
             },
             {
                 label: "Standings",

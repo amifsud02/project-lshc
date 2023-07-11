@@ -1,14 +1,22 @@
 import TeamCarousel from "@/components/Carousel/Team";
-import Fixtures from "@/components/Fixture/Fixture";
 import { Header } from "@/components/Headers/Header";
 import { Partners } from "@/components/Partners/Partners";
 import Standings from "@/components/Standings/Standings";
-import ListTeams from "./client-side/listTeams";
-import ListFixtures from "./client-side/listFixtures";
+
+import styles from '@/components/Fixture/Fixture.module.css'
+import JoinUs from "@/components/JoinUs/JoinUs";
+import Tabs from "@/components/Tab/Tabs";
+import Tab from "@/components/Tab/Tab";
+
+import { IFixture } from "@/lib/types/fixture.type";
+import { IStanding } from "@/lib/types/standing.type";
+import Fixtures from "@/components/Fixture/Fixture";
+
+
 
 const getFixtures = async () => {
   const response = await fetch(
-    `http://localhost:3000/api/fixtures?competitiontypename=U21 Men's National League&season=2023`
+    `http://localhost:3000/api/fixtures?competitiontypename=U21 Men's National League&season=2023&limit=5`
   );
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -17,62 +25,104 @@ const getFixtures = async () => {
   return fixtures;
 };
 
-type ILogo = {
-  _type: string;
-  asset: {
-    _ref: string;
-    _type: string
+const getStandings = async () => {
+  const response = await fetch(
+    `http://localhost:3000/api/standings?competitiontypename=U21%20Men%27s%20National%20League&season=2023`
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
-}
 
-type ITeam = {
-  teamName: string;
-  teamLogo: ILogo;
+  const standings = await response.json();
+  return standings
 }
-
-type IFixtures = {
-  homeTeamId: ITeam;
-  awayTeamId: ITeam;
-  homeScore: number;
-  awayScore: number;
-  status: string;
-  venue: string;
-  startDate: Date;
-};
 
 export default async function Home() {
-  const { fixtures }: { fixtures: IFixtures[] } = await getFixtures();
-  console.log(fixtures[0].awayTeamId.teamLogo);
-
+  const { fixtures }: { fixtures: IFixture[] } = await getFixtures();
+  const { standings }: { standings: IStanding[] } = await getStandings();
 
   return (
     <main>
-      {fixtures.map((fixture) => (
-        <>
-          
-          {fixture.homeScore}
-          {fixture.homeTeamId.teamName}
-          {fixture.awayScore}
-          {fixture.awayTeamId.teamName}
-          {fixture.venue}
-          {fixture.status}
-          <br/>
-        </>
-      ))}
-
-      {/* <section className="bg">
+      <section className="bg">
         <Header />
       </section>
+      
+      <section>
+        <div className="parent">
+          <h1 className="title">Latest Fixtures</h1>
 
+          <Tabs redirect="/season/current" showall={true}>
+            <Tab tabTitle="Men">
+              <Fixtures data={fixtures} showTitle={false}></Fixtures>
+              {/* <section className={styles.matchContainer}>
+                <div className={styles.matchWrapper}>
+                  {fixtures.map((fixture) => (
+                    <>
+                      <div className={styles.matchContent} key={fixture.awayTeamId.teamName}>
+                        <div className={styles.match}>
+                          <>
+                            <div className={styles.homeTeam}>
+                              <div className={styles.teamBadge}>
 
+                              </div>
+                              <span className={styles.teamName}>{fixture.homeTeamId.teamName}</span>
+                            </div>
 
-      <div style={{ maxWidth: '1280px', margin: 'auto' }}>
-         <Fixtures showTitle={true} fixtures={fixtures}></Fixtures>
-        <Standings showTitle={true}></Standings>
-      </div>
+                            <div className={styles.matchDetails}>
+                              <div className={styles.matchType}>
+                                <h4>{fixture.status}</h4>
+                              </div>
+                              <div className={styles.matchScore}>
+                                <span>
+                                  {fixture.homeScore} - {fixture.awayScore}
+                                </span>
+                              </div>
 
+                              <div className={styles.matchDate}>
+                                04 June 2023<br />21:00
+                              </div>
+                            </div>
+
+                            <div className={styles.awayTeam}>
+                              <span className={styles.teamName}>{fixture.awayTeamId.teamName}</span>
+                              <div className={styles.teamBadge}>
+
+                              </div>
+                            </div>
+                          </>
+                        </div>
+                      </div>
+                    </>
+                  ))}
+                </div>
+              </section> */}
+            </Tab>
+
+            <Tab tabTitle="Women">
+              
+            </Tab>
+          </Tabs>
+        </div>
+      </section>
+      <section>
+        <div className="parent">
+          <h1 className="title">Standings</h1>
+
+          <Tabs redirect="/season/current" showall={true}>
+            <Tab tabTitle="Men">
+              <Standings showTitle={false} data={standings}></Standings>
+            </Tab>
+
+            <Tab tabTitle="Women">
+              {/* <Standings showTitle={false}></Standings> */}
+            </Tab>
+          </Tabs>
+        </div>
+      </section>
+      <JoinUs></JoinUs>
       <TeamCarousel></TeamCarousel>
-      <Partners /> */}
+      <Partners />
     </main>
   );
 }
