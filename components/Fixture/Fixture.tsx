@@ -5,50 +5,70 @@ import Image from 'next/image';
 
 import styles from './Fixture.module.css'
 
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+
 const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] }) => {
 
     return (
         <section className={styles.matchContainer}>
             <div className={styles.matchWrapper}>
-                {data.map((fixture) => (
-                    <>
-                        <div className={styles.matchContent} key={fixture.awayTeamId.teamName}>
-                            <div className={styles.match}>
-                                <>
-                                    <div className={styles.homeTeam}>
-                                        <div className={styles.teamBadge}>
-                                            <Image src={imageBuilder.image(fixture.homeTeamId.teamLogo.asset._ref).url()} alt={`${fixture.homeTeamId.teamName}-logo`} width={60} height={60}></Image>
-                                        </div>
-                                        <span className={styles.teamName}>{fixture.homeTeamId.teamName}</span>
-                                    </div>
+                {data.map((fixture) => {
+                    const dateObj = new Date(fixture.startDate);
 
-                                    <div className={styles.matchDetails}>
-                                        <div className={styles.matchType}>
-                                            <h4>{fixture.status}</h4>
-                                        </div>
-                                        <div className={styles.matchScore}>
-                                            <span>
-                                                {fixture.homeScore} - {fixture.awayScore}
-                                            </span>
+                    let day = dateObj.getUTCDate();
+                    let month = monthNames[dateObj.getUTCMonth()]; // getting the month name
+                    let year = dateObj.getUTCFullYear();
+
+                    let hours = ("0" + dateObj.getUTCHours()).slice(-2); // padding single digit hours with a leading zero
+                    let minutes = ("0" + dateObj.getUTCMinutes()).slice(-2); // padding single digit minutes with a leading zero
+
+                    let formattedDate = `${day} ${month} ${year}`;
+                    let formattedTime = `${hours}:${minutes}`;
+
+                    return (
+                        <>
+                            <div className={styles.matchContent} key={fixture.awayTeamId.teamName}>
+                                <div className={styles.match}>
+                                    <>
+                                        <div className={styles.homeTeam}>
+                                            <div className={styles.teamBadge}>
+                                                <Image src={imageBuilder.image(fixture.homeTeamId.teamLogo.asset._ref).url()} alt={`${fixture.homeTeamId.teamName}-logo`} width={60} height={60}></Image>
+                                            </div>
+                                            <span className={styles.teamName}>{fixture.homeTeamId.teamName}</span>
                                         </div>
 
-                                        <div className={styles.matchDate}>
-                                            04 June 2023<br />21:00
-                                        </div>
-                                    </div>
+                                        <div className={styles.matchDetails}>
+                                            <div className={styles.matchType}>
+                                                <h4>{fixture.status}</h4>
+                                            </div>
+                                            <div className={styles.matchScore}>
+                                                <span>
+                                                    {fixture.homeScore} - {fixture.awayScore}
+                                                </span>
+                                            </div>
 
-                                    <div className={styles.awayTeam}>
-                                        <span className={styles.teamName}>{fixture.awayTeamId.teamName}</span>
-                                        <div className={styles.teamBadge}>
-                                            <Image src={imageBuilder.image(fixture.awayTeamId.teamLogo.asset._ref).url()} alt={`${fixture.awayTeamId.teamName}-logo`} width={60} height={60}></Image>
-
+                                            <div className={styles.matchDate}>
+                                                {formattedDate}
+                                                <br />
+                                                {formattedTime}
+                                                {/* 04 June 2023<br />21:00 */}
+                                            </div>
                                         </div>
-                                    </div>
-                                </>
+
+                                        <div className={styles.awayTeam}>
+                                            <span className={styles.teamName}>{fixture.awayTeamId.teamName}</span>
+                                            <div className={styles.teamBadge}>
+                                                <Image src={imageBuilder.image(fixture.awayTeamId.teamLogo.asset._ref).url()} alt={`${fixture.awayTeamId.teamName}-logo`} width={60} height={60}></Image>
+
+                                            </div>
+                                        </div>
+                                    </>
+                                </div>
                             </div>
-                        </div>
-                    </>
-                ))}
+                        </>
+                    )
+                })}
             </div>
 
 

@@ -6,6 +6,8 @@ export async function GET(request: NextRequest) {
   const season = request.nextUrl.searchParams.get("season")
   const competitionTypeName = request.nextUrl.searchParams.get('competitiontypename')
   const limit = request.nextUrl.searchParams.get("limit")
+  
+  const limitQuery = limit ? `[0..${limit}-1]` : '';
 
   const query = groq`
     *[_type == "fixture" && competition->season == $season && competition->competitionType->competitionTypeName == $competitionTypeName]{
@@ -29,7 +31,7 @@ export async function GET(request: NextRequest) {
         startDate,
         venue
         
-    } | order(startDate desc)[0..${limit}-1]`;
+    } | order(startDate desc)${limitQuery}`;
 
   const fixtures = await client.fetch(query, { season, competitionTypeName });
 

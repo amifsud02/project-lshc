@@ -1,8 +1,10 @@
 'use client'
 
+import Fixtures from "@/components/Fixture/Fixture";
 import PageHeader from "@/components/PageHeader/PageHeader";
+import { IFixture } from "@/lib/types/fixture.type";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface CompetitionDropdownItem {
@@ -82,10 +84,11 @@ const competitionDropdown: CompetitionDropdownItem = {
 }
 
 
-const Fixtures = () => {
+const Schedule = () => {
+    const pathname = usePathname();
+    console.log(pathname)
     const router = useRouter();
     const params = useParams(); // [category]/[competition]
-
     const { category, competition } = params;
 
     const [selectedCompetition, setSelectedCompetition] = useState<{ key: string; value: string }>({
@@ -94,25 +97,54 @@ const Fixtures = () => {
     });
 
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState<IFixture[]>([]); // To store the fetched data in the state.
+    const [error, setError] = useState(null);
 
     const changeURL = (event) => {
         const newCompetition = event.target.value;
+        console.log(newCompetition);
+
         const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
+
         setSelectedCompetition({ parentKey, newCompetition })
+
         router.push(`http://localhost:3000/season/2023/schedule/${category}/${parentKey}`)
     }
 
     useEffect(() => {
-        setLoading(true);
+        const fetchData = async () => {
+            setLoading(true);
 
-        // Fetch Data API
+            if (category && competition) {
+                const competitionItem = competitionDropdown[category][competition];
+                if (competitionItem) {
+                    setSelectedCompetition({
+                        key: competitionItem.key,
+                        value: competitionItem.value
+                    });
+                }
+            }
+           
+            try {
+                const response = await fetch(`http://localhost:3000/api/fixtures?competitiontypename=${selectedCompetition.value}&season=2023`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const { fixtures }: { fixtures: IFixture[] } = await response.json();
+                setData(fixtures); // Store the fetched data in the state.
+            } catch (err) {
+                setError(err); // Store the error in the state if any error occurs.
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        setSelectedCompetition(competitionDropdown[category][competition]);
+        fetchData();
+    }, [category, competition, selectedCompetition.value]);
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 2500)
-    }, [category, competition]);
+    console.log(data)
+
     return (
         <>
             <PageHeader pageName='Fixtures & Results' />
@@ -128,20 +160,20 @@ const Fixtures = () => {
                     <div className="tabs__wrapper">
                         <div className="nav__tab">
                             <ul className="category">
-                                <li className="tablinks">
+                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/men') ? 'active' : ''}`}>
                                     <Link href="http://localhost:3000/season/2023/schedule/men/national-league">
                                         Men
                                     </Link>
                                 </li>
-                                <li className="tablinks">
+                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/women') ? 'active' : ''}`}>
                                     <Link href="http://localhost:3000/season/2023/schedule/women/national-league">
                                         Women
                                     </Link></li>
-                                <li className="tablinks">
+                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-men') ? 'active' : ''}`}>
                                     <Link href="http://localhost:3000/season/2023/schedule/u21-men/national-league">
                                         U21 Men
                                     </Link></li>
-                                <li className="tablinks">
+                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-women') ? 'active' : ''}`}>
                                     <Link href="http://localhost:3000/season/2023/schedule/u21-women/national-league">
                                         U21 Women
                                     </Link>
@@ -173,15 +205,18 @@ const Fixtures = () => {
                     <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
                 ) : (
                     <>
-                        <div>
+                        {/* <div>
                             Upcoming Match
                             Display One Upcoming Match with Countdown
-                        </div>
+                        </div> */}
 
                         <div>
-                            Display All Matches of Competition
+                            
+                            { data && <Fixtures data={data} showTitle={false}></Fixtures> }
 
-                            Separate with Month
+                            {/* Display All Matches of Competition
+
+                            Separate with Month */}
                         </div>
                     </>
                 )
@@ -195,4 +230,4 @@ const Fixtures = () => {
     )
 }
 
-export default Fixtures;
+export default Schedule;
