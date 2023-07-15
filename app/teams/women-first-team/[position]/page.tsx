@@ -16,62 +16,127 @@ export type IPlayerCard = {
 
 const playerData: IPlayerCard[] = [
     {
-        number: 1,
-        firstName: 'Alan',
-        lastName: 'Portelli',
-        profilePicture: '',
-        position: 'Winger',
+      firstName: "Raffaella",
+      lastName: "Zammit Tabona",
+      position: "Goalkeeper",
+      number: 1
     },
     {
-        number: 2,
-        firstName: 'Daryl',
-        lastName: 'Magri',
-        profilePicture: '',
-        position: 'LinePlayer'
+      firstName: "Miriana",
+      lastName: "Attard",
+      position: "PlayMaker",
+      number: 4
     },
     {
-        number: 3,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'LinePlayer'
+      firstName: "Stephanie",
+      lastName: "Caruana",
+      position: "PlayMaker",
+      number: 5
     },
     {
-        number: 4,
-        firstName: 'Alan',
-        lastName: 'Portelli',
-        profilePicture: '',
-        position: 'Winger',
+      firstName: "Cassandra",
+      lastName: "Petrella",
+      position: "Lateral",
+      number: 6
     },
     {
-        number: 5,
-        firstName: 'Daryl',
-        lastName: 'Magri',
-        profilePicture: '',
-        position: 'LinePlayer'
+      firstName: "Jessica",
+      lastName: "Agius",
+      position: "Winger",
+      number: 7
     },
     {
-        number: 6,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'LinePlayer'
+      firstName: "Ruth",
+      lastName: "Debrincat",
+      position: "LinePlayer",
+      number: 8
     },
     {
-        number: 7,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'Goalkeeper'
+      firstName: "Beti",
+      lastName: "Petkovska",
+      position: "LinePlayer",
+      number: 9
     },
     {
-        number: 8,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'Coach'
+      firstName: "Abigail",
+      lastName: "Fenech Pomroy",
+      position: "LinePlayer",
+      number: 10
     },
-]
+    {
+      firstName: "Nicole",
+      lastName: "Gatt",
+      position: "PlayMaker",
+      number: 11
+    },
+    {
+      firstName: "Paula",
+      lastName: "Hundsrucker",
+      position: "Goalkeeper",
+      number: 16
+    },
+    {
+      firstName: "Laura",
+      lastName: "Berenguer Mellodo",
+      position: "Lateral",
+      number: 17
+    },
+    {
+      firstName: "Shanice",
+      lastName: "Ahar",
+      position: "Winger",
+      number: 18
+    },
+    {
+      firstName: "Szabina",
+      lastName: "Toth",
+      position: "Lateral",
+      number: 20
+    },
+    {
+      firstName: "Kirsty",
+      lastName: "Collins",
+      position: "PlayMaker",
+      number: 23
+    },
+    {
+      firstName: "Kyra",
+      lastName: "Licari",
+      position: "LinePlayer",
+      number: 24
+    },
+    {
+      firstName: "Mirea",
+      lastName: "Ferre",
+      position: "Lateral",
+      number: 26
+    },
+    {
+      firstName: "Sarah",
+      lastName: "Mifsud",
+      position: "Lateral",
+      number: 28
+    },
+    {
+      firstName: "Stephanie",
+      lastName: "Paris",
+      position: "Lateral",
+      number: 29
+    },
+    {
+      firstName: "Kristina",
+      lastName: "Falzon",
+      position: "PlayMaker",
+      number: 31
+    },
+    {
+      firstName: "Desislava Yordanova",
+      lastName: "Krasteva",
+      position: "Winger",
+      number: 77
+    }
+  ]
+  
 
 const positions = [
     { name: 'All', filter: (player: IPlayerCard) => true },

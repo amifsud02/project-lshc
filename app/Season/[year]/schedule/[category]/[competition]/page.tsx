@@ -26,6 +26,10 @@ const competitionDropdown: CompetitionDropdownItem = {
             "key": "National League",
             "value": "Men's National League"
         },
+        "premier-league": {
+            "key": "Premier League",
+            "value": "Men's Premier League"
+        },
         "knockout": {
             "key": "Knockout",
             "value": "Men's Knock Out"
@@ -96,6 +100,8 @@ const Schedule = () => {
         value: ''
     });
 
+    const [selectedYear, setSelectedYear] = useState(2023);
+
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<IFixture[]>([]); // To store the fetched data in the state.
     const [error, setError] = useState(null);
@@ -126,7 +132,7 @@ const Schedule = () => {
             }
            
             try {
-                const response = await fetch(`http://localhost:3000/api/fixtures?competitiontypename=${selectedCompetition.value}&season=2023`);
+                const response = await fetch(`http://localhost:3000/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -141,7 +147,7 @@ const Schedule = () => {
         };
 
         fetchData();
-    }, [category, competition, selectedCompetition.value]);
+    }, [category, competition, selectedCompetition.value, selectedYear]);
 
     console.log(data)
 
@@ -160,7 +166,7 @@ const Schedule = () => {
                     <div className="tabs__wrapper">
                         <div className="nav__tab">
                             <ul className="category">
-                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/men') ? 'active' : ''}`}>
+                                <li className={`tablinks ${pathname.startsWith('/season/*/schedule/men') ? 'active' : ''}`}>
                                     <Link href="http://localhost:3000/season/2023/schedule/men/national-league">
                                         Men
                                     </Link>
