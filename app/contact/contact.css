@@ -1,0 +1,193 @@
+
+.form-input
+{
+  display: flex;
+  flex-direction: column;
+}
+
+.form-submit{
+  margin-top: 1.5rem;
+  height: 50px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.form-group
+{
+  display: grid;
+  grid-template-columns: (2, 1fr);
+  column-gap: 25px;
+  row-gap: 10px;
+  grid-auto-rows: minmax(50px, auto);
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+.one
+{
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.two
+{
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.three
+{
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.four
+{
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.five
+{
+  grid-column: 1 / 3 ;
+  grid-row: 3;
+}
+
+.six
+{
+  grid-column: 1 / 3 ;
+  grid-row: 4;
+}
+
+.seven {
+  grid-column: 1 / 3;
+  grid-row: 5;
+}
+
+@media screen and (max-width: 770px) {
+  .one, .two, .three, .four, .five, .six, .seven{
+    grid-column: 1 / 3;
+  }
+
+  .one{
+    grid-row: 1;
+  }
+
+  .two{
+    grid-row: 2;
+  }
+
+  .three{
+    grid-row: 3;
+  }
+
+  .four{
+    grid-row: 4;
+  }
+
+  .five{
+    grid-row: 5;
+  }
+
+  .six{
+    grid-row: 6;
+  }
+
+  .seven {
+    grid-row: 7;
+  }
+}
+
+label
+{
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+input, textarea{
+  padding: 0;
+  height: 30px;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: none;
+  background: none;
+  border-bottom: 2px solid grey;
+  border-radius: 0;
+}
+
+input[type=radio] {
+  padding: 0;
+  height: 30px;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+  border: none;
+  background: none;
+  border-bottom: 2px solid grey;
+  border-radius: 0;
+}
+
+
+
+input::placeholder, textarea::placeholder
+{
+  color: grey;
+}
+
+input:focus, textarea:focus{
+  outline: none;
+  border:none;
+  border-bottom: 2px solid black;
+}
+
+input:focus::placeholder, textarea:focus::placeholder{
+  color: transparent;
+}
+
+.acc-button {
+  background: #ccffff;
+  cursor: pointer;
+  font-size: 20pt;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.acc-button:hover {
+    opacity: 0.7;
+}
+
+.acc-content {
+  background: #ffffcc;
+  width: inherit;
+  overflow: hidden;
+  max-height: 0;
+  transition: all 0.3s ease-in-out;
+  font-size: 18pt;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#acc-state:checked ~ .acc-content {  
+  max-height: 150px;
+}
+
+.acc-inner {
+  margin: 16px;
+}
+
+.radio-buttons {
+    display: flex;
+    justify-content: flex-start; 
+    gap: 20px;  
+    margin-top: .5rem;            
+}
+
+.radio-buttons > .radio-button {
+    display: flex;
+    align-items: center;  
+    gap: 5px;
+}
