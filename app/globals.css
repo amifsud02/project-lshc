@@ -140,8 +140,11 @@ body::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   width: 60%;
+  max-width: 1280px;
   margin: 75px auto;
 }
+
+
 
 .title {
   font-weight: 900;
@@ -252,4 +255,5 @@ body::-webkit-scrollbar {
     transform: rotate(360deg);
   }
 }
+
 

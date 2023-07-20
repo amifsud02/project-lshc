@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import sendGrid from '@sendgrid/mail';
 
-sendGrid.setApiKey(process.env.SENDGRID_KEY as string);
+sendGrid.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const sendEmail = async (msg) => {
     return new Promise((resolve, reject) => {

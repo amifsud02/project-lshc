@@ -15,7 +15,7 @@ const SponsorCard = (props: sponsorCardProps) => {
             <Image src={'/lshc.png'} alt={'LSHC Logo'} height={90} width={90} className={styles.partnerLogo}></Image>
                 {/*{props.sponsorImage}*/}
             </div>
-            <div>{props.sponsorName}</div>
+            <div className={styles.sponsorName}>{props.sponsorName}</div>
             <div className={styles.sponsorLink}>
                 <Link href={props.sponsorLink}>
                     <button className='primary-button'>More</button>
