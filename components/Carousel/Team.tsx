@@ -35,11 +35,12 @@ const TeamCarousel = () => {
 
 
     return (
-        <section style={{ width: '60%', maxWidth: '1280px', margin: '0 auto', padding: '100px 0' }}>
+        <section className='parent'>
             <Carousel
                 infiniteLoop={true}
                 showStatus={false}
                 showThumbs={false}
+                showIndicators={false}
 
                 renderArrowPrev={(onClickHandler, hasPrev, label) =>
                     hasPrev && (

@@ -22,7 +22,18 @@ html,
 body {
   font-family: "Raleway", sans-serif;
   background-color: var(--background-color);
+  position: relative;
+  height: 100vh;
+  width: 100vw;
   overflow-x: hidden;
+}
+
+main {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 body::-webkit-scrollbar {
@@ -136,12 +147,36 @@ body::-webkit-scrollbar {
 
 /* TABS */ 
 
+/* Default styles for the parent container */
 .parent {
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 100%; /* Change to 100% to make it full-width by default */
   max-width: 1280px;
-  margin: 75px auto;
+  margin: 0 auto; /* Change to 0 auto to center the container horizontally */
+  padding: 15px; /* Optional padding to add some space inside the container */
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .parent {
+    width: 750px; /* Adjust the width for larger screens */
+    margin: 75px auto; /* Adjust the margin for larger screens */
+  }
+}
+
+/* Media query for extra-large screens */
+@media (min-width: 992px) {
+  .parent {
+    width: 970px; /* Adjust the width for extra-large screens */
+  }
+}
+
+/* Media query for even larger screens */
+@media (min-width: 1200px) {
+  .parent {
+    width: 1170px; /* Adjust the width for even larger screens */
+  }
 }
 
 
@@ -256,4 +291,6 @@ body::-webkit-scrollbar {
   }
 }
 
-
+.szh-accordion__item--expanded{
+  color: white;
+}

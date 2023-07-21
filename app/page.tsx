@@ -12,6 +12,7 @@ import { IFixture } from "@/lib/types/fixture.type";
 import { IStanding } from "@/lib/types/standing.type";
 import Fixtures from "@/components/Fixture/Fixture";
 import Hero from "@/components/Hero/Hero";
+import Footer from "@/components/Footer/Footer";
 
 
 
@@ -122,6 +123,7 @@ export default async function Home() {
       <JoinUs></JoinUs>
       <TeamCarousel></TeamCarousel>
       <Partners />
+      <Footer />
     </main>
   );
 }

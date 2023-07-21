@@ -5,7 +5,7 @@ import styles from './Hero.module.css';
 const HeroSection = () => {
   return (
     <section className={styles.hero}>
-      <MobileNav/>
+      <Header/>
 
       <div className={styles.parent}>
         <div className={`${styles.animate__animated} ${styles.animate__backInLeft} ${styles.hpTitle}`}>

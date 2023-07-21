@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export function Partners() {
     return (
-        <section className={styles.container}>
+        <section className='parent'>
             <h2 className={styles.title}>Our Partners</h2>
 
             <div className={styles.partnerRow}>

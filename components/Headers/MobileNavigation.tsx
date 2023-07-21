@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from "next/image";
 import styles from './Mobile.module.css';
@@ -8,32 +8,55 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 
 
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
+import { usePathname } from 'next/navigation';
 
-const AccordionItem = ({ header, ...rest }) => (
-    <Item
-      {...rest}
-      header={
-        <>
-          {header}
-          <ChevronDown size={35} className={styles.chevron}/>
-        </>
-      }
-      className={styles.item}
-      buttonProps={{
-        className: ({ isEnter }) =>
-          `${styles.itemBtn} ${isEnter && styles.itemBtnExpanded}`
-      }}
-      contentProps={{ className: ({ isEnter }) => `${styles.itemContent} ${isEnter && styles.listExpanded}`}}
-      panelProps={{ className: styles.itemPanel }}
-    />
-  );
+const AccordionItem = ({ header, url, ...rest }) => {
+    const pathName = usePathname();   
+    
+    const regex = new RegExp(url);
+    const isUrl = regex.test(pathName);
+
+    console.log(pathName, regex,  isUrl);
+    
+    return (
+        <Item
+            {...rest}
+
+            header={
+                <>
+                    <span className={`${isUrl && styles.active}`}>{header}</span>
+                    <ChevronDown size={35} className={`${isUrl && styles.active} ${styles.chevron} `}/>
+                </>
+            }
+
+            className={styles.item}
+            buttonProps={{
+                className: ({ isEnter }) =>
+                    `${styles.itemBtn} ${isEnter && styles.itemBtnExpanded}`
+            }}
+            contentProps={{ className: ({ isEnter }) => `${styles.itemContent} ${isEnter && styles.listExpanded}` }}
+            panelProps={{ className: styles.itemPanel }}
+        />
+    )
+};
 
 export const MobileNav = () => {
+    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
 
+    useEffect(() => {
+        if(isOpen) {
+            document.body.style.overflowY = 'hidden';
+        }
+
+        else {
+            document.body.style.overflowY = 'scroll';
+        }
+    }, [isOpen])
+    
     return (
         <>
-            <header className={`${styles.nav__wrapper} ${isOpen && styles.nav__bg}`}>
+            <header className={`${styles.nav__wrapper} ${isOpen && styles.nav__bg} mobile-navigation`}>
                 <div className={styles.navbar}>
 
                     <div className={styles.nav__top}>
@@ -52,9 +75,9 @@ export const MobileNav = () => {
                             isOpen && (
 
                                 <Accordion transition transitionTimeout={250}>
-                                    <Link className={styles.navItemLink} href="/"><p>Home</p></Link>
+                                    <Link className={pathname === '/' ? `${styles.navItemLink} ${styles.active}` : styles.navItemLink} href="/"><p>Home</p></Link>
 
-                                    <AccordionItem header="Teams">
+                                    <AccordionItem header="Teams" url='^\/teams\/[\w-]+\/[\w-]+' style={{textAlign: 'left', width: '100%'}}>
                                         <ul className={styles.mobile__dropdown}>
                                             <li>Men's Team</li>
                                             <li>Women's Team</li>
@@ -64,14 +87,14 @@ export const MobileNav = () => {
                                         </ul>
                                     </AccordionItem>
 
-                                    <AccordionItem header="Season">
+                                    <AccordionItem header="Season" url="^\/season\/\d{4}\/schedule\/[a-zA-Z0-9_]+\/[\w-]+">
                                         <ul className={styles.mobile__dropdown}>
                                             <li>Standings</li>
                                             <li>Schedule</li>
                                         </ul>
                                     </AccordionItem>
 
-                                    <AccordionItem header="Club">
+                                    <AccordionItem header="Club" url='club'>
                                         <ul className={styles.mobile__dropdown}>
                                             <li>History</li>
                                             <li>Management</li>
@@ -79,7 +102,7 @@ export const MobileNav = () => {
                                         </ul>
                                     </AccordionItem>
 
-                                    <Link className={styles.navItemLink} href="/"><p>Contact Us</p></Link>
+                                    <Link className={styles.navItemLink} href="/contact-us"><p>Contact Us</p></Link>
                                 </Accordion>
                             )
                         }
