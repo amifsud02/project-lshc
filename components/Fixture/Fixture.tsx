@@ -4,6 +4,7 @@ import { IFixture } from '@/lib/types/fixture.type';
 import Image from 'next/image';
 
 import styles from './Fixture.module.css'
+import crypto from 'crypto';
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -28,7 +29,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
 
                     return (
                         <>
-                            <div className={styles.matchContent} key={fixture.awayTeamId.teamName}>
+                            <div className={styles.matchContent} key={crypto.randomBytes(20).toString('hex')}>
                                 <div className={styles.match}>
                                     <>
                                         <div className={styles.homeTeam}>

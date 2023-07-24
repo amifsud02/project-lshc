@@ -3,6 +3,8 @@
 import Link from "next/link";
 import React, { ReactElement, useState } from "react";
 import TabTitle from "./TabTitle";
+import styles from './tab.module.css';
+import crypto from 'crypto';
 
 type Props = {
   children: ReactElement[];
@@ -12,18 +14,15 @@ type Props = {
 
 const Tabs: React.FC<Props> = ({ children, redirect, showall }) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  
-  // Log the titles of the Tab components
-  console.log(children.map((item) => item.props['data-tab-title']));
-  
+    
   return (
     <>
       <div className="tabs__wrapper">
-        <ul className="nav__tab">
+        <ul className={styles.nav__tab}>
           <div className="category">
             {children.map((item, index) => (
               <TabTitle
-                key={index}
+                key={crypto.randomBytes(20).toString('hex')}
                 title={item.props['data-tab-title']}
                 index={index}
                 setSelectedTab={setSelectedTab}

@@ -19,7 +19,7 @@ import Footer from "@/components/Footer/Footer";
 const getFixtures = async () => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/fixtures?competitiontypename=U21 Men's National League&season=2023&limit=5`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=U21 Men's National League&season=2023&limit=5`
     );
 
     if (!response.ok) {
@@ -39,7 +39,7 @@ const getFixtures = async () => {
 const getStandings = async () => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/standings?competitiontypename=U21%20Men%27s%20National%20League&season=2023`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=U21%20Men%27s%20National%20League&season=2023`
     );
 
     if (!response.ok) {

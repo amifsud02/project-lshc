@@ -70,3 +70,9 @@
   transform: scaleX(1);
   transform-origin: bottom left;
 }
+
+.nav__tab {
+  display: flex;
+  justify-content: space-between;
+  
+}

@@ -18,6 +18,10 @@
   box-sizing: border-box;
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
 html,
 body {
   font-family: "Raleway", sans-serif;
@@ -163,7 +167,7 @@ body::-webkit-scrollbar {
   flex-direction: column;
   width: 100%; /* Change to 100% to make it full-width by default */
   max-width: 1280px;
-  margin: 75px auto; /* Change to 0 auto to center the container horizontally */
+  margin: 25px auto; /* Change to 0 auto to center the container horizontally */
   padding: 15px; /* Optional padding to add some space inside the container */
 }
 
@@ -174,11 +178,6 @@ body::-webkit-scrollbar {
   text-transform: uppercase;
   margin-bottom: 20px;
   letter-spacing: 0.05em;
-}
-
-.parent ul {
-  display: flex;
-  flex-direction: row;
 }
 
 .category {
@@ -301,6 +300,7 @@ body::-webkit-scrollbar {
 @media (min-width: 768px) {
   .parent {
     width: 750px; /* Adjust the width for larger screens */
+    margin: 75px auto;
   }
 
   .playercard-showcase{
@@ -333,5 +333,4 @@ body::-webkit-scrollbar {
   place-items: center;
   margin-top: 50px;
   margin-bottom: 50px;
-
 }
