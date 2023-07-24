@@ -86,7 +86,7 @@ export default async function Home() {
 
           <Tabs redirect="/season/current" showall={true}>
             <Tab tabTitle="Men">
-              <Standings showTitle={false} data={standings}></Standings>
+              {standings && <Standings showTitle={false} data={standings}></Standings> }
             </Tab>
 
             <Tab tabTitle="Women">
