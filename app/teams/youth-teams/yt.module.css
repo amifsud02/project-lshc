@@ -1,0 +1,16 @@
+.comingSoon {
+    padding-top: 60px;    
+    padding-bottom: 60px;    
+    align-items: center;
+    justify-content: center;
+}
+
+.comingSoon > p {
+    margin-bottom: 35px;
+}
+
+.comingSoon > h2 {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: clamp(2rem, 5rem, 3rem);
+}

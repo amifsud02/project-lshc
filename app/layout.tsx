@@ -1,7 +1,5 @@
 import './globals.css'
 import './fonts.css'
-import Footer from '@/components/Footer/Footer'
-import { ApolloWrapper } from '@/lib/utils/apollo/apollo-wrapper'
 
 export const metadata = {
   title: 'Create Next App',

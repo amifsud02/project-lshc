@@ -36,6 +36,16 @@ main {
   left: 0;
 }
 
+select {
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+select > * {
+  cursor: pointer;
+}
+
 body::-webkit-scrollbar {
   display: none;
 }
@@ -153,37 +163,14 @@ body::-webkit-scrollbar {
   flex-direction: column;
   width: 100%; /* Change to 100% to make it full-width by default */
   max-width: 1280px;
-  margin: 0 auto; /* Change to 0 auto to center the container horizontally */
+  margin: 75px auto; /* Change to 0 auto to center the container horizontally */
   padding: 15px; /* Optional padding to add some space inside the container */
 }
-
-/* Media query for larger screens */
-@media (min-width: 768px) {
-  .parent {
-    width: 750px; /* Adjust the width for larger screens */
-    margin: 75px auto; /* Adjust the margin for larger screens */
-  }
-}
-
-/* Media query for extra-large screens */
-@media (min-width: 992px) {
-  .parent {
-    width: 970px; /* Adjust the width for extra-large screens */
-  }
-}
-
-/* Media query for even larger screens */
-@media (min-width: 1200px) {
-  .parent {
-    width: 1170px; /* Adjust the width for even larger screens */
-  }
-}
-
 
 
 .title {
   font-weight: 900;
-  font-size: 16px;
+  font-size: 1.15rem;
   text-transform: uppercase;
   margin-bottom: 20px;
   letter-spacing: 0.05em;
@@ -192,12 +179,12 @@ body::-webkit-scrollbar {
 .parent ul {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
 }
 
 .category {
   display: flex;
   flex-direction: row;
+  overflow-x: scroll;
 }
 
 .category .tablinks, .show-all {
@@ -293,4 +280,58 @@ body::-webkit-scrollbar {
 
 .szh-accordion__item--expanded{
   color: white;
+}
+
+.position-titles{
+  color: var(--secondary-color);
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-style: italic;
+  padding-top: 15px;
+}
+
+.playercard-showcase{
+  margin-top: 20px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .parent {
+    width: 750px; /* Adjust the width for larger screens */
+  }
+
+  .playercard-showcase{
+    justify-content: flex-start;
+  }
+
+  .category{
+    overflow: auto;
+  }
+}
+
+/* Media query for extra-large screens */
+@media (min-width: 992px) {
+  .parent {
+    width: 970px; /* Adjust the width for extra-large screens */
+  }
+}
+
+/* Media query for even larger screens */
+@media (min-width: 1200px) {
+  .parent {
+    width: 1170px; /* Adjust the width for even larger screens */
+  }
+}
+
+.fr-page-section{
+  min-height: 400px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+
 }

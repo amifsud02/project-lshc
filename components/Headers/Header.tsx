@@ -125,7 +125,7 @@ export function Header() {
     return (
         <>
         <header className={styles.mainNavBG}>
-            <div className={styles.mainNav}>
+            <div className={`${styles.mainNav}`}>
                 <div>
                     <Image src={'/lshc.png'} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" />
                 </div>

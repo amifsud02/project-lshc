@@ -12,7 +12,7 @@
 }
 
 .socialLinks {
-    margin-top: 10px;
+    margin-top: 25px;
     display: flex;
     gap: 20px;
 }
@@ -22,12 +22,10 @@
 }
 
 .footerContent{
-    display: flex;
+    flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
-    width: 80%;
-    max-width: 1280px;
     margin: 0 auto;
+    padding: 0;
 }
 
 .fInfo
@@ -64,9 +62,9 @@
 .subFooter
 {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
-    width: 60%;
     margin: 0 auto;
     padding: 25px 0;   
     color: #999999;

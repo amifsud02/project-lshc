@@ -10,7 +10,14 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
 import { usePathname } from 'next/navigation';
 
-const AccordionItem = ({ header, url, ...rest }) => {
+interface AccordionItemProps {
+    header: string;
+    url: string;
+    style?: React.CSSProperties;
+    children: React.ReactNode;
+  }
+
+const AccordionItem: React.FC<AccordionItemProps> = ({header, url, ...rest}) => {
     const pathName = usePathname();   
     
     const regex = new RegExp(url);
@@ -79,10 +86,10 @@ export const MobileNav = () => {
 
                                     <AccordionItem header="Teams" url='^\/teams\/[\w-]+\/[\w-]+' style={{textAlign: 'left', width: '100%'}}>
                                         <ul className={styles.mobile__dropdown}>
-                                            <li>Men's Team</li>
-                                            <li>Women's Team</li>
-                                            <li>U21 Men's Team</li>
-                                            <li>U21 Women's Team</li>
+                                            <li>Men&apos;s Team</li>
+                                            <li>Women&apos;s Team</li>
+                                            <li>U21 Men&apos;s Team</li>
+                                            <li>U21 Women&apos;s Team</li>
                                             <li>Youth Teams</li>
                                         </ul>
                                     </AccordionItem>

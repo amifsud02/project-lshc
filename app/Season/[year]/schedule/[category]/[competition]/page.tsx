@@ -1,7 +1,9 @@
 'use client'
 
 import Fixtures from "@/components/Fixture/Fixture";
+import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
+import { Partners } from "@/components/Partners/Partners";
 import { IFixture } from "@/lib/types/fixture.type";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -18,10 +20,6 @@ interface CompetitionDropdownItem {
 
 const competitionDropdown: CompetitionDropdownItem = {
     "men": {
-        "all": {
-            "key": "All",
-            "value": "all"
-        },
         "national-league": {
             "key": "National League",
             "value": "Men's National League"
@@ -40,10 +38,6 @@ const competitionDropdown: CompetitionDropdownItem = {
         }
     },
     "women": {
-        "all": {
-            "key": "All",
-            "value": "all"
-        },
         "national-league": {
             "key": "National League",
             "value": "Women's National League"
@@ -58,10 +52,6 @@ const competitionDropdown: CompetitionDropdownItem = {
         }
     },
     "u21-men": {
-        "all": {
-            "key": "All",
-            "value": "all"
-        },
         "national-league": {
             "key": "National League",
             "value": "U21 Men's National League"
@@ -72,10 +62,6 @@ const competitionDropdown: CompetitionDropdownItem = {
         }
     },
     "u21-women": {
-        "all": {
-            "key": "All",
-            "value": "all"
-        },
         "national-league": {
             "key": "National League",
             "value": "U21 Women's National League"
@@ -106,15 +92,13 @@ const Schedule = () => {
     const [data, setData] = useState<IFixture[]>([]); // To store the fetched data in the state.
     const [error, setError] = useState(null);
 
-    const changeURL = (event) => {
+    const changeURL = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const newCompetition = event.target.value;
-        console.log(newCompetition);
-
         const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
-
-        setSelectedCompetition({ parentKey, newCompetition })
-
-        router.push(`http://localhost:3000/season/2023/schedule/${category}/${parentKey}`)
+        if(parentKey) {
+            setSelectedCompetition({ key: parentKey, value: newCompetition })
+            router.push(`http://localhost:3000/season/2023/schedule/${category}/${parentKey}`)
+        }
     }
 
     useEffect(() => {
@@ -130,8 +114,13 @@ const Schedule = () => {
                     });
                 }
             }
-           
+        
+            while(!selectedCompetition || !selectedCompetition.value) {
+                await new Promise(resolve => setTimeout(resolve, 250))
+            }
+            
             try {
+                console.log(selectedCompetition.value)
                 const response = await fetch(`http://localhost:3000/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -139,7 +128,7 @@ const Schedule = () => {
                 
                 const { fixtures }: { fixtures: IFixture[] } = await response.json();
                 setData(fixtures); // Store the fetched data in the state.
-            } catch (err) {
+            } catch (err: any) {
                 setError(err); // Store the error in the state if any error occurs.
             } finally {
                 setLoading(false);
@@ -147,7 +136,7 @@ const Schedule = () => {
         };
 
         fetchData();
-    }, [category, competition, selectedCompetition.value, selectedYear]);
+    }, [category, competition, selectedCompetition, selectedYear]);
 
     console.log(data)
 
@@ -208,7 +197,9 @@ const Schedule = () => {
 
 
                 {loading ? (
-                    <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    <div className="fr-page-section">
+                        <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    </div>
                 ) : (
                     <>
                         {/* <div>
@@ -216,10 +207,8 @@ const Schedule = () => {
                             Display One Upcoming Match with Countdown
                         </div> */}
 
-                        <div>
-                            
+                        <div className="fr-page-section">                            
                             { data && <Fixtures data={data} showTitle={false}></Fixtures> }
-
                             {/* Display All Matches of Competition
 
                             Separate with Month */}
@@ -232,6 +221,8 @@ const Schedule = () => {
 
 
             </section>
+            <Partners/>
+            <Footer/>
         </>
     )
 }

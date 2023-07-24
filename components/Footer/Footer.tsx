@@ -5,7 +5,7 @@ const Footer: React.FC<{}> = () => {
     return (
         <footer>
             <div className={styles.footer}>
-                <div className={styles.footerContent}>
+                <div className={`${styles.footerContent} parent`}>
                     <div className={`${styles.fc40} ${styles.fcFlex} ${styles.fcWs}`}>
                         <div className="title">La Salle Handball Club</div>
                         <div>An amateur club with a professional mentality.</div>                        
@@ -31,8 +31,8 @@ const Footer: React.FC<{}> = () => {
                 </div>
             </div>
 
-            <div className={styles.subFooter}>
-                <div className={styles.sfContent}>
+            <div className={`${styles.subFooter} parent`}>
+                <div className={`${styles.sfContent}`}>
                     © {new Date().getFullYear()} - La Salle Handball Club
                 </div>
                 <div className={styles.sfContent}>

@@ -1,8 +1,6 @@
 import Image from "next/image"
 import styles from './PlayerCard.module.css'
-import { IPlayerCard } from "../../pages/teams/men-first-team";
-
-
+import { IPlayerCard } from "@/lib/types/player.type";
 
 const PlayerCard: React.FC<{playerInfo: IPlayerCard}> = ({playerInfo}) => {
     return (

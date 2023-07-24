@@ -3,7 +3,7 @@ import sendGrid from '@sendgrid/mail';
 
 sendGrid.setApiKey(process.env.SENDGRID_API_KEY as string);
 
-const sendEmail = async (msg) => {
+const sendEmail = async (msg: any) => {
     return new Promise((resolve, reject) => {
         sendGrid.send(msg).then(() => {
             resolve("Email sent");

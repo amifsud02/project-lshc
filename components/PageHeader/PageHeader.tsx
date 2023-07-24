@@ -8,17 +8,17 @@ type PageProps = {
 
 const PageHeader = (props: PageProps) => {
     return (
-        <>
-            <div className={styles.pageHeader}>
-                <MobileNav />
-                <div className={styles.parent}>
-                    <div className={styles.pageHeaderInfo}>
-                        <div className={styles.pageMap}>Home • {props.pageName}</div>
-                        <div className={styles.pageTitle}>{props.pageName}</div>
-                    </div>
+
+        <div className={styles.pageHeader}>
+            <Header />
+            <div className='parent'>
+                <div className={styles.pageHeaderInfo}>
+                    <div className={styles.pageMap}>Home • {props.pageName}</div>
+                    <div className={styles.pageTitle}>{props.pageName}</div>
                 </div>
             </div>
-        </>
+        </div>
+
     );
 }
 

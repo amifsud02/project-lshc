@@ -17,11 +17,11 @@ export default function ContactForm() {
 
     // const { firstName, lastName, email, phone, message } = values
 
-    const handleInputChange = (e) =>
+    const handleInputChange = (e:  React.ChangeEvent<HTMLInputElement>| React.ChangeEvent<HTMLTextAreaElement>) =>
         setValues({ ...values, [e.target.name]: e.target.value });
 
 
-    const handleRadioChange = (e) => {
+    const handleRadioChange = (e:  React.ChangeEvent<HTMLInputElement> ) => {
         console.log(e.target);
         setContact(e.target.value);
     };
@@ -39,32 +39,8 @@ export default function ContactForm() {
         })
 
         const data = await response.json();
-
-        console.log(data);
-
-        
     }
-    // const handleSubmit = async e => {
-    //     e.preventDefault()
-
-    //     const data = {
-    //         ...values,
-    //         enquireType: contact
-    //     }
-
-    //     try {
-    //         await fetch('http://localhost:3000/api/contact-form', {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             body: JSON.stringify(data),
-    //         })
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-    // }
-
+   
     return (
         <form className="form-group" onSubmit={handleSubmit}>
             <div className="form-input one c-small">

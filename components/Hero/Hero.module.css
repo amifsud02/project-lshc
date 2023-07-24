@@ -1,11 +1,14 @@
 /* hero.module.css */
 
 .hero {
-  height: 100vh;
+  height: 60vh;
   width: 100%;
   z-index: -1;
+
   display: flex;
   flex-flow: column;
+  justify-content: center;
+
   background: rgb(1, 41, 111),
     url("../../public/la-salle-hero.jpg") no-repeat center;
   background: -moz-linear-gradient(
@@ -32,6 +35,7 @@
         GradientType=1
       );
   background-size: cover;
+  background-position: top center;
 }
 
 .heroContent {
@@ -47,16 +51,9 @@
 }
 
 .parent {
-  display: flex;
-  flex-direction: column;
   width: 80%;
+  height: 100%;
   max-width: 1280px;
-  margin: 75px auto;
-}
-
-.hero .parent {
-  justify-content: center;
-  height: 40%;
 }
 
 .heroTitle h1,

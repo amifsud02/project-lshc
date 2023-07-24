@@ -1,18 +1,13 @@
 'use client'
 
 import { useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 
 import PageHeader from "@/components/PageHeader/PageHeader";
 import PlayerCard from "@/components/PlayerCard/PlayerCard";
-
-export type IPlayerCard = {
-    number: number;
-    firstName: string;
-    lastName: string;
-    profilePicture?: string;
-    position?: 'Goalkeeper' | 'LinePlayer' | 'Winger' | 'PlayMaker' | 'Lateral' | 'Coach';
-}
+import { Partners } from '@/components/Partners/Partners';
+import Footer from '@/components/Footer/Footer';
+import { IPlayerCard } from '@/lib/types/player.type';
 
 const playerData: IPlayerCard[] = [
     {
@@ -83,9 +78,10 @@ const positions = [
     { name: 'Coach', filter: (player: IPlayerCard) => player.position === 'Coach' },
 ];
 
+
 const U21MenTeam = () => {
     const router = useRouter();
-    const params = useParams();
+    const params = useParams(); // men-first-team/[position]
 
     const { position } = params;
 
@@ -99,7 +95,7 @@ const U21MenTeam = () => {
             const selectedPosition = position.toLowerCase();
 
             const positionExists = positions.find(
-                (position) => position.name.toLowerCase() === selectedPosition
+                (pos) => pos.name.toLowerCase() === selectedPosition
             );
 
             if (positionExists) {
@@ -108,8 +104,12 @@ const U21MenTeam = () => {
             }
         }
 
+        // If position is undefined or not found in the positions array,
+        // return the default list of players (all players).
         return playerData;
     }, [position]);
+
+    const selectedPositionName = position && positions.find((pos) => pos.name.toLowerCase() === position.toLowerCase())?.name;
 
     return (
         <>
@@ -119,59 +119,61 @@ const U21MenTeam = () => {
                 <div className="tabs__wrapper">
                     <ul className="nav__tab">
                         <div className="category">
-                            {positions.map((position) => (
-                                <button key={position.name} className={'tablinks'} onClick={() => updateURL(position.name.toLowerCase())}>{position.name.replace(/-/g, ' ')}</button>
+                            {positions.map((p) => (
+                                <button key={p.name} className={p.name.toLowerCase() === position ? `tablinks active` : 'tablinks'} onClick={() => updateURL(p.name.toLowerCase())}>{p.name.replace(/-/g, ' ')}</button>
                             ))}
                         </div>
                     </ul>
                 </div>
 
                 {
-                    playerData.length === 0 ? (
+                    filteredPlayers.length === 0 ? (
                         <>
                             Coming Soon
-                        </> ) : 
-                    (
-                        position !== 'all' ? (
-                            <>
-                                {
-                                    filteredPlayers.length > 0 ? (
-                                        <div>
-                                            <h2>{positions && positions.find((pos) => pos.name.toLowerCase() === position.toLowerCase()).name.replace(/-/g, ' ')}</h2>
-                                            <ul style={{ marginTop: '20px', display: 'flex', flexFlow: 'row wrap', justifyContent: 'flex-start' }}>
-                                                {filteredPlayers.map((player, index) => (
-                                                    <PlayerCard playerInfo={player} key={index} />
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ) : ''
-                                }
-                            </>
-                        ) : (
-                            positions.filter(pos => pos.name !== 'All').map(pos => (
+                        </>) :
+                        (
+                            position && selectedPositionName?.toLowerCase() !== 'all' ? (
                                 <>
                                     {
-                                        playerData.filter(pos.filter).length > 0 ?
-                                            (
-                                                <div key={pos.name}>
-                                                    <h2>{pos.name}</h2>
-                                                    <ul style={{ marginTop: '20px', display: 'flex', flexFlow: 'row wrap', justifyContent: 'flex-start' }}>
-                                                        {playerData.filter(pos.filter).map((player, index) => (
-                                                            <PlayerCard playerInfo={player} key={index} />
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ) : (
-                                                <></>
-                                            )
+                                        filteredPlayers.length > 0 ? (
+                                            <div>
+                                                <h2 className='position-titles'>{selectedPositionName?.replace(/-/g, ' ')}</h2>
+                                                <ul className='playercard-showcase'>
+                                                    {filteredPlayers.map((player, index) => (
+                                                        <PlayerCard playerInfo={player} key={index} />
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ) : ''
                                     }
                                 </>
-                            ))
-                        )
+                            ) : (
+                                positions.filter(pos => pos.name !== 'All').map(pos => (
+                                    <>
+                                        {
+                                            playerData.filter(pos.filter).length > 0 ?
+                                                (
+                                                    <div key={pos.name}>
+                                                        <h2 className='position-titles'>{pos.name}</h2>
+                                                        <ul className='playercard-showcase'>
+                                                            {playerData.filter(pos.filter).map((player, index) => (
+                                                                <PlayerCard playerInfo={player} key={index} />
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ) : (
+                                                    <></>
+                                                )
+                                        }
+                                    </>
+                                ))
+                            )
 
-                    )
+                        )
                 }
             </section>
+            <Partners />
+            <Footer />
         </>
     )
 }

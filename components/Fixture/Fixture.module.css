@@ -57,7 +57,7 @@
   white-space: nowrap;
   width: 34px;
   overflow: hidden;
-  text-overflow: clip;
+  text-overflow: ellipsis;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -101,7 +101,7 @@
 
 @media screen and (min-width: 375px) {
   .teamName {
-    width: fit-content;
+    text-overflow: clip;
   }
   
 
@@ -146,6 +146,7 @@
 
 @media (min-width: 600px) {
   .matchContainer {
+    width: 100%;
     max-width: 1280px;
     margin: auto;
   }
