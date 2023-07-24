@@ -28,6 +28,7 @@ const getFixtures = async () => {
 
     const fixtures = await response.json();
     return fixtures;
+
   } catch (error) {
     console.error('Error fetching fixtures:', error);
     // Fallback handling: Return a default value or an empty array.
@@ -68,7 +69,9 @@ export default async function Home() {
 
           <Tabs redirect="/season/current" showall={true}>
             <Tab tabTitle="Men">
-              <Fixtures data={fixtures} showTitle={false}></Fixtures>
+              {fixtures && 
+                <Fixtures data={fixtures} showTitle={false}></Fixtures> 
+              }
             </Tab>
 
             <Tab tabTitle="Women">
