@@ -74,8 +74,12 @@
 
 .sfContent {
     display: flex;
+}
 
-     
+.sfContent p{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .cgowtLogo{    
