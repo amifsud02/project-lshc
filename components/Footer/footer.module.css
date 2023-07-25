@@ -82,12 +82,16 @@
     justify-content: center;
 }
 
+.sfContent p a {
+    position: relative;
+    height: 16px;
+    width: 82.14px;
+}
+
 .cgowtLogo{    
     margin-bottom: 4px;
     margin-left: 5px;
     opacity: 1;
-    height: 16px;
-    width: 100%;
 }
 
 @media screen and (max-width: 1440px)
