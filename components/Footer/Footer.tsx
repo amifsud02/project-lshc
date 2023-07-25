@@ -40,7 +40,7 @@ const Footer: React.FC<{}> = () => {
                     <p>
                         Designed and Developed by
 
-                        <Link href='https://cgowt.com' target="_blank">
+                        <Link href='https://cgowt.com' target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <svg className={styles.cgowtLogo} id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 502.08 97.79">
                                 <g id="Layer_9" data-name="Layer 9">
                                     <g>
