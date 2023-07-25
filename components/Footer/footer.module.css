@@ -73,11 +73,12 @@
 }
 
 .sfContent {
-    display: flex;    
+    display: flex;
+
+     
 }
 
 .cgowtLogo{    
-    display: block;
     margin-bottom: 4px;
     margin-left: 5px;
     opacity: 1;

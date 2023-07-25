@@ -37,7 +37,7 @@ const Footer: React.FC<{}> = () => {
                     © {new Date().getFullYear()} - La Salle Handball Club
                 </div>
                 <div className={styles.sfContent}>
-                    Designed and Developed by 
+                    <p>Designed and Developed by</p>
 
                     <Link href='https://cgowt.com' target="_blank">
                         <svg className={styles.cgowtLogo} id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 502.08 97.79">
