@@ -97,7 +97,7 @@ const Schedule = () => {
         const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
         if(parentKey) {
             setSelectedCompetition({ key: parentKey, value: newCompetition })
-            router.push(`http://localhost:3000/season/2023/schedule/${category}/${parentKey}`)
+            router.push(`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/${category}/${parentKey}`)
         }
     }
 
@@ -121,7 +121,7 @@ const Schedule = () => {
             
             try {
                 console.log(selectedCompetition.value)
-                const response = await fetch(`http://localhost:3000/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
