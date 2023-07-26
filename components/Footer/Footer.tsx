@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { CldImage } from 'next-cloudinary';
 import Image from "next/image";
 import styles from './footer.module.css'
 
@@ -41,7 +41,7 @@ const Footer: React.FC<{}> = () => {
                         Designed and Developed by
 
                         <a href='https://cgowt.com' target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                           <Image className={styles.cgowtLogo} src='./cgowt.svg' alt={"CGOWT Logo"} fill={true} priority={false}></Image>
+                           <Image className={styles.cgowtLogo} src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/v1690391565/ftiri6090wv2f2s66vwh.svg`} alt={"CGOWT Logo"} fill={true} priority={false}></Image>
                         </a>
                     </p>
                 </div>

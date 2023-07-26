@@ -22,7 +22,7 @@
     "gsap": "^3.12.1",
     "lucide-react": "^0.224.0",
     "next": "13.4.4",
-    "next-cloudinary": "^4.12.0",
+    "next-cloudinary": "^4.16.2",
     "next-sanity": "^4.3.3",
     "next-sanity-image": "^6.1.0",
     "npm": "^9.8.1",
