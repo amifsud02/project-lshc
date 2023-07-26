@@ -54,12 +54,20 @@
   font-size: 0.8em;
   font-weight: 700;
   margin: 5px 0;
-  white-space: nowrap;
+  /* white-space: nowrap;
   width: 34px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.homeTeam > .teamName {
+  text-align: left;
+}
+
+.awayTeam > .teamName {
+  text-align: right;
 }
 
 .matchDetails {
@@ -99,9 +107,11 @@
   text-align: center;
 }
 
-@media screen and (min-width: 375px) {
+@media (min-width: 375px) {
   .teamName {
     text-overflow: clip;
+    text-align: center;
+    font-size: 10px;
   }
   
 
