@@ -67,28 +67,28 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                                     </div>
                                 </div>
 
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     23
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {team.wins}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {team.draws}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {team.losses}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {team.goalDifference}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {/* {team.goalsAgainst} */}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {/* {team.goalsFor - team.goalsAgainst} */}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {team.points}
                                 </div>
                             </div>

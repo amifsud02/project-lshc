@@ -50,8 +50,9 @@
   border-bottom: none;
 }
 
-.teamName {
-  font-size: 0.8em;
+.teamName { 
+  display: none;
+  font-size: 10px;
   font-weight: 700;
   margin: 5px 0;
   /* white-space: nowrap;
@@ -107,14 +108,22 @@
   text-align: center;
 }
 
-@media (min-width: 375px) {
+.teamBadge {
+  height: 60px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+}
+
+
+@media (min-width: 420px) {
   .teamName {
+    display: block;
     text-overflow: clip;
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
   }
   
-
   .match {
     display: grid;
     grid-template-columns: 1fr 150px 1fr;

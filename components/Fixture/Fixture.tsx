@@ -34,7 +34,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                     <>
                                         <div className={styles.homeTeam}>
                                             <div className={styles.teamBadge}>
-                                                <Image src={imageBuilder.image(fixture.homeTeamId.teamLogo.asset._ref).url()} alt={`${fixture.homeTeamId.teamName}-logo`} width={60} height={60}></Image>
+                                                <Image src={imageBuilder.image(fixture.homeTeamId.teamLogo.asset._ref).url()} alt={`${fixture.homeTeamId.teamName}-logo`} width={60} height={60} loading={'eager'}></Image>
                                             </div>
                                             <span className={styles.teamName}>{fixture.homeTeamId.teamName}</span>
                                         </div>
@@ -44,12 +44,12 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                                 <h4>{fixture.status}</h4>
                                             </div>
                                             <div className={styles.matchScore}>
-                                                <span>
+                                                <span className='numbers'>
                                                     {fixture.homeScore} - {fixture.awayScore}
                                                 </span>
                                             </div>
 
-                                            <div className={styles.matchDate}>
+                                            <div className={`${styles.matchDate} numbers`}>
                                                 {formattedDate}
                                                 <br />
                                                 {formattedTime}

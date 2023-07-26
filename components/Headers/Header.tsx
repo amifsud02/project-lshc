@@ -144,7 +144,6 @@ export function Header() {
                                 </>
                             </span>
 
-
                             {dropdownState[item.label] && (item.dropdown && (
                                <Dropdown dropdown={item.dropdown}></Dropdown>                                
                             ))}

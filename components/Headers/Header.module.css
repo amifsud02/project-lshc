@@ -77,13 +77,13 @@
     padding: 10px 0;
     color: white;
 }
-
+/* 
 .navLink.active::before{
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: calc(100% - 34px);
     height: 2px;
     background-color: #fff;
 }
@@ -92,7 +92,7 @@
 {
     content: '';
     position: absolute;
-    width: 100%;
+    width: calc(100% - 34px);
     transform: scaleX(0);
     height: 2px;
     bottom: 0;
@@ -100,7 +100,44 @@
     background-color: white;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
+} */
+
+/* Default styling for .navLink */
+.navLink::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
 }
+
+/* If .navLink has a child SVG, apply this style when .active */
+.navLink.hasSvgChild.active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: calc(100% - 34px);
+  height: 2px;
+  background-color: #fff;
+}
+
+/* If .navLink does not have a child SVG, apply this style when .active */
+.navLink:not(.hasSvgChild).active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+}
+
 
 .navItemLink {
     display: flex;
@@ -108,8 +145,6 @@
     gap: 10px;
     align-items: center;
 }
-
-
 
 .navItem:hover:not(:has(.dropdown)) .navLink:after {
     transform: scaleX(1);

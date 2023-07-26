@@ -115,3 +115,5 @@
          url('../fonts/raleway-v28-latin-900.ttf') format('truetype'), /* Safari, Android, iOS */
          url('../fonts/raleway-v28-latin-900.svg#Raleway') format('svg'); /* Legacy iOS */
   }
+
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
