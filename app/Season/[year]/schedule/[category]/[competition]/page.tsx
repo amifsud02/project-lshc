@@ -76,7 +76,7 @@ const competitionDropdown: CompetitionDropdownItem = {
 
 const Schedule = () => {
     const pathname = usePathname();
-    console.log(pathname)
+    // console.log(pathname)
     const router = useRouter();
     const params = useParams(); // [category]/[competition]
     const { category, competition } = params;
@@ -92,7 +92,7 @@ const Schedule = () => {
     const [data, setData] = useState<IFixture[]>([]); // To store the fetched data in the state.
     const [error, setError] = useState(null);
 
-    const changeURL = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const changeURL = (event: any) => {
         const newCompetition = event.target.value;
         const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
         if(parentKey) {
@@ -102,43 +102,83 @@ const Schedule = () => {
     }
 
     useEffect(() => {
+        // This effect is only responsible for setting selectedCompetition based on the URL parameters.
+        if (category && competition) {
+            const competitionItem = competitionDropdown[category][competition];
+            if (competitionItem) {
+                setSelectedCompetition({
+                    key: competitionItem.key,
+                    value: competitionItem.value
+                });
+            }
+        }
+    }, [category, competition]);
+    
+    useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-
-            if (category && competition) {
-                const competitionItem = competitionDropdown[category][competition];
-                if (competitionItem) {
-                    setSelectedCompetition({
-                        key: competitionItem.key,
-                        value: competitionItem.value
-                    });
-                }
-            }
-        
-            while(!selectedCompetition || !selectedCompetition.value) {
-                await new Promise(resolve => setTimeout(resolve, 250))
-            }
-            
+    
             try {
-                console.log(selectedCompetition.value)
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                // console.log(selectedCompetition.value);
+                if (selectedCompetition.value) {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const { fixtures }: { fixtures: IFixture[] } = await response.json();
+                    setData(fixtures);
                 }
-                
-                const { fixtures }: { fixtures: IFixture[] } = await response.json();
-                setData(fixtures); // Store the fetched data in the state.
             } catch (err: any) {
-                setError(err); // Store the error in the state if any error occurs.
+                setError(err);
             } finally {
                 setLoading(false);
             }
         };
+    
+        // Fetch data only when selectedCompetition.value or selectedYear changes
+        if (selectedCompetition.value && selectedYear) {
+            fetchData();
+        }
+    }, [selectedCompetition.value, selectedYear]);
 
-        fetchData();
-    }, [category, competition, selectedCompetition, selectedYear]);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         setLoading(true);
 
-    console.log(data)
+    //         if (category && competition) {
+    //             const competitionItem = competitionDropdown[category][competition];
+    //             if (competitionItem) {
+    //                 setSelectedCompetition({
+    //                     key: competitionItem.key,
+    //                     value: competitionItem.value
+    //                 });
+    //             }
+    //         }
+        
+    //         while(!selectedCompetition || !selectedCompetition.value) {
+    //             await new Promise(resolve => setTimeout(resolve, 250))
+    //         }
+            
+    //         try {
+    //             console.log(selectedCompetition.value)
+    //             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
+    //             if (!response.ok) {
+    //                 throw new Error('Network response was not ok');
+    //             }
+                
+    //             const { fixtures }: { fixtures: IFixture[] } = await response.json();
+    //             setData(fixtures); // Store the fetched data in the state.
+    //         } catch (err: any) {
+    //             setError(err); // Store the error in the state if any error occurs.
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, [category, competition, selectedCompetition.value, selectedYear]);
+
+    // console.log(data)
 
     return (
         <>
