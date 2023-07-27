@@ -10,7 +10,7 @@ const History = () => {
           Salle College for a year and had seen the big opportunity which
           existed. Originally one of the founders of the Malta Handball
           Association and co-founder of Birzebbugia Handball Club (that won the
-          first men's senior national league, but withdrew from all competitions
+          first men&apos;s senior national league, but withdrew from all competitions
           the following season), Alan started working hard on fulfilling his
           dream - founding the La Salle Handball Club.
         </p>
@@ -20,7 +20,7 @@ const History = () => {
           held in Gran Canaria in July 1998. His dream would not have come true
           without the support of Christian Bonett, Alistair Vella, Renzo Kerr
           Cumbo and Keith Monaco who helped him in his venture. A call for
-          interested players, a players’ meeting was set up in August 1998 where
+          interested players, a players&apos; meeting was set up in August 1998 where
           full details were given.
         </p>
         <p className='information'>
@@ -31,7 +31,7 @@ const History = () => {
           deal with the Grech brothers of Mirechem Ltd.
         </p>
         <p className='information'>
-          It was also important for Alan Grima to set up the club’s handball
+          It was also important for Alan Grima to set up the club&apos;s handball
           nursery something which was done immediately in the first year. It was
           the first handball nursery in Malta with a group of around 15 Form 1
           and Form 2 students attending training regularly after school, making
