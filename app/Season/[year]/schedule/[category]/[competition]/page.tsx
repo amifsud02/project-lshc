@@ -97,7 +97,7 @@ const Schedule = () => {
         const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
         if(parentKey) {
             setSelectedCompetition({ key: parentKey, value: newCompetition })
-            router.push(`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/${category}/${parentKey}`)
+            router.push(`${process.env.NEXT_PUBLIC_API_URL as string}/season/2023/schedule/${category}/${parentKey}`)
         }
     }
 
@@ -151,20 +151,20 @@ const Schedule = () => {
                         <div className="nav__tab">
                             <ul className="category">
                                 <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/men')? 'active' : ''}`}>
-                                    <Link href="http://localhost:3000/season/2023/schedule/men/national-league">
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/men/national-league`}>
                                         Men
                                     </Link>
                                 </li>
                                 <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/women') ? 'active' : ''}`}>
-                                    <Link href="http://localhost:3000/season/2023/schedule/women/premier-league">
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/women/premier-league`}>
                                         Women
                                     </Link></li>
                                 <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-men') ? 'active' : ''}`}>
-                                    <Link href="http://localhost:3000/season/2023/schedule/u21-men/national-league">
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/u21-men/national-league`}>
                                         U21 Men
                                     </Link></li>
                                 <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-women') ? 'active' : ''}`}>
-                                    <Link href="http://localhost:3000/season/2023/schedule/u21-women/national-league">
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/u21-women/national-league`}>
                                         U21 Women
                                     </Link>
                                 </li>
