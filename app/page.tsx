@@ -53,11 +53,13 @@ const getStandings = async () => {
 };
 
 export default async function Home() {
-  const { fixtures: menFixtures }: { fixtures: IFixture[] } = await getFixtures(
-    "men"
-  );
-  const { fixtures: womenFixtures }: { fixtures: IFixture[] } =
-    await getFixtures("women");
+  const menFetchFixtures = await getFixtures('men');
+  let menFixtures: IFixture[] = menFetchFixtures['fixtures'];
+
+  const womenFetchFixtures = await getFixtures('women');
+  let womenFixtures: IFixture[] = womenFetchFixtures['fixtures'];
+
+  console.log(menFixtures, womenFixtures);  
 
   const { standings }: { standings: IStanding[] } = await getStandings();
 
