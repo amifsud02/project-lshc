@@ -5,7 +5,7 @@
 
   display: flex;
   flex-flow: column;
-  justify-content: center;
+  justify-content: flex-end;
 
   background: rgb(1, 41, 111), url("/template.svg") no-repeat center;
   background: -moz-linear-gradient(
@@ -47,9 +47,44 @@
   font-size: clamp(40px, 4vw, 4em);
   letter-spacing: 1.5px;
   font-weight: 800;
+  line-height: 1em;
 }
 
 .pageMap {
   color: white;
   text-transform: uppercase;
+}
+
+.parent {
+  width: 100%;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+@media (min-width: 600px) {
+  .parent {
+    margin-bottom: 50px;
+  }
+}
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .parent {
+    padding: 0;
+    width: 750px;
+    margin-left: 75px;
+  }
+}
+
+/* Media query for extra-large screens */
+@media (min-width: 992px) {
+  .parent {
+    width: 970px; /* Adjust the width for extra-large screens */
+  }
+}
+
+/* Media query for even larger screens */
+@media (min-width: 1200px) {
+  .parent {
+    width: 1170px; /* Adjust the width for even larger screens */
+  }
 }

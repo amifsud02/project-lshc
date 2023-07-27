@@ -52,11 +52,11 @@ export const MobileNavbar = () => {
 
     useEffect(() => {
         if(isOpen) {
-            document.body.style.overflowY = 'hidden';
+            document.documentElement.style.overflowY = 'hidden';
         }
 
         else {
-            document.body.style.removeProperty('overflow-y');
+            document.documentElement.style.removeProperty('overflow-y');
         }
     }, [isOpen])
     

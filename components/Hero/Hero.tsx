@@ -11,7 +11,7 @@ const HeroSection = () => {
   return (
     <section className={styles.hero}>
       <div>
-        <Navbar />
+        <Navbar/>
 
         <div className={`parent`}>
           <div
