@@ -117,6 +117,7 @@ body::-webkit-scrollbar {
 }
 
 .arrow-navigation {
+  display: flex;
   background: rgba(0, 0, 0, 0.5);
   transition: all ease-out 0.5s;
 }
@@ -364,3 +365,15 @@ body::-webkit-scrollbar {
   }
 }
 
+.information {
+  text-align: justify;
+  margin: 20px 0;
+}
+
+
+@media (max-width: 550px){
+  .arrow-navigation {
+    display: none;
+  }
+
+}

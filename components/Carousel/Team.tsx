@@ -18,7 +18,6 @@ const TeamCarousel = () => {
         height: 30,
         cursor: 'pointer',
         borderRadius: '50%',
-        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     };
@@ -40,7 +39,7 @@ const TeamCarousel = () => {
                 infiniteLoop={true}
                 showStatus={false}
                 showThumbs={false}
-                showIndicators={false}
+                showIndicators={true}
 
                 renderArrowPrev={(onClickHandler, hasPrev, label) =>
                     hasPrev && (
@@ -83,7 +82,7 @@ const TeamCarousel = () => {
                 }}
             >
                 <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' height={500} width={1280} className="w-max h-max"></Image>
+                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
 
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Men First Team</h2>
@@ -92,7 +91,7 @@ const TeamCarousel = () => {
                     </div>
                 </div>
                 <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' height={500} width={1280}></Image>
+                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Women First Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
@@ -100,7 +99,7 @@ const TeamCarousel = () => {
                     </div>
                 </div>
                 <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' height={500} width={1280}></Image>
+                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Men Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
@@ -108,7 +107,7 @@ const TeamCarousel = () => {
                     </div>
                 </div>
                 <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' height={500} width={1280}></Image>
+                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Women Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}

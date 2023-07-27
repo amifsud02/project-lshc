@@ -7,6 +7,7 @@
 .joinUsWrapper {
     margin: 0 auto;
     padding: 15px;
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
@@ -20,12 +21,13 @@
 }
 
 .joinUsButton{
-    padding: 0 10px;
+    height: 40px;
+    padding: 10px 20px;
     width: fit-content;
     color: var(--secondary-color);
     border: 2px solid var(--primary-color);
     background-color: var(--primary-color);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 800;
     letter-spacing: 0.05em;
 }
@@ -33,4 +35,13 @@
 .joinUsButton:hover{
     background-color: transparent;
     color: var(--primary-color);
+}
+
+@media (max-width: 650px) {
+    .joinUsWrapper {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+    }
 }

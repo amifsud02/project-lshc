@@ -10,7 +10,7 @@ type sponsorCardProps = {
 
 const SponsorCard = (props: sponsorCardProps) => {
     return (
-        <div className={styles.sponsorCard}>
+        <div className={` card ${styles.sponsorCard}`}>
             <div className={styles.sponsorImage}>
             <Image src={'/lshc.png'} alt={'LSHC Logo'} height={90} width={90} className={styles.partnerLogo}></Image>
                 {/*{props.sponsorImage}*/}
