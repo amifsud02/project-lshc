@@ -1,16 +1,26 @@
-
-
-.nav__wrapper { 
+.nav__wrapper {
   position: absolute;
   top: 0;
   color: white;
   width: 100%;
   z-index: 999;
-  background: rgb(0,13,36);
-    background: -moz-linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,0) 100%);
-    background: -webkit-linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,0) 100%);
-    background: linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,0) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000d24",endColorstr="#000d24",GradientType=1);
+  background: rgb(0, 13, 36);
+  background: -moz-linear-gradient(
+    180deg,
+    rgba(0, 13, 36, 1) 0%,
+    rgba(0, 13, 36, 0) 100%
+  );
+  background: -webkit-linear-gradient(
+    180deg,
+    rgba(0, 13, 36, 1) 0%,
+    rgba(0, 13, 36, 0) 100%
+  );
+  background: linear-gradient(
+    180deg,
+    rgba(0, 13, 36, 1) 0%,
+    rgba(0, 13, 36, 0) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000d24",endColorstr="#000d24",GradientType=1);
   pointer-events: auto;
   padding: 30px 20px;
 }
@@ -79,7 +89,6 @@
   height: min-content;
 }
 
-
 .itemBtn {
   cursor: pointer;
   display: flex;
@@ -110,6 +119,7 @@
   color: white;
 }
 
-.navItemLink.active, .active {
+.navItemLink.active,
+.active {
   color: white;
 }

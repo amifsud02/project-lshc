@@ -56,7 +56,7 @@ export const MobileNavbar = () => {
         }
 
         else {
-            document.body.style.overflowY = 'scroll';
+            document.body.style.removeProperty('overflow-x');
         }
     }, [isOpen])
     
@@ -85,26 +85,26 @@ export const MobileNavbar = () => {
 
                                     <AccordionItem header="Teams" url='^\/teams\/[\w-]+\/[\w-]+' style={{textAlign: 'left', width: '100%'}}>
                                         <ul className={styles.mobile__dropdown}>
-                                            <li>Men&apos;s Team</li>
-                                            <li>Women&apos;s Team</li>
-                                            <li>U21 Men&apos;s Team</li>
-                                            <li>U21 Women&apos;s Team</li>
-                                            <li>Youth Teams</li>
+                                            <li><Link href={'/teams/men-first-team/all'}>Men&apos;s Team</Link></li>
+                                            <li><Link href={'/teams/women-first-team/all'}>Women&apos;s Team</Link></li>
+                                            <li><Link href={'/teams/u21-mens-team/all'}>U21 Men&apos;s Team</Link></li>
+                                            <li><Link href={'/teams/u21-womens-team/all'}>U21 Women&apos;s Team</Link></li>
+                                            <li><Link href={'/teams/youth-team'}>Youth Teams</Link></li>
                                         </ul>
                                     </AccordionItem>
 
                                     <AccordionItem header="Season" url="^\/season\/\d{4}\/schedule\/[a-zA-Z0-9_]+\/[\w-]+">
                                         <ul className={styles.mobile__dropdown}>
-                                            <li>Standings</li>
-                                            <li>Schedule</li>
+                                            <li><Link href={'/season/2023/schedule/men/national-league'}>Standings</Link></li>
+                                            <li><Link href={'/season/2023/standings/men/national-league'}>Schedule</Link></li>
                                         </ul>
                                     </AccordionItem>
 
                                     <AccordionItem header="Club" url='club'>
                                         <ul className={styles.mobile__dropdown}>
-                                            <li>History</li>
-                                            <li>Management</li>
-                                            <li>Our Partners</li>
+                                            <li><Link href={'/club/history'}>History</Link></li>
+                                            <li><Link href={'/club/management'}>Management</Link></li>
+                                            <li><Link href={'/club/sponsors'}>Our Partners</Link></li>
                                         </ul>
                                     </AccordionItem>
 

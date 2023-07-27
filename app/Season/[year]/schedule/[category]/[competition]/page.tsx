@@ -38,7 +38,7 @@ const competitionDropdown: ICompetitionDropdownItem = {
         }
     },
     "women": {
-        "premiere-league": {
+        "premier-league": {
             "key": "Premier League",
             "value": "Women's Premier League"
         },
@@ -76,7 +76,7 @@ const competitionDropdown: ICompetitionDropdownItem = {
 
 const Schedule = () => {
     const pathname = usePathname();
-    // console.log(pathname)
+    console.log(pathname)
     const router = useRouter();
     const params = useParams(); // [category]/[competition]
     const { category, competition } = params;
@@ -141,45 +141,6 @@ const Schedule = () => {
         }
     }, [selectedCompetition.value, selectedYear]);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         setLoading(true);
-
-    //         if (category && competition) {
-    //             const competitionItem = competitionDropdown[category][competition];
-    //             if (competitionItem) {
-    //                 setSelectedCompetition({
-    //                     key: competitionItem.key,
-    //                     value: competitionItem.value
-    //                 });
-    //             }
-    //         }
-        
-    //         while(!selectedCompetition || !selectedCompetition.value) {
-    //             await new Promise(resolve => setTimeout(resolve, 250))
-    //         }
-            
-    //         try {
-    //             console.log(selectedCompetition.value)
-    //             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
-    //             if (!response.ok) {
-    //                 throw new Error('Network response was not ok');
-    //             }
-                
-    //             const { fixtures }: { fixtures: IFixture[] } = await response.json();
-    //             setData(fixtures); // Store the fetched data in the state.
-    //         } catch (err: any) {
-    //             setError(err); // Store the error in the state if any error occurs.
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchData();
-    // }, [category, competition, selectedCompetition.value, selectedYear]);
-
-    // console.log(data)
-
     return (
         <>
             <PageHeader pageName='Fixtures & Results' />
@@ -189,13 +150,13 @@ const Schedule = () => {
                     <div className="tabs__wrapper " >
                         <div className="nav__tab">
                             <ul className="category">
-                                <li className={`tablinks ${pathname.startsWith('/season/*/schedule/men') ? 'active' : ''}`}>
+                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/men')? 'active' : ''}`}>
                                     <Link href="http://localhost:3000/season/2023/schedule/men/national-league">
                                         Men
                                     </Link>
                                 </li>
                                 <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/women') ? 'active' : ''}`}>
-                                    <Link href="http://localhost:3000/season/2023/schedule/women/national-league">
+                                    <Link href="http://localhost:3000/season/2023/schedule/women/premier-league">
                                         Women
                                     </Link></li>
                                 <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-men') ? 'active' : ''}`}>
@@ -221,9 +182,9 @@ const Schedule = () => {
                             })}
                         </select>
 
-                        <select name="seasons" id="seasons">
+                        <select name="seasons" className='numbers' id="seasons">
                             <option value="2023">2022/23</option>
-                            <option value="2024">2023/24</option>
+                            <option value="2024" disabled>2023/24</option>
                         </select>
                     </div>
 

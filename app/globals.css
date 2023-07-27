@@ -27,7 +27,6 @@ body {
   font-family: "Raleway", sans-serif;
   background-color: var(--background-color);
   position: relative;
-  height: 100vh;
   width: 100vw;
   overflow-x: hidden;
 }
@@ -55,7 +54,7 @@ body::-webkit-scrollbar {
 }
 
 .numbers {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif !important;
 }
 
 .bg {
@@ -324,12 +323,19 @@ body::-webkit-scrollbar {
 .fixtureHeader > .tabs__wrapper > .nav__tab > .category > .tablinks{
   margin-right: 0;
 }
+@media (min-width: 500px) {
+  .fixtureHeader > .tabs__wrapper > .nav__tab > .category > .tablinks {
+    margin: 0;
+  }
 
+  .fixtureHeader { 
+    flex-direction: row; 
+    justify-content: space-between;
+    align-items: center;
+  }
+}
 /* Media query for larger screens */
 @media (min-width: 768px) {
-  .fixtureHeader {
-    justify-content: space-between;
-  }
 
   .parent {
     width: 750px; /* Adjust the width for larger screens */
