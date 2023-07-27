@@ -8,6 +8,10 @@ import crypto from 'crypto';
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+const cleanCompetitionName = (compName: string) => {
+    const pattern = /^(?:U21 Men's |U21 Women's |Men's |Women's )/;
+    return compName.replace(pattern, '');
+}
 
 const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] }) => {
 
@@ -15,6 +19,8 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
         <section className={styles.matchContainer}>
             <div className={styles.matchWrapper}>
                 {data.map((fixture) => {
+                    const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
+                    console.log(compName)
                     const dateObj = new Date(fixture.startDate);
 
                     let day = dateObj.getUTCDate();
@@ -41,7 +47,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
 
                                         <div className={styles.matchDetails}>
                                             <div className={styles.matchType}>
-                                                <h4>{fixture.status}</h4>
+                                                <h4>{compName}</h4>
                                             </div>
                                             <div className={styles.matchScore}>
                                                 <span className='numbers'>

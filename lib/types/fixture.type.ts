@@ -8,4 +8,11 @@ export type IFixture = {
     status: string;
     venue: string;
     startDate: Date;
+    competition: ICompetition;
   };
+
+export type ICompetition = {
+  competitionType: {
+    competitionTypeName: string
+  }
+}
