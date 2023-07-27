@@ -67,7 +67,7 @@ export const MobileNavbar = () => {
 
                     <div className={styles.nav__top}>
                         <div className={styles.nav__brand}>
-                            <Image src={'/lshc.png'} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" />
+                            <Link href={'/'}><Image src={'/lshc.png'} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" loading='eager'/></Link>
                         </div>
                         {
                             isOpen

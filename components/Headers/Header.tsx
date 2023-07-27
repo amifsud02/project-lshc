@@ -127,7 +127,7 @@ export function DesktopNavbar() {
         <header className={styles.mainNavBG}>
             <div className={`${styles.mainNav}`}>
                 <div>
-                    <Image src={'/lshc.png'} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" />
+                    <Link href={'/'}><Image src={'/lshc.png'} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" loading='eager'/></Link>
                 </div>
 
                 <ul className={styles.navItems}>
