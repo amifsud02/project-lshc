@@ -185,14 +185,8 @@ const Schedule = () => {
             <PageHeader pageName='Fixtures & Results' />
 
             <section className="parent">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    {/* Display Sub Nav |       | Display Drop Down with different competition | Display Dropdown with different season */}
-
-                    {/* On Page Enter, by default its MEN, and the dropdown are populated accordingly. So there would be a dictionary 
-                    of the Category be it men, and the dropdowns are populated with the competitions of the men. Obviously the value would be "Men's National League" 
-                    for instance and then displayed as National League */}
-
-                    <div className="tabs__wrapper">
+                <div className="fixtureHeader">
+                    <div className="tabs__wrapper " >
                         <div className="nav__tab">
                             <ul className="category">
                                 <li className={`tablinks ${pathname.startsWith('/season/*/schedule/men') ? 'active' : ''}`}>
@@ -246,13 +240,11 @@ const Schedule = () => {
                             Upcoming Match
                             Display One Upcoming Match with Countdown
                         </div> */}
-
-                        <div className="fr-page-section">                            
+                         
                             { data && <Fixtures data={data} showTitle={false}></Fixtures> }
                             {/* Display All Matches of Competition
 
                             Separate with Month */}
-                        </div>
                     </>
                 )
 
