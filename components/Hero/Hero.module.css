@@ -1,7 +1,7 @@
 /* hero.module.css */
 
 .hero {
-  height: 100vh;
+  height: 100svh;
   width: 100%;
   z-index: -1;
 
@@ -60,9 +60,9 @@
   color: white;
   font-optical-sizing: auto;
   text-transform: uppercase;
-  line-height: 50%;
+  line-height: 1;
   letter-spacing: 2px;
-  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: white;
   text-align: center;
 }
