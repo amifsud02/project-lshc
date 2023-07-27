@@ -6,7 +6,6 @@ import Image from "next/image";
 import styles from './Mobile.module.css';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
-
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
 import { usePathname } from 'next/navigation';
 
@@ -47,7 +46,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({header, url, ...rest}) => 
     )
 };
 
-export const MobileNav = () => {
+export const MobileNavbar = () => {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
 
@@ -63,7 +62,7 @@ export const MobileNav = () => {
     
     return (
         <>
-            <header className={`${styles.nav__wrapper} ${isOpen && styles.nav__bg} mobile-navigation`}>
+            <header className={`${styles.nav__wrapper} ${isOpen && styles.nav__bg}`}>
                 <div className={styles.navbar}>
 
                     <div className={styles.nav__top}>

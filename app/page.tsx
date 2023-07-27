@@ -1,5 +1,4 @@
 import TeamCarousel from "@/components/Carousel/Team";
-import { Header } from "@/components/Headers/Header";
 import { Partners } from "@/components/Partners/Partners";
 import Standings from "@/components/Standings/Standings";
 

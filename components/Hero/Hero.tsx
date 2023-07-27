@@ -1,12 +1,17 @@
-import { Header } from "../Headers/Header";
-import { MobileNav } from "../Headers/MobileNavigation";
+
+import { useState } from "react";
+
 import styles from "./Hero.module.css";
+import Navbar from "./Navbar";
 
 const HeroSection = () => {
+  
+ 
+
   return (
     <section className={styles.hero}>
       <div>
-        <Header />
+        <Navbar />
 
         <div className={`parent`}>
           <div

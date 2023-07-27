@@ -103,7 +103,7 @@ const navItems: NavItem[] = [
     },
 ]
 
-export function Header() {
+export function DesktopNavbar() {
 
     const pathname = usePathname();
 

@@ -1,5 +1,4 @@
-import { Header } from "../Headers/Header";
-import { MobileNav } from "../Headers/MobileNavigation";
+import Navbar from "../Hero/Navbar";
 import styles from './PageHeader.module.css'
 
 type PageProps = {
@@ -10,7 +9,7 @@ const PageHeader = (props: PageProps) => {
     return (
 
         <div className={styles.pageHeader}>
-            <Header />
+            <Navbar />
             <div className='parent'>
                 <div className={styles.pageHeaderInfo}>
                     <div className={styles.pageMap}>Home • {props.pageName}</div>
