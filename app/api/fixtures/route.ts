@@ -2,7 +2,7 @@ import { client } from "@/lib/utils/sanity/sanity.config";
 import { groq } from "next-sanity";
 import { NextResponse, NextRequest } from "next/server";
 
-export type ICompetitionDropdownItem = {
+type ICompetitionDropdownItem = {
   [key: string]: {
       [key: string]: {
           key: string;
@@ -11,7 +11,7 @@ export type ICompetitionDropdownItem = {
   };
 }
 
-export const competitionDropdown: ICompetitionDropdownItem = {
+const competitionDropdown: ICompetitionDropdownItem = {
   "men": {
       "national-league": {
           "key": "National League",
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
           
       } | order(startDate desc)${limitQuery}`;
     const fixtures = await client.fetch(query, { season, competitionTypeNames });
-    
+
     return NextResponse.json({
       fixtures,
     });
@@ -174,98 +174,4 @@ export async function GET(request: NextRequest) {
       fixtures,
     });
   }
-
-
 }
-
-// export async function GET(request: NextRequest) {
-//   // If ?allfixtures=men?limit=5
-//   // Sort by date (most recent first)
-  
-//   const allFixtures = request.nextUrl.searchParams.get("allfixtures");
-
-//   const season = request.nextUrl.searchParams.get("season");
-//   const limit = request.nextUrl.searchParams.get("limit");
-//   const limitQuery = limit ? `[0..${limit}-1]` : '';
-
-//   type GroupType = "men" | "women" | "u21-men" | "u21-women";
-
-//   function fetchCategoryValues(group: GroupType): string[] {
-//     const groupData = competitionDropdown[group];
-//     if (!groupData) {
-//       throw new Error(`Group '${group}' not found.`);
-//     }
-  
-//     const values: string[] = [];
-//     for (const key in groupData) {
-//       if (groupData.hasOwnProperty(key)) {
-//         values.push(groupData[key].value);
-//       }
-//     }
-  
-//     return values;
-//   }
-
-//   if(allFixtures === null) {
-//     const competitionTypeName = request.nextUrl.searchParams.get('competitiontypename');
-//     const query = groq`
-//       *[_type == "fixture" && competition->season == $season && competition->competitionType->competitionTypeName == $competitionTypeName]{
-//           competition -> {
-//               competitionType -> {
-//                   competitionTypeName
-//               },
-//               season
-//           },
-//           homeTeamId -> { 
-//             teamName, 
-//             teamLogo
-//           },
-//           homeScore,
-//           awayTeamId -> { 
-//             teamName, 
-//             teamLogo
-//           },
-//           awayScore,
-//           status,
-//           startDate,
-//           venue
-          
-//       } | order(startDate desc)${limitQuery}`;
-//     const fixtures = await client.fetch(query, { season, competitionTypeName });
-
-//     return NextResponse.json({
-//       fixtures,
-//     });
-//   } 
-//   else {
-//     const competitionTypeNames = fetchCategoryValues(allFixtures)
-//     const query = groq`
-//       *[_type == "fixture" && competition->season == $season && competition->competitionType->competitionTypeName in $competitionTypeNames]{
-//           competition -> {
-//               competitionType -> {
-//                   competitionTypeName
-//               },
-//               season
-//           },
-//           homeTeamId -> { 
-//             teamName, 
-//             teamLogo
-//           },
-//           homeScore,
-//           awayTeamId -> { 
-//             teamName, 
-//             teamLogo
-//           },
-//           awayScore,
-//           status,
-//           startDate,
-//           venue
-          
-//       } | order(startDate desc)${limitQuery}`;
-//     const fixtures = await client.fetch(query, { season, competitionTypeNames });
-//   }
-
-//   return NextResponse.json({
-//     fixtures: []
-//   });
-// }
