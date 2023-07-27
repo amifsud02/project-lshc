@@ -108,7 +108,7 @@ export const MobileNavbar = () => {
                                         </ul>
                                     </AccordionItem>
 
-                                    <Link className={styles.navItemLink} href="/contact-us"><p>Contact Us</p></Link>
+                                    <Link className={styles.navItemLink} href="/contact"><p>Contact Us</p></Link>
                                 </Accordion>
                             )
                         }
