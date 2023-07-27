@@ -1,32 +1,20 @@
 'use client'
-
-import { useEffect, useState } from "react";
 import { MobileNavbar } from "../Headers/MobileNavigation";
 import { DesktopNavbar } from "../Headers/Header";
+import styles from './nav.module.css'
 
 export default function Navbar() {
-    const [isMobile, setIsMobile] = useState(false);
+  return (
+    <>
+      {/* Show MobileNavbar for screens with width less than 1000px (mobile) */}
+      <div className={styles.mobileNavbar}>
+        <MobileNavbar />
+      </div>
 
-    useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth < 1000); // Set the breakpoint according to your design
-      };
-  
-      // Add event listener to detect window resize
-      window.addEventListener('resize', handleResize);
-  
-      // Call the handleResize function initially to set the initial state correctly
-      handleResize();
-  
-      // Clean up the event listener when the component unmounts
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    }, []);
-
-    return (
-        <>
-            {isMobile ? <MobileNavbar /> : <DesktopNavbar />}
-        </>
-    )
+      {/* Show DesktopNavbar for screens with width 1000px and above (desktop) */}
+      <div className={styles.desktopNavbar}>
+        <DesktopNavbar />
+      </div>
+    </>
+  );
 }

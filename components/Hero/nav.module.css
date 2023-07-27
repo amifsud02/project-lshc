@@ -1,0 +1,12 @@
+@media screen and (min-width: 1000px) {
+    .mobileNavbar {
+      display: none;
+    }
+  }
+
+  /* Hide DesktopNavbar on screens with width less than 1000px (mobile) */
+  @media screen and (max-width: 999px) {
+    .desktopNavbar {
+      display: none;
+    }
+  }
