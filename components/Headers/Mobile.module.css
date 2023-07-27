@@ -34,7 +34,7 @@
 
 .nav__wrapper.nav__bg {
   position: fixed;
-  height: 100vh;
+  height: 100lvh;
   background-color: var(--secondary-color);
 }
 
