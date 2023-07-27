@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export type ICompetitionDropdownItem = {
+type ICompetitionDropdownItem = {
     [key: string]: {
         [key: string]: {
             key: string;
@@ -18,7 +18,7 @@ export type ICompetitionDropdownItem = {
     };
 }
 
-export const competitionDropdown: ICompetitionDropdownItem = {
+const competitionDropdown: ICompetitionDropdownItem = {
     "men": {
         "national-league": {
             "key": "National League",
