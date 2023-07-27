@@ -56,7 +56,7 @@ export const MobileNavbar = () => {
         }
 
         else {
-            document.body.style.removeProperty('overflow-x');
+            document.body.style.removeProperty('overflow-y');
         }
     }, [isOpen])
     
