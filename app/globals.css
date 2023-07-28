@@ -300,12 +300,12 @@ body::-webkit-scrollbar {
 }
 
 .fr-page-section{
-  min-height: 400px;
+  min-height: 100px;
   width: 100%;
   display: grid;
   place-items: center;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .fixtureHeader {
