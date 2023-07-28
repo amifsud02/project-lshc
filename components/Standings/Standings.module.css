@@ -61,8 +61,6 @@
 
 .tableCell:nth-child(3),
 .tableCell:nth-child(4),
-.tableCell:nth-child(5),
-.tableCell:nth-child(6),
 .tableCell:nth-child(10),
 .tableBodyCell {
   flex: 0 0 6%;
@@ -72,6 +70,8 @@
   font-size: 12px;
 }
 
+.tableCell:nth-child(5),
+.tableCell:nth-child(6),
 .tableCell:nth-child(7),
   .tableCell:nth-child(8),
   .tableCell:nth-child(9) {
@@ -132,13 +132,18 @@
   .tableCell:nth-child(4),
   .tableCell:nth-child(5),
   .tableCell:nth-child(6),
-  .tableCell:nth-child(7),
-  .tableCell:nth-child(8),
   .tableCell:nth-child(9) ,
   .tableCell:nth-child(10) 
   {
     display: flex;
-    min-width: 43.5px;
+    width: 43.5px;
+    max-width: 43.5px;
+  }
+
+  .tableCell:nth-child(7),
+  .tableCell:nth-child(8)
+  {
+    display: none;
   }
 
   .team {

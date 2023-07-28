@@ -1,5 +1,7 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 import ContactForm from "./contact-form";
+import Footer from "@/components/Footer/Footer";
+import { Partners } from "@/components/Partners/Partners";
 
 export default function ContactPage() {
   return (
@@ -8,6 +10,8 @@ export default function ContactPage() {
       <section className="parent">
         <ContactForm />
       </section>
+      <Partners/>
+      <Footer/>
     </>
   );
 }

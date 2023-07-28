@@ -13,16 +13,16 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
-
   width: 240px;
   height: 280px;
   background-color: rgb(255, 255, 255);
   transition: all 0.3s ease 0s;
+  padding: 10px 20px;
 }
 
 .sponsorImage {
   height: 130px;
-  margin: 10px 20px 0px;
+  margin: 0 20px 0px;
   display: flex;
   -webkit-box-align: center;
   align-items: center;
@@ -48,4 +48,11 @@
   .sponsorWrapper {
     justify-content: flex-start;
   }
+}
+
+.partnerLogo {
+  height: 90px;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
 }

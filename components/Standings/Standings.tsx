@@ -27,7 +27,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                         </div>
 
                         <div className={`${styles.tableCell}`}>
-                            P
+                            GP
                         </div>
                         <div className={`${styles.tableCell}`}>
                             W
@@ -47,7 +47,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                         <div className={`${styles.tableCell}`}>
                             GD
                         </div>
-                        <div className={`${styles.tableCell}`}>
+                        <div className={`${styles.tableCell}`} style={{marginRight: '3px'}}>
                             Pts
                         </div>
                     </div>
@@ -68,7 +68,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                                 </div>
 
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
-                                    23
+                                    {team.matchesPlayed}
                                 </div>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {team.wins}
@@ -80,15 +80,15 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                                     {team.losses}
                                 </div>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
-                                    {team.goalDifference}
+                                    
                                 </div>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
                                     {/* {team.goalsAgainst} */}
                                 </div>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
-                                    {/* {team.goalsFor - team.goalsAgainst} */}
+                                    {team.goalDifference}
                                 </div>
-                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`}>
+                                <div className={`${styles.tableCell} ${styles.tableBodyCell} numbers`} style={{marginRight: '3px'}}>
                                     {team.points}
                                 </div>
                             </div>

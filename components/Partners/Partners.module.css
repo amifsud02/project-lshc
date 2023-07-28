@@ -19,23 +19,25 @@
     align-items: center;
     -webkit-box-pack: center;
     justify-content: center;
+    height: 65px;
+    width: 75px;
     margin: 0px 15px;
     opacity: 1;
     z-index: 10;
-    width: 60px;
-    height: 65px;
 }
 
 .partnerLogo {
     max-width: 90%;
-    max-height: 90%;
+    height: 95%;
     z-index: 9;
     vertical-align: top;
+    object-fit: contain;
+    object-position: center;
 }
 
 .divider {
-    width: 505px;
-    margin: 10px auto;
+    width: 80%;
+    margin: 25px auto;
     border-color: 'black'
 }
 

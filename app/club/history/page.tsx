@@ -1,4 +1,6 @@
+import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
+import { Partners } from "@/components/Partners/Partners";
 
 const History = () => {
   return (
@@ -66,6 +68,8 @@ const History = () => {
           </li>
         </span>
       </section>
+      <Partners/>
+      <Footer/>
     </>
   );
 };

@@ -150,7 +150,7 @@ const WomenTeam = () => {
   const { position } = params;
 
   const updateURL = (position: string) => {
-      const positionURL = `/teams/men-first-team/${position}`;
+      const positionURL = `/teams/women-first-team/${position}`;
       router.push(positionURL);
   }
 

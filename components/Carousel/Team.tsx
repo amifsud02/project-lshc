@@ -31,15 +31,15 @@ const TeamCarousel = () => {
         borderRadius: '50%'
     };
 
-
-
     return (
         <section className='parent'>
             <Carousel
                 infiniteLoop={true}
                 showStatus={false}
                 showThumbs={false}
-                showIndicators={true}
+                showIndicators={false}
+
+                width={'100%'}
 
                 renderArrowPrev={(onClickHandler, hasPrev, label) =>
                     hasPrev && (
@@ -81,33 +81,40 @@ const TeamCarousel = () => {
                     );
                 }}
             >
-                <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
-
+                <div className="carousel-image-container">
+                    <div className="image-wrapper">
+                        <img src='/la-salle-hero.jpg' alt="" />
+                    </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Men First Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
                     </div>
                 </div>
-                <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
+                <div className="carousel-image-container">
+                    <div className="image-wrapper">
+                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/arxdxfehrefwzdvaxvu7' alt="" />
+                    </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Women First Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
                     </div>
                 </div>
-                <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
+                <div className="carousel-image-container">
+                <div className="image-wrapper">
+                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/d1i2euwvdelqktny6k3u' alt="" />
+                    </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Men Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
                     </div>
                 </div>
-                <div className="w-[1280px] h-[500px]">
-                    <Image src={'/la-salle-hero.jpg'} alt='image' fill={true} style={{objectFit: "cover", objectPosition: 'top center'}}></Image>
+                <div className="carousel-image-container">
+                    <div className="image-wrapper">
+                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/lynuchzl53oqdgq5blpv' alt="" />
+                    </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Women Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}

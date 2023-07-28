@@ -10,7 +10,7 @@ const PageHeader = (props: PageProps) => {
 
         <div className={styles.pageHeader}>
             <Navbar />
-            <div className={styles.parent}>
+            <div className='parent'>
                 <div className={styles.pageHeaderInfo}>
                     <div className={styles.pageMap}>Home • {props.pageName}</div>
                     <div className={styles.pageTitle}>{props.pageName}</div>

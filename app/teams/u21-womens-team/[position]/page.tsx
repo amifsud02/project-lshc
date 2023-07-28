@@ -138,7 +138,7 @@ const U21WomenTeam = () => {
   const { position } = params;
 
   const updateURL = (position: string) => {
-      const positionURL = `/teams/men-first-team/${position}`;
+      const positionURL = `/teams/u21-womens-team/${position}`;
       router.push(positionURL);
   }
 
