@@ -72,7 +72,7 @@ export default async function Home() {
         <div className="parent">
           <h1 className="title">Latest Fixtures</h1>
 
-          <Tabs redirect="/season/current" showall={true}>
+          <Tabs redirect="/season/2023/schedule/men/national-league/" showall={true}>
             <Tab tabTitle="Men">
               {menFixtures && (
                 <Fixtures data={menFixtures} showTitle={false}></Fixtures>
@@ -91,7 +91,7 @@ export default async function Home() {
         <div className="parent">
           <h1 className="title">Standings</h1>
 
-          <Tabs redirect="/season/2023/" showall={false}>
+          <Tabs redirect="/season/2023/schedule/men/national-league/" showall={false}>
             <Tab tabTitle="Men">
               {menStandings && (
                 <Standings showTitle={false} data={menStandings}></Standings>
