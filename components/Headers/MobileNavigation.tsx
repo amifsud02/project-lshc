@@ -104,7 +104,7 @@ export const MobileNavbar = () => {
                                     <AccordionItem header="Club" url='club'>
                                         <ul className={styles.mobile__dropdown}>
                                             <li><Link href={'/club/history'}>History</Link></li>
-                                            <li><Link href={'/club/management'}>Management</Link></li>
+                                            {/* <li><Link href={'/club/management'}>Management</Link></li> */}
                                             <li><Link href={'/club/sponsors'}>Our Partners</Link></li>
                                         </ul>
                                     </AccordionItem>
