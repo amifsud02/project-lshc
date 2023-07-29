@@ -58,15 +58,11 @@ export default async function Home() {
   const womenFetchFixtures = await getFixtures('women');
   let womenFixtures: IFixture[] = womenFetchFixtures['fixtures'];
 
-  console.log(menFixtures, womenFixtures);  
-
-  const menFetchStandings = await getStandings(`Men's National League`);
+  const menFetchStandings = await getStandings("Men's National League");
   let menStandings: IStanding[] = menFetchStandings['standings'];
 
-  const womenFetchStandings = await getStandings(`Women's Premier League`);
-  
+  const womenFetchStandings = await getStandings("Women's Premier League");
   let womenStandings: IStanding[] = womenFetchStandings['standings'];
-  console.log(womenFetchStandings);
 
   return (
     <main>
@@ -95,17 +91,17 @@ export default async function Home() {
         <div className="parent">
           <h1 className="title">Standings</h1>
 
-          <Tabs redirect="/season/current" showall={true}>
+          <Tabs redirect="/season/2023/" showall={false}>
             <Tab tabTitle="Men">
               {menStandings && (
                 <Standings showTitle={false} data={menStandings}></Standings>
               )}
             </Tab>
 
-            <Tab tabTitle="Women">
-              {womenStandings && (
+            <Tab tabTitle=" ">
+              {/* {womenStandings && (
                 <Standings showTitle={false} data={womenStandings}></Standings>
-              )}
+              )} */}
             </Tab>
           </Tabs>
         </div>

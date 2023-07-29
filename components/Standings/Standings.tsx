@@ -1,7 +1,5 @@
 import { IStanding } from '@/lib/types/standing.type'
 import { imageBuilder } from '@/lib/utils/sanity/sanity.config'
-
-import Link from 'next/link'
 import Image from 'next/image'
 
 import styles from './Standings.module.css'
@@ -53,8 +51,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                     </div>
 
 
-                    {data[0].teams.map((team, index) => {      
-                        console.log(team.team.teamName)
+                    {data[0].teams.map((team, index) => { 
                         return (
                             <div className={`${styles.tableRow} ${styles.tableBodyRow} ${team.team.teamName === 'La Salle' ? styles.tablePrimaryRow : ''}`} key={team.draws}>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
