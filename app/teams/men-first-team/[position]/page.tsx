@@ -11,61 +11,249 @@ import Footer from '@/components/Footer/Footer';
 
 const playerData: IPlayerCard[] = [
     {
-        number: 1,
-        firstName: 'Alan',
-        lastName: 'Portelli',
-        profilePicture: '',
-        position: 'Winger',
-    },
-    {
-        number: 2,
-        firstName: 'Daryl',
-        lastName: 'Magri',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 3,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 4,
-        firstName: 'Alan',
-        lastName: 'Portelli',
-        profilePicture: '',
-        position: 'Winger',
-    },
-    {
-        number: 5,
-        firstName: 'Daryl',
-        lastName: 'Magri',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 6,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 7,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'Goalkeeper'
-    },
-    {
-        number: 8,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'Coach'
-    },
+        "firstName": "Jake",
+        "lastName": "Camilleri",
+        "position": "PlayMaker",
+        "number": 1
+      },
+      {
+        "firstName": "Francis",
+        "lastName": "Buhagiar",
+        "position": "LinePlayer",
+        "number": 2
+      },
+      {
+        "firstName": "Anthony",
+        "lastName": "Mifsud",
+        "position": "LinePlayer",
+        "number": 5
+      },
+      {
+        "firstName": "Josef",
+        "lastName": "Camilleri",
+        "position": "Goalkeeper",
+        "number": 6
+      },
+      {
+        "firstName": "Lizio",
+        "lastName": "Buhagiar",
+        "position": "Lateral",
+        "number": 7
+      },
+      {
+        "firstName": "Lowell",
+        "lastName": "Bezzina",
+        "position": "Lateral",
+        "number": 9
+      },
+      {
+        "firstName": "Neil",
+        "lastName": "Gruppetta",
+        "position": "PlayMaker",
+        "number": 11
+      },
+      {
+        "firstName": "Alan-Michael",
+        "lastName": "Portelli",
+        "position": "Winger",
+        "number": 12
+      },
+      {
+        "firstName": "Jeremy John",
+        "lastName": "Scicluna",
+        "position": "Winger",
+        "number": 13
+      },
+      {
+        "firstName": "Matthew",
+        "lastName": "Fenech",
+        "position": "Goalkeeper",
+        "number": 16
+      },
+      {
+        "firstName": "Miguel",
+        "lastName": "Gruppetta",
+        "position": "Winger",
+        "number": 17
+      },
+      {
+        "firstName": "Andrew",
+        "lastName": "Tabone",
+        "position": "LinePlayer",
+        "number": 19
+      },
+      {
+        "firstName": "Stefan",
+        "lastName": "Meli",
+        "position": "Winger",
+        "number": 20
+      },
+      {
+        "firstName": "Christopher",
+        "lastName": "Magro",
+        "position": "Lateral",
+        "number": 22
+      },
+      {
+        "firstName": "Alessandro",
+        "lastName": "Zerafa",
+        "position": "Winger",
+        "number": 27
+      },
+      {
+        "firstName": "Craig",
+        "lastName": "Muscat",
+        "position": "Goalkeeper",
+        "number": 37
+      },
+      {
+        "firstName": "Khalifa",
+        "lastName": "Queslati",
+        "position": "Lateral",
+        "number": 66
+      },
+      {
+        "firstName": "Julian",
+        "lastName": "Seguna",
+        "position": "LinePlayer",
+        "number": 77
+      },
+      {
+        "firstName": "Nico",
+        "lastName": "Gambin",
+        "position": "Goalkeeper",
+        "number": 19
+      },
+      {
+        "firstName": "Christian",
+        "lastName": "Falzon",
+        "position": "Goalkeeper",
+        "number": 31
+      },
+      {
+        "firstName": "Francesco",
+        "lastName": "Musu",
+        "position": "Goalkeeper",
+        "number": 21
+      },
+      {
+        "firstName": "John",
+        "lastName": "Scicluna",
+        "position": "Goalkeeper",
+        "number": 28
+      },
+      {
+        "firstName": "Matteo",
+        "lastName": "Rubei",
+        "position": "Winger",
+        "number": 3
+      },
+      {
+        "firstName": "Matthew",
+        "lastName": "Buttigieg",
+        "position": "Winger",
+        "number": 32
+      },
+      {
+        "firstName": "Pero",
+        "lastName": "Arsoski",
+        "position": "Lateral",
+        "number": 99
+      },
+      {
+        "firstName": "Robert",
+        "lastName": "Cachia",
+        "position": "Lateral",
+        "number": 7
+      },
+      {
+        "firstName": "Paul Jean Enrique",
+        "lastName": "Faucheux",
+        "position": "Lateral",
+        "number": 4
+      },
+      {
+        "firstName": "Micheal",
+        "lastName": "Schembri",
+        "position": "Lateral",
+        "number": 29
+      },
+      {
+        "firstName": "Ilija",
+        "lastName": "Kalinov",
+        "position": "LinePlayer",
+        "number": 26
+      },
+      {
+        "firstName": "Gabriel",
+        "lastName": "Abela",
+        "position": "LinePlayer",
+        "number": 22
+      },
+      {
+        "firstName": "Marcus",
+        "lastName": "Cachia",
+        "position": "LinePlayer",
+        "number": 44
+      },
+      {
+        "firstName": "Matthias",
+        "lastName": "Nussbaum",
+        "position": "LinePlayer",
+        "number": 55
+      },
+      {
+        "firstName": "Daryl",
+        "lastName": "Magri",
+        "position": "PlayMaker",
+        "number": 30
+      },
+      {
+        "firstName": "Jordi",
+        "lastName": "Stafrace",
+        "position": "Winger",
+        "number": 8
+      },
+      {
+        "firstName": "Mathis",
+        "lastName": "Rigaber",
+        "position": "Winger",
+        "number": 36
+      },
+      {
+        "firstName": "Ian",
+        "lastName": "Turban",
+        "position": "Lateral",
+        "number": 17
+      },
+      {
+        "firstName": "Mark",
+        "lastName": "Gilson",
+        "position": "LinePlayer",
+        "number": 10
+      },
+      {
+        "firstName": "Enea",
+        "lastName": "Perisnaka",
+        "position": "LinePlayer",
+        "number": 36
+      },
+      {
+        "firstName": "Nicholas",
+        "lastName": "Fava",
+        "position": "Lateral",
+        "number": 11
+      },
+      {
+        firstName: "Clive",
+        lastName: "Ferrante",
+        position: "Coach",        
+      },
+      {
+        firstName: "Kenneth",
+        lastName: "Hili",
+        position: "Coach",        
+      }
 ]
 
 const positions = [
@@ -92,10 +280,10 @@ const MenFirstTeam = () => {
 
     const filteredPlayers = useMemo(() => {
         if (position) {
-            const selectedPosition = position.toLowerCase();
+            const selectedposition = position.toLowerCase();
 
             const positionExists = positions.find(
-                (pos) => pos.name.toLowerCase() === selectedPosition
+                (pos) => pos.name.toLowerCase() === selectedposition
             );
 
             if (positionExists) {
@@ -109,11 +297,11 @@ const MenFirstTeam = () => {
         return playerData;
     }, [position]);
 
-    const selectedPositionName = position && positions.find((pos) => pos.name.toLowerCase() === position.toLowerCase())?.name;
+    const selectedpositionfirstName = position && positions.find((pos) => pos.name.toLowerCase() === position.toLowerCase())?.name;
 
     return (
         <>
-            <PageHeader pageName='Men First Team' />
+            <PageHeader pageName='La Salle Karrettun' />
             <section className="parent">
 
                 <div className="tabs__wrapper">
@@ -132,15 +320,15 @@ const MenFirstTeam = () => {
                             Coming Soon
                         </>) :
                         (
-                            position && selectedPositionName?.toLowerCase() !== 'all' ? (
+                            position && selectedpositionfirstName?.toLowerCase() !== 'all' ? (
                                 <>
                                     {
                                         filteredPlayers.length > 0 ? (
                                             <div>
-                                                <h2 className='position-titles'>{selectedPositionName?.replace(/-/g, ' ')}</h2>
+                                                <h2 className='position-titles'>{selectedpositionfirstName?.replace(/-/g, ' ')}</h2>
                                                 <ul className='playercard-showcase'>
                                                     {filteredPlayers.map((player, index) => (
-                                                        <PlayerCard playerInfo={player} key={index} />
+                                                        <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index}/>
                                                     ))}
                                                 </ul>
                                             </div>
@@ -157,7 +345,7 @@ const MenFirstTeam = () => {
                                                         <h2 className='position-titles'>{pos.name}</h2>
                                                         <ul className='playercard-showcase'>
                                                             {playerData.filter(pos.filter).map((player, index) => (
-                                                                <PlayerCard playerInfo={player} key={index} />
+                                                                <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} />
                                                             ))}
                                                         </ul>
                                                     </div>

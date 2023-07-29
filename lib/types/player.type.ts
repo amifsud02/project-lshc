@@ -1,5 +1,5 @@
 export type IPlayerCard = {
-    number: number;
+    number?: number;
     firstName: string;
     lastName: string;
     profilePicture?: string;

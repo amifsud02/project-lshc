@@ -117,6 +117,11 @@ const playerData: IPlayerCard[] = [
     lastName: "Vella",
     position: "Goalkeeper",
     number: 99
+  },
+  {
+    firstName: "Pero",
+    lastName: "Arsoski",
+    position: "Coach",        
   }
 ]
 
@@ -192,7 +197,10 @@ const U21WomenTeam = () => {
                                               <h2 className='position-titles'>{selectedPositionName?.replace(/-/g, ' ')}</h2>
                                               <ul className='playercard-showcase'>
                                                   {filteredPlayers.map((player, index) => (
-                                                      <PlayerCard playerInfo={player} key={index} />
+                                                      player.position == "Coach" ? 
+                                                      <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} /> 
+                                                      :                                                       
+                                                      <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/tvmlhaydchymp7sqynf7'} key={index} />                                                     
                                                   ))}
                                               </ul>
                                           </div>
@@ -209,7 +217,10 @@ const U21WomenTeam = () => {
                                                       <h2 className='position-titles'>{pos.name}</h2>
                                                       <ul className='playercard-showcase'>
                                                           {playerData.filter(pos.filter).map((player, index) => (
-                                                              <PlayerCard playerInfo={player} key={index} />
+                                                              player.position == "Coach" ? 
+                                                              <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} /> 
+                                                              :                                                       
+                                                              <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/tvmlhaydchymp7sqynf7'} key={index} />
                                                           ))}
                                                       </ul>
                                                   </div>

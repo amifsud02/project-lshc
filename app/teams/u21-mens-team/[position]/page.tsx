@@ -11,61 +11,107 @@ import { IPlayerCard } from '@/lib/types/player.type';
 
 const playerData: IPlayerCard[] = [
     {
-        number: 1,
-        firstName: 'Alan',
-        lastName: 'Portelli',
-        profilePicture: '',
-        position: 'Winger',
-    },
-    {
-        number: 2,
-        firstName: 'Daryl',
-        lastName: 'Magri',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 3,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 4,
-        firstName: 'Alan',
-        lastName: 'Portelli',
-        profilePicture: '',
-        position: 'Winger',
-    },
-    {
-        number: 5,
-        firstName: 'Daryl',
-        lastName: 'Magri',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 6,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'LinePlayer'
-    },
-    {
-        number: 7,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'Goalkeeper'
-    },
-    {
-        number: 8,
-        firstName: 'Anthony',
-        lastName: 'Mifsud',
-        profilePicture: '',
-        position: 'Coach'
-    },
+        "firstName": "Anthony",
+        "lastName": "Mifsud",
+        "position": "Lateral",
+        "number": 9
+      },
+      {
+        "firstName": "Nico",
+        "lastName": "Gambin",
+        "position": "Winger",
+        "number": 19
+      },
+      {
+        "firstName": "Matthew",
+        "lastName": "Fenech",
+        "position": "Goalkeeper",
+        "number": 16
+      },
+      {
+        "firstName": "Neil",
+        "lastName": "Gruppetta",
+        "position": "PlayMaker",
+        "number": 11
+      },
+      {
+        "firstName": "Lizio",
+        "lastName": "Buhagiar",
+        "position": "Lateral",
+        "number": 12
+      },
+      {
+        "firstName": "Matthew",
+        "lastName": "Buttigieg",
+        "position": "Winger",
+        "number": 7
+      },
+      {
+        "firstName": "Enea",
+        "lastName": "Perisnaka",
+        "position": "Winger",
+        "number": 24
+      },
+      {
+        "firstName": "Ilija",
+        "lastName": "Kalinov",
+        "position": "LinePlayer",
+        "number": 2
+      },
+      {
+        "firstName": "Liam",
+        "lastName": "Borg",
+        "position": "LinePlayer",
+        "number": 4
+      },
+      {
+        "firstName": "Daniel",
+        "lastName": "Mercieca",
+        "position": "LinePlayer",
+        "number": 28
+      },
+      {
+        "firstName": "Gabriel",
+        "lastName": "Abela",
+        "position": "LinePlayer",
+        "number": 22
+      },
+      {
+        "firstName": "Mathis",
+        "lastName": "Rigaber",
+        "position": "Winger",
+        "number": 17
+      },
+      {
+        "firstName": "Liam",
+        "lastName": "Apap",
+        "position": "Winger",
+        "number": 13
+      },
+      {
+        "firstName": "Ben",
+        "lastName": "Galea",
+        "position": "Winger",
+        "number": 6
+      },
+      {
+        "firstName": "Harry",
+        "lastName": "Camilleri Mallia",
+        "position": "Goalkeeper",
+        "number": 31
+      },
+      {
+        "firstName": "Keiran",
+        "lastName": "Demicoli",
+        "position": "Winger",
+        "number": 15
+      },
+      {
+        firstName: "Clive",
+        lastName: "Ferrante",
+        position: "Coach",        
+      }
+
 ]
 
 const positions = [
@@ -140,7 +186,7 @@ const U21MenTeam = () => {
                                                 <h2 className='position-titles'>{selectedPositionName?.replace(/-/g, ' ')}</h2>
                                                 <ul className='playercard-showcase'>
                                                     {filteredPlayers.map((player, index) => (
-                                                        <PlayerCard playerInfo={player} key={index} />
+                                                        <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} />
                                                     ))}
                                                 </ul>
                                             </div>
@@ -157,7 +203,7 @@ const U21MenTeam = () => {
                                                         <h2 className='position-titles'>{pos.name}</h2>
                                                         <ul className='playercard-showcase'>
                                                             {playerData.filter(pos.filter).map((player, index) => (
-                                                                <PlayerCard playerInfo={player} key={index} />
+                                                                <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} />
                                                             ))}
                                                         </ul>
                                                     </div>
