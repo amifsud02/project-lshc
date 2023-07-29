@@ -27,7 +27,7 @@ const Footer: React.FC<{}> = () => {
                     <div className={`${styles.fc30} ${styles.fcFlex} ${styles.fcRight} ${styles.fcWs}`}>
                         <div className="title">Contact Us</div>
                         <div className="fInfo"><a href="mailto:info@lasallehandball.com">info@lasallehandball.com</a></div>
-                        <div className="fInfo">Mobile</div>
+                        <div className="fInfo"><a href="tel:+35699447991">9944 7991</a></div>
                     </div>
                 </div>
             </div>
@@ -41,7 +41,7 @@ const Footer: React.FC<{}> = () => {
                         Designed and Developed by
 
                         <a href='https://cgowt.com' target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                           <Image className={styles.cgowtLogo} src={`/image/upload/f_auto,q_auto/ftiri6090wv2f2s66vwh`} alt={"CGOWT Logo"} fill={true} priority={false}></Image>
+                           <Image className={styles.cgowtLogo} src={`https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/ftiri6090wv2f2s66vwh`} alt={"CGOWT Logo"} fill={true} priority={false}></Image>
                         </a>
                     </p>
                 </div>

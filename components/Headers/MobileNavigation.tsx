@@ -90,14 +90,14 @@ export const MobileNavbar = () => {
                                             <li><Link href={'/teams/women-first-team/all'}>Women&apos;s Team</Link></li>
                                             <li><Link href={'/teams/u21-mens-team/all'}>U21 Men&apos;s Team</Link></li>
                                             <li><Link href={'/teams/u21-womens-team/all'}>U21 Women&apos;s Team</Link></li>
-                                            <li><Link href={'/teams/youth-team'}>Youth Teams</Link></li>
+                                            <li><Link href={'/teams/youth-teams'}>Youth Teams</Link></li>
                                         </ul>
                                     </AccordionItem>
 
                                     <AccordionItem header="Season" url="^\/season\/\d{4}\/schedule\/[a-zA-Z0-9_]+\/[\w-]+">
                                         <ul className={styles.mobile__dropdown}>
-                                            <li><Link href={'/season/2023/schedule/men/national-league'}>Standings</Link></li>
-                                            <li><Link href={'/season/2023/standings/men/national-league'}>Schedule</Link></li>
+                                            <li><Link href={'/season/2023/schedule/men/national-league'}>Schedule</Link></li>
+                                            {/* <li><Link href={'/season/2023/standings/men/national-league'}>Schedule</Link></li> */}
                                         </ul>
                                     </AccordionItem>
 

@@ -170,7 +170,7 @@ const U21WomenTeam = () => {
 
   return (
       <>
-          <PageHeader pageName='U21 Women First Team' />
+          <PageHeader pageName='La Salle Metalco' />
           <section className="parent">
 
               <div className="tabs__wrapper">

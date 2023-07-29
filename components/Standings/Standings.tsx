@@ -13,7 +13,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
             {showTitle &&
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <h2 className={styles.sectionTitle}>Standings</h2>
-                    <Link style={{ fontSize: '12px', fontWeight: '700' }} href={''}>See More</Link>
+                    {/* <Link style={{ fontSize: '12px', fontWeight: '700' }} href={''}>See More</Link> */}
                 </div>
             }
             <div className={styles.tableWrapper}>

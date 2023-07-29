@@ -13,6 +13,8 @@ export default function ContactForm() {
         message: "",
     })
 
+    const [message, setMessage] = useState('');
+
     const [contact, setContact] = useState("General");
 
     // const { firstName, lastName, email, phone, message } = values
@@ -39,6 +41,20 @@ export default function ContactForm() {
         })
 
         const data = await response.json();
+
+        if(data === 'Success') {
+            setValues({
+                firstName: "",
+                lastName: "",
+                email: "",
+                phone: "",
+                message: "",
+            })
+
+            setMessage('Message Sent Successfully');
+        } else {
+            setMessage('Message Failed to Send')
+        }
     }
    
     return (
@@ -134,6 +150,12 @@ export default function ContactForm() {
             <div className="form-input seven c-wide ">
                 <button className="primary-button form-submit">Send</button>
             </div>
+
+            {message && 
+                <div className="eight c-wide">
+                    {message}
+                </div>
+            }
 
         </form>
     )

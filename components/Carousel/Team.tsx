@@ -88,7 +88,7 @@ const TeamCarousel = () => {
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Men First Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
+                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
@@ -98,17 +98,17 @@ const TeamCarousel = () => {
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Women First Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
+                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
                 <div className="image-wrapper">
-                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/d1i2euwvdelqktny6k3u' alt="" />
+                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/kqd1a1rljelowgtoztuo' alt="" />
                     </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Men Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
+                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
@@ -118,7 +118,7 @@ const TeamCarousel = () => {
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Women Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team'} className="button-link">View Team</Link>
+                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
             </Carousel>

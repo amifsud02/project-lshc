@@ -73,10 +73,10 @@ const navItems: NavItem[] = [
                 label: "Schedule",
                 href: "/season/2023/schedule/men/national-league"
             },
-            {
-                label: "Standings",
-                href: "/"
-            }
+            // {
+            //     label: "Standings",
+            //     href: "/"
+            // }
         ]
     },
     {
@@ -87,10 +87,10 @@ const navItems: NavItem[] = [
                 label: "History",
                 href: "/club/history"
             },
-            {
-                label: "Management",
-                href: "/club/management"
-            },
+            // {
+            //     label: "Management",
+            //     href: "/club/management"
+            // },
             {
                 label: "Our Partners",
                 href: "/club/sponsors"

@@ -32,10 +32,10 @@ const getFixtures = async (group: string) => {
   }
 };
 
-const getStandings = async () => {
+const getStandings = async (group: string) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=U21%20Men%27s%20National%20League&season=2023`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=${group}&season=2023`
     );
 
     if (!response.ok) {
@@ -47,7 +47,7 @@ const getStandings = async () => {
   } catch (error) {
     console.error("Error fetching standings:", error);
     // Fallback handling: Return a default value or an empty object.
-    return {};
+    return [];
   }
 };
 
@@ -60,7 +60,15 @@ export default async function Home() {
 
   console.log(menFixtures, womenFixtures);  
 
-  const { standings }: { standings: IStanding[] } = await getStandings();
+  const menFetchStandings = await getStandings(`Men's National League`);
+  let menStandings: IStanding[] = menFetchStandings['standings'];
+
+  // const womenFetchStandings: any = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=Women's Premier League&season=2023`
+  // );
+  
+  // let womenStandings: IStanding[] = womenFetchStandings['standings'];
+  // console.log(womenFetchStandings);
 
   return (
     <main>
@@ -91,13 +99,17 @@ export default async function Home() {
 
           <Tabs redirect="/season/current" showall={true}>
             <Tab tabTitle="Men">
-              {standings && (
-                <Standings showTitle={false} data={standings}></Standings>
+              {menStandings && (
+                <Standings showTitle={false} data={menStandings}></Standings>
               )}
             </Tab>
 
             <Tab tabTitle="Women">
-              {/* <Standings showTitle={false}></Standings> */}
+              {/* {womenStandings && (
+                <Standings showTitle={false} data={womenStandings}></Standings>
+              )} */}
+
+              Not available. Sorry.
             </Tab>
           </Tabs>
         </div>

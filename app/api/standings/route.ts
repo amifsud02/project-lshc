@@ -4,10 +4,12 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
     const season = request.nextUrl.searchParams.get("season")
+
     const competitionTypeName = request.nextUrl.searchParams.get('competitiontypename')
+    console.log(competitionTypeName);
 
     const query = groq`
-    *[_type == "standing"&& competition->season == '2023' && competition->competitionType->competitionTypeName == "Men's National League"]{
+    *[_type == "standing" && competition->season == '2023' && competition->competitionType->competitionTypeName == $competitionTypeName]{
         competition -> {
             competitionType -> {
                 competitionTypeName
@@ -15,26 +17,30 @@ export async function GET(request: NextRequest) {
             season
         },
         teams[] {
-          position,
-          _key,
-          draws,
-          matchesPlayed,
-          losses,
-          points,
-          wins,
-          team -> {
+        position,
+        _key,
+        draws,
+        matchesPlayed,
+        losses,
+        points,
+        wins,
+        team -> {
             teamName,
             teamLogo
-          },
-          goalDifference
+        },
+        goalDifference
         }
     }`;
 
     const standings = await client.fetch(query, { season, competitionTypeName });
 
+    return NextResponse.json({
+        standings: standings,
+    });
+    
+}
+    
+
     //competition->competitionType->competitionTypeName == $competitionTypeName &&
 
-    return NextResponse.json({
-        standings,
-    });
-}
+    

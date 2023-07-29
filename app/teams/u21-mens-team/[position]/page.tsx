@@ -159,7 +159,7 @@ const U21MenTeam = () => {
 
     return (
         <>
-            <PageHeader pageName='U21 Men First Team' />
+            <PageHeader pageName='La Salle MBI' />
             <section className="parent">
 
                 <div className="tabs__wrapper">
