@@ -63,12 +63,10 @@ export default async function Home() {
   const menFetchStandings = await getStandings(`Men's National League`);
   let menStandings: IStanding[] = menFetchStandings['standings'];
 
-  // const womenFetchStandings: any = await fetch(
-  //   `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=Women's Premier League&season=2023`
-  // );
+  const womenFetchStandings = await getStandings(`Women's Premier League`);
   
-  // let womenStandings: IStanding[] = womenFetchStandings['standings'];
-  // console.log(womenFetchStandings);
+  let womenStandings: IStanding[] = womenFetchStandings['standings'];
+  console.log(womenFetchStandings);
 
   return (
     <main>
@@ -105,11 +103,9 @@ export default async function Home() {
             </Tab>
 
             <Tab tabTitle="Women">
-              {/* {womenStandings && (
+              {womenStandings && (
                 <Standings showTitle={false} data={womenStandings}></Standings>
-              )} */}
-
-              Not available. Sorry.
+              )}
             </Tab>
           </Tabs>
         </div>

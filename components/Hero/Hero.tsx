@@ -26,7 +26,7 @@ const HeroSection = () => {
               EST. <span className="numbers">1998</span>
             </p>
             <div className={styles.socialLinks}>
-              <a className={styles.fbIcon} href="https://www.facebook.com">
+              <a className={styles.fbIcon} href="https://www.facebook.com/LaSalleHandball/">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true"
@@ -42,7 +42,7 @@ const HeroSection = () => {
                   />
                 </svg>
               </a>
-              <a className={styles.instaIcon} href="https://www.instagram.com">
+              <a className={styles.instaIcon} href="https://www.instagram.com/lasallehandball/?hl=en">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true"
@@ -63,7 +63,7 @@ const HeroSection = () => {
                   />
                 </svg>
               </a>
-              <a className={styles.tiktokIcon} href="https://www.tiktok.com">
+              <a className={styles.tiktokIcon} href="http://www.tiktok.com/@lasallehandball">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   aria-hidden="true"

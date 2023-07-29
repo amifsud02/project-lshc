@@ -98,7 +98,7 @@ const TeamCarousel = () => {
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Women First Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
+                        <Link href={'/teams/women-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
@@ -108,7 +108,7 @@ const TeamCarousel = () => {
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Men Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
+                        <Link href={'/teams/u21-mens-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
@@ -118,7 +118,7 @@ const TeamCarousel = () => {
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Women Team</h2>
                         {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
-                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
+                        <Link href={'/teams/u21-womens-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
             </Carousel>
