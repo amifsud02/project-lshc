@@ -6,10 +6,10 @@ export async function GET(request: NextRequest) {
     const season = request.nextUrl.searchParams.get("season")
 
     const competitionTypeName = request.nextUrl.searchParams.get('competitiontypename')
-    console.log(competitionTypeName);
+    console.log("From Route: ", competitionTypeName);
 
     const query = groq`
-    *[_type == "standing" && competition->season == '2023' && competition->competitionType->competitionTypeName == $competitionTypeName]{
+    *[_type == "standing" && competition->season == $season && competition->competitionType->competitionTypeName == $competitionTypeName]{
         competition -> {
             competitionType -> {
                 competitionTypeName
@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
         standings: standings,
     });
-    
 }
     
 
