@@ -1,6 +1,7 @@
 import { IStanding } from '@/lib/types/standing.type'
 import { imageBuilder } from '@/lib/utils/sanity/sanity.config'
 import Image from 'next/image'
+import crypto from 'crypto';
 
 import styles from './Standings.module.css'
 
@@ -53,7 +54,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
 
                     {data[0].teams.map((team, index) => { 
                         return (
-                            <div className={`${styles.tableRow} ${styles.tableBodyRow} ${team.team.teamName === 'La Salle' ? styles.tablePrimaryRow : ''}`} key={team.draws}>
+                            <div className={`${styles.tableRow} ${styles.tableBodyRow} ${team.team.teamName === 'La Salle' ? styles.tablePrimaryRow : ''}`} key={crypto.randomBytes(20).toString('hex')}>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
                                     {index + 1}
                                 </div>

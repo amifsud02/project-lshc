@@ -14,6 +14,7 @@ export default function ContactForm() {
     })
 
     const [message, setMessage] = useState('');
+    const [isSuccess, setSuccess] = useState(true);
 
     const [contact, setContact] = useState("General");
 
@@ -42,7 +43,7 @@ export default function ContactForm() {
 
         const data = await response.json();
 
-        if(data === 'Success') {
+        if(data.status === 200) {
             setValues({
                 firstName: "",
                 lastName: "",
@@ -51,9 +52,11 @@ export default function ContactForm() {
                 message: "",
             })
 
-            setMessage('Message Sent Successfully');
+            setSuccess(true);
+            setMessage(data.message);
         } else {
-            setMessage('Message Failed to Send')
+            setSuccess(false);
+            setMessage(data.message);
         }
     }
    
@@ -152,8 +155,8 @@ export default function ContactForm() {
             </div>
 
             {message && 
-                <div className="eight c-wide">
-                    {message}
+                <div className="c-wide" style={{ fontWeight: '800', marginTop: '1.5rem' }}>
+                    <p style={{color: `${isSuccess ? 'green' : 'red'}`}}>{message}</p> 
                 </div>
             }
 

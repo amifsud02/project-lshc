@@ -33,6 +33,7 @@ const getFixtures = async (group: string) => {
 };
 
 const getStandings = async (group: string) => {
+  console.log(group);
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=${group}&season=2023`
@@ -58,11 +59,11 @@ export default async function Home() {
   const womenFetchFixtures = await getFixtures('women');
   let womenFixtures: IFixture[] = womenFetchFixtures['fixtures'];
 
-  const menFetchStandings = await getStandings("Men's National League");
-  let menStandings: IStanding[] = menFetchStandings['standings'];
-
   const womenFetchStandings = await getStandings("Women's Premier League");
   let womenStandings: IStanding[] = womenFetchStandings['standings'];
+
+  const menFetchStandings = await getStandings("Men's National League");
+  let menStandings: IStanding[] = menFetchStandings['standings'];
 
   return (
     <main>
@@ -94,14 +95,13 @@ export default async function Home() {
           <Tabs redirect="/season/2023/schedule/men/national-league/" showall={false}>
             <Tab tabTitle="Men">
               {menStandings && (
-                <Standings showTitle={false} data={menStandings}></Standings>
+                <Standings key={'men_standings'} showTitle={false} data={menStandings}></Standings>
               )}
             </Tab>
-
-            <Tab tabTitle=" ">
-              {/* {womenStandings && (
-                <Standings showTitle={false} data={womenStandings}></Standings>
-              )} */}
+            <Tab tabTitle="Women">
+              {womenStandings && (
+                <Standings key={'women_standings'} showTitle={false} data={womenStandings}></Standings>
+              )}
             </Tab>
           </Tabs>
         </div>

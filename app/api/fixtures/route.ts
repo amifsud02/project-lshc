@@ -4,65 +4,65 @@ import { NextResponse, NextRequest } from "next/server";
 
 type ICompetitionDropdownItem = {
   [key: string]: {
-      [key: string]: {
-          key: string;
-          value: string;
-      };
+    [key: string]: {
+      key: string;
+      value: string;
+    };
   };
 }
 
 const competitionDropdown: ICompetitionDropdownItem = {
   "men": {
-      "national-league": {
-          "key": "National League",
-          "value": "Men's National League"
-      },
-      "premier-league": {
-          "key": "Premier League",
-          "value": "Men's Premier League"
-      },
-      "knockout": {
-          "key": "Knockout",
-          "value": "Men's Knock Out"
-      },
-      "louis-borg-cup": {
-          "key": "Louis Borg Cup",
-          "value": "Men's Louis Borg Cup"
-      }
+    "national-league": {
+      "key": "National League",
+      "value": "Men's National League"
+    },
+    "premier-league": {
+      "key": "Premier League",
+      "value": "Men's Premier League"
+    },
+    "knockout": {
+      "key": "Knockout",
+      "value": "Men's Knock Out"
+    },
+    "louis-borg-cup": {
+      "key": "Louis Borg Cup",
+      "value": "Men's Louis Borg Cup"
+    }
   },
   "women": {
-      "premiere-league": {
-          "key": "Premier League",
-          "value": "Women's Premier League"
-      },
-      "knockout": {
-          "key": "Knockout",
-          "value": "Women's Knock Out"
-      },
-      "louis-borg-cup": {
-          "key": "Louis Borg Cup",
-          "value": "Women's Louis Borg Cup"
-      }
+    "premiere-league": {
+      "key": "Premier League",
+      "value": "Women's Premier League"
+    },
+    "knockout": {
+      "key": "Knockout",
+      "value": "Women's Knock Out"
+    },
+    "louis-borg-cup": {
+      "key": "Louis Borg Cup",
+      "value": "Women's Louis Borg Cup"
+    }
   },
   "u21-men": {
-      "national-league": {
-          "key": "National League",
-          "value": "U21 Men's National League"
-      },
-      "knockout": {
-          "key": "Knockout",
-          "value": "U21 Men's Knock Out"
-      }
+    "national-league": {
+      "key": "National League",
+      "value": "U21 Men's National League"
+    },
+    "knockout": {
+      "key": "Knockout",
+      "value": "U21 Men's Knock Out"
+    }
   },
   "u21-women": {
-      "national-league": {
-          "key": "National League",
-          "value": "U21 Women's National League"
-      },
-      "knockout": {
-          "key": "Knockout",
-          "value": "U21 Women's Knock Out"
-      }
+    "national-league": {
+      "key": "National League",
+      "value": "U21 Women's National League"
+    },
+    "knockout": {
+      "key": "Knockout",
+      "value": "U21 Women's Knock Out"
+    }
   }
 }
 
@@ -93,16 +93,16 @@ export async function GET(request: NextRequest) {
   // Validate query parameters
   if (!season) {
     return NextResponse.json({
-      message: "Missing 'season' parameter.",  
-      statusCode: 400 
+      message: "Missing 'season' parameter.",
+      statusCode: 400
     });
   }
 
   if (allFixtures !== null) {
     const validGroups: GroupType[] = ["men", "women", "u21-men", "u21-women"];
     if (!validGroups.includes(allFixtures as GroupType)) {
-      return NextResponse.json({ 
-        message: "Invalid 'allfixtures' parameter value.", 
+      return NextResponse.json({
+        message: "Invalid 'allfixtures' parameter value.",
         statusCode: 400,
       });
     }

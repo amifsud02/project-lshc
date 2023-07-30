@@ -77,19 +77,16 @@ export async function POST(request: NextRequest) {
     const emailSent = await sendEmail(msg);
 
     if (emailSent === "Email sent") {
-        console.log("Success")
         return new NextResponse(
             JSON.stringify({
-                message: "Success!",
+                message: "Your message has been sent successfully. We'll get back to you soon!",
                 status: 200
             }),
         );
     } else {
-        console.log("Error")
-
         return new NextResponse(
             JSON.stringify({
-                message: emailSent,
+                message: "Something went wrong while processing your request.",
                 status: 400 
             }),
         );

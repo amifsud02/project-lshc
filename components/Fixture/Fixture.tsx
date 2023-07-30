@@ -20,7 +20,6 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
             <div className={styles.matchWrapper}>
                 {data.map((fixture) => {
                     const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
-                    console.log(compName)
                     const dateObj = new Date(fixture.startDate);
 
                     let day = dateObj.getUTCDate();

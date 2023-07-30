@@ -21,8 +21,6 @@ const AccordionItem: React.FC<AccordionItemProps> = ({header, url, ...rest}) => 
     
     const regex = new RegExp(url);
     const isUrl = regex.test(pathName);
-
-    console.log(pathName, regex,  isUrl);
     
     return (
         <Item
