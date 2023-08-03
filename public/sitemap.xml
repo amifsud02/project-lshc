@@ -4,54 +4,95 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
 
 <url>
-  <loc>https://www.lasallehandball.com/</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/teams/men-first-team/all</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/teams/men-first-team/all</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/season/2023/schedule/men/national-league</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/teams/women-first-team/all</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/club/history</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/teams/u21-mens-team/all</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/contact</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/teams/u21-womens-team/all</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/season/current</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/season/2023/schedule/men/national-league</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/teams/u21-womens-team/all</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/season/2023/schedule/men/premier-league</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/teams/women-first-team/all</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/season/2023/schedule/men/knockout</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://www.lasallehandball.com/teams/u21-mens-team/all</loc>
-  <lastmod>2023-07-29T17:52:06+00:00</lastmod>
+  <loc>https://lasallehandball.com/season/2023/schedule/men/louis-borg-cup</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
   <priority>0.80</priority>
 </url>
-
-
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/women/premier-league</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/women/knockout</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/women/louis-borg-cup</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/u21-men/national-league</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/u21-men/knockout</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/u21-women/national-league</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/season/2023/schedule/u21-women/knockout</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/club/history</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://lasallehandball.com/contact</loc>
+  <lastmod>2023-08-03T11:59:12+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
 </urlset>
