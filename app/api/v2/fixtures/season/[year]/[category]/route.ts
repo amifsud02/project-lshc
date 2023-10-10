@@ -62,18 +62,3 @@ const getFixturesStatusScheduled = async (year: number, category: string, limit?
 
     return fixtures;
 }
-
-/**
- * const referrer = request.headers.get('referer');
-
-    if('http://localhost:3000/' !== referrer){
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
-    const apiKey = 'HeyHeyMyG'
-    const requestApiKey = request.headers.get('x-api-key');
-
-    if (requestApiKey !== apiKey) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
- */
