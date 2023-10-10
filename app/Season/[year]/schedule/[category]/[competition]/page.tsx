@@ -20,9 +20,17 @@ type ICompetitionDropdownItem = {
 
 const competitionDropdown: ICompetitionDropdownItem = {
     "men": {
+        "all": {
+            "key": "All",
+            "value": "All",
+        },
         "national-league": {
             "key": "National League",
             "value": "Men's National League"
+        },
+        "1st-division-league": {
+            "key": "1st Division League",
+            "value": "Men's 1st Division League"
         },
         "premier-league": {
             "key": "Premier League",
@@ -38,6 +46,10 @@ const competitionDropdown: ICompetitionDropdownItem = {
         }
     },
     "women": {
+        "all": {
+            "key": "All",
+            "value": "All",
+        },
         "premier-league": {
             "key": "Premier League",
             "value": "Women's Premier League"
@@ -52,6 +64,10 @@ const competitionDropdown: ICompetitionDropdownItem = {
         }
     },
     "u21-men": {
+        "all": {
+            "key": "All",
+            "value": "All",
+        },
         "national-league": {
             "key": "National League",
             "value": "U21 Men's National League"
@@ -62,6 +78,10 @@ const competitionDropdown: ICompetitionDropdownItem = {
         }
     },
     "u21-women": {
+        "all": {
+            "key": "All",
+            "value": "All",
+        },
         "national-league": {
             "key": "National League",
             "value": "U21 Women's National League"
@@ -76,17 +96,17 @@ const competitionDropdown: ICompetitionDropdownItem = {
 
 const Schedule = () => {
     const pathname = usePathname();
-    console.log(pathname)
     const router = useRouter();
     const params = useParams(); // [category]/[competition]
-    const { category, competition } = params;
+    console.log(params)
+    const { year, category, competition } = params;
 
     const [selectedCompetition, setSelectedCompetition] = useState<{ key: string; value: string }>({
         key: '',
         value: ''
     });
 
-    const [selectedYear, setSelectedYear] = useState(2023);
+    const [selectedYear, setSelectedYear] = useState(year);
 
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<IFixture[]>([]); // To store the fetched data in the state.
@@ -97,7 +117,7 @@ const Schedule = () => {
         const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
         if(parentKey) {
             setSelectedCompetition({ key: parentKey, value: newCompetition })
-            router.push(`${process.env.NEXT_PUBLIC_API_URL as string}/season/2023/schedule/${category}/${parentKey}`)
+            router.push(`${process.env.NEXT_PUBLIC_API_URL as string}/season/${year}/schedule/${category}/${parentKey}`)
         }
     }
 
@@ -117,16 +137,18 @@ const Schedule = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-    
+            
             try {
                 // console.log(selectedCompetition.value);
                 if (selectedCompetition.value) {
-                    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/2024/Men`;
+                    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${year}/${category}/${competition}`;
 
                     const response = await fetch(url);
+                    
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
+
                     const fixtures: IFixture[] = await response.json();
                     setData(fixtures);
                 }
@@ -152,21 +174,21 @@ const Schedule = () => {
                     <div className="tabs__wrapper " >
                         <div className="nav__tab">
                             <ul className="category">
-                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/men')? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/men/national-league`}>
+                                <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/men`)? 'active' : ''}`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/men/national-league`}>
                                         Men
                                     </Link>
                                 </li>
-                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/women') ? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/women/premier-league`}>
+                                <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/women`) ? 'active' : ''}`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/women/premier-league`}>
                                         Women
                                     </Link></li>
-                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-men') ? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/u21-men/national-league`}>
+                                <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/u21-men`) ? 'active' : ''}`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/u21-men/national-league`}>
                                         U21 Men
                                     </Link></li>
-                                <li className={`tablinks ${pathname.startsWith('/season/2023/schedule/u21-women') ? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/2023/schedule/u21-women/national-league`}>
+                                <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/u21-women`) ? 'active' : ''}`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/u21-women/national-league`}>
                                         U21 Women
                                     </Link>
                                 </li>
@@ -189,13 +211,17 @@ const Schedule = () => {
                             <option value="2024">2023/24</option>
                         </select>
                     </div>
-
                 </div>
 
 
                 {loading ? (
                     <div className="fr-page-section">
-                        <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+                        <div className="lds-ring">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
                     </div>
                 ) : (
                     <>
@@ -203,7 +229,8 @@ const Schedule = () => {
                             Upcoming Match
                             Display One Upcoming Match with Countdown
                         </div> */}
-                         
+
+                           
                             { data && <Fixtures data={data} showTitle={false}></Fixtures> }
                             {/* Display All Matches of Competition
 

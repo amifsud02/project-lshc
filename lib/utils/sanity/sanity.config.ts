@@ -12,7 +12,7 @@ export const clientV2 = createClient({
     projectId: 'mde7gom4', 
     dataset: 'production',
     apiVersion: '2022-03-25',
-    useCdn: true 
+    useCdn: false 
 })
 
 

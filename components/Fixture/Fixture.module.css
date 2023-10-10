@@ -83,7 +83,8 @@
 .matchType {
   font-size: 0.75em;
   font-weight: 700;
-  margin: 5px 0;
+  text-align: center;
+  opacity: 0.5;
 }
 
 .matchScore {

@@ -29,7 +29,12 @@ const ShowCounter = ({ days, hours, minutes, seconds }: any) => {
         <div className="countdown-indicator">
           <DateTimeDisplay value={minutes} type={'Mins'} isDanger={false} />
           <span>Mins</span>
-        </div>       
+        </div>   
+        <span style={{transform: "translateY(-15px)"}}>:</span>
+        <div className="countdown-indicator">
+          <DateTimeDisplay value={seconds} type={'sec'} isDanger={false} />
+          <span>Sec</span>
+        </div>      
       </div>
     </div>
   );

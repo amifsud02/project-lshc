@@ -57,21 +57,23 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                         </div>
 
                                         <div className={styles.matchDetails}>
-                                            <div className={styles.matchType}>
-                                                <h4>{competitionName}</h4>
+                                            <div>
+                                                <div className={`${styles.matchDate} numbers`}>
+                                                    {formattedDate} / {formattedTime}
+                                                </div>
+                                                <div className={styles.matchType}>
+                                                    <h4>{competitionName}</h4>
+                                                </div>
                                             </div>
                                             <div className={styles.matchScore}>
                                                 <span className='numbers'>
                                                     {fixture.homeScore} - {fixture.awayScore}
                                                 </span>
                                             </div>
-
-                                            <div className={`${styles.matchDate} numbers`}>
-                                                {formattedDate}
-                                                <br />
-                                                {formattedTime}
-                                                {/* 04 June 2023<br />21:00 */}
+                                            <div style={{fontSize: '0.75em'}}>
+                                                <p>Fixture Report</p>
                                             </div>
+                                           
                                         </div>
 
                                         <div className={styles.awayTeam}>

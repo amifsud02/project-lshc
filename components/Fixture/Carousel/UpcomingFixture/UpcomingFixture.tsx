@@ -41,15 +41,21 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
             </div>
 
             <div className={styles.matchDetails}>
-                <div className={styles.fixtureType}>
-                    <h4>{competitionName}</h4>
+                <div>
+                    <div className={`${styles.fixtureDate} numbers`}>
+                        {formattedDate} / {formattedTime}
+                    </div>
+                    <div className={styles.fixtureType}>
+                        <h4>{competitionName}</h4>
+                    </div>                    
                 </div>
 
                 <CountdownTimer targetDate={dateObj} />
 
-                <div className={`${styles.fixtureDate} numbers`}>
-                    {formattedDate} / {formattedTime}
+                <div>
+                    Fixture Report
                 </div>
+              
             </div>
 
             <div className={styles.awayTeam}>
