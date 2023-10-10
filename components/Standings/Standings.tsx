@@ -60,7 +60,7 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
                                 </div>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
                                     <div className={styles.team}>
-                                        <Image src={imageBuilder.image(team.team.teamLogo.asset._ref).width(50).height(50).url()} alt={`${team.team.name}-logo`} width={40} height={40}></Image>
+                                        <Image src={imageBuilder.image(team.team.logo.asset._ref).width(50).height(50).url()} alt={`${team.team.name}-logo`} width={40} height={40}></Image>
                                         <p className={styles.name}>{team.team.name}</p>
                                     </div>
                                 </div>
