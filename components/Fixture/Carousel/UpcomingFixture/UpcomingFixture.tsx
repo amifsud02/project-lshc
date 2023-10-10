@@ -2,7 +2,7 @@ import CountdownTimer from '@/components/Countdown/CountdownTimer';
 import styles from './UpcomingFixture.module.css'
 import { IFixture } from '@/lib/types/fixture.type';
 import Image from 'next/image';
-import { imageBuilder } from '@/lib/utils/sanity/sanity.config';
+import { imageBuilderV2 } from '@/lib/utils/sanity/sanity.config';
 
 const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
@@ -20,9 +20,12 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
 
 
     const homeTeamName = fixture.fixtureInfo.homeTeam.team.name
-    const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.teamLogo
+    const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.logo
     const awayTeamName = fixture.fixtureInfo.awayTeam.team.name
-    const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.teamLogo
+    const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.logo
+
+    console.log(homeTeamLogo, awayTeamLogo)
+
     const competitionName = fixture.fixtureInfo.competition[0].name;
 
     return (
@@ -31,7 +34,7 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
                 <div className={styles.teamBadge}>
                     { 
                         homeTeamLogo && 
-                        <Image src={imageBuilder.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}`} width={60} height={60} loading={'eager'}></Image> 
+                        <Image src={imageBuilderV2.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}`} width={256} height={256} loading={'eager'}></Image> 
                     }
                 </div>
                 <span className={styles.teamName}>{homeTeamName}</span>
@@ -53,7 +56,7 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
                 <div className={styles.teamBadge}>
                     { 
                         awayTeamLogo && 
-                        <Image src={imageBuilder.image(awayTeamLogo.asset._ref).url()} alt={`${awayTeamName}`} width={60} height={60} loading={'eager'}></Image> 
+                        <Image src={imageBuilderV2.image(awayTeamLogo.asset._ref).url()} alt={`${awayTeamName}`} width={256} height={256} loading={'eager'}></Image> 
                     }
                 </div>
                 <span className={styles.teamName}>{awayTeamName}</span>

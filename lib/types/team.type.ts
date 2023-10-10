@@ -3,7 +3,7 @@ import { ILogo } from "./logo.type";
 export type ITeam = {
   _id: string;
   name: string;
-  teamLogo: ILogo;
+  logo: ILogo;
   categoryName: string;
   shortname?: string;
 }

@@ -3,7 +3,6 @@ import { groq } from "next-sanity";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest, context: any) {
-    console.log('YAHOOOOOO')
     try {
         const { year, category } = context.params;
 

@@ -1,4 +1,4 @@
-import { imageBuilder } from '@/lib/utils/sanity/sanity.config';
+import { imageBuilderV2 } from '@/lib/utils/sanity/sanity.config';
 import { IFixture } from '@/lib/types/fixture.type';
 
 import Image from 'next/image';
@@ -33,10 +33,13 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                     let formattedTime = `${hours}:${minutes}`;
 
                     const homeTeamName = fixture.fixtureInfo.homeTeam.team.name
-                    const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.teamLogo
+                    const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.logo
                     const awayTeamName = fixture.fixtureInfo.awayTeam.team.name
-                    const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.teamLogo
+                    const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.logo
+                    
                     const competitionName = fixture.fixtureInfo.competition[0].name;
+
+                    console.log('Away Team Logo: ', awayTeamLogo)
 
                     return (
                         <>
@@ -47,7 +50,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                             {
                                                 homeTeamLogo &&
                                                 <div className={styles.teamBadge}>
-                                                    <Image src={imageBuilder.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}-logo`} width={60} height={60} loading={'eager'}></Image>
+                                                    <Image src={imageBuilderV2.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}-logo`} width={256} height={256} loading={'eager'}></Image>
                                                 </div>
                                             }
                                             <span className={styles.teamName}>{homeTeamName}</span>
@@ -59,7 +62,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                             </div>
                                             <div className={styles.matchScore}>
                                                 <span className='numbers'>
-                                                    {/* {fixture.homeScore} - {fixture.awayScore} */}
+                                                    {fixture.homeScore} - {fixture.awayScore}
                                                 </span>
                                             </div>
 
@@ -76,7 +79,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                             {
                                                 awayTeamLogo &&
                                                 <div className={styles.teamBadge}>
-                                                    <Image src={imageBuilder.image(homeTeamLogo.asset._ref).url()} alt={`${awayTeamName}-logo`} width={60} height={60}></Image>
+                                                    <Image src={imageBuilderV2.image(awayTeamLogo.asset._ref).url()} alt={`${awayTeamName}-logo`} width={256} height={256}></Image>
                                                 </div>
                                             }
                                         </div>

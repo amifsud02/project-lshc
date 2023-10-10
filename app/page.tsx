@@ -15,31 +15,12 @@ import Footer from "@/components/Footer/Footer";
 import { clientV2 } from "@/lib/utils/sanity/sanity.config";
 import FixtureCarousel from "@/components/Fixture/Carousel";
 
-const getFixtures = async (group: string, season: number) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?allfixtures=${group}&season=${season}&&limit=5`
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const fixtures = await response.json();
-    return fixtures;
-  } catch (error) {
-    console.error("Error fetching fixtures:", error);
-    return [];
-  }
-};
-
-
 const getHomePageFixtures = async (group: string, season: number) => {
   console.log(process.env.NEXT_PUBLIC_API_URL)
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}?isHomepage=1`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 1 } }
     );
 
     if (!response.ok) {
@@ -78,15 +59,17 @@ export default async function Home() {
   let currentSeason = await clientV2.fetch(`*[_type == "settings"]`);
   currentSeason = Number(currentSeason[1].season);
 
-  const menFixturesV2 = await getHomePageFixtures('Men', currentSeason);
-  const menFinishedFixtures: IFixture[] = menFixturesV2['finishedFixtures'];
-  const menScheduledFixtures: IFixture[] = menFixturesV2['scheduledFixtures'];
+  /** Fetch Men Fixtures */
+  const menFixtures = await getHomePageFixtures('Men', currentSeason);
+  const menFinishedFixtures: IFixture[] = menFixtures['finishedFixtures'];
+  const menScheduledFixtures: IFixture[] = menFixtures['scheduledFixtures'];
 
-  // const menFetchFixtures = await getFixtures('men', currentSeason);
-  // let menFixtures: IFixture[] = menFetchFixtures['fixtures'];
+  /** Fetch Women Fixtures */
+  const womenFixtures = await getHomePageFixtures('Women', currentSeason);
+  const womenFinishedFixtures: IFixture[] = womenFixtures['finishedFixtures'];
+  const womenScheduledFixtures: IFixture[] = womenFixtures['scheduledFixtures'];
 
-  // const womenFetchFixtures = await getFixtures('women', currentSeason);
-  // let womenFixtures: IFixture[] = womenFetchFixtures['fixtures'];
+
 
   const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   let womenStandings: IStanding[] = womenFetchStandings['standings'];
@@ -104,16 +87,7 @@ export default async function Home() {
 
           <Tabs redirect="/season/2023/schedule/men/national-league/" showall={true}>
             <Tab tabTitle="Men">
-              Nothing Here
-              {/* {menFixtures.length > 0 && (
-                <>
-                  <Fixtures data={menFixtures} showTitle={false} />
-                </>
-              )} */}
-            </Tab>
-
-            <Tab tabTitle="Test">
-              {menFixturesV2 && (
+              {menFixtures && (
                 <>
                   <Fixtures data={menFinishedFixtures} showTitle={false} />
                   <FixtureCarousel data={menScheduledFixtures} />
@@ -122,10 +96,19 @@ export default async function Home() {
             </Tab>
 
             <Tab tabTitle="Women">
-             Nothing Here
-              {/* {womenFixtures.length > 0 && (
-                <Fixtures data={womenFixtures} showTitle={false}></Fixtures>
-              )} */}
+              {womenFixtures && (
+                <>
+                  {womenFinishedFixtures.length > 0 && (
+                    <Fixtures data={womenFinishedFixtures} showTitle={false} />
+                  )}
+
+                  {womenScheduledFixtures.length > 0 && (
+                    <FixtureCarousel data={womenScheduledFixtures} />
+                  )}
+
+                  
+                </>
+              )}
             </Tab>
           </Tabs>
         </div>

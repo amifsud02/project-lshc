@@ -121,11 +121,13 @@ const Schedule = () => {
             try {
                 // console.log(selectedCompetition.value);
                 if (selectedCompetition.value) {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?competitiontypename=${selectedCompetition.value}&season=${selectedYear}`);
+                    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/2024/Men`;
+
+                    const response = await fetch(url);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    const { fixtures }: { fixtures: IFixture[] } = await response.json();
+                    const fixtures: IFixture[] = await response.json();
                     setData(fixtures);
                 }
             } catch (err: any) {
@@ -183,8 +185,8 @@ const Schedule = () => {
                         </select>
 
                         <select name="seasons" className='numbers' id="seasons">
-                            <option value="2023">2022/23</option>
-                            <option value="2024" disabled>2023/24</option>
+                            <option value="2023" disabled>2022/23</option>
+                            <option value="2024">2023/24</option>
                         </select>
                     </div>
 

@@ -3,6 +3,8 @@ import { ITeam } from "./team.type";
 export type IFixture = {
   _id: string;
   fixtureInfo: IFixtureInfo;
+  homeScore: number;
+  awayScore: number;
   season: number;
   status: string;
   venue: string;
