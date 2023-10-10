@@ -1,6 +1,9 @@
 import { ILogo } from "./logo.type";
 
 export type ITeam = {
-    teamName: string;
-    teamLogo: ILogo;
-  }
+  _id: string;
+  name: string;
+  teamLogo: ILogo;
+  categoryName: string;
+  shortname?: string;
+}

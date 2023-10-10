@@ -1,33 +1,12 @@
-.sectionTitle {
-  font-size: 20px;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.matchWrapper {
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  /* box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1); */
-}
-
-.matchContent {
-  background-color: rgb(255, 255, 255);
-  min-height: 120px;
-  display: flex;
-  flex-direction: row;
-  place-content: center;
-}
-
-.matchContent {
-  border-bottom: 1px rgb(245, 245, 245) solid;
-}
-
-.match {
+.fixtureCard {
+  height: 100%;
+  width: 80%;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 150px 1fr;
+  grid-template-columns: 1fr 200px 1fr;
   place-items: center stretch;
   -webkit-box-align: center;
-  width: 100%;
-  padding: 20px;
+  color: var(--primary-color);
 }
 
 .homeTeam,
@@ -43,23 +22,11 @@
   text-align: center;
 }
 
-.awayTeam {
-  flex-direction: column-reverse;
-}
-
-.matchContent:last-child {
-  border-bottom: none;
-}
-
-.teamName { 
+.teamName {
   display: none;
   font-size: 10px;
   font-weight: 700;
   margin: 5px 0;
-  /* white-space: nowrap;
-  width: 34px;
-  overflow: hidden;
-  text-overflow: ellipsis; */
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -72,7 +39,7 @@
   text-align: right;
 }
 
-.matchDetails {
+.fixtureDetails {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -80,42 +47,20 @@
   gap: 15px;
 }
 
-.matchType {
+.fixtureType {
   font-size: 0.75em;
   font-weight: 700;
-  margin: 5px 0;
+  margin-bottom: 35px;
+  font-family: 'Montserrat', sans-serif !important;
 }
 
-.matchScore {
-  font-size: 1em;
-  font-weight: 600;
-}
-
-.matchScore span {
-  color: white;
-  background: var(--accent-color);
-  border-radius: 5px;
-  padding: 7.5px 10px;
-}
-
-.matchStatus {
-  font-size: 0.75em;
-  font-weight: 600;
-}
-
-.matchDate {
+.fixtureDate {
   font-size: 0.75em;
   font-weight: 600;
   text-align: center;
+  margin-top: 30px;
+  font-family: 'Montserrat', sans-serif !important;
 }
-
-.teamBadge {
-  height: 60px;
-  width: 60px;
-  display: flex;
-  align-items: center;
-}
-
 
 @media (min-width: 420px) {
   .teamName {
@@ -125,15 +70,6 @@
     font-size: 12px;
   }
   
-  .match {
-    display: grid;
-    grid-template-columns: 1fr 150px 1fr;
-    gap: 10px;
-    place-items: center stretch;
-    -webkit-box-align: center;
-    padding: 20px;
-  }
-
   .homeTeam > .teamBadge,
   .awayTeam > .teamBadge {
     width: 100%;
@@ -144,6 +80,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: white;
   }
 
   .homeTeam,
@@ -165,37 +102,18 @@
 }
 
 @media (min-width: 600px) {
-  .matchContainer {
-    width: 100%;
-    max-width: 1280px;
-    margin: auto;
-  }
-
-  .match {
-    display: grid;
-    grid-template-columns: 1fr 150px 1fr;
-    gap: 10px;
-    place-items: center stretch;
-    -webkit-box-align: center;
-    padding: 20px 30px;
-    min-height: 150px;
-  }
-
+ 
   .homeTeam,
   .awayTeam {
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+    flex-direction: column;
+    justify-content: center;
     -webkit-box-align: center;
     align-items: center;
     text-align: center;
     gap: 20px;
-  }
-
-  .awayTeam {
-    justify-content: flex-end;
   }
 }
 

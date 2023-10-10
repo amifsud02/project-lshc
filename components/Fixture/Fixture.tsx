@@ -19,7 +19,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
         <section className={styles.matchContainer}>
             <div className={styles.matchWrapper}>
                 {data.map((fixture) => {
-                    const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
+                    // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
                     const dateObj = new Date(fixture.startDate);
 
                     let day = dateObj.getUTCDate();
@@ -32,25 +32,34 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                     let formattedDate = `${day} ${month} ${year}`;
                     let formattedTime = `${hours}:${minutes}`;
 
+                    const homeTeamName = fixture.fixtureInfo.homeTeam.team.name
+                    const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.teamLogo
+                    const awayTeamName = fixture.fixtureInfo.awayTeam.team.name
+                    const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.teamLogo
+                    const competitionName = fixture.fixtureInfo.competition[0].name;
+
                     return (
                         <>
                             <div className={styles.matchContent} key={crypto.randomBytes(20).toString('hex')}>
                                 <div className={styles.match}>
                                     <>
                                         <div className={styles.homeTeam}>
-                                            <div className={styles.teamBadge}>
-                                                <Image src={imageBuilder.image(fixture.homeTeamId.teamLogo.asset._ref).url()} alt={`${fixture.homeTeamId.teamName}-logo`} width={60} height={60} loading={'eager'}></Image>
-                                            </div>
-                                            <span className={styles.teamName}>{fixture.homeTeamId.teamName}</span>
+                                            {
+                                                homeTeamLogo &&
+                                                <div className={styles.teamBadge}>
+                                                    <Image src={imageBuilder.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}-logo`} width={60} height={60} loading={'eager'}></Image>
+                                                </div>
+                                            }
+                                            <span className={styles.teamName}>{homeTeamName}</span>
                                         </div>
 
                                         <div className={styles.matchDetails}>
                                             <div className={styles.matchType}>
-                                                <h4>{compName}</h4>
+                                                <h4>{competitionName}</h4>
                                             </div>
                                             <div className={styles.matchScore}>
                                                 <span className='numbers'>
-                                                    {fixture.homeScore} - {fixture.awayScore}
+                                                    {/* {fixture.homeScore} - {fixture.awayScore} */}
                                                 </span>
                                             </div>
 
@@ -63,11 +72,13 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                         </div>
 
                                         <div className={styles.awayTeam}>
-                                            <span className={styles.teamName}>{fixture.awayTeamId.teamName}</span>
-                                            <div className={styles.teamBadge}>
-                                                <Image src={imageBuilder.image(fixture.awayTeamId.teamLogo.asset._ref).url()} alt={`${fixture.awayTeamId.teamName}-logo`} width={60} height={60}></Image>
-
-                                            </div>
+                                            <span className={styles.teamName}>{awayTeamName}</span>
+                                            {
+                                                awayTeamLogo &&
+                                                <div className={styles.teamBadge}>
+                                                    <Image src={imageBuilder.image(homeTeamLogo.asset._ref).url()} alt={`${awayTeamName}-logo`} width={60} height={60}></Image>
+                                                </div>
+                                            }
                                         </div>
                                     </>
                                 </div>

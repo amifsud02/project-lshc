@@ -12,11 +12,13 @@ import { IStanding } from "@/lib/types/standing.type";
 import Fixtures from "@/components/Fixture/Fixture";
 import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/Footer";
+import { clientV2 } from "@/lib/utils/sanity/sanity.config";
+import FixtureCarousel from "@/components/Fixture/Carousel";
 
-const getFixtures = async (group: string) => {
+const getFixtures = async (group: string, season: number) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?allfixtures=${group}&season=2023&limit=5`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures?allfixtures=${group}&season=${season}&&limit=5`
     );
 
     if (!response.ok) {
@@ -27,12 +29,30 @@ const getFixtures = async (group: string) => {
     return fixtures;
   } catch (error) {
     console.error("Error fetching fixtures:", error);
-    // Fallback handling: Return a default value or an empty array.
     return [];
   }
 };
 
-const getStandings = async (group: string) => {
+
+const getHomePageFixtures = async (group: string, season: number) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}?isHomepage=1`,
+      { next: { revalidate: 3600 } }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const fixtures = await response.json();
+    return fixtures;
+  } catch (error) {
+    console.error("Error fetching fixtures:", error);
+    return [];
+  }
+};
+const getStandings = async (group: string, season: number) => {
   console.log(group);
   try {
     const response = await fetch(
@@ -53,16 +73,23 @@ const getStandings = async (group: string) => {
 };
 
 export default async function Home() {
-  const menFetchFixtures = await getFixtures('men');
-  let menFixtures: IFixture[] = menFetchFixtures['fixtures'];
+  let currentSeason = await clientV2.fetch(`*[_type == "settings"]`);
+  currentSeason = Number(currentSeason[1].season);
 
-  const womenFetchFixtures = await getFixtures('women');
-  let womenFixtures: IFixture[] = womenFetchFixtures['fixtures'];
+  const menFixturesV2 = await getHomePageFixtures('Men', currentSeason);
+  const menFinishedFixtures: IFixture[] = menFixturesV2['finishedFixtures'];
+  const menScheduledFixtures: IFixture[] = menFixturesV2['scheduledFixtures'];
 
-  const womenFetchStandings = await getStandings("Women's Premier League");
+  // const menFetchFixtures = await getFixtures('men', currentSeason);
+  // let menFixtures: IFixture[] = menFetchFixtures['fixtures'];
+
+  // const womenFetchFixtures = await getFixtures('women', currentSeason);
+  // let womenFixtures: IFixture[] = womenFetchFixtures['fixtures'];
+
+  const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   let womenStandings: IStanding[] = womenFetchStandings['standings'];
 
-  const menFetchStandings = await getStandings("Men's National League");
+  const menFetchStandings = await getStandings("Men's National League", currentSeason);
   let menStandings: IStanding[] = menFetchStandings['standings'];
 
   return (
@@ -75,15 +102,28 @@ export default async function Home() {
 
           <Tabs redirect="/season/2023/schedule/men/national-league/" showall={true}>
             <Tab tabTitle="Men">
-              {menFixtures && (
-                <Fixtures data={menFixtures} showTitle={false}></Fixtures>
+              Nothing Here
+              {/* {menFixtures.length > 0 && (
+                <>
+                  <Fixtures data={menFixtures} showTitle={false} />
+                </>
+              )} */}
+            </Tab>
+
+            <Tab tabTitle="Test">
+              {menFixturesV2 && (
+                <>
+                  <Fixtures data={menFinishedFixtures} showTitle={false} />
+                  <FixtureCarousel data={menScheduledFixtures} />
+                </>
               )}
             </Tab>
 
             <Tab tabTitle="Women">
-              {womenFixtures && (
+             Nothing Here
+              {/* {womenFixtures.length > 0 && (
                 <Fixtures data={womenFixtures} showTitle={false}></Fixtures>
-              )}
+              )} */}
             </Tab>
           </Tabs>
         </div>
