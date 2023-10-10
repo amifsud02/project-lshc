@@ -50,7 +50,7 @@ const getHomePageFixtures = async (group: string, season: number) => {
     return fixtures;
   } catch (error) {
     console.error("Error fetching fixtures:", error);
-    return [];
+    return false;
   }
 };
 
