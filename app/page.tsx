@@ -35,6 +35,7 @@ const getFixtures = async (group: string, season: number) => {
 
 
 const getHomePageFixtures = async (group: string, season: number) => {
+  console.log(process.env.NEXT_PUBLIC_API_URL)
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}?isHomepage=1`,
@@ -52,6 +53,7 @@ const getHomePageFixtures = async (group: string, season: number) => {
     return [];
   }
 };
+
 const getStandings = async (group: string, season: number) => {
   console.log(group);
   try {
