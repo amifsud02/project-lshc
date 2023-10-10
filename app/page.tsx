@@ -119,14 +119,14 @@ export default async function Home() {
 
           <Tabs redirect="/season/2023/schedule/men/national-league/" showall={false}>
             <Tab tabTitle="Men">
-              {menStandings && (
+              {/* {menStandings && (
                 <Standings key={'men_standings'} showTitle={false} data={menStandings}></Standings>
-              )}
+              )} */}
             </Tab>
             <Tab tabTitle="Women">
-              {womenStandings && (
+              {/* {womenStandings && (
                 <Standings key={'women_standings'} showTitle={false} data={womenStandings}></Standings>
-              )}
+              )} */}
             </Tab>
           </Tabs>
         </div>
