@@ -9,7 +9,7 @@ import { IFixture } from '@/lib/types/fixture.type'
 
 
 const FixtureCarousel = ({ data }: { data: IFixture[] }) => {
-    console.log(data);
+
     const arrowStyles: CSSProperties = {
         position: 'absolute',
         zIndex: 2,

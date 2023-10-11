@@ -74,8 +74,6 @@ async function handleSingleCompetition(competitionTypeName: string, season: stri
 
 function createQuery(operator: "==" | "in", competitionTypeNames: string[], season: string, limitQuery: string, status?: string[]) {
     let statusFilter = status ? `&& status in ${JSON.stringify(status)}` : "";
-
-    console.log(statusFilter);
     
     return groq`
   *[_type == "fixture" && competition->season == $season ${statusFilter} && competition->competitionType->competitionTypeName ${operator} $competitionTypeNames]{

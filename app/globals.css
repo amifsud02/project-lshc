@@ -125,7 +125,7 @@ body::-webkit-scrollbar {
 }
 
 .mb-50 {
-  margin-top: 50px;
+  margin-top: 25px;
 }
 
 .carousel-match-content-element{
@@ -403,6 +403,10 @@ body::-webkit-scrollbar {
     display: none;
   }
 
+  .carousel-match-container{
+    height: 250px;
+  }
+  
 }
 
 /* COUNTDOWN CSS */

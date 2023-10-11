@@ -98,7 +98,7 @@ const Schedule = () => {
     const pathname = usePathname();
     const router = useRouter();
     const params = useParams(); // [category]/[competition]
-    console.log(params)
+    
     const { year, category, competition } = params;
 
     const [selectedCompetition, setSelectedCompetition] = useState<{ key: string; value: string }>({
@@ -139,7 +139,6 @@ const Schedule = () => {
             setLoading(true);
             
             try {
-                // console.log(selectedCompetition.value);
                 if (selectedCompetition.value) {
                     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${year}/${category}/${competition}`;
 

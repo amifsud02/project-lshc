@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, context: any) {
         const parsedCompetition = splitCompetition.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
         const fixtures = await getFixtures(parsedYear, parsedCategory, parsedCompetition);
-        console.log(parsedCompetition)
+
         return NextResponse.json(fixtures);    
 
     } catch (error) {

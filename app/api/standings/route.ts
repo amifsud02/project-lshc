@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
     const season = request.nextUrl.searchParams.get("season")
 
     const competitionTypeName = request.nextUrl.searchParams.get('competitiontypename')
-    console.log("From Route: ", competitionTypeName);
 
     const query = groq`
     *[_type == "standing" && competition->season == $season && competition->competitionType->competitionTypeName == $competitionTypeName]{

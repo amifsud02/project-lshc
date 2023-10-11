@@ -39,8 +39,6 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                     
                     const competitionName = fixture.fixtureInfo.competition[0].name;
 
-                    console.log('Away Team Logo: ', awayTeamLogo)
-
                     return (
                         <>
                             <div className={styles.matchContent} key={crypto.randomBytes(20).toString('hex')}>
@@ -59,7 +57,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                         <div className={styles.matchDetails}>
                                             <div>
                                                 <div className={`${styles.matchDate} numbers`}>
-                                                    {formattedDate} / {formattedTime}
+                                                    {formattedDate}
                                                 </div>
                                                 <div className={styles.matchType}>
                                                     <h4>{competitionName}</h4>
@@ -71,7 +69,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                                 </span>
                                             </div>
                                             <div style={{fontSize: '0.75em'}}>
-                                                <p>Fixture Report</p>
+                                                {/* <p>Fixture Report</p> */}
                                             </div>
                                            
                                         </div>

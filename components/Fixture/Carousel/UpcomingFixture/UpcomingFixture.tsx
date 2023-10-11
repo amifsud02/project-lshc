@@ -1,8 +1,8 @@
-import CountdownTimer from '@/components/Countdown/CountdownTimer';
+import Image from 'next/image';
 import styles from './UpcomingFixture.module.css'
 import { IFixture } from '@/lib/types/fixture.type';
-import Image from 'next/image';
 import { imageBuilderV2 } from '@/lib/utils/sanity/sanity.config';
+import CountdownTimer from '@/components/Countdown/CountdownTimer';
 
 const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
@@ -18,55 +18,60 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     let formattedDate = `${day} ${month} ${year}`;
     let formattedTime = `${hours}:${minutes}`;
 
-
     const homeTeamName = fixture.fixtureInfo.homeTeam.team.name
     const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.logo
     const awayTeamName = fixture.fixtureInfo.awayTeam.team.name
     const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.logo
 
-    console.log(homeTeamLogo, awayTeamLogo)
-
     const competitionName = fixture.fixtureInfo.competition[0].name;
 
     return (
         <div className={styles.fixtureCard}>
-            <div className={styles.homeTeam}>
-                <div className={styles.teamBadge}>
-                    { 
-                        homeTeamLogo && 
-                        <Image src={imageBuilderV2.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}`} width={256} height={256} loading={'eager'}></Image> 
-                    }
-                </div>
-                <span className={styles.teamName}>{homeTeamName}</span>
-            </div>
-
-            <div className={styles.matchDetails}>
+            <div>
                 <div>
                     <div className={`${styles.fixtureDate} numbers`}>
-                        {formattedDate} / {formattedTime}
+                        {formattedDate}
                     </div>
                     <div className={styles.fixtureType}>
                         <h4>{competitionName}</h4>
-                    </div>                    
+                    </div>
                 </div>
+            </div>
 
-                <CountdownTimer targetDate={dateObj} />
+            <div className={styles.fixturesMain}>
+                <div className={styles.homeTeam}>
+                    <div className={styles.teamBadge}>
+                        {
+                            homeTeamLogo &&
+                            <Image src={imageBuilderV2.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}`} width={256} height={256} loading={'eager'}></Image>
+                        }
+                    </div>
+                    <span className={styles.teamName}>{homeTeamName}</span>
+                </div>
 
                 <div>
-                    Fixture Report
+                    <div className={styles.countdown}>
+                        <CountdownTimer targetDate={dateObj} />
+                    </div>
+
+                    <div className={styles.fixtureTime}>
+                        {formattedTime}
+                    </div>
                 </div>
-              
+                <div className={styles.awayTeam}>
+                    <div className={styles.teamBadge}>
+                        {
+                            awayTeamLogo &&
+                            <Image src={imageBuilderV2.image(awayTeamLogo.asset._ref).url()} alt={`${awayTeamName}`} width={256} height={256} loading={'eager'}></Image>
+                        }
+                    </div>
+                    <span className={styles.teamName}>{awayTeamName}</span>
+                </div>
             </div>
 
-            <div className={styles.awayTeam}>
-                <div className={styles.teamBadge}>
-                    { 
-                        awayTeamLogo && 
-                        <Image src={imageBuilderV2.image(awayTeamLogo.asset._ref).url()} alt={`${awayTeamName}`} width={256} height={256} loading={'eager'}></Image> 
-                    }
-                </div>
-                <span className={styles.teamName}>{awayTeamName}</span>
-            </div>
+            <div>
+                <span className={styles.fixtureLink}>Match Report</span>
+            </div>           
         </div>
     )
 }

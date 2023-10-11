@@ -146,7 +146,6 @@ const FixturePage: NextPage = () => {
             try {
                 const data = await clientV2.fetch(`*[_type == "fixture" && _id == "${id}"]`);
                 setFixtureData(data[0]);  // assuming data is an array and you're interested in the first item
-                console.log(data[0]);
             } catch (error) {
                 console.error('Error fetching fixture data:', error);
             }

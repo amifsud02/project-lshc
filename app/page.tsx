@@ -16,11 +16,10 @@ import { clientV2 } from "@/lib/utils/sanity/sanity.config";
 import FixtureCarousel from "@/components/Fixture/Carousel";
 
 const getHomePageFixtures = async (group: string, season: number) => {
-  console.log(process.env.NEXT_PUBLIC_API_URL)
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}?isHomepage=1`,
-      { next: { revalidate: 1 } }
+      { cache: 'no-store' }
     );
 
     if (!response.ok) {
@@ -36,7 +35,6 @@ const getHomePageFixtures = async (group: string, season: number) => {
 };
 
 const getStandings = async (group: string, season: number) => {
-  console.log(group);
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/standings?competitiontypename=${group}&season=2023`
@@ -50,7 +48,6 @@ const getStandings = async (group: string, season: number) => {
     return standings;
   } catch (error) {
     console.error("Error fetching standings:", error);
-    // Fallback handling: Return a default value or an empty object.
     return [];
   }
 };
@@ -68,8 +65,6 @@ export default async function Home() {
   const womenFixtures = await getHomePageFixtures('Women', currentSeason);
   const womenFinishedFixtures: IFixture[] = womenFixtures['finishedFixtures'];
   const womenScheduledFixtures: IFixture[] = womenFixtures['scheduledFixtures'];
-
-
 
   const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   let womenStandings: IStanding[] = womenFetchStandings['standings'];
@@ -106,13 +101,14 @@ export default async function Home() {
                     <FixtureCarousel data={womenScheduledFixtures} />
                   )}
 
-                  
+
                 </>
               )}
             </Tab>
           </Tabs>
         </div>
       </section>
+
       <section>
         <div className="parent">
           <h1 className="title">Standings</h1>
@@ -131,7 +127,9 @@ export default async function Home() {
           </Tabs>
         </div>
       </section>
+
       <JoinUs></JoinUs>
+
       <TeamCarousel></TeamCarousel>
       <Partners />
       <Footer />

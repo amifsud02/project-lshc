@@ -36,7 +36,7 @@ const Footer: React.FC<{}> = () => {
                 <div className={`${styles.sfContent}`}>
                     © {new Date().getFullYear()} - La Salle Handball Club
                 </div>
-                <div className={styles.sfContent}>
+                {/* <div className={styles.sfContent}>
                     <p>
                         Designed and Developed by
 
@@ -44,7 +44,7 @@ const Footer: React.FC<{}> = () => {
                            <Image className={styles.cgowtLogo} src={`https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/ftiri6090wv2f2s66vwh`} alt={"CGOWT Logo"} fill={true} priority={false}></Image>
                         </a>
                     </p>
-                </div>
+                </div> */}
             </div>
         </footer>
 

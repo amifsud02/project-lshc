@@ -81,10 +81,9 @@
 }
 
 .matchType {
-  font-size: 0.75em;
-  font-weight: 700;
-  text-align: center;
-  opacity: 0.5;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif !important;
+  opacity: 0.65;
 }
 
 .matchScore {
