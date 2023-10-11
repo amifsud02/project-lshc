@@ -427,6 +427,17 @@ body::-webkit-scrollbar {
   font-size: .75rem;
 }
 
+.fixtures-page .show-counter {
+  margin: 0;
+  scale: 0.75;
+}
+
+@media (min-width: 768px) {
+  .fixtures-page .show-counter {
+    scale: 1;
+  }
+  
+}
 .show-counter {
   margin: 25px 0;
 }
@@ -484,7 +495,8 @@ body::-webkit-scrollbar {
 }
 
 .countdown-indicator span {
-  font-size: 0.4em;
+  margin-top: 5px;
+  font-size: 0.6em;
 }
 
 .vs.notFin, .match-type.notFin {

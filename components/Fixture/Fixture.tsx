@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import styles from './Fixture.module.css'
 import crypto from 'crypto';
+import Link from 'next/link';
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -36,7 +37,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                     const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.logo
                     const awayTeamName = fixture.fixtureInfo.awayTeam.team.name
                     const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.logo
-                    
+
                     const competitionName = fixture.fixtureInfo.competition[0].name;
 
                     return (
@@ -68,10 +69,12 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                                     {fixture.homeScore} - {fixture.awayScore}
                                                 </span>
                                             </div>
-                                            <div style={{fontSize: '0.75em'}}>
-                                                {/* <p>Fixture Report</p> */}
+                                            <div>
+                                                <span className={styles.fixtureLink}>
+                                                    <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
+                                                </span>
                                             </div>
-                                           
+
                                         </div>
 
                                         <div className={styles.awayTeam}>

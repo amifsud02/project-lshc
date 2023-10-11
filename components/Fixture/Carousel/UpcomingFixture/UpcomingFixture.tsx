@@ -3,6 +3,7 @@ import styles from './UpcomingFixture.module.css'
 import { IFixture } from '@/lib/types/fixture.type';
 import { imageBuilderV2 } from '@/lib/utils/sanity/sanity.config';
 import CountdownTimer from '@/components/Countdown/CountdownTimer';
+import Link from 'next/link';
 
 const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
@@ -70,7 +71,9 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
             </div>
 
             <div>
-                <span className={styles.fixtureLink}>Match Report</span>
+                <span className={styles.fixtureLink}>
+                    <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
+                </span>
             </div>           
         </div>
     )

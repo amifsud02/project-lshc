@@ -116,6 +116,15 @@
   align-items: center;
 }
 
+.fixtureLink {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  font-family: "Montserrat", sans-serif !important;
+  padding-bottom: 5px;
+  border-bottom: 1px solid black;
+  opacity: 0.8;
+}
 
 @media (min-width: 420px) {
   .teamName {

@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
-import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
 import { NextPage } from "next";
 import { MapPin } from "lucide-react";
-
-import Navbar from "@/components/Hero/Navbar";
 import styled from "styled-components";
+import Navbar from "@/components/Hero/Navbar";
+import Footer from "@/components/Footer/Footer";
+import React, { useEffect, useState } from "react";
+import { Partners } from "@/components/Partners/Partners";
 import { useParams, useSearchParams } from "next/navigation";
+import CountdownTimer from "@/components/Countdown/CountdownTimer";
 import { IFixtureData, IPlayer } from "@/lib/types/fixture-info.type";
+import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -28,41 +29,42 @@ const formatDate = (dateString: string) => {
     const formattedDate = `${dayName} ${day} ${monthName} ${year}`;
     const formattedTime = `${hours}:${minutes}`;
 
-    return { 
-        formattedDate, 
+    return {
+        formattedDate,
         formattedTime
     }
 }
 
-const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({fixtureData}) => {
+const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureData }) => {
 
+    const { homeTeam, awayTeam } = fixtureData?.fixtureInfo;
     const dateTime = formatDate(fixtureData.startDate.toString());
 
     return (
         <header>
             <FixtureHeader>
                 <Navbar />
-                <div className='parent'>
+                <div className='parent fixtures-page'>
                     <HeaderContent>
                         <Top>
                             <div className="numbers">{dateTime.formattedDate}</div>
-                            <div className="numbers">{dateTime.formattedTime}</div>
+                            <div style={{display: 'inline-flex'}}><MapPin height={'16px'} /> {fixtureData.venue}</div>
                         </Top>
                         <Middle>
                             <Team isSecond={false}>
-                                <TeamName>La Salle</TeamName>
-                                <TeamLogo></TeamLogo>
+                                <TeamName>{homeTeam.team.name}</TeamName>
+                                <TeamLogo src={imageBuilderV2.image(homeTeam.team.logo).url()} />
                             </Team>
 
-                            <TimeScore className="numbers">16:00</TimeScore>
+                            <TimeScore className="numbers">{dateTime.formattedTime}</TimeScore>
 
                             <Team isSecond={true}>
-                                <TeamName>La Salle</TeamName>
-                                <TeamLogo></TeamLogo>
+                                <TeamName>{awayTeam.team.name}</TeamName>
+                                <TeamLogo src={imageBuilderV2.image(awayTeam.team.logo).url()} />
                             </Team>
                         </Middle>
                         <Bottom className="numbers">
-                            <MapPin height={'16px'} /> {fixtureData.venue}
+                            <CountdownTimer targetDate={fixtureData.startDate} />
                         </Bottom>
                     </HeaderContent>
                 </div>
@@ -84,6 +86,9 @@ const PlayerInfo: React.FC<{ player: IPlayer, isRight: boolean }> = ({ player, i
 const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureData }) => {
     const { homeTeam, awayTeam } = fixtureData?.fixtureInfo;
 
+    const homeTeamPlayers = homeTeam?.players || [];
+    const awayTeamPlayers = awayTeam?.players || [];
+
     return (
         <>
             <section>
@@ -91,47 +96,53 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
             </section>
 
             <article className="parent">
-                <LineUpWrapper>
-                    <LineUpTitle>Lineup</LineUpTitle>
-                    <Divider />
-                    <LineUpContainer>
+                {(homeTeamPlayers.length <= 5 || awayTeamPlayers.length <= 5) ? (
+                    <p style={{ textAlign: 'center' }}>Line Up Not Available</p>
+                ) : (
+                    <LineUpWrapper>
+                        <LineUpTitle>Lineup</LineUpTitle>
+                        <Divider />
+                        <LineUpContainer>
+                            <LineUpColumn>
+                                <Team isSecond={false} style={{ marginBottom: '20px' }}>
+                                    <TeamName>{homeTeam.team.name}</TeamName>
+                                    {homeTeam.team.hasOwnProperty("logo") ?
+                                        <TeamLogo src={imageBuilderV2.image(homeTeam.team.logo).url()} /> : ''
+                                    }
+                                </Team>
+                                <LineUpHeader>
+                                    <span style={{ flexGrow: '1' }}></span>
+                                    <span style={{ flexGrow: '5' }}></span>
+                                    <div style={{ flexGrow: '1', textAlign: 'right' }}>Goals</div>
+                                </LineUpHeader>
+                                {homeTeam && homeTeam.players.map((player: IPlayer) => (
+                                    <PlayerInfo key={player._id} player={player} isRight={false} />
+                                ))}
+                            </LineUpColumn>
 
-                        <LineUpColumn>
-                            <Team isSecond={false} style={{ marginBottom: '20px' }}>
-                                <TeamName>{homeTeam.team.name}</TeamName>
-                                {homeTeam.team.hasOwnProperty("logo") ?
-                                    <TeamLogo src={imageBuilderV2.image(homeTeam.team.logo).url()} /> : ''
-                                }
-                            </Team>
-                            <LineUpHeader>
-                                <span style={{ flexGrow: '1' }}></span>
-                                <span style={{ flexGrow: '5' }}></span>
-                                <div style={{ flexGrow: '1', textAlign: 'right' }}>Goals</div>
-                            </LineUpHeader>
-                            {homeTeam && homeTeam.players.map((player: IPlayer) => (
-                                <PlayerInfo key={player._id} player={player} isRight={false} />
-                            ))}
-                        </LineUpColumn>
-
-                        <LineUpColumn>
-                            <Team isSecond={true} style={{ marginBottom: '20px' }}>
-                                <TeamName>{awayTeam.team.name}</TeamName>
-                                {awayTeam.team.hasOwnProperty("logo") ?
-                                    <TeamLogo src={imageBuilderV2.image(awayTeam.team.logo).url()} /> : ''
-                                }
-                            </Team>
-                            <LineUpHeader>
-                                <div style={{ flexGrow: '1', textAlign: 'left' }}>Goals</div>
-                                <span style={{ flexGrow: '5' }}></span>
-                                <span style={{ flexGrow: '1' }}></span>
-                            </LineUpHeader>
-                            {awayTeam.players && awayTeam.players.map((player: IPlayer) => (
-                                <PlayerInfo key={player._id} player={player} isRight={true} />
-                            ))}
-                        </LineUpColumn>
-                    </LineUpContainer>
-                </LineUpWrapper>
+                            <LineUpColumn>
+                                <Team isSecond={true} style={{ marginBottom: '20px' }}>
+                                    <TeamName>{awayTeam.team.name}</TeamName>
+                                    {awayTeam.team.hasOwnProperty("logo") ?
+                                        <TeamLogo src={imageBuilderV2.image(awayTeam.team.logo).url()} /> : ''
+                                    }
+                                </Team>
+                                <LineUpHeader>
+                                    <div style={{ flexGrow: '1', textAlign: 'left' }}>Goals</div>
+                                    <span style={{ flexGrow: '5' }}></span>
+                                    <span style={{ flexGrow: '1' }}></span>
+                                </LineUpHeader>
+                                {awayTeam.players && awayTeam.players.map((player: IPlayer) => (
+                                    <PlayerInfo key={player._id} player={player} isRight={true} />
+                                ))}
+                            </LineUpColumn>
+                        </LineUpContainer>
+                    </LineUpWrapper>
+                )}
             </article>
+
+            <Partners />
+            <Footer />
         </>
     )
 }
@@ -178,16 +189,25 @@ const FixtureHeader = styled.header`
     z-index: -1;
     display: flex;
     flex-flow: column;
-    justify-content: flex-end;
+    justify-content: space-evenly;
     background: linear-gradient(125deg, rgba(1, 41, 111, 1) 0%, rgba(0, 13, 36, 0.95) 100%), url('/template.svg') no-repeat center;
     background-size: cover;
     color: white;
+
+    @media (min-width: 768px) {
+        justify-content: flex-end;
+    }
 `;
 
 const HeaderContent = styled.div`
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     height: 300px;
+
+    @media (min-width: 768px) {
+        gap: 0px;
+    }
 `
 
 const Top = styled.div`
@@ -202,16 +222,17 @@ const Top = styled.div`
     gap: 10px;
 `;
 
-const Middle = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
+const Middle = styled.div`    
     flex-grow: 6;
     flex-basis: 0;
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr;
+    place-items: center;
+    -webkit-box-align: center;
 `;
 
 const Bottom = styled.div`
-    margin-top: 20px;
+    // margin-top: 20px;
     display: flex;
     justify-content: center;
     text-align: center;
@@ -219,34 +240,65 @@ const Bottom = styled.div`
     flex-basis: 0;
     font-size: 0.75em;
     font-weight: 600;
-    opacity: 0.8;
+    opacity: 1;
 `;
+
+const Countdown = styled.div`
+    display: none;
+`
 
 const Team = styled.div<{ isSecond: boolean }>`
     display: flex;
-    flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
+    flex-direction: column-reverse;
     align-items: center;
-    gap: 30px;
+    gap: 15px;
     height: 50px;
     max-height: 50px;
+    justify-content: center;
+
+    text-align: ${props => (props.isSecond ? 'left' : 'right')};
+
+    @media (min-width: 700px) {
+        gap: 30px;
+        flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
+    }
 `;
 
 const TeamLogo = styled.img`
-    width: 50px;
-    height: 50px;
+
+    width: 60px;
+    height: 60px;
+
+    @media (min-width: 768px) {
+        width: 75px;
+        height: 75px;
+    }
+    
 `;
 
 const TeamName = styled.h4`
-    text-align: center;
-    font-size: 2rem;
-    line-height: 2rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
     font-weight: 700;
     text-transform: uppercase;
+
+    @media (min-width: 768px) {
+        font-size: 2rem;
+        line-height: 2rem;
+    }
 `;
 
 const TimeScore = styled.div`
     margin: 0 20px;
     text-align: center;
+    
+    margin: 15px 0;
+    font-weight: 700;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif !important; 
+    padding: 10px 15px; 
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.2)
 `;
 
 const LineUpWrapper = styled.article`
