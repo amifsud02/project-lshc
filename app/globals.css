@@ -409,6 +409,11 @@ body::-webkit-scrollbar {
   
 }
 
+.news-image{
+  width: 100%;
+  margin: 35px 0;
+}
+
 /* COUNTDOWN CSS */
 
 .expired-notice {
