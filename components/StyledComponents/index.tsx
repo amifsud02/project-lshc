@@ -7,10 +7,16 @@ export const ArticleContent = styled.div`
     width: 83.33333333%;
     margin: 0 auto;
 
-    > p {
+    > p, h3 {
         font-size: 18px;
         max-width: 808px;
         margin: 0 auto;
+    }
+
+    > h3 {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 36px auto;
     }
 
     > img {

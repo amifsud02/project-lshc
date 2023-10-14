@@ -32,26 +32,50 @@ export async function generateMetadata(
         openGraph: {
             title: data.title,
             description: data.description,
-            images: [`${urlFor(data.featuredImage.asset._ref)}`, ...previousImages ]
+            images: [`${urlFor(data.featuredImage.asset._ref)}`, ...previousImages]
         }
     }
 }
 
 async function getData(slug: string) {
     const query = `*[_type == "news" && slug.current == "${slug}"]`
-    const data = await clientV2.fetch(query, 
-        { 
+    const data = await clientV2.fetch(query,
+        {
             cache: 'force-cache',
-            next: { 
-                revalidate: 3600 
+            next: {
+                revalidate: 3600
             }
         });
-        
+
     return data;
+}
+
+
+async function getPreviousAndNextPosts(slug: string) {
+    // Query to fetch all news posts sorted by publication date
+    const query = `*[_type == "news"] | order(publishedAt desc)`;
+
+    // Fetch all blog posts
+    const allPosts = await clientV2.fetch(query);
+
+    // Find the index of the current post by slug
+    const currentIndex = allPosts.findIndex((post: INewsPost) => post.slug.current === slug);
+
+    // Calculate the indices for the previous and next posts
+    const previousIndex = currentIndex - 1;
+    const nextIndex = currentIndex + 1;
+
+    // Get the previous and next posts, handling boundary cases
+    const previousPost = previousIndex >= 0 ? allPosts[previousIndex] : null;
+    const nextPost = nextIndex < allPosts.length ? allPosts[nextIndex] : null;
+
+    return { previousPost, nextPost };
 }
 
 export default async function SingleNewsPage({ params }: { params: { slug: string } }) {
     const data = (await getData(params.slug))[0] as INewsPost;
+    
+    const { previousPost, nextPost } = await getPreviousAndNextPosts(params.slug);
 
     const baseSiteUrl = "https://development.lasallehandball.com/news/"
 
@@ -70,7 +94,7 @@ export default async function SingleNewsPage({ params }: { params: { slug: strin
     };
 
     return (
-        <>           
+        <>
             <PageHeader pageName={data.title} backgroundImage={urlFor(data.featuredImage.asset._ref)} ></PageHeader>
 
             <article className='parent'>
@@ -82,14 +106,19 @@ export default async function SingleNewsPage({ params }: { params: { slug: strin
                 </ArticleContent>
             </article>
 
-            <SectionSeparator/>
+            {(previousPost || nextPost) &&
+                <>
+                    <SectionSeparator />
 
-            <section className='parent'>
-               <OtherArticles>
-                    <NewsCard data={data}/>
-                    <NewsCard data={data}/>
-                </OtherArticles>
-            </section>
+                    <section className='parent'>
+                        <OtherArticles>
+                            {previousPost && <NewsCard data={previousPost} />}
+                            {nextPost && <NewsCard data={nextPost} />}
+                        </OtherArticles>
+                    </section>
+                </>
+            }
+
             <Footer />
 
         </>
