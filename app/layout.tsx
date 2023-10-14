@@ -1,6 +1,7 @@
 import "./globals.css";
 import "./fonts.css";
 import Script from "next/script";
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata = {
   title: "La Salle Handball Club",
@@ -31,6 +32,7 @@ export default function RootLayout({
           </Script>
         </div>
         {children}
+        <Analytics/>
       </body>
     </html>
   );

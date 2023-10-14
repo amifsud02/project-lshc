@@ -1,3 +1,5 @@
+'use client'
+
 import TeamCarousel from "@/components/Carousel/Team";
 import { Partners } from "@/components/Partners/Partners";
 import Standings from "@/components/Standings/Standings";
@@ -18,8 +20,13 @@ import FixtureCarousel from "@/components/Fixture/Carousel";
 const getHomePageFixtures = async (group: string, season: number) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}?isHomepage=1`,
-      { cache: 'no-store' }
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}`,
+      {
+        cache: 'reload',
+        next: {
+          revalidate: 60 // once every 60 seconds
+        }
+      }
     );
 
     if (!response.ok) {
@@ -56,15 +63,24 @@ export default async function Home() {
   let currentSeason = await clientV2.fetch(`*[_type == "settings"]`);
   currentSeason = Number(currentSeason[1].season);
 
+  const today = new Date();
+
   /** Fetch Men Fixtures */
-  const menFixtures = await getHomePageFixtures('Men', currentSeason);
-  const menFinishedFixtures: IFixture[] = menFixtures['finishedFixtures'];
-  const menScheduledFixtures: IFixture[] = menFixtures['scheduledFixtures'];
+  const menFixtures = (await getHomePageFixtures('Men', currentSeason) as IFixture[])
+
+  const menScheduledFixtures = menFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) > today).slice(0, 3);
+  const menFinishedFixtures = menFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) < today).slice(0, 5);
+
+  // const menFinishedFixtures: IFixture[] = menFixtures['finishedFixtures'];
+  // const menScheduledFixtures: IFixture[] = menFixtures['scheduledFixtures'];
 
   /** Fetch Women Fixtures */
-  const womenFixtures = await getHomePageFixtures('Women', currentSeason);
-  const womenFinishedFixtures: IFixture[] = womenFixtures['finishedFixtures'];
-  const womenScheduledFixtures: IFixture[] = womenFixtures['scheduledFixtures'];
+  const womenFixtures = (await getHomePageFixtures('Women', currentSeason) as IFixture[])
+  const womenScheduledFixtures = menFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) > today).slice(0, 3);
+  const womenFinishedFixtures = menFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) < today).slice(0, 5);
+
+  // const womenFinishedFixtures: IFixture[] = womenFixtures['finishedFixtures'];
+  // const womenScheduledFixtures: IFixture[] = womenFixtures['scheduledFixtures'];
 
   const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   let womenStandings: IStanding[] = womenFetchStandings['standings'];

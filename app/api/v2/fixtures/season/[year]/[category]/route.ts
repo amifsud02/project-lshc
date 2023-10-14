@@ -15,49 +15,34 @@ export async function GET(request: NextRequest, context: any) {
         // Check for filters
         const isHomepage = Number(request.nextUrl.searchParams.get('isHomepage'));
 
-        if(1 === isHomepage) {
-            const fixtures = await getFixturesForHomepage(parsedYear, category);
-            return NextResponse.json(fixtures);
-        }
+        const fixtures = isHomepage === 1
+            ? await getFixturesForHomepage(parsedYear, category)
+            : await getAllFixtures(parsedYear, category);
 
-        const fixtures = await getAllFixtures(parsedYear, category);
         return NextResponse.json(fixtures);
     } catch (error) {
         return NextResponse.json(error);
     }
-
 }
 
 const getAllFixtures = async (year: number, category: string) => {
     const query = groq`*[_type == "fixture" && season == $year && fixtureInfo.competition[0].category.categoryName == $category]`
     const fixtures = await clientV2.fetch(query, {year, category})
-
     return fixtures;
 }
 
 const getFixturesForHomepage = async (year: number, category: string) => {
-    const finishedFixtures = await getFixturesStatusFinished(year, category, 5);
-    const scheduledFixtures = await getFixturesStatusScheduled(year, category, 3);
+    const finishedFixtures = await getFixturesStatus(year, category, 'Completed', 5);
+    const scheduledFixtures = await getFixturesStatus(year, category, 'Scheduled', 3);
 
     return {finishedFixtures, scheduledFixtures};
 }
 
-const getFixturesStatusFinished = async (year: number, category: string, limit?: number) => {
+const getFixturesStatus = async (year: number, category: string, status: string, limit?: number) => {
     const limitQuery = `[0..${limit}-1]`;
-    const status = 'Completed';
 
     const query = groq`*[_type == "fixture" && season == $year && fixtureInfo.competition[0].category.categoryName == $category && status == $status] | order(startDate desc) ${limitQuery}`
     const fixtures = await clientV2.fetch(query, {year, category, status});
 
     return fixtures;
-}
-
-const getFixturesStatusScheduled = async (year: number, category: string, limit?: number) => {
-    const limitQuery = `[0..${limit}-1]`;
-    const status = 'Scheduled';
-
-    const query = groq`*[_type == "fixture" && season == $year && fixtureInfo.competition[0].category.categoryName == $category && status == $status] | order(startDate desc) ${limitQuery}`
-    const fixtures = await clientV2.fetch(query, {year, category, status});
-
-    return fixtures;
-}
+}   

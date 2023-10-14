@@ -17,7 +17,7 @@ const ShowCounter = ({ days, hours, minutes, seconds }: any) => {
     <div className="show-counter">
       <div className="countdown-link">
         <div className="countdown-indicator">
-          <DateTimeDisplay value={days} type={'Days'} isDanger={days <= 3} />
+          <DateTimeDisplay value={days} type={'Days'} isDanger={false} />
           <span>Days</span>
         </div>
         <span style={{transform: "translateY(-15px)"}}>:</span>

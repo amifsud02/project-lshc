@@ -101,6 +101,8 @@ const Schedule = () => {
     
     const { year, category, competition } = params;
 
+
+
     const [selectedCompetition, setSelectedCompetition] = useState<{ key: string; value: string }>({
         key: '',
         value: ''
@@ -114,7 +116,7 @@ const Schedule = () => {
 
     const changeURL = (event: any) => {
         const newCompetition = event.target.value;
-        const parentKey = Object.keys(competitionDropdown[category]).find((key) => competitionDropdown[category][key].value === newCompetition);
+        const parentKey = Object.keys(competitionDropdown[category as string]).find((key) => competitionDropdown[category as string][key].value === newCompetition);
         if(parentKey) {
             setSelectedCompetition({ key: parentKey, value: newCompetition })
             router.push(`${process.env.NEXT_PUBLIC_API_URL as string}/season/${year}/schedule/${category}/${parentKey}`)
@@ -124,7 +126,7 @@ const Schedule = () => {
     useEffect(() => {
         // This effect is only responsible for setting selectedCompetition based on the URL parameters.
         if (category && competition) {
-            const competitionItem = competitionDropdown[category][competition];
+            const competitionItem = competitionDropdown[category as string][competition as string];
             if (competitionItem) {
                 setSelectedCompetition({
                     key: competitionItem.key,
@@ -197,8 +199,8 @@ const Schedule = () => {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px' }}>
                         <select name="competitions" id="competitions" onChange={changeURL} value={selectedCompetition.value}>
-                            {Object.keys(competitionDropdown[category]).map((competitionKey) => {
-                                const competition = competitionDropdown[category][competitionKey];
+                            {Object.keys(competitionDropdown[category as string]).map((competitionKey) => {
+                                const competition = competitionDropdown[category as string][competitionKey];
                                 return (
                                     <option value={competition.value} key={competition.key}>{competition.key}</option>
                                 )

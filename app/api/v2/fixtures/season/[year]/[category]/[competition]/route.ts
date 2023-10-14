@@ -17,7 +17,6 @@ export async function GET(request: NextRequest, context: any) {
         const fixtures = await getFixtures(parsedYear, parsedCategory, parsedCompetition);
 
         return NextResponse.json(fixtures);    
-
     } catch (error) {
         return NextResponse.json(error);
     }
@@ -34,7 +33,4 @@ const getFixtures = async (year: number, category: string, competition: string) 
         const fixtures = await clientV2.fetch(query, {year, category, competition});
         return fixtures;
     }
-   
-
-    
 }

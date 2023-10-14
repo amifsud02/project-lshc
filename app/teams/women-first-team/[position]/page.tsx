@@ -161,7 +161,7 @@ const WomenTeam = () => {
 
   const filteredPlayers = useMemo(() => {
       if (position) {
-          const selectedPosition = position.toLowerCase();
+          const selectedPosition = (position as string).toLowerCase();
 
           const positionExists = positions.find(
               (pos) => pos.name.toLowerCase() === selectedPosition
@@ -178,7 +178,7 @@ const WomenTeam = () => {
       return playerData;
   }, [position]);
 
-  const selectedPositionName = position && positions.find((pos) => pos.name.toLowerCase() === position.toLowerCase())?.name;
+  const selectedPositionName = position && positions.find((pos) => pos.name.toLowerCase() === (position as string).toLowerCase())?.name;
 
   return (
       <>

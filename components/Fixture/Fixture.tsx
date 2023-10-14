@@ -42,7 +42,7 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
 
                     return (
                         <>
-                            <div className={styles.matchContent} key={crypto.randomBytes(20).toString('hex')}>
+                            <div className={styles.matchContent} key={fixture._id}>
                                 <div className={styles.match}>
                                     <>
                                         <div className={styles.homeTeam}>

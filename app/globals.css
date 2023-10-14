@@ -478,8 +478,8 @@ body::-webkit-scrollbar {
   margin: 0 0.5rem;
 }
 
-.show-counter .countdown.danger {
-  color: white;
+.show-counter .countdown.danger p {
+  color: rgb(255, 0, 0);
 }
 
 .show-counter .countdown > p {
