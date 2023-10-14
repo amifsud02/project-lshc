@@ -1,5 +1,3 @@
-'use client'
-
 import TeamCarousel from "@/components/Carousel/Team";
 import { Partners } from "@/components/Partners/Partners";
 import Standings from "@/components/Standings/Standings";
@@ -16,6 +14,8 @@ import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/Footer";
 import { clientV2 } from "@/lib/utils/sanity/sanity.config";
 import FixtureCarousel from "@/components/Fixture/Carousel";
+
+import crypto from 'crypto';
 
 const getHomePageFixtures = async (group: string, season: number) => {
   try {
@@ -76,8 +76,8 @@ export default async function Home() {
 
   /** Fetch Women Fixtures */
   const womenFixtures = (await getHomePageFixtures('Women', currentSeason) as IFixture[])
-  const womenScheduledFixtures = menFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) > today).slice(0, 3);
-  const womenFinishedFixtures = menFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) < today).slice(0, 5);
+  const womenScheduledFixtures = womenFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
+  const womenFinishedFixtures = womenFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
 
   // const womenFinishedFixtures: IFixture[] = womenFixtures['finishedFixtures'];
   // const womenScheduledFixtures: IFixture[] = womenFixtures['scheduledFixtures'];
@@ -97,7 +97,7 @@ export default async function Home() {
           <h1 className="title">Latest Fixtures</h1>
 
           <Tabs redirect="/season/2023/schedule/men/national-league/" showall={true}>
-            <Tab tabTitle="Men">
+            <Tab tabTitle="Men" key={crypto.randomBytes(20).toString('hex')}>
               {menFixtures && (
                 <>
                   <Fixtures data={menFinishedFixtures} showTitle={false} />
@@ -106,7 +106,7 @@ export default async function Home() {
               )}
             </Tab>
 
-            <Tab tabTitle="Women">
+            <Tab tabTitle="Women" key={crypto.randomBytes(20).toString('hex')}>
               {womenFixtures && (
                 <>
                   {womenFinishedFixtures.length > 0 && (
@@ -130,12 +130,12 @@ export default async function Home() {
           <h1 className="title">Standings</h1>
 
           <Tabs redirect="/season/2023/schedule/men/national-league/" showall={false}>
-            <Tab tabTitle="Men">
+            <Tab tabTitle="Men" key={crypto.randomBytes(20).toString('hex')}>
               {/* {menStandings && (
                 <Standings key={'men_standings'} showTitle={false} data={menStandings}></Standings>
               )} */}
             </Tab>
-            <Tab tabTitle="Women">
+            <Tab tabTitle="Women" key={crypto.randomBytes(20).toString('hex')}>
               {/* {womenStandings && (
                 <Standings key={'women_standings'} showTitle={false} data={womenStandings}></Standings>
               )} */}
