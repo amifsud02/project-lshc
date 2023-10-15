@@ -52,6 +52,7 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
 
                 <div>
                     <div className={styles.countdown}>
+                        <p style={{fontSize: '12px'}}>The match will start in:</p>
                         <CountdownTimer targetDate={dateObj} />
                     </div>
 

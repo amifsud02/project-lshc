@@ -7,6 +7,7 @@ export interface IFixtureData {
     endDate:       Date;
     venue:         string;
     broadcastInfo: string;
+    season:        Date;
 }
 
 export interface IFixtureInfo {

@@ -1,16 +1,80 @@
-"use client";
-
-import { NextPage } from "next";
+import React from "react";
 import { MapPin } from "lucide-react";
-import styled from "styled-components";
 import Navbar from "@/components/Hero/Navbar";
 import Footer from "@/components/Footer/Footer";
-import React, { useEffect, useState } from "react";
+import { Metadata, ResolvingMetadata } from "next";
 import { Partners } from "@/components/Partners/Partners";
-import { useParams, useSearchParams } from "next/navigation";
-import CountdownTimer from "@/components/Countdown/CountdownTimer";
 import { IFixtureData, IPlayer } from "@/lib/types/fixture-info.type";
 import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
+import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader } from "@/components/Fixture/SinglePageComponents";
+
+import dynamic from "next/dynamic";
+
+const DynamicCountdown = dynamic(() => import('../../../components/Countdown/CountdownTimer'), {
+    ssr: false,
+    loading: () => <></>
+})
+
+
+const getData = async (id: string) => {
+    const query = `*[_type == "fixture" && _id == "${id}"]`;
+    const data = await clientV2.fetch(query,
+        {
+            next: {
+                revalidate: 3600
+            }
+        });
+
+    return data;
+}
+
+const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+
+type Props = {
+    params: { id: string }
+    searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata(
+    { params, searchParams }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+
+    const id = params.id
+    const fixtureData = (await getData(id))[0] as IFixtureData;
+
+    const { homeTeam, awayTeam } = fixtureData?.fixtureInfo
+    const { competition } = fixtureData?.fixtureInfo;
+    const { season } = fixtureData;
+
+    const teams = `${homeTeam.team.name} - ${awayTeam.team.name}`
+    const year = getYear(season.toString());
+
+    const canonical = `${baseSiteUrl}/fixtures/${id}`;
+    const title = `${teams}: Handball ${competition[0].name} ${competition[0].category.categoryName} ${year}  fixture | La Salle Handball`;
+    const description = `Explore live handball streams, stats, and stay updated with the latest results and rankings from ${competition[0].name} ${competition[0].category.categoryName} ${year} fixture: ${teams}`
+    return {
+        title: title,
+        description: description,
+        alternates: {
+            canonical: canonical
+        },
+        openGraph: {
+            title: title,
+            description: description,
+            // image: 'https://example.com/path/to/your-image.jpg',
+            type: 'website', // or other applicable types
+            url: canonical,
+        }
+    }
+};
+
+const getYear = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const previousYear = (year - 1).toString() // Extract the last two digits of the next year
+    return `${previousYear}/${year.toString().slice(-2)}`;
+}
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -48,7 +112,7 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
                     <HeaderContent>
                         <Top>
                             <div className="numbers">{dateTime.formattedDate}</div>
-                            <div style={{display: 'inline-flex'}}><MapPin height={'16px'} /> {fixtureData.venue}</div>
+                            <div style={{ display: 'inline-flex' }}><MapPin height={'16px'} /> {fixtureData.venue}</div>
                         </Top>
                         <Middle>
                             <Team isSecond={false}>
@@ -64,7 +128,8 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
                             </Team>
                         </Middle>
                         <Bottom className="numbers">
-                            <CountdownTimer targetDate={fixtureData.startDate} />
+                            <h2>The match will start in:</h2>
+                            <DynamicCountdown targetDate={fixtureData.startDate} />
                         </Bottom>
                     </HeaderContent>
                 </div>
@@ -147,216 +212,14 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
     )
 }
 
-const FixturePage: NextPage = () => {
-    const { id } = useParams();
-    const [fixtureData, setFixtureData] = useState(null);
-
-
-    useEffect(() => {
-        const fetchFixtureData = async () => {
-            try {
-                const data = await clientV2.fetch(`*[_type == "fixture" && _id == "${id}"]`);
-                setFixtureData(data[0]);  // assuming data is an array and you're interested in the first item
-            } catch (error) {
-                console.error('Error fetching fixture data:', error);
-            }
-        };
-
-        fetchFixtureData();
-    }, [id]);
-
-    if (!fixtureData) {
-        return <div>Loading...</div>;  // render loading state while fetching
-    }
+// eslint-disable-next-line @next/next/no-async-client-component
+export default async function FixturePage({ params }: { params: { id: string } }) {
+    const { id } = params;
+    const fixtureData = (await getData(id))[0] as IFixtureData;
 
     return (
         <FixturePageContent fixtureData={fixtureData} />
-    );
+    )
+
 }
 
-export default FixturePage;
-
-const Divider = styled.hr`
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(0, 13, 36, 0.5) 50%, rgba(255,255,255,0) 100%);
-    margin-bottom: 60px;
-`;
-
-const FixtureHeader = styled.header`
-    width: 100%;
-    height: 600px;
-    z-index: -1;
-    display: flex;
-    flex-flow: column;
-    justify-content: space-evenly;
-    background: linear-gradient(125deg, rgba(1, 41, 111, 1) 0%, rgba(0, 13, 36, 0.95) 100%), url('/template.svg') no-repeat center;
-    background-size: cover;
-    color: white;
-
-    @media (min-width: 768px) {
-        justify-content: flex-end;
-    }
-`;
-
-const HeaderContent = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 300px;
-
-    @media (min-width: 768px) {
-        gap: 0px;
-    }
-`
-
-const Top = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 0.75em;
-    font-weight: 600;
-    opacity: 0.8;
-    flex-basis: 0;
-    flex-grow: 1;
-    gap: 10px;
-`;
-
-const Middle = styled.div`    
-    flex-grow: 6;
-    flex-basis: 0;
-    display: grid;
-    grid-template-columns: 1fr 100px 1fr;
-    place-items: center;
-    -webkit-box-align: center;
-`;
-
-const Bottom = styled.div`
-    // margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-grow: 1;
-    flex-basis: 0;
-    font-size: 0.75em;
-    font-weight: 600;
-    opacity: 1;
-`;
-
-const Countdown = styled.div`
-    display: none;
-`
-
-const Team = styled.div<{ isSecond: boolean }>`
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 15px;
-    height: 50px;
-    max-height: 50px;
-    justify-content: center;
-
-    text-align: ${props => (props.isSecond ? 'left' : 'right')};
-
-    @media (min-width: 700px) {
-        gap: 30px;
-        flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
-    }
-`;
-
-const TeamLogo = styled.img`
-
-    width: 60px;
-    height: 60px;
-
-    @media (min-width: 768px) {
-        width: 75px;
-        height: 75px;
-    }
-    
-`;
-
-const TeamName = styled.h4`
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-
-    @media (min-width: 768px) {
-        font-size: 2rem;
-        line-height: 2rem;
-    }
-`;
-
-const TimeScore = styled.div`
-    margin: 0 20px;
-    text-align: center;
-    
-    margin: 15px 0;
-    font-weight: 700;
-    font-size: 18px;
-    font-family: "Montserrat", sans-serif !important; 
-    padding: 10px 15px; 
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.2)
-`;
-
-const LineUpWrapper = styled.article`
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    
-`
-
-const LineUpContainer = styled.section`
-    display: flex;
-    gap: 50px;
-`
-
-const LineUpHeader = styled.div`
-    display: flex;
-    width: 100%;
-    gap: 20px;
-    margin: 10px 0;
-
-`
-
-const LineUpTitle = styled.h6`
-    text-align: center;
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    margin-bottom: 50px;
-`
-
-const LineUpColumn = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    width: 50%;
-`
-const PlayerContent = styled.div<{ isRight: boolean }>`
-    display: flex;
-    flex-direction: ${props => (props.isRight ? 'row-reverse' : 'row')};
-    width: 100%;
-    gap: 20px;
-    align-items: center;
-`
-const PlayerImage = styled.img`
-    width: 40px;
-    height: 40px;
-`
-
-const PlayerName = styled.p<{ isRight: boolean }>`
-    font-size: 1em;
-    font-weight: 600;
-    flex-grow: 5;
-    text-align: ${props => (props.isRight ? 'right' : 'left')};
-`
-
-const PlayerStats = styled.p<{ isRight: boolean }>`
-    font-size: 1em;
-    font-weight: 600;
-    flex-grow: 1;
-    text-align: ${props => (props.isRight ? 'left' : 'right')};
-`

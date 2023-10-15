@@ -1,10 +1,28 @@
-"use client";
-import { useState, useEffect } from "react";
-
 import PageHeader from "@/components/PageHeader/PageHeader";
 import SponsorCard from "@/components/Sponsor/sponsorCard";
 import styles from "@/components/Sponsor/sponsors.module.css";
 import Footer from "@/components/Footer/Footer";
+
+const title = 'Official La Salle Handball Sponsors'
+const description = 'Explore the valued partners and official sponsors of La Salle Handball Club, standing by our players in every match.'
+const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const canonical = `${baseSiteUrl}/club/management`;
+
+export const metadata = {
+    title: title,
+    description: description,
+    alternates: {
+        canonical: canonical
+    },
+    openGraph: {
+        title: title,
+        description: description,
+        // image: 'https://example.com/path/to/your-image.jpg',
+        type: 'website', // or other applicable types
+        url: canonical,
+        // keywords: []
+    }
+};
 
 const Sponsors = () => {
   return (

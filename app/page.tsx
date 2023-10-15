@@ -19,11 +19,33 @@ import crypto from 'crypto';
 
 import dynamic from "next/dynamic";
 import FixtureCardSkeleton from "@/components/Fixture/Carousel/Skeleton/UpcomingFixtureSkeleton";
+import { Metadata, ResolvingMetadata } from "next";
 
 const DynamicFixtureCarousel = dynamic(() => import('../components/Fixture/Carousel'), {
   ssr: false,
   loading: () => <FixtureCardSkeleton/>
 })
+
+const title =  "La Salle Handball | Official Website"
+const description = "Visit the La Salle Handball Club official website: all the latest news on the team and club, and fixtures."
+const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const canonical = `${baseSiteUrl}`;
+export async function generateMetadata( parent: ResolvingMetadata): Promise<Metadata> {
+  return {
+    title: title,
+    description: description,
+    alternates: {
+      canonical: canonical
+    },
+    openGraph: {
+        title: title,
+        description: description,
+        // image: 'https://example.com/path/to/your-image.jpg',
+        type: 'website', // or other applicable types
+        url: canonical,
+    }
+  }
+};
 
 const getHomePageFixtures = async (group: string, season: number) => {
   try {
