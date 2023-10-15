@@ -1,0 +1,189 @@
+@keyframes shine-lines {
+  0% {
+    background-position: -100px;
+  }
+  40%,
+  100% {
+    background-position: 140px;
+  }
+}
+
+@keyframes shine-avatar {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.fixtureCard {
+  padding: 20px;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  place-items: center;
+  height: 100%;
+  width: 100%;
+  color: var(--primary-color);
+  margin: 0 auto;
+  background-color: var(--primary-color);
+}
+
+.fixturesMain {
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  place-items: center stretch;
+  -webkit-box-align: center;
+  justify-items: center;
+}
+
+.homeTeam,
+.awayTeam {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+}
+
+.teamName {
+  height: 6px;
+  width: 70px;
+  border-radius: 8px;
+  background-image: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+  background-size: 400%;
+  animation: shine-lines 1.6s infinite ease-in-out;
+}
+
+.homeTeam > .teamName {
+  text-align: left;
+}
+
+.awayTeam > .teamName {
+  text-align: right;
+}
+
+.homeTeam > .teamBadge,
+.awayTeam > .teamBadge {
+  height: 60px;
+  width: 60px;
+  max-width: 60px;
+  max-height: 60px;
+  margin: 0px 10px;
+  background-image: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+  background-size: 400%;
+  animation: shine-lines 1.6s infinite ease-in-out;  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fixtureDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.fixtureType {
+  height: 6px;
+  width: 125px;
+  border-radius: 8px;
+  background-image: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+  background-size: 400%;
+  animation: shine-lines 1.6s infinite ease-in-out;
+}
+
+.fixtureDate {
+  margin: 0 auto;
+  margin-bottom: 10px;
+  height: 6px;
+  width: 100px;
+  border-radius: 8px;
+  background-image: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+  background-size: 400%;
+  animation: shine-lines 1.6s infinite ease-in-out;
+}
+
+.countdown {
+  display: none;
+}
+
+.fixtureTime {
+  height: 6px;
+  width: 125px;
+  border-radius: 8px;
+  background-image: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+  background-size: 400%;
+  animation: shine-lines 1.6s infinite ease-in-out;
+}
+
+.fixtureLink {
+  height: 6px;
+  width: 125px;
+  border-radius: 8px;
+  background-image: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+  background-size: 400%;
+  animation: shine-lines 1.6s infinite ease-in-out;
+}
+
+@media (min-width: 420px) {
+  .teamName {
+    display: block;
+    text-overflow: clip;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .homeTeam > .teamBadge,
+  .awayTeam > .teamBadge {
+    max-width: 60px;
+    max-height: 60px;
+    margin: 0px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .homeTeam,
+  .awayTeam {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (min-width: 600px) {
+  .homeTeam,
+  .awayTeam {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .countdown {
+    display: block;
+  }
+
+  .fixtureTime {
+    display: none;
+  }
+}

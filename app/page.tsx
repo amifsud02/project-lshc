@@ -13,16 +13,23 @@ import Fixtures from "@/components/Fixture/Fixture";
 import Hero from "@/components/Hero/Hero";
 import Footer from "@/components/Footer/Footer";
 import { clientV2 } from "@/lib/utils/sanity/sanity.config";
-import FixtureCarousel from "@/components/Fixture/Carousel";
+// import FixtureCarousel from "@/components/Fixture/Carousel";
 
 import crypto from 'crypto';
+
+import dynamic from "next/dynamic";
+import FixtureCardSkeleton from "@/components/Fixture/Carousel/Skeleton/UpcomingFixtureSkeleton";
+
+const DynamicFixtureCarousel = dynamic(() => import('../components/Fixture/Carousel'), {
+  ssr: false,
+  loading: () => <FixtureCardSkeleton/>
+})
 
 const getHomePageFixtures = async (group: string, season: number) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}`,
       {
-        cache: 'reload',
         next: {
           revalidate: 60 // once every 60 seconds
         }
@@ -67,20 +74,13 @@ export default async function Home() {
 
   /** Fetch Men Fixtures */
   const menFixtures = (await getHomePageFixtures('Men', currentSeason) as IFixture[])
-
   const menScheduledFixtures = menFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) > today).slice(0, 3);
   const menFinishedFixtures = menFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) < today).slice(0, 5);
-
-  // const menFinishedFixtures: IFixture[] = menFixtures['finishedFixtures'];
-  // const menScheduledFixtures: IFixture[] = menFixtures['scheduledFixtures'];
 
   /** Fetch Women Fixtures */
   const womenFixtures = (await getHomePageFixtures('Women', currentSeason) as IFixture[])
   const womenScheduledFixtures = womenFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
   const womenFinishedFixtures = womenFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
-
-  // const womenFinishedFixtures: IFixture[] = womenFixtures['finishedFixtures'];
-  // const womenScheduledFixtures: IFixture[] = womenFixtures['scheduledFixtures'];
 
   const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   let womenStandings: IStanding[] = womenFetchStandings['standings'];
@@ -101,7 +101,7 @@ export default async function Home() {
               {menFixtures && (
                 <>
                   <Fixtures data={menFinishedFixtures} showTitle={false} />
-                  <FixtureCarousel data={menScheduledFixtures} />
+                  <DynamicFixtureCarousel data={menScheduledFixtures} />
                 </>
               )}
             </Tab>
@@ -114,7 +114,7 @@ export default async function Home() {
                   )}
 
                   {womenScheduledFixtures.length > 0 && (
-                    <FixtureCarousel data={womenScheduledFixtures} />
+                    <DynamicFixtureCarousel data={womenScheduledFixtures} />
                   )}
 
 

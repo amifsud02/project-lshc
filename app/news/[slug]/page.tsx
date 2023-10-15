@@ -7,7 +7,6 @@ import { clientV2 } from "@/lib/utils/sanity/sanity.config";
 import PageHeader from '@/components/News/NewsHeader/PageHeader';
 
 import type { Metadata, ResolvingMetadata } from 'next'
-import styled from 'styled-components';
 import { ArticleContent, OtherArticles } from '@/components/StyledComponents';
 import SectionSeparator from '@/components/News/section-separator';
 import NewsCard from '@/components/News/NewsCard/NewsCard';
@@ -29,6 +28,7 @@ export async function generateMetadata(
 
     return {
         title: data.title,
+        description: data.description,
         openGraph: {
             title: data.title,
             description: data.description,
@@ -41,7 +41,6 @@ async function getData(slug: string) {
     const query = `*[_type == "news" && slug.current == "${slug}"]`
     const data = await clientV2.fetch(query,
         {
-            cache: 'force-cache',
             next: {
                 revalidate: 3600
             }
