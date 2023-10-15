@@ -3,9 +3,22 @@ import "./fonts.css";
 import Script from "next/script";
 import { Analytics } from '@vercel/analytics/react';
 
+const title =  "La Salle Handball | Official Website"
+const description = "Visit the La Salle Handball Club official website: all the latest news on the team and club, and fixtures."
+const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const canonical = `${baseSiteUrl}`;
+
 export const metadata = {
-  title: "La Salle Handball Club",
-  description: "An amateur club with a professional mentality.",
+  title: title,
+    description: description,
+    alternates: {
+      canonical: canonical
+    },
+    openGraph: {
+        title: title,
+        description: description,        
+        url: canonical,
+    }
 };
 
 export default function RootLayout({

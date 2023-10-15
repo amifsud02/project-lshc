@@ -62,8 +62,7 @@ export async function generateMetadata(
         openGraph: {
             title: title,
             description: description,
-            // image: 'https://example.com/path/to/your-image.jpg',
-            type: 'website', // or other applicable types
+            
             url: canonical,
         }
     }
