@@ -1,5 +1,5 @@
 import TeamCarousel from "@/components/Carousel/Team";
-import { Partners } from "@/components/Partners/Partners";
+import Partners from "@/components/Partners/Partners";
 import Standings from "@/components/Standings/Standings";
 
 import styles from "@/components/Fixture/Fixture.module.css";
@@ -24,6 +24,11 @@ import { Metadata, ResolvingMetadata } from "next";
 const DynamicFixtureCarousel = dynamic(() => import('../components/Fixture/Carousel'), {
   ssr: false,
   loading: () => <FixtureCardSkeleton/>
+})
+
+const DynamicPartners = dynamic(() => import('../components/Partners/Partners'), {
+  ssr: true,
+  loading: () => <></>
 })
 
 const getHomePageFixtures = async (group: string, season: number) => {
@@ -148,7 +153,7 @@ export default async function Home() {
       <JoinUs></JoinUs>
 
       <TeamCarousel></TeamCarousel>
-      <Partners />
+      <DynamicPartners/>
       <Footer />
     </main>
   );
