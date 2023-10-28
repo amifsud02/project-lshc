@@ -76,13 +76,13 @@ export default async function Home() {
   /** Fetch Men Fixtures */
   const menFixtures = (await getHomePageFixtures('Men', currentSeason) as IFixture[])
 
-  const menScheduledFixtures: IFixture[] = menFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
-  const menFinishedFixtures: IFixture[] = menFixtures.filter((match) => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
+  const menScheduledFixtures: IFixture[] = menFixtures && menFixtures.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()).filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
+  const menFinishedFixtures: IFixture[] = menFixtures && menFixtures.filter((match) => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
   
   /** Fetch Women Fixtures */
   const womenFixtures = (await getHomePageFixtures('Women', currentSeason) as IFixture[])
-  const womenScheduledFixtures: IFixture[] = womenFixtures.filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
-  const womenFinishedFixtures: IFixture[] = womenFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
+  const womenScheduledFixtures: IFixture[] = womenFixtures && womenFixtures.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()).filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
+  const womenFinishedFixtures: IFixture[] = womenFixtures && womenFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
 
   // const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   // let womenStandings: IStanding[] = womenFetchStandings['standings'];
