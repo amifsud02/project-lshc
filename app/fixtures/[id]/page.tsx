@@ -85,8 +85,8 @@ const formatDate = (dateString: string) => {
     const year = date.getFullYear();
 
     // Get the hours and minutes, ensuring they are two digits
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2); 
 
     // Construct the formatted date string
     const formattedDate = `${dayName} ${day} ${monthName} ${year}`;
@@ -102,6 +102,7 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
 
     const { homeTeam, awayTeam } = fixtureData?.fixtureInfo;
     const dateTime = formatDate(fixtureData.startDate.toString());
+
     const today = new Date();
 
     return (
