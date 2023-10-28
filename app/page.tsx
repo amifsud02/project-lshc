@@ -32,7 +32,7 @@ const getHomePageFixtures = async (group: string, season: number) => {
       `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${season}/${group}`,
       {
         next: {
-          revalidate: 60 // once every 60 seconds
+          revalidate: 3600 // once every 60 seconds
         }
       }
     );
@@ -75,13 +75,14 @@ export default async function Home() {
   
   /** Fetch Men Fixtures */
   const menFixtures = (await getHomePageFixtures('Men', currentSeason) as IFixture[])
-  const menScheduledFixtures = menFixtures.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()).filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
-  const menFinishedFixtures = menFixtures.filter((match) => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
-  console.log(menFinishedFixtures);
+
+  const menScheduledFixtures: IFixture[] = menFixtures.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()).filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
+  const menFinishedFixtures: IFixture[] = menFixtures.filter((match) => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
+  
   /** Fetch Women Fixtures */
   const womenFixtures = (await getHomePageFixtures('Women', currentSeason) as IFixture[])
-  const womenScheduledFixtures = womenFixtures.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()).filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
-  const womenFinishedFixtures = womenFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
+  const womenScheduledFixtures: IFixture[] = womenFixtures.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()).filter(match => match.status === 'Scheduled' && new Date(match.startDate) >= today).slice(0, 3);
+  const womenFinishedFixtures: IFixture[] = womenFixtures.filter(match => match.status === 'Completed' && new Date(match.startDate) <= today).slice(0, 5);
 
   // const womenFetchStandings = await getStandings("Women's Premier League", currentSeason);
   // let womenStandings: IStanding[] = womenFetchStandings['standings'];
