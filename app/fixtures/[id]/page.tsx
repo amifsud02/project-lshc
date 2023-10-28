@@ -130,7 +130,7 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
 
                         <Bottom className="numbers">
                             {
-                                fixtureData.startDate >= today && 
+                                new Date(fixtureData.startDate) >= today && 
                                 <>
                                     <h2>The match will start in:</h2>
                                     <DynamicCountdown targetDate={fixtureData.startDate} />

@@ -79,10 +79,9 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                             </div>
                                             <div>
                                                 <span className={styles.fixtureLink}>
-                                                    {
-                                                        fixture.status === 'Completed' &&
-                                                        <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
-                                                    }
+                                                
+                                                    <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
+                                                    
                                                 </span>
                                             </div>
 
