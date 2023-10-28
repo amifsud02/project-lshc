@@ -6,6 +6,7 @@ import Image from 'next/image';
 import styles from './Fixture.module.css'
 import crypto from 'crypto';
 import Link from 'next/link';
+import { TimeScore, TimeScoreV2 } from './SinglePageComponents';
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -23,12 +24,12 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
                     const dateObj = new Date(fixture.startDate);
 
-                    let day = dateObj.getUTCDate();
-                    let month = monthNames[dateObj.getUTCMonth()]; // getting the month name
-                    let year = dateObj.getUTCFullYear();
+                    let day = dateObj.getDate();
+                    let month = monthNames[dateObj.getMonth()]; // getting the month name
+                    let year = dateObj.getFullYear();
 
-                    let hours = ("0" + dateObj.getUTCHours()).slice(-2); // padding single digit hours with a leading zero
-                    let minutes = ("0" + dateObj.getUTCMinutes()).slice(-2); // padding single digit minutes with a leading zero
+                    let hours = ("0" + dateObj.getHours()).slice(-2); // padding single digit hours with a leading zero
+                    let minutes = ("0" + dateObj.getMinutes()).slice(-2); // padding single digit minutes with a leading zero
 
                     let formattedDate = `${day} ${month} ${year}`;
                     let formattedTime = `${hours}:${minutes}`;
@@ -65,13 +66,23 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
                                                 </div>
                                             </div>
                                             <div className={styles.matchScore}>
-                                                <span className='numbers'>
-                                                    {fixture.homeScore} - {fixture.awayScore}
-                                                </span>
+                                                {
+                                                    fixture.status !== 'Completed' ? 
+                                                        <TimeScoreV2 className="numbers">{formattedTime}</TimeScoreV2>
+                                                    :
+
+                                                    <span className='numbers'>
+                                                        {fixture.homeScore} - {fixture.awayScore}
+                                                    </span>
+                                                }
+                                               
                                             </div>
                                             <div>
                                                 <span className={styles.fixtureLink}>
-                                                    <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
+                                                    {
+                                                        fixture.status === 'Completed' &&
+                                                        <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
+                                                    }
                                                 </span>
                                             </div>
 

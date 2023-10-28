@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import { Partners } from "@/components/Partners/Partners";
+import { Partners }from "@/components/Partners/Partners";
 
 const title = 'La Salle Handball | Management'
 const description = 'Meet the La Salle Handball leadership: President, Vice-President, and Sports Director of your team.'

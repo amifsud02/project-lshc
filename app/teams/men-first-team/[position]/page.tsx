@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { Partners } from '@/components/Partners/Partners';
+import { Partners }from '@/components/Partners/Partners';
 import { IPlayerCard } from '@/lib/types/player.type';
 
 import PageHeader from "@/components/PageHeader/PageHeader";

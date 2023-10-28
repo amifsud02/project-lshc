@@ -1,6 +1,6 @@
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import { Partners } from "@/components/Partners/Partners";
+import { Partners }from "@/components/Partners/Partners";
 import { clientV2 } from "@/lib/utils/sanity/sanity.config";
 
 async function getData(slug: string) {

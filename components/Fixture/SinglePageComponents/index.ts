@@ -129,6 +129,15 @@ export const TimeScore = styled.div`
     background: rgba(255, 255, 255, 0.2)
 `;
 
+export const TimeScoreV2 = styled.div`
+    text-align: center;
+    font-weight: 700;
+    padding: 7.5px 10px;
+    border-radius: 6px;
+    color: white;
+    background: rgba(1, 41, 111, 0.8)
+`;
+
 export const LineUpWrapper = styled.article`
     height: 100%;
     width: 100%;

@@ -3,7 +3,7 @@
 import Fixtures from "@/components/Fixture/Fixture";
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import { Partners } from "@/components/Partners/Partners";
+import { Partners }from "@/components/Partners/Partners";
 import { IFixture } from "@/lib/types/fixture.type";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -101,8 +101,6 @@ const Schedule = () => {
     
     const { year, category, competition } = params;
 
-
-
     const [selectedCompetition, setSelectedCompetition] = useState<{ key: string; value: string }>({
         key: '',
         value: ''
@@ -176,20 +174,20 @@ const Schedule = () => {
                         <div className="nav__tab">
                             <ul className="category">
                                 <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/men`)? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/men/national-league`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/men/all`}>
                                         Men
                                     </Link>
                                 </li>
                                 <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/women`) ? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/women/premier-league`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/women/all`}>
                                         Women
                                     </Link></li>
                                 <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/u21-men`) ? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/u21-men/national-league`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/u21-men/all`}>
                                         U21 Men
                                     </Link></li>
                                 <li className={`tablinks ${pathname.startsWith(`/season/${year}/schedule/u21-women`) ? 'active' : ''}`}>
-                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/u21-women/national-league`}>
+                                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/season/${year}/schedule/u21-women/all`}>
                                         U21 Women
                                     </Link>
                                 </li>
@@ -197,7 +195,7 @@ const Schedule = () => {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px' }}>
+                    {/* <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px' }}>
                         <select name="competitions" id="competitions" onChange={changeURL} value={selectedCompetition.value}>
                             {Object.keys(competitionDropdown[category as string]).map((competitionKey) => {
                                 const competition = competitionDropdown[category as string][competitionKey];
@@ -208,10 +206,9 @@ const Schedule = () => {
                         </select>
 
                         <select name="seasons" className='numbers' id="seasons">
-                            <option value="2023" disabled>2022/23</option>
                             <option value="2024">2023/24</option>
                         </select>
-                    </div>
+                    </div> */}
                 </div>
 
 

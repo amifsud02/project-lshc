@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 
 import PageHeader from "@/components/PageHeader/PageHeader";
 import PlayerCard from "@/components/PlayerCard/PlayerCard";
-import { Partners } from '@/components/Partners/Partners';
+import { Partners }from '@/components/Partners/Partners';
 import Footer from '@/components/Footer/Footer';
 import { IPlayerCard } from '@/lib/types/player.type';
 

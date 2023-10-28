@@ -3,7 +3,7 @@ import { MapPin } from "lucide-react";
 import Navbar from "@/components/Hero/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { Metadata, ResolvingMetadata } from "next";
-import { Partners } from "@/components/Partners/Partners";
+import { Partners }from "@/components/Partners/Partners";
 import { IFixtureData, IPlayer } from "@/lib/types/fixture-info.type";
 import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
 import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader } from "@/components/Fixture/SinglePageComponents";
@@ -62,7 +62,7 @@ export async function generateMetadata(
         openGraph: {
             title: title,
             description: description,
-            
+
             url: canonical,
         }
     }
@@ -102,6 +102,7 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
 
     const { homeTeam, awayTeam } = fixtureData?.fixtureInfo;
     const dateTime = formatDate(fixtureData.startDate.toString());
+    const today = new Date();
 
     return (
         <header>
@@ -126,9 +127,15 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
                                 <TeamLogo src={imageBuilderV2.image(awayTeam.team.logo).url()} />
                             </Team>
                         </Middle>
+
                         <Bottom className="numbers">
-                            <h2>The match will start in:</h2>
-                            <DynamicCountdown targetDate={fixtureData.startDate} />
+                            {
+                                fixtureData.startDate >= today && 
+                                <>
+                                    <h2>The match will start in:</h2>
+                                    <DynamicCountdown targetDate={fixtureData.startDate} />
+                                </>
+                            }
                         </Bottom>
                     </HeaderContent>
                 </div>

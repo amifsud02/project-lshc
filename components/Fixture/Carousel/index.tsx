@@ -7,7 +7,6 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"
 import UpcomingFixture from './UpcomingFixture/UpcomingFixture'
 import { IFixture } from '@/lib/types/fixture.type'
 
-
 const FixtureCarousel = ({ data }: { data: IFixture[] }) => {
 
     const arrowStyles: CSSProperties = {
@@ -39,8 +38,8 @@ const FixtureCarousel = ({ data }: { data: IFixture[] }) => {
             infiniteLoop={true}
             showStatus={false}
             showThumbs={false}
-            showIndicators={data.length > 1} 
-            
+            showIndicators={data.length > 1}
+
 
             width={'100%'}
 
@@ -85,13 +84,16 @@ const FixtureCarousel = ({ data }: { data: IFixture[] }) => {
             }}
         >
 
-            {data.map((fixture: IFixture) => (
-                <div className="carousel-match-container" key={fixture._id}>
-                    <div className="carousel-match-content-element">
-                        <UpcomingFixture fixture={fixture}/>
+            {data.map((fixture: IFixture) => {
+                console.log(fixture.startDate);
+                return (
+                    <div className="carousel-match-container" key={fixture._id}>
+                        <div className="carousel-match-content-element">
+                            <UpcomingFixture fixture={fixture} />
+                        </div>
                     </div>
-                </div>
-            ))}
+                )
+            })}
 
         </Carousel>
     )

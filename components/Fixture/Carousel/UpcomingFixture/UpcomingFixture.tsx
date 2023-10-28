@@ -8,13 +8,15 @@ import Link from 'next/link';
 const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
     const dateObj = new Date(fixture.startDate);
+    console.log(dateObj);
+    
 
-    let day = dateObj.getUTCDate();
-    let month = monthNames[dateObj.getUTCMonth()]; // getting the month name
-    let year = dateObj.getUTCFullYear();
+    let day = dateObj.getDate();
+    let month = monthNames[dateObj.getMonth()]; // getting the month name
+    let year = dateObj.getFullYear();
 
-    let hours = ("0" + dateObj.getUTCHours()).slice(-2); // padding single digit hours with a leading zero
-    let minutes = ("0" + dateObj.getUTCMinutes()).slice(-2); // padding single digit minutes with a leading zero
+    let hours = ("0" + dateObj.getHours() + 1).slice(-2); // padding single digit hours with a leading zero
+    let minutes = ("0" + dateObj.getMinutes()).slice(-2); // padding single digit minutes with a leading zero
 
     let formattedDate = `${day} ${month} ${year}`;
     let formattedTime = `${hours}:${minutes}`;

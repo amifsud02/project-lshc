@@ -1,7 +1,7 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 import ContactForm from "./contact-form";
 import Footer from "@/components/Footer/Footer";
-import { Partners } from "@/components/Partners/Partners";
+import { Partners }from "@/components/Partners/Partners";
 
 const title = 'La Salle Handball | Contact Us'
 const description = 'Click here to reach out to our team regarding inquiries, job opportunities, future projects, or any other matters you find important.'
