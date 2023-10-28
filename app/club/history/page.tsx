@@ -1,6 +1,25 @@
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import { Partners } from "@/components/Partners/Partners";
+import { Partners }from "@/components/Partners/Partners";
+
+const title = 'History of La Salle Handball | La Salle Handball'
+const description = 'Malta&apos;s handball legends: EHF Cup contenders, national league champions, and more. Explore our rich history!'
+const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const canonical = `${baseSiteUrl}/club/history`;
+
+export const metadata = {
+    title: title,
+    description: description,
+    alternates: {
+        canonical: canonical
+    },
+    openGraph: {
+        title: title,
+        description: description,
+        
+        url: canonical,
+    }
+};
 
 const History = () => {
   return (

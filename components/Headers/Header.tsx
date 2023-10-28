@@ -25,20 +25,20 @@ const navItems: NavItem[] = [
         label: "Home",
         href: "/",
     },
-    // {
-    //     label: "News",
-    //     href: "/news",
-    //     dropdown: [
-    //         {
-    //             label: "All The News",
-    //             href: "/"
-    //         },
-    //         {
-    //             label: "Photo Galleries",
-    //             href: "/"
-    //         }
-    //     ]
-    // },
+    {
+        label: "News",
+        href: "/news",
+        dropdown: [
+            {
+                label: "All The News",
+                href: "/news/all-the-news"
+            },
+            // {
+            //     label: "Photo Galleries",
+            //     href: "/"
+            // }
+        ]
+    },
     {
         label: "Teams",
         href: "/teams/men-first-team/all",
@@ -67,11 +67,11 @@ const navItems: NavItem[] = [
     },
     {
         label: "Season",
-        href: "/season/2023/schedule/men/national-league",
+        href: "/season/2024/schedule/men/all",
         dropdown: [
             {
                 label: "Schedule",
-                href: "/season/2023/schedule/men/national-league"
+                href: "/season/2024/schedule/men/all"
             },
             // {
             //     label: "Standings",

@@ -25,7 +25,6 @@ export default function ContactForm() {
 
 
     const handleRadioChange = (e:  React.ChangeEvent<HTMLInputElement> ) => {
-        console.log(e.target);
         setContact(e.target.value);
     };
 

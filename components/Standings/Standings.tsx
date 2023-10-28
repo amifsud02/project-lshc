@@ -54,14 +54,14 @@ const Standings = ({ showTitle, data }: { showTitle: boolean, data: IStanding[] 
 
                     {data[0].teams.map((team, index) => { 
                         return (
-                            <div className={`${styles.tableRow} ${styles.tableBodyRow} ${team.team.teamName === 'La Salle' ? styles.tablePrimaryRow : ''}`} key={crypto.randomBytes(20).toString('hex')}>
+                            <div className={`${styles.tableRow} ${styles.tableBodyRow} ${team.team.name === 'La Salle' ? styles.tablePrimaryRow : ''}`} key={crypto.randomBytes(20).toString('hex')}>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
                                     {index + 1}
                                 </div>
                                 <div className={`${styles.tableCell} ${styles.tableBodyCell}`}>
                                     <div className={styles.team}>
-                                        <Image src={imageBuilder.image(team.team.teamLogo.asset._ref).width(50).height(50).url()} alt={`${team.team.teamName}-logo`} width={40} height={40}></Image>
-                                        <p className={styles.teamName}>{team.team.teamName}</p>
+                                        <Image src={imageBuilder.image(team.team.logo.asset._ref).width(50).height(50).url()} alt={`${team.team.name}-logo`} width={40} height={40}></Image>
+                                        <p className={styles.name}>{team.team.name}</p>
                                     </div>
                                 </div>
 

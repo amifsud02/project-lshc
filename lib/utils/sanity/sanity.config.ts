@@ -8,4 +8,14 @@ export const client = createClient({
     useCdn: true
 })
 
+export const clientV2 = createClient({ 
+    projectId: 'mde7gom4', 
+    dataset: 'production',
+    apiVersion: '2022-03-25',
+    useCdn: false 
+})
+
+
 export const imageBuilder = ImageUrlBuilder(client);
+export const imageBuilderV2 = ImageUrlBuilder(clientV2);
+

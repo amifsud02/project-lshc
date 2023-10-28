@@ -5,7 +5,8 @@
 }
 
 .matchWrapper {
-  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  /* box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1); */
 }
 
 .matchContent {
@@ -80,9 +81,10 @@
 }
 
 .matchType {
-  font-size: 0.75em;
-  font-weight: 700;
-  margin: 5px 0;
+  text-align: center;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif !important;
+  opacity: 0.65;
 }
 
 .matchScore {
@@ -115,6 +117,15 @@
   align-items: center;
 }
 
+.fixtureLink {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  font-family: "Montserrat", sans-serif !important;
+  padding-bottom: 5px;
+  border-bottom: 1px solid black;
+  opacity: 0.8;
+}
 
 @media (min-width: 420px) {
   .teamName {
@@ -202,29 +213,4 @@
   .matchContainer {
     /* padding: 50px 70px; */
   }
-}
-
-/* UPCOMING MATCH */
-
-.upcomingMatchWrapper {
-  margin: 50px 0 0 0;
-  color: white;
-  padding: 100px;
-  background: rgb(1, 41, 111);
-  background: -moz-linear-gradient(
-    125deg,
-    rgba(1, 41, 111, 1) 0%,
-    rgba(0, 13, 36, 1) 100%
-  );
-  background: -webkit-linear-gradient(
-    125deg,
-    rgba(1, 41, 111, 1) 0%,
-    rgba(0, 13, 36, 1) 100%
-  );
-  background: linear-gradient(
-    125deg,
-    rgba(1, 41, 111, 1) 0%,
-    rgba(0, 13, 36, 1) 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#01296f",endColorstr="#000d24",GradientType=1);
 }

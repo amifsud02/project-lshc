@@ -1,10 +1,12 @@
-import { imageBuilder } from '@/lib/utils/sanity/sanity.config';
+import { imageBuilderV2 } from '@/lib/utils/sanity/sanity.config';
 import { IFixture } from '@/lib/types/fixture.type';
 
 import Image from 'next/image';
 
 import styles from './Fixture.module.css'
 import crypto from 'crypto';
+import Link from 'next/link';
+import { TimeScore, TimeScoreV2 } from './SinglePageComponents';
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -19,55 +21,80 @@ const Fixtures = ({ showTitle, data }: { showTitle: boolean, data: IFixture[] })
         <section className={styles.matchContainer}>
             <div className={styles.matchWrapper}>
                 {data.map((fixture) => {
-                    const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
+                    // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
                     const dateObj = new Date(fixture.startDate);
 
-                    let day = dateObj.getUTCDate();
-                    let month = monthNames[dateObj.getUTCMonth()]; // getting the month name
-                    let year = dateObj.getUTCFullYear();
+                    let day = dateObj.getDate();
+                    let month = monthNames[dateObj.getMonth()]; // getting the month name
+                    let year = dateObj.getFullYear();
 
-                    let hours = ("0" + dateObj.getUTCHours()).slice(-2); // padding single digit hours with a leading zero
-                    let minutes = ("0" + dateObj.getUTCMinutes()).slice(-2); // padding single digit minutes with a leading zero
+                    let hours = ("0" + dateObj.getHours()).slice(-2); // padding single digit hours with a leading zero
+                    let minutes = ("0" + dateObj.getMinutes()).slice(-2); // padding single digit minutes with a leading zero
 
                     let formattedDate = `${day} ${month} ${year}`;
                     let formattedTime = `${hours}:${minutes}`;
 
+                    const homeTeamName = fixture.fixtureInfo.homeTeam.team.name
+                    const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.logo
+                    const awayTeamName = fixture.fixtureInfo.awayTeam.team.name
+                    const awayTeamLogo = fixture.fixtureInfo.awayTeam.team.logo
+
+                    const competitionName = fixture.fixtureInfo.competition[0].name;
+
                     return (
                         <>
-                            <div className={styles.matchContent} key={crypto.randomBytes(20).toString('hex')}>
+                            <div className={styles.matchContent} key={fixture._id}>
                                 <div className={styles.match}>
                                     <>
                                         <div className={styles.homeTeam}>
-                                            <div className={styles.teamBadge}>
-                                                <Image src={imageBuilder.image(fixture.homeTeamId.teamLogo.asset._ref).url()} alt={`${fixture.homeTeamId.teamName}-logo`} width={60} height={60} loading={'eager'}></Image>
-                                            </div>
-                                            <span className={styles.teamName}>{fixture.homeTeamId.teamName}</span>
+                                            {
+                                                homeTeamLogo &&
+                                                <div className={styles.teamBadge}>
+                                                    <Image src={imageBuilderV2.image(homeTeamLogo.asset._ref).url()} alt={`${homeTeamName}-logo`} width={256} height={256} loading={'eager'}></Image>
+                                                </div>
+                                            }
+                                            <span className={styles.teamName}>{homeTeamName}</span>
                                         </div>
 
                                         <div className={styles.matchDetails}>
-                                            <div className={styles.matchType}>
-                                                <h4>{compName}</h4>
+                                            <div>
+                                                <div className={`${styles.matchDate} numbers`}>
+                                                    {formattedDate}
+                                                </div>
+                                                <div className={styles.matchType}>
+                                                    <h4>{competitionName}</h4>
+                                                </div>
                                             </div>
                                             <div className={styles.matchScore}>
-                                                <span className='numbers'>
-                                                    {fixture.homeScore} - {fixture.awayScore}
+                                                {
+                                                    fixture.status !== 'Completed' ? 
+                                                        <TimeScoreV2 className="numbers">{formattedTime}</TimeScoreV2>
+                                                    :
+
+                                                    <span className='numbers'>
+                                                        {fixture.homeScore} - {fixture.awayScore}
+                                                    </span>
+                                                }
+                                               
+                                            </div>
+                                            <div>
+                                                <span className={styles.fixtureLink}>
+                                                
+                                                    <Link href={`/fixtures/${fixture._id}`}>Match Report</Link>
+                                                    
                                                 </span>
                                             </div>
 
-                                            <div className={`${styles.matchDate} numbers`}>
-                                                {formattedDate}
-                                                <br />
-                                                {formattedTime}
-                                                {/* 04 June 2023<br />21:00 */}
-                                            </div>
                                         </div>
 
                                         <div className={styles.awayTeam}>
-                                            <span className={styles.teamName}>{fixture.awayTeamId.teamName}</span>
-                                            <div className={styles.teamBadge}>
-                                                <Image src={imageBuilder.image(fixture.awayTeamId.teamLogo.asset._ref).url()} alt={`${fixture.awayTeamId.teamName}-logo`} width={60} height={60}></Image>
-
-                                            </div>
+                                            <span className={styles.teamName}>{awayTeamName}</span>
+                                            {
+                                                awayTeamLogo &&
+                                                <div className={styles.teamBadge}>
+                                                    <Image src={imageBuilderV2.image(awayTeamLogo.asset._ref).url()} alt={`${awayTeamName}-logo`} width={256} height={256}></Image>
+                                                </div>
+                                            }
                                         </div>
                                     </>
                                 </div>

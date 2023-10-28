@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 
 import PageHeader from "@/components/PageHeader/PageHeader";
 import PlayerCard from "@/components/PlayerCard/PlayerCard";
-import { Partners } from '@/components/Partners/Partners';
+import { Partners }from '@/components/Partners/Partners';
 import Footer from '@/components/Footer/Footer';
 import { IPlayerCard } from '@/lib/types/player.type';
 
@@ -149,7 +149,7 @@ const U21WomenTeam = () => {
 
   const filteredPlayers = useMemo(() => {
       if (position) {
-          const selectedPosition = position.toLowerCase();
+          const selectedPosition = (position as string).toLowerCase();
 
           const positionExists = positions.find(
               (pos) => pos.name.toLowerCase() === selectedPosition
@@ -166,7 +166,7 @@ const U21WomenTeam = () => {
       return playerData;
   }, [position]);
 
-  const selectedPositionName = position && positions.find((pos) => pos.name.toLowerCase() === position.toLowerCase())?.name;
+  const selectedPositionName = position && positions.find((pos) => pos.name.toLowerCase() === (position as string).toLowerCase())?.name;
 
   return (
       <>

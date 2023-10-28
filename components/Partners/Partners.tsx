@@ -49,7 +49,3 @@ export function Partners() {
         </section>
     )
 }
-
-export function PartnerCard() {
-
-}
