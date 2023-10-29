@@ -78,8 +78,10 @@ const getYear = (dateString: string) => {
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
 
-    const timeObj = date.toLocaleString("en-US", { timeZone: "Europe/Berlin" })
+    const timeObj = date.toLocaleString("de-De", { timeZone: "Europe/Berlin" })
     const timeParts = timeObj.split(', ')[1].split(':');
+    console.log(timeObj);
+
     const hour = timeParts[0];
     const minute = timeParts[1];  
 

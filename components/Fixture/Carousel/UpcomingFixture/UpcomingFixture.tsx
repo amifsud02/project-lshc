@@ -8,7 +8,7 @@ import Link from 'next/link';
 const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
     const dateObj = new Date(fixture.startDate);
-    const timeObj = dateObj.toLocaleString("en-US", { timeZone: "Europe/Berlin" })
+    const timeObj = dateObj.toLocaleString("de-De", { timeZone: "Europe/Berlin" })
 
     console.log('TIME OBJ', timeObj);
 
