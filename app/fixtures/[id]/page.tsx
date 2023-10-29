@@ -78,6 +78,11 @@ const getYear = (dateString: string) => {
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
 
+    const timeObj = date.toLocaleString("en-US", { timeZone: "Europe/Berlin" })
+    const timeParts = timeObj.split(', ')[1].split(':');
+    const hour = timeParts[0];
+    const minute = timeParts[1];  
+
     // Get the day name, date, and month name
     const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
     const day = date.getDate();
@@ -90,7 +95,7 @@ const formatDate = (dateString: string) => {
 
     // Construct the formatted date string
     const formattedDate = `${dayName} ${day} ${monthName} ${year}`;
-    const formattedTime = `${hours}:${minutes}`;
+    const formattedTime = `${hour}:${minute}`;
 
     return {
         formattedDate,

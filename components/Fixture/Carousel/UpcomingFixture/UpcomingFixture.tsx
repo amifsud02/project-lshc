@@ -8,8 +8,9 @@ import Link from 'next/link';
 const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     // const compName = cleanCompetitionName(fixture.competition.competitionType.competitionTypeName);
     const dateObj = new Date(fixture.startDate);
-    console.log(dateObj);
-    
+    const timeObj = dateObj.toLocaleString("en-US", { timeZone: "Europe/Berlin" })
+
+    console.log('TIME OBJ', timeObj);
 
     let day = dateObj.getDate();
     let month = monthNames[dateObj.getMonth()]; // getting the month name
@@ -18,8 +19,13 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     let hours = ("0" + dateObj.getHours()).slice(-2); // padding single digit hours with a leading zero
     let minutes = ("0" + dateObj.getMinutes()).slice(-2); // padding single digit minutes with a leading zero
 
+    const timeParts = timeObj.split(', ')[1].split(':');
+    const hour = timeParts[0];
+    const minute = timeParts[1];
+
     let formattedDate = `${day} ${month} ${year}`;
-    let formattedTime = `${hours}:${minutes}`;
+    
+    let formattedTime = `${hour}:${minute}`;
 
     const homeTeamName = fixture.fixtureInfo.homeTeam.team.name
     const homeTeamLogo = fixture.fixtureInfo.homeTeam.team.logo
