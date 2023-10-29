@@ -101,7 +101,7 @@ export const MobileNavbar = () => {
 
                                     <AccordionItem header="Season" url="^\/season\/\d{4}\/schedule\/[a-zA-Z0-9_]+\/[\w-]+">
                                         <ul className={styles.mobile__dropdown}>
-                                            <li><Link href={'/season/2023/schedule/men/national-league'}>Schedule</Link></li>
+                                            <li><Link href={'/season/2024/schedule/men/all'}>Schedule</Link></li>
                                             {/* <li><Link href={'/season/2023/standings/men/national-league'}>Schedule</Link></li> */}
                                         </ul>
                                     </AccordionItem>
