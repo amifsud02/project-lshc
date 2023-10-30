@@ -8,6 +8,8 @@ export interface IFixtureData {
     venue:         string;
     broadcastInfo: string;
     season:        Date;
+    homeScore:     number;
+    awayScore:     number;
 }
 
 export interface IFixtureInfo {

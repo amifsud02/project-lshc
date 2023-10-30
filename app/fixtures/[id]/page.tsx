@@ -128,7 +128,9 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
                                 <TeamLogo src={imageBuilderV2.image(homeTeam.team.logo).url()} />
                             </Team>
 
-                            <TimeScore className="numbers">{dateTime.formattedTime}</TimeScore>
+                            <TimeScore className="numbers">
+                                {fixtureData.status === 'Completed' ? `${fixtureData.homeScore} - ${fixtureData.awayScore}` : dateTime.formattedTime}
+                            </TimeScore>
 
                             <Team isSecond={true}>
                                 <TeamName>{awayTeam.team.name}</TeamName>
