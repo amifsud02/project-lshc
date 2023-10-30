@@ -6,7 +6,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { Partners }from "@/components/Partners/Partners";
 import { IFixtureData, IPlayer } from "@/lib/types/fixture-info.type";
 import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
-import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader } from "@/components/Fixture/SinglePageComponents";
+import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader, Goals } from "@/components/Fixture/SinglePageComponents";
 
 import dynamic from "next/dynamic";
 
@@ -157,7 +157,7 @@ const PlayerInfo: React.FC<{ player: IPlayer, isRight: boolean }> = ({ player, i
         <PlayerContent isRight={isRight}>
             <PlayerImage></PlayerImage>
             <PlayerName isRight={isRight}>{player.firstName} {player.lastName}</PlayerName>
-            <PlayerStats className="numbers" isRight={isRight}>{player.goalsScored}</PlayerStats>
+            <PlayerStats className="numbers" isRight={isRight}>{player.goalsScored > 0 ? player.goalsScored : 0}</PlayerStats>
         </PlayerContent>
     )
 }
@@ -190,9 +190,7 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                                     }
                                 </Team>
                                 <LineUpHeader>
-                                    <span style={{ flexGrow: '1' }}></span>
-                                    <span style={{ flexGrow: '5' }}></span>
-                                    <div style={{ flexGrow: '1', textAlign: 'right' }}>Goals</div>
+                                    <Goals style={{ flexGrow: '1' }} isRight={true}>Goals</Goals>
                                 </LineUpHeader>
                                 {homeTeam && homeTeam.players.map((player: IPlayer) => (
                                     <PlayerInfo key={player._id} player={player} isRight={false} />
@@ -207,9 +205,7 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                                     }
                                 </Team>
                                 <LineUpHeader>
-                                    <div style={{ flexGrow: '1', textAlign: 'left' }}>Goals</div>
-                                    <span style={{ flexGrow: '5' }}></span>
-                                    <span style={{ flexGrow: '1' }}></span>
+                                    <Goals style={{ flexGrow: '1'}} isRight={false}>Goals</Goals>
                                 </LineUpHeader>
                                 {awayTeam.players && awayTeam.players.map((player: IPlayer) => (
                                     <PlayerInfo key={player._id} player={player} isRight={true} />

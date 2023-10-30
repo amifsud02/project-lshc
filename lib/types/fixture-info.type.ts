@@ -62,4 +62,5 @@ export interface IPlayer {
     goalsScored:      number;
     lastName:         string;
     firstName:        string;
+    kitNumber: number;
 }

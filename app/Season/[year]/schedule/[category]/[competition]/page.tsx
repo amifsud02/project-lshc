@@ -115,6 +115,7 @@ const Schedule = () => {
     const changeURL = (event: any) => {
         const newCompetition = event.target.value;
         const parentKey = Object.keys(competitionDropdown[category as string]).find((key) => competitionDropdown[category as string][key].value === newCompetition);
+        
         if(parentKey) {
             setSelectedCompetition({ key: parentKey, value: newCompetition })
             router.push(`${process.env.NEXT_PUBLIC_API_URL as string}/season/${year}/schedule/${category}/${parentKey}`)
@@ -162,7 +163,7 @@ const Schedule = () => {
         if (selectedCompetition.value && selectedYear) {
             fetchData();
         }
-    }, [selectedCompetition.value, selectedYear]);
+    }, [year, selectedCompetition.value, selectedYear]);
 
     return (
         <>

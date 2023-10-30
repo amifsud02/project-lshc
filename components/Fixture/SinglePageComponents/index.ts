@@ -90,6 +90,12 @@ export const Team = styled.div<{ isSecond: boolean }>`
         gap: 30px;
         flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
     }
+
+    @media screen and (max-width: 600px) {
+        flex-direction: row-reverse;
+        height: 75px;
+        max-height: 75px;
+    }
 `;
 
 export const TeamLogo = styled.img`
@@ -113,6 +119,10 @@ export const TeamName = styled.h4`
     @media (min-width: 768px) {
         font-size: 2rem;
         line-height: 2rem;
+    }
+
+    @media screen and (max-width: 600px) {
+        font-size: 1.5rem;
     }
 `;
 
@@ -149,6 +159,10 @@ export const LineUpWrapper = styled.article`
 export const LineUpContainer = styled.section`
     display: flex;
     gap: 50px;
+
+    @media screen and (max-width: 600px) {
+        flex-direction: column;
+    }
 `
 
 export const LineUpHeader = styled.div`
@@ -156,7 +170,14 @@ export const LineUpHeader = styled.div`
     width: 100%;
     gap: 20px;
     margin: 10px 0;
+`
 
+export const Goals = styled.div<{ isRight: boolean }>`
+    text-align: ${props => (props.isRight ? 'right' : 'left')};
+
+    @media screen and (max-width: 600px) {
+        text-align: right;
+    }
 `
 
 export const LineUpTitle = styled.h6`
@@ -171,6 +192,10 @@ export const LineUpColumn = styled.div`
     flex-direction: column;
     flex-grow: 1;
     width: 50%;
+
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
 `
 export const PlayerContent = styled.div<{ isRight: boolean }>`
     display: flex;
@@ -178,6 +203,13 @@ export const PlayerContent = styled.div<{ isRight: boolean }>`
     width: 100%;
     gap: 20px;
     align-items: center;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 0.5px solid rgba(0,0,0, 0.08);
+
+    @media screen and (max-width: 600px) {
+        flex-direction: row;
+    }
 `
 export const PlayerImage = styled.img`
     width: 40px;
@@ -185,15 +217,23 @@ export const PlayerImage = styled.img`
 `
 
 export const PlayerName = styled.p<{ isRight: boolean }>`
-    font-size: 1em;
+font-size: 0.85rem;
     font-weight: 600;
     flex-grow: 5;
     text-align: ${props => (props.isRight ? 'right' : 'left')};
+
+    @media screen and (max-width: 600px) {
+        text-align: left;
+    }
 `
 
 export const PlayerStats = styled.p<{ isRight: boolean }>`
-    font-size: 1em;
+    font-size: 0.85rem;
     font-weight: 600;
     flex-grow: 1;
     text-align: ${props => (props.isRight ? 'left' : 'right')};
+
+    @media screen and (max-width: 600px) {
+        text-align: right;
+    }
 `
