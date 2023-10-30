@@ -194,7 +194,7 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                                 <LineUpHeader>
                                     <Goals style={{ flexGrow: '1' }} isRight={true}>Goals</Goals>
                                 </LineUpHeader>
-                                {homeTeam && homeTeam.players.map((player: IPlayer) => (
+                                {homeTeam && homeTeam.players.slice().sort((a, b) => b.goalsScored - a.goalsScored).map((player: IPlayer) => (
                                     <PlayerInfo key={player._id} player={player} isRight={false} />
                                 ))}
                             </LineUpColumn>
@@ -209,7 +209,7 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                                 <LineUpHeader>
                                     <Goals style={{ flexGrow: '1'}} isRight={false}>Goals</Goals>
                                 </LineUpHeader>
-                                {awayTeam.players && awayTeam.players.map((player: IPlayer) => (
+                                {awayTeam.players && awayTeam.players.slice().sort((a, b) => b.goalsScored - a.goalsScored).map((player: IPlayer) => (
                                     <PlayerInfo key={player._id} player={player} isRight={true} />
                                 ))}
                             </LineUpColumn>
