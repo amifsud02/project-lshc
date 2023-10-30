@@ -90,6 +90,23 @@ export const Team = styled.div<{ isSecond: boolean }>`
         gap: 30px;
         flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
     }
+`;
+
+export const TeamStats = styled.div<{ isSecond: boolean }>`
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 15px;
+    height: 50px;
+    max-height: 50px;
+    justify-content: center;
+
+    text-align: ${props => (props.isSecond ? 'left' : 'right')};
+
+    @media (min-width: 700px) {
+        gap: 30px;
+        flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
+    }
 
     @media screen and (max-width: 600px) {
         flex-direction: row-reverse;
@@ -110,7 +127,21 @@ export const TeamLogo = styled.img`
     
 `;
 
+
 export const TeamName = styled.h4`
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    @media (min-width: 768px) {
+        font-size: 2rem;
+        line-height: 2rem;
+    }
+
+`;
+
+export const TeamNameStats = styled.h4`
     font-size: 0.75rem;
     line-height: 1rem;
     font-weight: 700;

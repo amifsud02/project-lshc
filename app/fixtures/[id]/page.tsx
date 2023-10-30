@@ -6,7 +6,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { Partners }from "@/components/Partners/Partners";
 import { IFixtureData, IPlayer } from "@/lib/types/fixture-info.type";
 import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
-import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader, Goals } from "@/components/Fixture/SinglePageComponents";
+import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader, Goals, TeamStats, TeamNameStats } from "@/components/Fixture/SinglePageComponents";
 
 import dynamic from "next/dynamic";
 
@@ -183,12 +183,12 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                         <Divider />
                         <LineUpContainer>
                             <LineUpColumn>
-                                <Team isSecond={false} style={{ marginBottom: '20px' }}>
-                                    <TeamName>{homeTeam.team.name}</TeamName>
+                                <TeamStats isSecond={false} style={{ marginBottom: '20px' }}>
+                                    <TeamNameStats>{homeTeam.team.name}</TeamNameStats>
                                     {homeTeam.team.hasOwnProperty("logo") ?
                                         <TeamLogo src={imageBuilderV2.image(homeTeam.team.logo).url()} /> : ''
                                     }
-                                </Team>
+                                </TeamStats>
                                 <LineUpHeader>
                                     <Goals style={{ flexGrow: '1' }} isRight={true}>Goals</Goals>
                                 </LineUpHeader>
@@ -198,12 +198,12 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                             </LineUpColumn>
 
                             <LineUpColumn>
-                                <Team isSecond={true} style={{ marginBottom: '20px' }}>
-                                    <TeamName>{awayTeam.team.name}</TeamName>
+                                <TeamStats isSecond={true} style={{ marginBottom: '20px' }}>
+                                    <TeamNameStats>{awayTeam.team.name}</TeamNameStats>
                                     {awayTeam.team.hasOwnProperty("logo") ?
                                         <TeamLogo src={imageBuilderV2.image(awayTeam.team.logo).url()} /> : ''
                                     }
-                                </Team>
+                                </TeamStats>
                                 <LineUpHeader>
                                     <Goals style={{ flexGrow: '1'}} isRight={false}>Goals</Goals>
                                 </LineUpHeader>
