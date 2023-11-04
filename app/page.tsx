@@ -98,7 +98,7 @@ export default async function Home() {
         <div className="parent">
           <h1 className="title">Latest Fixtures</h1>
 
-          <Tabs redirect="/season/2023/schedule/men/national-league/" showall={true}>
+          <Tabs redirect={`/season/${currentSeason}/schedule/men/national-league/`} showall={true}>
             <Tab tabTitle="Men" key={crypto.randomBytes(20).toString('hex')}>
               {menFixtures && (
                 <>
