@@ -1,5 +1,4 @@
 import React from "react";
-import ReactPlayer from 'react-player/youtube'
 import { MapPin } from "lucide-react";
 import Navbar from "@/components/Hero/Navbar";
 import Footer from "@/components/Footer/Footer";
