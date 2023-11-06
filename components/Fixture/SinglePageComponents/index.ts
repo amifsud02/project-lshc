@@ -242,7 +242,7 @@ export const PlayerContent = styled.div<{ isRight: boolean }>`
         flex-direction: row;
     }
 `
-export const PlayerImage = styled.img`
+export const PlayerImage = styled.div`
     width: 40px;
     height: 40px;
 `

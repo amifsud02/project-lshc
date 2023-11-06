@@ -44,6 +44,7 @@ export default function RootLayout({
             `}
           </Script>
           <Script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/bf6579391a8ef2247d80d05c/script.js"></Script>
+          <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6327648024245847" crossOrigin="anonymous"></Script>
         </div>
         {children}
         <Analytics/>

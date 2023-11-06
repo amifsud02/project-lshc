@@ -1,20 +1,21 @@
 import React from "react";
+import ReactPlayer from 'react-player/youtube'
 import { MapPin } from "lucide-react";
 import Navbar from "@/components/Hero/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { Metadata, ResolvingMetadata } from "next";
-import { Partners }from "@/components/Partners/Partners";
+import { Partners } from "@/components/Partners/Partners";
 import { IFixtureData, IPlayer } from "@/lib/types/fixture-info.type";
 import { clientV2, imageBuilderV2 } from "@/lib/utils/sanity/sanity.config";
 import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, TimeScore, Bottom, PlayerContent, PlayerImage, PlayerName, PlayerStats, LineUpWrapper, LineUpTitle, Divider, LineUpContainer, LineUpColumn, LineUpHeader, Goals, TeamStats, TeamNameStats } from "@/components/Fixture/SinglePageComponents";
 
 import dynamic from "next/dynamic";
+import { YouTubePlayer } from "@/components/Fixture/MediaPlayer/VideoPlayer";
 
 const DynamicCountdown = dynamic(() => import('../../../components/Countdown/CountdownTimer'), {
     ssr: false,
     loading: () => <></>
 })
-
 
 const getData = async (id: string) => {
     const query = `*[_type == "fixture" && _id == "${id}"]`;
@@ -83,7 +84,7 @@ const formatDate = (dateString: string) => {
     console.log(timeObj);
 
     const hour = timeParts[0];
-    const minute = timeParts[1];  
+    const minute = timeParts[1];
 
     // Get the day name, date, and month name
     const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
@@ -93,7 +94,7 @@ const formatDate = (dateString: string) => {
 
     // Get the hours and minutes, ensuring they are two digits
     const hours = ("0" + date.getHours()).slice(-2);
-    const minutes = ("0" + date.getMinutes()).slice(-2); 
+    const minutes = ("0" + date.getMinutes()).slice(-2);
 
     // Construct the formatted date string
     const formattedDate = `${dayName} ${day} ${monthName} ${year}`;
@@ -140,7 +141,7 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
 
                         <Bottom className="numbers">
                             {
-                                new Date(fixtureData.startDate) >= today && 
+                                new Date(fixtureData.startDate) >= today &&
                                 <>
                                     <h2>The match will start in:</h2>
                                     <DynamicCountdown targetDate={fixtureData.startDate} />
@@ -154,10 +155,15 @@ const FixturePageHeader: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDat
     )
 }
 
+import playerFallbackImage from '@/public/lshc-avatar.svg';
+import Image from "next/image";
+
 const PlayerInfo: React.FC<{ player: IPlayer, isRight: boolean }> = ({ player, isRight }) => {
     return (
         <PlayerContent isRight={isRight}>
-            <PlayerImage></PlayerImage>
+            <PlayerImage>
+                <Image src={playerFallbackImage} alt="" width={40} height={40} />
+            </PlayerImage>
             <PlayerName isRight={isRight}>{player.firstName} {player.lastName}</PlayerName>
             <PlayerStats className="numbers" isRight={isRight}>{player.goalsScored > 0 ? player.goalsScored : 0}</PlayerStats>
         </PlayerContent>
@@ -170,11 +176,19 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
     const homeTeamPlayers = homeTeam?.players || [];
     const awayTeamPlayers = awayTeam?.players || [];
 
+    console.log(fixtureData);
+
     return (
         <>
             <section>
                 <FixturePageHeader fixtureData={fixtureData} />
             </section>
+
+            {fixtureData.broadcastInfo &&
+                <section className="parent">
+                    <YouTubePlayer videoId={fixtureData.broadcastInfo} />
+                </section>
+            }
 
             <article className="parent">
                 {(homeTeamPlayers.length <= 5 || awayTeamPlayers.length <= 5) ? (
@@ -207,7 +221,7 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
                                     }
                                 </TeamStats>
                                 <LineUpHeader>
-                                    <Goals style={{ flexGrow: '1'}} isRight={false}>Goals</Goals>
+                                    <Goals style={{ flexGrow: '1' }} isRight={false}>Goals</Goals>
                                 </LineUpHeader>
                                 {awayTeam.players && awayTeam.players.slice().sort((a, b) => (b.goalsScored || 0) - (a.goalsScored || 0)).map((player: IPlayer) => (
                                     <PlayerInfo key={player._id} player={player} isRight={true} />
