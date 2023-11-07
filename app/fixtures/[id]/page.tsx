@@ -161,7 +161,7 @@ const PlayerInfo: React.FC<{ player: IPlayer, isRight: boolean }> = ({ player, i
     return (
         <PlayerContent isRight={isRight}>
             <PlayerImage>
-                <Image src={playerFallbackImage} alt="" width={40} height={40} />
+                <Image src={playerFallbackImage} alt="" fill={true} />
             </PlayerImage>
             <PlayerName isRight={isRight}>{player.firstName} {player.lastName}</PlayerName>
             <PlayerStats className="numbers" isRight={isRight}>{player.goalsScored > 0 ? player.goalsScored : 0}</PlayerStats>
@@ -175,8 +175,6 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
     const homeTeamPlayers = homeTeam?.players || [];
     const awayTeamPlayers = awayTeam?.players || [];
 
-    console.log(fixtureData);
-
     return (
         <>
             <section>
@@ -185,7 +183,9 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
 
             {fixtureData.broadcastInfo &&
                 <section className="parent">
-                    <YouTubePlayer videoId={fixtureData.broadcastInfo} />
+                        <div className="aspect-video">
+                            <YouTubePlayer videoId={fixtureData.broadcastInfo}/>
+                        </div>
                 </section>
             }
 

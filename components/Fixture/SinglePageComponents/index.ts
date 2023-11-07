@@ -243,6 +243,9 @@ export const PlayerContent = styled.div<{ isRight: boolean }>`
     }
 `
 export const PlayerImage = styled.div`
+    position: relative; 
+    border-radius: 50%;
+    overflow: hidden;
     width: 40px;
     height: 40px;
 `

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import YouTube from 'react-youtube';
 
 interface VideoPlayerProps {
     videoId: string;
@@ -21,13 +20,13 @@ export const YouTubePlayer: React.FC<VideoPlayerProps> = ({videoId}) => {
       console.error('YouTube Player Error:', error);
     };
   
-    return (
-      <YouTube
-        className='mx-auto'
-        videoId={videoId}
-        onReady={onReady}
-        onError={onError}
-      />
+    return(
+      <iframe
+        className="w-full h-full"
+        src={`https://www.youtube.com/embed/${videoId}`}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        
+    ></iframe>
     );
   };
   
