@@ -10,6 +10,7 @@ import { FixtureHeader, HeaderContent, Top, Middle, Team, TeamName, TeamLogo, Ti
 
 import dynamic from "next/dynamic";
 import { YouTubePlayer } from "@/components/Fixture/MediaPlayer/VideoPlayer";
+import AdSense from '@/components/AdSense/AdSense';
 
 const DynamicCountdown = dynamic(() => import('../../../components/Countdown/CountdownTimer'), {
     ssr: false,
@@ -180,12 +181,15 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
             <section>
                 <FixturePageHeader fixtureData={fixtureData} />
             </section>
-
+            
+            <section className="parent">
+               <AdSense adSlot='4410526483'></AdSense>
+            </section>
             {fixtureData.broadcastInfo &&
                 <section className="parent">
-                        <div className="aspect-video">
-                            <YouTubePlayer videoId={fixtureData.broadcastInfo}/>
-                        </div>
+                    <div className="aspect-video">
+                        <YouTubePlayer videoId={fixtureData.broadcastInfo} />
+                    </div>
                 </section>
             }
 
