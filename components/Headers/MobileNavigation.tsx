@@ -80,41 +80,10 @@ export const MobileNavbar = () => {
                             isOpen && (
 
                                 <Accordion transition transitionTimeout={250}>
-                                    <Link className={pathname === '/' ? `${styles.navItemLink} ${styles.active}` : styles.navItemLink} href="/"><p>Home</p></Link>
+                                    <Link className={pathname === '/' ? `${styles.navItemLink} ${styles.active} w-full` : `${styles.navItemLink} w-full`} href="/"><p>Home</p></Link>
 
-                                    <AccordionItem header="News" url="^\/season\/\d{4}\/schedule\/[a-zA-Z0-9_]+\/[\w-]+">
-                                        <ul className={styles.mobile__dropdown}>
-                                            <li><Link href={'/news/all-the-news'}>All The News</Link></li>
-                                            {/* <li><Link href={'/season/2023/standings/men/national-league'}>Schedule</Link></li> */}
-                                        </ul>
-                                    </AccordionItem>
+                                    <Link className={`${styles.navItemLink} w-full`} href="https://memberships.lasallehandball.com"><p>Memberships</p></Link>
 
-                                    <AccordionItem header="Teams" url='^\/teams\/[\w-]+\/[\w-]+' style={{textAlign: 'left', width: '100%'}}>
-                                        <ul className={styles.mobile__dropdown}>
-                                            <li><Link href={'/teams/men-first-team/all'}>Men&apos;s Team</Link></li>
-                                            <li><Link href={'/teams/women-first-team/all'}>Women&apos;s Team</Link></li>
-                                            <li><Link href={'/teams/u21-mens-team/all'}>U21 Men&apos;s Team</Link></li>
-                                            <li><Link href={'/teams/u21-womens-team/all'}>U21 Women&apos;s Team</Link></li>
-                                            <li><Link href={'/teams/youth-teams'}>Youth Teams</Link></li>
-                                        </ul>
-                                    </AccordionItem>
-
-                                    <AccordionItem header="Season" url="^\/season\/\d{4}\/schedule\/[a-zA-Z0-9_]+\/[\w-]+">
-                                        <ul className={styles.mobile__dropdown}>
-                                            <li><Link href={'/season/2024/schedule/men/all'}>Schedule</Link></li>
-                                            {/* <li><Link href={'/season/2023/standings/men/national-league'}>Schedule</Link></li> */}
-                                        </ul>
-                                    </AccordionItem>
-
-                                    <AccordionItem header="Club" url='club'>
-                                        <ul className={styles.mobile__dropdown}>
-                                            <li><Link href={'/club/history'}>History</Link></li>
-                                            {/* <li><Link href={'/club/management'}>Management</Link></li> */}
-                                            <li><Link href={'/club/sponsors'}>Our Partners</Link></li>
-                                        </ul>
-                                    </AccordionItem>
-
-                                    <Link className={styles.navItemLink} href="/contact"><p>Contact Us</p></Link>
                                 </Accordion>
                             )
                         }

@@ -26,81 +26,85 @@ const navItems: NavItem[] = [
         href: "/",
     },
     {
-        label: "News",
-        href: "/news",
-        dropdown: [
-            {
-                label: "All The News",
-                href: "/news/all-the-news"
-            },
-            // {
-            //     label: "Photo Galleries",
-            //     href: "/"
-            // }
-        ]
+        label: "Memberships",
+        href: "https://memberships.lasallehandball.com",
     },
-    {
-        label: "Teams",
-        href: "/teams/men-first-team/all",
-        dropdown: [
-            {
-                label: "Men's First Team",
-                href: "/teams/men-first-team/all"
-            },
-            {
-                label: "Women's First Team",
-                href: "/teams/women-first-team/all"
-            },
-            {
-                label: "U21 Men's Team",
-                href: "/teams/u21-mens-team/all"
-            },
-            {
-                label: "U21 Women's Team",
-                href: "/teams/u21-womens-team/all"
-            },
-            {
-                label: "Youth Teams",
-                href: "/teams/youth-teams"
-            }
-        ]
-    },
-    {
-        label: "Season",
-        href: "/season/2024/schedule/men/all",
-        dropdown: [
-            {
-                label: "Schedule",
-                href: "/season/2024/schedule/men/all"
-            },
-            // {
-            //     label: "Standings",
-            //     href: "/"
-            // }
-        ]
-    },
-    {
-        label: "Club",
-        href: "/club/history",
-        dropdown: [
-            {
-                label: "History",
-                href: "/club/history"
-            },
-            // {
-            //     label: "Management",
-            //     href: "/club/management"
-            // },
-            {
-                label: "Our Partners",
-                href: "/club/sponsors"
-            }
-        ]
-    },
-    {
-        label: "Contact Us",
-        href: "/contact",
-    },
+    // {
+    //     label: "News",
+    //     href: "/news",
+    //     dropdown: [
+    //         {
+    //             label: "All The News",
+    //             href: "/news/all-the-news"
+    //         },
+    //         // {
+    //         //     label: "Photo Galleries",
+    //         //     href: "/"
+    //         // }
+    //     ]
+    // },
+    // {
+    //     label: "Teams",
+    //     href: "/teams/men-first-team/all",
+    //     dropdown: [
+    //         {
+    //             label: "Men's First Team",
+    //             href: "/teams/men-first-team/all"
+    //         },
+    //         {
+    //             label: "Women's First Team",
+    //             href: "/teams/women-first-team/all"
+    //         },
+    //         {
+    //             label: "U21 Men's Team",
+    //             href: "/teams/u21-mens-team/all"
+    //         },
+    //         {
+    //             label: "U21 Women's Team",
+    //             href: "/teams/u21-womens-team/all"
+    //         },
+    //         {
+    //             label: "Youth Teams",
+    //             href: "/teams/youth-teams"
+    //         }
+    //     ]
+    // },
+    // {
+    //     label: "Season",
+    //     href: "/season/2024/schedule/men/all",
+    //     dropdown: [
+    //         {
+    //             label: "Schedule",
+    //             href: "/season/2024/schedule/men/all"
+    //         },
+    //         // {
+    //         //     label: "Standings",
+    //         //     href: "/"
+    //         // }
+    //     ]
+    // },
+    // {
+    //     label: "Club",
+    //     href: "/club/history",
+    //     dropdown: [
+    //         {
+    //             label: "History",
+    //             href: "/club/history"
+    //         },
+    //         // {
+    //         //     label: "Management",
+    //         //     href: "/club/management"
+    //         // },
+    //         {
+    //             label: "Our Partners",
+    //             href: "/club/sponsors"
+    //         }
+    //     ]
+    // },
+    // {
+    //     label: "Contact Us",
+    //     href: "/contact",
+    // },
 ]
 
 export function DesktopNavbar() {

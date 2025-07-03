@@ -1,22 +1,36 @@
-
-import { useState } from "react";
+"use client"
 
 import styles from "./Hero.module.css";
 import Navbar from "./Navbar";
+import Slider from "react-slick";
 
 const HeroSection = () => {
-
-
-
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    arrows: false,
+  };
   return (
-    <section className={styles.hero}>
-      <div>
+    <section className={styles.hero} style={{ position: 'relative', overflow: 'hidden' }}>
+      <Slider {...settings}>
+        <div>
+          <img src="/la-salle-hero.jpg" alt="La Salle Hero 1" style={{ width: '100%', height: '100vh', objectFit: 'cover' }} />
+        </div>
+        <div>
+          <img src="/women-team-hero.jpg" alt="La Salle Hero 2" style={{ width: '100%', height: '100vh', objectFit: 'cover' }} />
+        </div>
+      </Slider>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(125deg, rgba(1, 41, 111, 1) 0%, rgba(0, 13, 36, 0.83) 100%)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, display: 'flex', flexDirection: 'column' }}>
         <Navbar />
-
-        <div className={`parent`}>
-          <div
-            className={`${styles.animate__animated} ${styles.animate__backInLeft} ${styles.hpTitle}`}
-          >
+        <div className={`parent`} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className={`${styles.animate__animated} ${styles.animate__backInLeft} ${styles.hpTitle}`}> 
+            <div style={{ marginBottom: '24px' }}></div>
             <h1 className={styles.title}>
               La Salle
               <br />
