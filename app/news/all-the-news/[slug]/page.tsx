@@ -1,15 +1,13 @@
-import Image from 'next/image'
-import { INewsPost } from "@/lib/types/news";
-import Footer from '@/components/Footer/Footer';
-import { PortableText } from '@portabletext/react';
-import { urlFor } from '@/lib/utils/sanity/sanity.imageurl';
-import { clientV2 } from "@/lib/utils/sanity/sanity.config";
-import PageHeader from '@/components/News/NewsHeader/PageHeader';
-
-import type { Metadata, ResolvingMetadata } from 'next'
-import { ArticleContent, OtherArticles } from '@/components/StyledComponents';
-import SectionSeparator from '@/components/News/section-separator';
-import NewsCard from '@/components/News/NewsCard/NewsCard';
+import Image from "next/image";
+import Footer from "@/components/Footer/Footer";
+import PageHeader from "@/components/News/NewsHeader/PageHeader";
+import type { Metadata, ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
+import { ArticleContent, OtherArticles } from "@/components/StyledComponents";
+import SectionSeparator from "@/components/News/section-separator";
+import NewsCard from "@/components/News/NewsCard/NewsCard";
+import { getAllPosts, getPostBySlug } from "@/lib/data/newsPosts";
+import type { HardcodedNewsContentBlock, IHardcodedNewsPost } from "@/lib/types/news";
 
 type Props = {
     params: { slug: string }
@@ -22,8 +20,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
     const slug = params.slug
 
-    // fetch data
-    const data = (await getData(slug))[0] as INewsPost;
+    const data = getPostBySlug(slug);
+    if (!data) return {};
+
     const previousImages = (await parent).openGraph?.images || []
 
     return {
@@ -32,76 +31,59 @@ export async function generateMetadata(
         openGraph: {
             title: data.title,
             description: data.description,
-            images: [`${urlFor(data.featuredImage.asset._ref)}`, ...previousImages]
+            images: [data.featuredImageUrl, ...previousImages]
         }
     }
 }
 
-async function getData(slug: string) {
-    const query = `*[_type == "news" && slug.current == "${slug}"]`
-    const data = await clientV2.fetch(query,
-        {
-            next: {
-                revalidate: 3600
-            }
-        });
+function getPreviousAndNextPosts(slug: string): {
+    previousPost: IHardcodedNewsPost | null
+    nextPost: IHardcodedNewsPost | null
+} {
+    const allPosts = getAllPosts();
+    const currentIndex = allPosts.findIndex((post) => post.slug.current === slug);
 
-    return data;
-}
-
-
-async function getPreviousAndNextPosts(slug: string) {
-    // Query to fetch all news posts sorted by publication date
-    const query = `*[_type == "news"] | order(publishedAt desc)`;
-
-    // Fetch all blog posts
-    const allPosts = await clientV2.fetch(query);
-
-    // Find the index of the current post by slug
-    const currentIndex = allPosts.findIndex((post: INewsPost) => post.slug.current === slug);
-
-    // Calculate the indices for the previous and next posts
     const previousIndex = currentIndex - 1;
     const nextIndex = currentIndex + 1;
 
-    // Get the previous and next posts, handling boundary cases
     const previousPost = previousIndex >= 0 ? allPosts[previousIndex] : null;
     const nextPost = nextIndex < allPosts.length ? allPosts[nextIndex] : null;
 
     return { previousPost, nextPost };
 }
 
-export default async function SingleNewsPage({ params }: { params: { slug: string } }) {
-    const data = (await getData(params.slug))[0] as INewsPost;
-    
-    const { previousPost, nextPost } = await getPreviousAndNextPosts(params.slug);
+function ContentBlock({ block }: { block: HardcodedNewsContentBlock }) {
+    if (block.type === "p") return <p>{block.text}</p>;
+    if (block.type === "h3") return <h3>{block.text}</h3>;
+    if (block.type === "image") {
+        return (
+            <Image
+                className="news-image"
+                src={block.src}
+                alt={block.alt}
+                width={block.width ?? 800}
+                height={block.height ?? 800}
+            />
+        );
+    }
+    return null;
+}
 
-    const baseSiteUrl = "https://development.lasallehandball.com/news/"
+export default function SingleNewsPage({ params }: { params: { slug: string } }) {
+    const data = getPostBySlug(params.slug);
+    if (!data) notFound();
 
-    const PortableTextComponent = {
-        types: {
-            image: ({ value }: { value: any }) => (
-                <Image
-                    className='news-image'
-                    src={urlFor(value).url()}
-                    alt="Image"
-                    width={800}
-                    height={800}
-                />
-            ),
-        },
-    };
+    const { previousPost, nextPost } = getPreviousAndNextPosts(params.slug);
 
     return (
         <>
-            <PageHeader pageName={data.title} backgroundImage={urlFor(data.featuredImage.asset._ref)} ></PageHeader>
+            <PageHeader pageName={data.title} backgroundImage={data.featuredImageUrl} />
 
             <article className='parent'>
                 <ArticleContent>
-                    <PortableText
-                        value={data.content}
-                        components={PortableTextComponent}
-                    />
+                    {data.content.map((block, idx) => (
+                        <ContentBlock key={`${data._id}-${idx}`} block={block} />
+                    ))}
                 </ArticleContent>
             </article>
 
@@ -111,8 +93,9 @@ export default async function SingleNewsPage({ params }: { params: { slug: strin
 
                     <section className='parent'>
                         <OtherArticles>
-                            {previousPost && <NewsCard data={previousPost} />}
-                            {nextPost && <NewsCard data={nextPost} />}
+                            {/* NewsCard will be updated to accept hard-coded posts. */}
+                            {previousPost && <NewsCard data={previousPost as any} />}
+                            {nextPost && <NewsCard data={nextPost as any} />}
                         </OtherArticles>
                     </section>
                 </>

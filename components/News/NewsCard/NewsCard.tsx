@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { INewsPost } from "@/lib/types/news";
+import type { IHardcodedNewsPost, INewsPost } from "@/lib/types/news";
 import { urlFor } from "@/lib/utils/sanity/sanity.imageurl";
 import { NewsDate, NewsImageWrapper, NewsInfo, NewsTitle, NewsWrapper } from "@/components/StyledComponents";
 
 export interface INewsCard {
-    data: INewsPost
+    data: INewsPost | IHardcodedNewsPost
 }
 
 function formatDateToCustomString(date: Date) {
@@ -27,15 +27,21 @@ function formatDateToCustomString(date: Date) {
 }
 
 const NewsCard: React.FC<INewsCard> = ({ data }: INewsCard) => {
-    const date = new Date(data.date)
+    const date = new Date((data as any).date)
     const formattedDate = formatDateToCustomString(date);
+
+    const href = `/news/all-the-news/${data.slug.current}`;
+    const imageSrc =
+        "featuredImageUrl" in data
+            ? data.featuredImageUrl
+            : `${urlFor(data.featuredImage.asset._ref)}`;
 
     return (
         <NewsWrapper>
-            <Link href={`${process.env.NEXT_PUBLIC_API_URL}/news/${data.slug.current}`}>
+            <Link href={href}>
                 <NewsImageWrapper className="newsCardImage">
                     <Image
-                        src={`${urlFor(data.featuredImage.asset._ref)}`}                    
+                        src={imageSrc}
                         alt={data.title}
                         fill={true}
                         style={{
