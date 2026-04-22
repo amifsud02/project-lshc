@@ -1,0 +1,21 @@
+import { withPayload } from "@payloadcms/next/withPayload";
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    compiler: {
+        styledComponents: true,
+    },
+    images: {
+        remotePatterns: [
+            { protocol: 'https', hostname: 'i.postimg.cc' },
+            { protocol: 'https', hostname: 'thumbs2.imgbox.com' },
+            { protocol: 'http', hostname: 'localhost' },
+            { protocol: 'https', hostname: 'res.cloudinary.com' },
+            { protocol: 'https', hostname: 'cdn.sanity.io' },
+        ],
+        formats: ["image/avif"],
+    },
+    output: 'standalone'
+}
+
+export default withPayload(nextConfig)

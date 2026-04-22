@@ -7,7 +7,7 @@ import styles from './tab.module.css';
 import crypto from 'crypto';
 
 type Props = {
-  children: ReactElement[];
+  children: ReactElement<{ 'data-tab-title': string }>[];
   redirect: string;
   showall: boolean;
 };

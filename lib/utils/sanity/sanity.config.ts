@@ -1,5 +1,5 @@
 import { createClient } from 'next-sanity';
-import ImageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 
 export const client = createClient({
     projectId: '1sbbeli5',
@@ -16,6 +16,6 @@ export const clientV2 = createClient({
 })
 
 
-export const imageBuilder = ImageUrlBuilder(client);
-export const imageBuilderV2 = ImageUrlBuilder(clientV2);
+export const imageBuilder = createImageUrlBuilder(client);
+export const imageBuilderV2 = createImageUrlBuilder(clientV2);
 

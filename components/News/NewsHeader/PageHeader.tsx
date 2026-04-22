@@ -1,25 +1,27 @@
-
-import Navbar from '@/components/Hero/Navbar';
 import styles from './PageHeader.module.css'
 
 type PageProps = {
     pageName: string;
-    backgroundImage?: any;
+    backgroundImage?: string;
 }
 
-const PageHeader = (props: PageProps) => {
-    return (
+const PageHeader = ({ pageName, backgroundImage }: PageProps) => {
+    const style = backgroundImage
+        ? {
+            backgroundImage: `url("${backgroundImage}")`,
+            backgroundPosition: 'center',
+        }
+        : undefined;
 
-        <div className={styles.pageHeader} style={{ backgroundImage: `url(${props.backgroundImage})`, backgroundPosition: 'center' }}>
-            <Navbar/>
-            <div className='parent' style={{zIndex: '10'}}>
+    return (
+        <div className={styles.pageHeader} style={style}>
+            <div className='parent' style={{ position: 'relative', zIndex: 2 }}>
                 <div className={styles.pageHeaderInfo}>
-                    {/* <div className={styles.pageMap}>Home • {props.pageName}</div> */}
-                    <div className={styles.pageTitle}>{props.pageName}</div>
+                    {/* <div className={styles.pageMap}>Home • {pageName}</div> */}
+                    <div className={styles.pageTitle}>{pageName}</div>
                 </div>
             </div>
         </div>
-
     );
 }
 

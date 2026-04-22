@@ -17,9 +17,15 @@ const Dropdown = ({ dropdown }: { dropdown: NavLink[] }) => {
                 className={`${click ? `${styles.dropdownMenu} clicked` : styles.dropdownMenu} ${styles.dropdownItems}`}
 
             >
-                {dropdown.map((dropdownItem, index) => (
+                {dropdown.map((dropdownItem) => (
                     <li key={dropdownItem.label}>
-                        <Link href={dropdownItem.href} className={styles.dropdownLink}>{dropdownItem.label}</Link>
+                        <Link
+                            href={dropdownItem.href}
+                            className={styles.dropdownLink}
+                            {...(dropdownItem.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                        >
+                            {dropdownItem.label}
+                        </Link>
                     </li>
                 ))}
             </ul>

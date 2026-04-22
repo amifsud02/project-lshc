@@ -1,18 +1,28 @@
-import Navbar from "../Hero/Navbar";
 import styles from './PageHeader.module.css'
+import Hero, { type HeroProps } from '@/components/Hero/Hero'
 
-type PageProps = {
+type InnerVariantProps = {
+    variant?: 'inner';
     pageName: string;
 }
 
-const PageHeader = (props: PageProps) => {
-    return (
+type LandingVariantProps = {
+    variant: 'landing';
+} & HeroProps;
 
+type PageHeaderProps = InnerVariantProps | LandingVariantProps;
+
+const PageHeader = (props: PageHeaderProps) => {
+    if (props.variant === 'landing') {
+        const { variant: _variant, ...heroProps } = props;
+        return <Hero {...heroProps} />;
+    }
+
+    return (
         <div className={styles.pageHeader}>
-            <Navbar />
             <div className='parent'>
                 <div className={styles.pageHeaderInfo}>
-                    <div className={styles.pageMap}>Home • {props.pageName}</div>
+                    {/* <div className={styles.pageMap}>Home • {props.pageName}</div> */}
                     <div className={styles.pageTitle}>{props.pageName}</div>
                 </div>
             </div>

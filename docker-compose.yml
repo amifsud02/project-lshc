@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  project-lshc-db:
+    container_name: project-lshc-db
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    command:
+      - --storageEngine=wiredTiger
+    volumes:
+      - data:/data/db
+    logging:
+      driver: none
+
+volumes:
+  data:
+  node_modules:

@@ -1,19 +1,24 @@
 'use client'
 import { MobileNavbar } from "../Headers/MobileNavigation";
 import { DesktopNavbar } from "../Headers/Header";
+import type { NavItem } from "../Headers/Header";
 import styles from './nav.module.css'
 
-export default function Navbar() {
+export default function Navbar({
+  logo,
+  navItems,
+}: {
+  logo?: string
+  navItems?: NavItem[]
+} = {}) {
   return (
     <>
-      {/* Show MobileNavbar for screens with width less than 1000px (mobile) */}
       <div className={styles.mobileNavbar}>
-        <MobileNavbar />
+        <MobileNavbar logo={logo} navItems={navItems} />
       </div>
 
-      {/* Show DesktopNavbar for screens with width 1000px and above (desktop) */}
       <div className={styles.desktopNavbar}>
-        <DesktopNavbar />
+        <DesktopNavbar logo={logo} navItems={navItems} />
       </div>
     </>
   );

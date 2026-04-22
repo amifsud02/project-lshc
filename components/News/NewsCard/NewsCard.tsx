@@ -1,54 +1,65 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { IHardcodedNewsPost, INewsPost } from "@/lib/types/news";
-import { urlFor } from "@/lib/utils/sanity/sanity.imageurl";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import type { News, Media } from "@/payload-types";
 import { NewsDate, NewsImageWrapper, NewsInfo, NewsTitle, NewsWrapper } from "@/components/StyledComponents";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const DISPLAY_TZ = "Europe/Malta";
+
 export interface INewsCard {
-    data: INewsPost | IHardcodedNewsPost
+    data: News
 }
 
-function formatDateToCustomString(date: Date) {
-    const formattedDate = new Date(date);
-
-    // Extract the day, month, and year
-    const day = formattedDate.getDate();
-    const month = formattedDate.toLocaleString('default', { month: 'short' });
-    const year = formattedDate.getFullYear();
-
-    // Convert the day to the format "13th"
+function formatDateToCustomString(value: string | Date) {
+    const d = dayjs(value).tz(DISPLAY_TZ);
+    const day = d.date();
     const dayWithOrdinal = day + (
         (day % 10 === 1 && day !== 11) ? 'st' :
             (day % 10 === 2 && day !== 12) ? 'nd' :
                 (day % 10 === 3 && day !== 13) ? 'rd' : 'th'
     );
 
-    return `${dayWithOrdinal} ${month} ${year}`;
+    return `${dayWithOrdinal} ${d.format('MMM YYYY')}`;
 }
 
-const NewsCard: React.FC<INewsCard> = ({ data }: INewsCard) => {
-    const date = new Date((data as any).date)
-    const formattedDate = formatDateToCustomString(date);
+function getMediaUrl(m: string | Media | null | undefined): string {
+    if (!m) return '';
+    if (typeof m === 'string') return m;
+    return m.url ?? '';
+}
 
-    const href = `/news/all-the-news/${data.slug.current}`;
-    const imageSrc =
-        "featuredImageUrl" in data
-            ? data.featuredImageUrl
-            : `${urlFor(data.featuredImage.asset._ref)}`;
+function getCategorySlug(category: News['category']): string | null {
+    if (!category) return null;
+    if (typeof category === 'string') return null;
+    return category.slug ?? null;
+}
+
+const NewsCard: React.FC<INewsCard> = ({ data }) => {
+    const formattedDate = formatDateToCustomString(data.publishedAt);
+    const categorySlug = getCategorySlug(data.category);
+    const href = categorySlug ? `/news/${categorySlug}/${data.slug}` : '#';
+    const imageSrc = getMediaUrl(data.featuredImage);
 
     return (
         <NewsWrapper>
             <Link href={href}>
                 <NewsImageWrapper className="newsCardImage">
-                    <Image
-                        src={imageSrc}
-                        alt={data.title}
-                        fill={true}
-                        style={{
-                            objectFit: 'cover',
-                            objectPosition: 'center'
-                        }}
-                    />
+                    {imageSrc ? (
+                        <Image
+                            src={imageSrc}
+                            alt={data.title}
+                            fill={true}
+                            style={{
+                                objectFit: 'cover',
+                                objectPosition: 'center'
+                            }}
+                        />
+                    ) : null}
                 </NewsImageWrapper>
                 <NewsInfo>
                     <NewsDate>{formattedDate}</NewsDate>
