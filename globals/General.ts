@@ -1,5 +1,5 @@
 import { GlobalConfig } from "payload";
-import { revalidateGeneral } from "./hooks/revalidateGeneral";
+import { revalidateGlobal } from "./hooks/revalidateGlobal";
 
 export const General: GlobalConfig = {
     slug: 'general',
@@ -69,6 +69,6 @@ export const General: GlobalConfig = {
         }
     ],
     hooks: {
-        afterChange: [revalidateGeneral]
+        afterChange: [revalidateGlobal('global:general')]
     }
 }

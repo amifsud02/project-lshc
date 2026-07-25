@@ -315,7 +315,6 @@ export interface PageHeaderBlock {
   pageName?: string | null;
   title?: string | null;
   subtitle?: string | null;
-  established?: string | null;
   /**
    * Leave empty to use component defaults.
    */
@@ -1103,7 +1102,6 @@ export interface PageHeaderBlockSelect<T extends boolean = true> {
   pageName?: T;
   title?: T;
   subtitle?: T;
-  established?: T;
   slides?:
     | T
     | {

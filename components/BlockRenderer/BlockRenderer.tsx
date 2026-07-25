@@ -57,7 +57,6 @@ const PageHeaderAdapter = (props: {
   pageName?: string
   title?: string
   subtitle?: string
-  established?: string
   slides?: Array<{ image: Media; alt?: string }>
   social?: { facebook?: string; instagram?: string; tiktok?: string }
 }) => {
@@ -70,7 +69,6 @@ const PageHeaderAdapter = (props: {
         variant="landing"
         title={props.title}
         subtitle={props.subtitle}
-        established={props.established}
         slides={slides}
         social={props.social}
       />

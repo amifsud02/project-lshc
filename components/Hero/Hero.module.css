@@ -93,17 +93,6 @@
   height: 25px;
 }
 
-.yearOfEstablishment {
-  text-transform: uppercase;
-  line-height: 0.8;
-  font-size: 1.5rem;
-  letter-spacing: 2px;
-  font-weight: 700;
-  text-align: center;
-  margin-top: 25px;
-  color: white;
-}
-
 @media screen and (max-width: 776px) {
 
   .heroTitle h1,
@@ -175,4 +164,12 @@
     margin-bottom: 50px;
     margin-top: 0px;
   }
+}
+
+/* CMS titles can wrap to multiple lines, so they can't use the
+   compressed line-height of the fixed two-line homepage lockup */
+.richTitle h1,
+.richTitle h2,
+.richTitle h3 {
+  line-height: 1;
 }

@@ -40,13 +40,6 @@ export const PageHeaderBlock: Block = {
       },
     },
     {
-      name: 'established',
-      type: 'text',
-      admin: {
-        condition: (_, sibling) => sibling?.variant === 'landing',
-      },
-    },
-    {
       name: 'slides',
       type: 'array',
       admin: {

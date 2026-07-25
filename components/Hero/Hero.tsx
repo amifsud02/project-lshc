@@ -19,7 +19,6 @@ export type HeroSocial = {
 export type HeroProps = {
   title?: string | SerializedEditorState | null;
   subtitle?: string;
-  established?: string | number;
   slides?: HeroSlide[];
   social?: HeroSocial;
 };
@@ -38,7 +37,6 @@ const DEFAULT_SOCIAL: HeroSocial = {
 const HeroSection = ({
   title = "La Salle",
   subtitle = "Handball Club",
-  established = "1998",
   slides,
   social,
 }: HeroProps = {}) => {
@@ -73,7 +71,6 @@ const HeroSection = ({
           </div>
         ))}
       </Slider>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(125deg, rgba(1, 41, 111, 0.5) 0%, rgba(0, 13, 36, 0.4) 100%)', zIndex: 1 }} />
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, display: 'flex', flexDirection: 'column' }}>
         <div className={`parent`} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className={`${styles.animate__animated} ${styles.animate__backInLeft} ${styles.hpTitle}`}>
@@ -93,11 +90,6 @@ const HeroSection = ({
                 ) : null}
               </h1>
             )}
-            {established ? (
-              <p className={styles.yearOfEstablishment}>
-                EST. <span className="numbers">{established}</span>
-              </p>
-            ) : null}
             <ul className={styles.socialLinks}>
                 <li>
                     <a className={styles.fbIcon} href={resolvedSocial.facebook} rel="noopener noreferrer" target="_blank">

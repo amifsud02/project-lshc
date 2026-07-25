@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { link } from '@/lib/utils/payload/link'
+import { revalidateGlobal } from './hooks/revalidateGlobal'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
@@ -9,6 +10,9 @@ export const Footer: GlobalConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [revalidateGlobal('global:footer')],
   },
   fields: [
     {
