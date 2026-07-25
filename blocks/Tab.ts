@@ -1,10 +1,10 @@
 import type { Block } from 'payload'
-import { RichTextBlock } from './RichText.ts'
-import { AdSlotBlock } from './AdSlot.ts'
-import { CarouselBlock } from './Carousel.ts'
-import { FixtureListBlock } from './FixtureList.ts'
-import { StandingsBlock } from './Standings.ts'
-import { PlayerGridBlock } from './PlayerGrid.ts'
+import { RichTextBlock } from './RichText'
+import { AdSlotBlock } from './AdSlot'
+import { CarouselBlock } from './Carousel'
+import { FixtureListBlock } from './FixtureList'
+import { StandingsBlock } from './Standings'
+import { PlayerGridBlock } from './PlayerGrid'
 
 export const TabBlock: Block = {
   slug: 'tab',

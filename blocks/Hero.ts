@@ -9,20 +9,17 @@ export const HeroBlock: Block = {
   },
   fields: [
     {
-      name: 'variant',
-      type: 'select',
-      defaultValue: 'v1',
-      options: [
-        { label: 'Classic (Hero)', value: 'v1' },
-        { label: 'Modern (HeroV2)', value: 'v2' },
-      ],
+      name: 'title',
+      type: 'richText',
+      admin: {
+        description: 'Hero title. Leave empty to fall back to the default title.',
+      },
     },
     {
       name: 'slides',
       type: 'array',
       admin: {
-        description: 'Only used by the Classic variant. Leave empty to fall back to component defaults.',
-        condition: (_, siblingData) => siblingData?.variant === 'v1',
+        description: 'Leave empty to fall back to component defaults.',
       },
       fields: [
         { name: 'image', type: 'upload', relationTo: 'media', required: true },

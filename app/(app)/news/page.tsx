@@ -23,7 +23,7 @@ type SP = { tag?: string | string[] }
 export default async function NewsPage({
     searchParams,
 }: {
-    searchParams?: SP | Promise<SP>
+    searchParams?: Promise<SP>
 }) {
     const resolvedSearchParams = (await searchParams) ?? {};
     const selectedTag = typeof resolvedSearchParams.tag === "string" ? resolvedSearchParams.tag : undefined;

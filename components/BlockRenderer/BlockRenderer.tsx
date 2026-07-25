@@ -4,7 +4,6 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 
 import Hero from '@/components/Hero/Hero'
-import { HeroV2 } from '@/components/HeroV2'
 import PageHeader from '@/components/PageHeader/PageHeader'
 import JoinUs from '@/components/JoinUs/JoinUs'
 import TeamCarousel from '@/components/Carousel/Team'
@@ -37,8 +36,21 @@ const refId = (r: Ref): string | number | undefined => {
   return r
 }
 
-const HeroAdapter = ({ variant }: { variant?: 'v1' | 'v2' }) =>
-  variant === 'v2' ? <HeroV2 /> : <Hero />
+const HeroAdapter = ({
+  title,
+  slides,
+}: {
+  title?: any
+  slides?: Array<{ image: Media; caption?: string }>
+}) => {
+  const heroSlides = slides
+    ?.map((s) => ({
+      src: mediaUrl(s.image),
+      alt: s.caption ?? (typeof s.image === 'object' ? s.image?.alt : undefined),
+    }))
+    .filter((s) => s.src)
+  return <Hero title={title ?? undefined} slides={heroSlides} />
+}
 
 const PageHeaderAdapter = (props: {
   variant?: 'inner' | 'landing'

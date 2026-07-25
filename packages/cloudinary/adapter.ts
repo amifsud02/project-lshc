@@ -1,6 +1,6 @@
 import type { HandleUpload, HandleDelete } from '@payloadcms/plugin-cloud-storage/types'
 import type { UploadApiResponse } from 'cloudinary'
-import { cloudinary } from './config.ts'
+import { cloudinary } from './config'
 
 export const cloudinaryAdapter = () => ({
   name: 'cloudinary-adapter',

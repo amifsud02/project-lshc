@@ -26,8 +26,8 @@ const getData = async (id: string) => {
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 
 type Props = {
-    params: { id: string }
-    searchParams: { [key: string]: string | string[] | undefined }
+    params: Promise<{ id: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata(
@@ -35,7 +35,7 @@ export async function generateMetadata(
     parent: ResolvingMetadata
 ): Promise<Metadata> {
 
-    const id = params.id
+    const { id } = await params
     const fixtureData = (await getData(id))[0] as IFixtureData;
 
     const { homeTeam, awayTeam } = fixtureData?.fixtureInfo
@@ -234,9 +234,8 @@ const FixturePageContent: React.FC<{ fixtureData: IFixtureData }> = ({ fixtureDa
     )
 }
 
-// eslint-disable-next-line @next/next/no-async-client-component
-export default async function FixturePage({ params }: { params: { id: string } }) {
-    const { id } = params;
+export default async function FixturePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const fixtureData = (await getData(id))[0] as IFixtureData;
 
     return (

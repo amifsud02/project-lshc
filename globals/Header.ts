@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { link } from '@/lib/utils/payload/link.ts'
+import { link } from '@/lib/utils/payload/link'
 
 export const Header: GlobalConfig = {
   slug: 'header',

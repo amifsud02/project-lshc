@@ -21,7 +21,7 @@ function getTagSlug(tag: Gallery['tag']): string | null {
 }
 
 export async function generateMetadata(
-    { params }: { params: Params | Promise<Params> },
+    { params }: { params: Promise<Params> },
     parent: ResolvingMetadata
 ): Promise<Metadata> {
     const { tag, slug } = await params;
@@ -45,7 +45,7 @@ export async function generateMetadata(
 export default async function SingleGalleryPage({
     params,
 }: {
-    params: Params | Promise<Params>
+    params: Promise<Params>
 }) {
     const { tag, slug } = await params;
     const data = await getGalleryBySlug(slug);

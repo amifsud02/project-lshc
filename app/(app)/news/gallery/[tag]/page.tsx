@@ -17,7 +17,7 @@ const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 type Params = { tag: string }
 
 export async function generateMetadata(
-    { params }: { params: Params | Promise<Params> }
+    { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
     const { tag } = await params;
     const cat = await getGalleryCategoryBySlug(tag);
@@ -31,7 +31,7 @@ export async function generateMetadata(
 export default async function GalleryTagPage({
     params,
 }: {
-    params: Params | Promise<Params>
+    params: Promise<Params>
 }) {
     const { tag } = await params;
     const [cat, categories] = await Promise.all([

@@ -128,6 +128,7 @@ const Schedule = () => {
         if (category && competition) {
             const competitionItem = competitionDropdown[category as string][competition as string];
             if (competitionItem) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs dropdown state from URL params
                 setSelectedCompetition({
                     key: competitionItem.key,
                     value: competitionItem.value

@@ -131,6 +131,16 @@
   -webkit-text-stroke-color: white;
 }
 
+.richTitle p {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: 2px;
+  color: white;
+  text-transform: uppercase;
+  text-align: center;
+}
+
 @media screen and (max-width: 500px) {
   .hero .container {
     width: 90%;

@@ -24,6 +24,8 @@ import { cloudinaryAdapter } from "./packages/cloudinary/adapter";
 import { cloudinary } from "./packages/cloudinary/config";
 import { GalleryCategories } from "./collections/GalleryCategories";
 import { NewsCategories } from "./collections/NewsCategories";
+import { Products } from "./collections/Products";
+import { Orders } from "./collections/Orders";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -48,7 +50,9 @@ export default buildConfig({
     News,
     NewsCategories,
     Galleries,
-    GalleryCategories
+    GalleryCategories,
+    Products,
+    Orders,
   ],
   globals: [Header, Footer, General],
   editor: lexicalEditor(),

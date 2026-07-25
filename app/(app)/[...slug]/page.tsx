@@ -23,7 +23,8 @@ export default async function Page({
     return notFound()
   }
 
-  const { layout } = page
+  const { layout } = page;
+  console.log('layout', layout)
 
   return (
     <>
@@ -40,7 +41,7 @@ export async function generateStaticParams() {
   const pages = await getPages();
 
   return pages.map(({ slug }) => ({
-    slug,
+    slug: (slug ?? '').split('/').filter(Boolean),
   }))
 
   // return pages.map(({ breadcrumbs }) => ({

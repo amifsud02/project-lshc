@@ -2,9 +2,9 @@ import { clientV2 } from "@/lib/utils/sanity/sanity.config";
 import { groq } from "next-sanity";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, context: any) {
+export async function GET(request: NextRequest, context: { params: Promise<{ year: string; category: string }> }) {
     try {
-        const { year, category } = context.params;
+        const { year, category } = await context.params;
 
         const parsedYear = Number(year);
         

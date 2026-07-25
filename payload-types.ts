@@ -80,6 +80,8 @@ export interface Config {
     'news-categories': NewsCategory;
     galleries: Gallery;
     'gallery-categories': GalleryCategory;
+    products: Product;
+    orders: Order;
     'payload-kv': PayloadKv;
     'payload-folders': FolderInterface;
     'payload-locked-documents': PayloadLockedDocument;
@@ -105,6 +107,8 @@ export interface Config {
     'news-categories': NewsCategoriesSelect<false> | NewsCategoriesSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     'gallery-categories': GalleryCategoriesSelect<false> | GalleryCategoriesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -159,6 +163,9 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -267,9 +274,26 @@ export interface Page {
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
-  variant?: ('v1' | 'v2') | null;
   /**
-   * Only used by the Classic variant. Leave empty to fall back to component defaults.
+   * Hero title. Leave empty to fall back to the default title.
+   */
+  title?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Leave empty to fall back to component defaults.
    */
   slides?:
     | {
@@ -544,8 +568,7 @@ export interface TabBlock {
     | {
         label: string;
         content?:
-          | (RichTextBlock | AdSlotBlock | CarouselBlock | FixtureListBlock | StandingsBlock | PlayerGridBlock)[]
-          | null;
+          (RichTextBlock | AdSlotBlock | CarouselBlock | FixtureListBlock | StandingsBlock | PlayerGridBlock)[] | null;
         id?: string | null;
       }[]
     | null;
@@ -733,6 +756,122 @@ export interface GalleryCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  type: 'single' | 'bundle';
+  active?: boolean | null;
+  /**
+   * Price in cents (e.g. 2500 = €25.00). For bundles this is the bundle price the customer pays.
+   */
+  price: number;
+  image?: (string | null) | Media;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Information the customer must fill in per unit. On single products, one set per product unit. On bundles, one set per bundle unit (asked in addition to each child product's own fields).
+   */
+  customFields?:
+    | {
+        /**
+         * Machine key, e.g. firstName
+         */
+        name: string;
+        label: string;
+        kind: 'text' | 'email' | 'phone' | 'select';
+        required?: boolean | null;
+        options?:
+          | {
+              value: string;
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Products that make up this bundle.
+   */
+  bundleItems?:
+    | {
+        product: string | Product;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  orderNumber?: string | null;
+  status: 'pending' | 'paid' | 'fulfilled' | 'cancelled' | 'refunded';
+  user?: (string | null) | User;
+  customerEmail: string;
+  customerName?: string | null;
+  customerPhone?: string | null;
+  items: {
+    productTitle: string;
+    product?: (string | null) | Product;
+    /**
+     * Set when this line was expanded from a bundle cart line.
+     */
+    bundleParentLineId?: string | null;
+    quantity: number;
+    /**
+     * Cents
+     */
+    unitPrice: number;
+    /**
+     * Snapshot of per-unit custom fields { firstName, size, ... }
+     */
+    customFieldValues?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    id?: string | null;
+  }[];
+  subtotal: number;
+  total: number;
+  currency: string;
+  stripeCheckoutSessionId?: string | null;
+  stripePaymentIntentId?: string | null;
+  paidAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -808,6 +947,14 @@ export interface PayloadLockedDocument {
         value: string | GalleryCategory;
       } | null)
     | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: string | Order;
+      } | null)
+    | ({
         relationTo: 'payload-folders';
         value: string | FolderInterface;
       } | null);
@@ -858,6 +1005,9 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  phone?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -933,7 +1083,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "HeroBlock_select".
  */
 export interface HeroBlockSelect<T extends boolean = true> {
-  variant?: T;
+  title?: T;
   slides?:
     | T
     | {
@@ -1288,6 +1438,76 @@ export interface GalleryCategoriesSelect<T extends boolean = true> {
   title?: T;
   generateSlug?: T;
   slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  type?: T;
+  active?: T;
+  price?: T;
+  image?: T;
+  description?: T;
+  customFields?:
+    | T
+    | {
+        name?: T;
+        label?: T;
+        kind?: T;
+        required?: T;
+        options?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  bundleItems?:
+    | T
+    | {
+        product?: T;
+        quantity?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  status?: T;
+  user?: T;
+  customerEmail?: T;
+  customerName?: T;
+  customerPhone?: T;
+  items?:
+    | T
+    | {
+        productTitle?: T;
+        product?: T;
+        bundleParentLineId?: T;
+        quantity?: T;
+        unitPrice?: T;
+        customFieldValues?: T;
+        id?: T;
+      };
+  subtotal?: T;
+  total?: T;
+  currency?: T;
+  stripeCheckoutSessionId?: T;
+  stripePaymentIntentId?: T;
+  paidAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

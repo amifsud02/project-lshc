@@ -5,13 +5,15 @@ import Link from 'next/link';
 import styles from './Mobile.module.css';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import type { NavItem } from './Header';
+import CartIcon from '@/components/Shop/CartIcon';
+import { SHOP_ENABLED, isShopHref } from '@/lib/shop/visibility';
 
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
 import { usePathname } from 'next/navigation';
 
 const DEFAULT_NAV_ITEMS: NavItem[] = [
     { label: 'Home', href: '/' },
-    { label: 'Memberships', href: 'https://memberships.lasallehandball.com' },
+    { label: 'Shop', href: '/shop' },
 ]
 
 interface AccordionItemProps {
@@ -52,13 +54,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ header, url, ...rest }) =
 export const MobileNavbar = ({
     logo,
     navItems,
+    isAuthed = false,
 }: {
     logo?: string
     navItems?: NavItem[]
+    isAuthed?: boolean
 } = {}) => {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
-    const items = navItems && navItems.length > 0 ? navItems : DEFAULT_NAV_ITEMS
+    const items = (navItems && navItems.length > 0 ? navItems : DEFAULT_NAV_ITEMS)
+        .filter((item) => SHOP_ENABLED || !isShopHref(item.href))
     const logoSrc = logo ?? '/lshc.png'
 
     useEffect(() => {
@@ -79,11 +84,14 @@ export const MobileNavbar = ({
                         <div className={styles.nav__brand}>
                             <Link href={'/'}><img src={logoSrc} alt="LSHC Logo" className="w-[75px] h-[75px]" /></Link>
                         </div>
-                        {
-                            isOpen
-                                ? <X color='white' size={40} onClick={() => setIsOpen(!isOpen)} />
-                                : <Menu color='white' size={40} onClick={() => setIsOpen(!isOpen)} />
-                        }
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#fff' }}>
+                            {SHOP_ENABLED ? <CartIcon /> : null}
+                            {
+                                isOpen
+                                    ? <X color='white' size={40} onClick={() => setIsOpen(!isOpen)} />
+                                    : <Menu color='white' size={40} onClick={() => setIsOpen(!isOpen)} />
+                            }
+                        </div>
                     </div>
 
                     <nav className={`${styles.nav__menu} ${styles.accordion} ${isOpen && styles.nav__open}`}>
@@ -100,6 +108,14 @@ export const MobileNavbar = ({
                                             <p>{item.label}</p>
                                         </Link>
                                     ))}
+                                    {SHOP_ENABLED ? (
+                                        <Link
+                                            className={`${styles.navItemLink} w-full`}
+                                            href={isAuthed ? '/account' : '/login'}
+                                        >
+                                            <p>{isAuthed ? 'Account' : 'Sign in'}</p>
+                                        </Link>
+                                    ) : null}
                                 </Accordion>
                             )
                         }

@@ -2,6 +2,8 @@
 
 import styles from "./Hero.module.css";
 import Slider from "react-slick";
+import { RichText } from "@payloadcms/richtext-lexical/react";
+import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 
 export type HeroSlide = {
   src: string;
@@ -15,7 +17,7 @@ export type HeroSocial = {
 };
 
 export type HeroProps = {
-  title?: string;
+  title?: string | SerializedEditorState | null;
   subtitle?: string;
   established?: string | number;
   slides?: HeroSlide[];
@@ -52,10 +54,11 @@ const HeroSection = ({
   };
 
   const resolvedSlides = slides?.length ? slides : DEFAULT_SLIDES;
-  const resolvedSocial = social ?? DEFAULT_SOCIAL;
-  const hasSocial = Boolean(
-    resolvedSocial.facebook || resolvedSocial.instagram || resolvedSocial.tiktok
-  );
+  const resolvedSocial: Required<HeroSocial> = {
+    facebook: social?.facebook || DEFAULT_SOCIAL.facebook!,
+    instagram: social?.instagram || DEFAULT_SOCIAL.instagram!,
+    tiktok: social?.tiktok || DEFAULT_SOCIAL.tiktok!,
+  };
 
   return (
     <section className={styles.hero} style={{ position: 'relative', overflow: 'hidden' }}>
@@ -70,29 +73,33 @@ const HeroSection = ({
           </div>
         ))}
       </Slider>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(125deg, rgba(1, 41, 111, 1) 0%, rgba(0, 13, 36, 0.83) 100%)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(125deg, rgba(1, 41, 111, 0.5) 0%, rgba(0, 13, 36, 0.4) 100%)', zIndex: 1 }} />
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, display: 'flex', flexDirection: 'column' }}>
         <div className={`parent`} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className={`${styles.animate__animated} ${styles.animate__backInLeft} ${styles.hpTitle}`}>
             <div style={{ marginBottom: '24px' }}></div>
-            <h1 className={styles.title}>
-              {title}
-              {subtitle ? (
-                <>
-                  <br />
-                  <span className={styles.subtitle}>{subtitle}</span>
-                </>
-              ) : null}
-            </h1>
+            {typeof title === "object" && title !== null ? (
+              <div className={styles.richTitle}>
+                <RichText data={title} />
+              </div>
+            ) : (
+              <h1 className={styles.title}>
+                {title}
+                {subtitle ? (
+                  <>
+                    <br />
+                    <span className={styles.subtitle}>{subtitle}</span>
+                  </>
+                ) : null}
+              </h1>
+            )}
             {established ? (
               <p className={styles.yearOfEstablishment}>
                 EST. <span className="numbers">{established}</span>
               </p>
             ) : null}
-            {hasSocial ? (
-              <ul className={styles.socialLinks}>
-                {resolvedSocial.facebook ? (
-                  <li>
+            <ul className={styles.socialLinks}>
+                <li>
                     <a className={styles.fbIcon} href={resolvedSocial.facebook} rel="noopener noreferrer" target="_blank">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -110,9 +117,7 @@ const HeroSection = ({
                       </svg>
                     </a>
                   </li>
-                ) : null}
-                {resolvedSocial.instagram ? (
-                  <li>
+                <li>
                     <a className={styles.instaIcon} href={resolvedSocial.instagram} rel="noopener noreferrer" target="_blank">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -135,9 +140,7 @@ const HeroSection = ({
                       </svg>
                     </a>
                   </li>
-                ) : null}
-                {resolvedSocial.tiktok ? (
-                  <li>
+                <li>
                     <a className={styles.tiktokIcon} href={resolvedSocial.tiktok} rel="noopener noreferrer" target="_blank">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -155,9 +158,7 @@ const HeroSection = ({
                       </svg>
                     </a>
                   </li>
-                ) : null}
               </ul>
-            ) : null}
           </div>
         </div>
       </div>

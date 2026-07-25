@@ -18,7 +18,7 @@ type Params = { category: string }
 type SP = { tag?: string | string[] }
 
 export async function generateMetadata(
-    { params }: { params: Params | Promise<Params> }
+    { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
     const { category } = await params;
     const cat = await getNewsCategoryBySlug(category);
@@ -33,8 +33,8 @@ export default async function NewsCategoryPage({
     params,
     searchParams,
 }: {
-    params: Params | Promise<Params>
-    searchParams?: SP | Promise<SP>
+    params: Promise<Params>
+    searchParams?: Promise<SP>
 }) {
     const { category } = await params;
     const [cat, categories] = await Promise.all([

@@ -1,5 +1,5 @@
 import type { Field } from 'payload'
-import deepMerge from '@/lib/utils/deepMerge.ts'
+import deepMerge from '@/lib/utils/deepMerge'
 
 export type LinkAppearances = 'default' | 'outline'
 
@@ -73,7 +73,7 @@ export const link: LinkType = ({
     const withWidth = linkTypes.map((linkType) => ({
       ...linkType,
       admin: { ...linkType.admin, width: '50%' },
-    }))
+    })) as Field[]
 
     ;(linkResult.fields as Field[]).push({
       type: 'row',
