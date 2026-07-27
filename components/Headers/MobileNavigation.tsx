@@ -67,6 +67,10 @@ export const MobileNavbar = ({
     const logoSrc = logo ?? '/lshc.png'
 
     useEffect(() => {
+        setIsOpen(false);
+    }, [pathname])
+
+    useEffect(() => {
         if (isOpen) {
             document.documentElement.style.overflowY = 'hidden';
         }
@@ -82,7 +86,7 @@ export const MobileNavbar = ({
 
                     <div className={styles.nav__top}>
                         <div className={styles.nav__brand}>
-                            <Link href={'/'}><img src={logoSrc} alt="LSHC Logo" className="w-[75px] h-[75px]" /></Link>
+                            <Link href={'/'} onClick={() => setIsOpen(false)}><img src={logoSrc} alt="LSHC Logo" className="w-[75px] h-[75px]" /></Link>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#fff' }}>
                             {SHOP_ENABLED ? <CartIcon /> : null}
@@ -103,6 +107,7 @@ export const MobileNavbar = ({
                                             key={item.label}
                                             className={pathname === item.href ? `${styles.navItemLink} ${styles.active} w-full` : `${styles.navItemLink} w-full`}
                                             href={item.href}
+                                            onClick={() => setIsOpen(false)}
                                             {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                                         >
                                             <p>{item.label}</p>
@@ -112,6 +117,7 @@ export const MobileNavbar = ({
                                         <Link
                                             className={`${styles.navItemLink} w-full`}
                                             href={isAuthed ? '/account' : '/login'}
+                                            onClick={() => setIsOpen(false)}
                                         >
                                             <p>{isAuthed ? 'Account' : 'Sign in'}</p>
                                         </Link>
