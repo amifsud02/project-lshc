@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { collectionWriteAccess } from '@/lib/auth/roles'
 
 export const Players: CollectionConfig = {
   slug: 'players',
@@ -12,7 +13,10 @@ export const Players: CollectionConfig = {
     group: 'Handball Management',
   },
   access: {
+    create: collectionWriteAccess('players'),
+    delete: collectionWriteAccess('players'),
     read: () => true,
+    update: collectionWriteAccess('players'),
   },
   fields: [
     {

@@ -7,6 +7,13 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"
 import Image from 'next/image'
 import Link from 'next/link'
 
+const CAROUSEL_IMAGES = [
+    { src: '/la-salle-hero.jpg', alt: 'Men First Team' },
+    { src: 'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/arxdxfehrefwzdvaxvu7', alt: 'Women First Team' },
+    { src: 'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/kqd1a1rljelowgtoztuo', alt: 'U21 Men Team' },
+    { src: 'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/lynuchzl53oqdgq5blpv', alt: 'U21 Women Team' },
+]
+
 const TeamCarousel = () => {
 
     const arrowStyles: CSSProperties = {
@@ -83,41 +90,37 @@ const TeamCarousel = () => {
             >
                 <div className="carousel-image-container">
                     <div className="image-wrapper">
-                        <img src='/la-salle-hero.jpg' alt="" />
+                        <Image src={CAROUSEL_IMAGES[0].src} alt={CAROUSEL_IMAGES[0].alt} fill className="object-cover" />
                     </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Men First Team</h2>
-                        {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
                     <div className="image-wrapper">
-                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/arxdxfehrefwzdvaxvu7' alt="" />
+                        <Image src={CAROUSEL_IMAGES[1].src} alt={CAROUSEL_IMAGES[1].alt} fill className="object-cover" />
                     </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Women First Team</h2>
-                        {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/women-first-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
-                <div className="image-wrapper">
-                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/kqd1a1rljelowgtoztuo' alt="" />
+                    <div className="image-wrapper">
+                        <Image src={CAROUSEL_IMAGES[2].src} alt={CAROUSEL_IMAGES[2].alt} fill className="object-cover" />
                     </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Men Team</h2>
-                        {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/u21-mens-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>
                 <div className="carousel-image-container">
                     <div className="image-wrapper">
-                        <img src='https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/lynuchzl53oqdgq5blpv' alt="" />
+                        <Image src={CAROUSEL_IMAGES[3].src} alt={CAROUSEL_IMAGES[3].alt} fill className="object-cover" />
                     </div>
                     <div className="carousel-content-element">
                         <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Women Team</h2>
-                        {/* <p style={{ color: "#fff", marginBottom: '25px' }}>The squad coached by Kenneth Hili</p> */}
                         <Link href={'/teams/u21-womens-team/all'} className="button-link">View Team</Link>
                     </div>
                 </div>

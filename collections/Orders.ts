@@ -1,5 +1,6 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
 import { sendOrderConfirmation } from '@/lib/email/orderConfirmation'
+import { collectionWriteAccess, hasRole } from '@/lib/auth/roles'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -9,10 +10,20 @@ export const Orders: CollectionConfig = {
     defaultColumns: ['orderNumber', 'customerEmail', 'total', 'status', 'createdAt'],
   },
   access: {
-    read: ({ req: { user } }) => Boolean(user),
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    create: collectionWriteAccess('orders'),
+    delete: collectionWriteAccess('orders'),
+    // Staff who run the shop see every order; a customer only ever sees their own.
+    // Storefront pages read orders through the Local API with `overrideAccess`,
+    // so this governs the REST/GraphQL surface.
+    read: ({ req: { user } }) => {
+      if (!user) return false
+      if (hasRole(user, 'admin', 'shop-manager')) return true
+      const ownOrders: Where = {
+        or: [{ user: { equals: user.id } }, { customerEmail: { equals: user.email } }],
+      }
+      return ownOrders
+    },
+    update: collectionWriteAccess('orders'),
   },
   hooks: {
     beforeChange: [

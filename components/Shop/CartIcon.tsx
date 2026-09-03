@@ -52,7 +52,7 @@ export default function CartIcon() {
             alignItems: 'center',
             justifyContent: 'center',
             border: '2px solid #000d24',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: 'var(--font-manrope), sans-serif',
           }}
         >
           {count}

@@ -1,10 +1,12 @@
 import { GlobalConfig } from "payload";
 import { revalidateGlobal } from "./hooks/revalidateGlobal";
+import { adminOnly } from '@/lib/auth/roles'
 
 export const General: GlobalConfig = {
     slug: 'general',
     access: {
         read: ({ req: { user } }) => !!user,
+      update: adminOnly,
     },
     admin: {
         group: 'Theme Settings'

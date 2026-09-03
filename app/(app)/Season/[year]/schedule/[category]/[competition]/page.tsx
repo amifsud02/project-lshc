@@ -140,13 +140,13 @@ const Schedule = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            
+
             try {
                 if (selectedCompetition.value) {
                     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v2/fixtures/season/${year}/${category}/${competition}`;
 
                     const response = await fetch(url);
-                    
+
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -160,12 +160,12 @@ const Schedule = () => {
                 setLoading(false);
             }
         };
-    
+
         // Fetch data only when selectedCompetition.value or selectedYear changes
         if (selectedCompetition.value && selectedYear) {
             fetchData();
         }
-    }, [year, selectedCompetition.value, selectedYear]);
+    }, [year, category, competition, selectedCompetition.value, selectedYear]);
 
     return (
         <>

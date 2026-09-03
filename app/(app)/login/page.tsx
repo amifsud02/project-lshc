@@ -1,31 +1,45 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import PageHeader from '@/components/PageHeader/PageHeader'
+import AuthForm from '@/components/Auth/AuthForm'
 import { getCurrentUser } from '@/lib/auth/server'
-import LoginForm from './LoginForm'
+import { safeRedirectPath } from '@/lib/auth/session'
+import {
+  isGoogleSignInConfigured,
+  siteGoogleSignInErrorMessages,
+  type GoogleSignInError,
+} from '@/lib/auth/google'
+import { magicLinkErrorMessages, type MagicLinkError } from '@/lib/auth/magicLinkMessages'
 import '@/components/Shop/shop.css'
+import '@/components/Auth/auth.css'
 
 export const metadata = { title: 'Sign in | La Salle Handball' }
 
-type SearchParams = Promise<{ redirect?: string }>
+type SearchParams = Promise<{ redirect?: string; google?: string; link?: string }>
 
 export default async function LoginPage({ searchParams }: { searchParams: SearchParams }) {
-  const { redirect: redirectTo } = await searchParams
+  const params = await searchParams
+  const redirectTo = safeRedirectPath(params.redirect)
+
   const user = await getCurrentUser()
-  if (user) redirect(redirectTo || '/account')
+  if (user) redirect(redirectTo)
+
+  const googleError = params.google
+    ? (siteGoogleSignInErrorMessages[params.google as GoogleSignInError] ??
+      siteGoogleSignInErrorMessages.server_error)
+    : null
+  const linkError = params.link ? (magicLinkErrorMessages[params.link as MagicLinkError] ?? null) : null
 
   return (
     <>
       <PageHeader pageName="Sign in" />
-      <section className="parent shop" style={{ maxWidth: 520 }}>
-        <p className="shop__intro">Access your orders and update your club details.</p>
-        <LoginForm redirectTo={redirectTo ?? '/account'} />
-        <p style={{ marginTop: 22, fontSize: 13, color: 'var(--shop-muted)' }}>
-          New here?{' '}
-          <Link href="/register" className="shop-link">
-            Create an account
-          </Link>
-        </p>
+      <section className="parent shop auth">
+        <AuthForm
+          mode="login"
+          redirectTo={redirectTo}
+          googleEnabled={isGoogleSignInConfigured()}
+          googleError={googleError}
+          linkError={linkError}
+        />
       </section>
     </>
   )

@@ -83,7 +83,7 @@
 .matchType {
   text-align: center;
   font-size: 12px;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
   opacity: 0.65;
 }
 
@@ -121,7 +121,7 @@
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
   padding-bottom: 5px;
   border-bottom: 1px solid black;
   opacity: 0.8;

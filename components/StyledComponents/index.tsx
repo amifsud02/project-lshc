@@ -72,7 +72,7 @@ export const NewsInfo = styled.div`
 
 export const NewsDate = styled.p`
     font-size: 11px;
-    font-family: 'Montserrat',sans-serif;
+    font-family: var(--font-manrope),sans-serif;
     font-weight: 600;
     text-transform: uppercase;
     margin: 10px 0;
@@ -83,7 +83,7 @@ export const NewsDate = styled.p`
 
 export const NewsTitle = styled.h3`
     font-size: 16px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-manrope), sans-serif;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--secondary-color);

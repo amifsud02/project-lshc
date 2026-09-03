@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { collectionWriteAccess } from '@/lib/auth/roles'
+import { buildFixtureSlug } from '@/lib/utils/fixtureSlug'
 
 export const Fixtures: CollectionConfig = {
   slug: 'fixtures',
@@ -19,9 +21,50 @@ export const Fixtures: CollectionConfig = {
     group: 'Handball Management',
   },
   access: {
+    create: collectionWriteAccess('fixtures'),
+    delete: collectionWriteAccess('fixtures'),
     read: () => true,
+    update: collectionWriteAccess('fixtures'),
+  },
+  hooks: {
+    /**
+     * The public match-report URL is derived from the two clubs and the kick-off
+     * date, so it is rebuilt whenever any of those three change rather than being
+     * frozen at creation — a corrected date or opponent would otherwise leave a
+     * slug that reads wrong.
+     */
+    beforeChange: [
+      async ({ data, originalDoc, req }) => {
+        const homeTeam = data.homeTeam ?? originalDoc?.homeTeam
+        const awayTeam = data.awayTeam ?? originalDoc?.awayTeam
+        const startDate = data.startDate ?? originalDoc?.startDate
+
+        const slug = await buildFixtureSlug({
+          homeTeam,
+          awayTeam,
+          startDate,
+          currentId: originalDoc?.id,
+          req,
+        })
+
+        if (slug) data.slug = slug
+        return data
+      },
+    ],
   },
   fields: [
+    {
+      name: 'slug',
+      type: 'text',
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description:
+          'Public match-report URL. Generated from the teams and kick-off date.',
+      },
+    },
     {
       name: 'fixtureCode',
       type: 'text',

@@ -12,9 +12,7 @@ const SponsorCard = (props: sponsorCardProps) => {
     return (
         <div className={` card ${styles.sponsorCard}`}>
             <div className={styles.sponsorImage}>
-                <img src={props.sponsorImage} alt={props.sponsorName} className={styles.partnerLogo}/>
-            {/* <Image src={'/lshc.png'} alt={'LSHC Logo'} height={90} width={90} className={styles.partnerLogo}></Image> */}
-                {/*{props.sponsorImage}*/}
+                <Image src={props.sponsorImage} alt={props.sponsorName} height={90} width={90} className={styles.partnerLogo} />
             </div>
             <div className={styles.sponsorName}>{props.sponsorName}</div>
             <div className={styles.sponsorLink}>

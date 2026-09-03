@@ -8,6 +8,7 @@ import Dropdown from './Dropdown/Dropdown';
 import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react';
 import CartIcon from '@/components/Shop/CartIcon';
+import AccountIcon from '@/components/Shop/AccountIcon';
 import { SHOP_ENABLED, isShopHref } from '@/lib/shop/visibility';
 
 export type NavLink = {
@@ -99,18 +100,11 @@ export function DesktopNavbar({
                         ))}
                     </ul>
 
-                    {SHOP_ENABLED ? (
-                        <div className={styles.shopActions}>
-                            <Link
-                                href={isAuthed ? '/account' : '/login'}
-                                className={styles.shopActionLink}
-                            >
-                                {isAuthed ? 'Account' : 'Sign in'}
-                            </Link>
-                            <div className={styles.shopActionDivider} aria-hidden />
-                            <CartIcon />
-                        </div>
-                    ) : null}
+                    {/* The account is used for nursery registrations too, so it stays visible when the shop is off. */}
+                    <div className={styles.shopActions}>
+                        <AccountIcon isAuthed={isAuthed} />
+                        {SHOP_ENABLED ? <CartIcon /> : null}
+                    </div>
                 </div>
             </div>
         </header>

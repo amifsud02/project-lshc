@@ -15,6 +15,9 @@ const nextConfig = {
         ],
         formats: ["image/avif"],
     },
+    turbopack: {
+        root: import.meta.dirname,
+    },
     output: 'standalone'
 }
 

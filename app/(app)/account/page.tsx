@@ -1,159 +1,96 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import PageHeader from '@/components/PageHeader/PageHeader'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { Package, School, UserRound } from 'lucide-react'
+import StatusBadge from '@/components/Account/StatusBadge'
 import { getCurrentUser } from '@/lib/auth/server'
+import { countUserRecords, formatDate, getUserOrders, orderStatusLabels } from '@/lib/account/data'
 import { formatPrice } from '@/lib/shop/types'
-import '@/components/Shop/shop.css'
 
-export const metadata = { title: 'Account | La Salle Handball' }
+export const metadata = { title: 'My account | La Salle Handball' }
 
-export default async function AccountPage() {
+export default async function AccountDashboardPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?redirect=/account')
 
-  const payload = await getPayload({ config })
-  const { docs: orders } = await payload.find({
-    collection: 'orders',
-    where: {
-      or: [{ user: { equals: user.id } }, { customerEmail: { equals: user.email } }],
-    },
-    sort: '-createdAt',
-    limit: 50,
-    overrideAccess: true,
-  })
+  const [counts, recentOrders] = await Promise.all([countUserRecords(user), getUserOrders(user, 3)])
+  const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email
 
   return (
     <>
-      <PageHeader pageName="My account" />
-      <section className="parent shop">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            gap: 16,
-            flexWrap: 'wrap',
-            marginBottom: 24,
-          }}
-        >
-          <div>
-            <p
-              style={{
-                fontFamily: 'Montserrat, sans-serif',
-                fontSize: 11,
-                letterSpacing: '0.26em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                color: 'var(--shop-accent)',
-                margin: 0,
-              }}
-            >
-              Signed in as
-            </p>
-            <p
-              style={{
-                fontFamily: 'Raleway, sans-serif',
-                fontSize: 20,
-                fontWeight: 800,
-                textTransform: 'uppercase',
-                letterSpacing: '0.02em',
-                margin: '4px 0 0',
-              }}
-            >
-              {[user.firstName, user.lastName].filter(Boolean).join(' ') || user.email}
-            </p>
-            <p
-              style={{
-                fontFamily: 'Montserrat, sans-serif',
-                fontSize: 13,
-                color: 'var(--shop-muted)',
-                margin: '2px 0 0',
-              }}
-            >
-              {user.email}
-            </p>
-          </div>
-          <Link href="/logout" prefetch={false} className="shop-link">
-            Sign out
-          </Link>
-        </div>
+      <h2 className="account-title">Dashboard</h2>
+      <p className="account-lead account-hello">
+        Hello <strong>{displayName}</strong> (not {displayName}?{' '}
+        <Link href="/logout" prefetch={false}>Sign out</Link>)
+      </p>
+      <p className="account-lead">
+        From your account dashboard you can view your{' '}
+        <Link href="/account/orders">recent orders</Link>, check your{' '}
+        <Link href="/account/nursery">nursery registrations</Link>, and edit your{' '}
+        <Link href="/account/details">account details</Link>.
+      </p>
 
-        <div className="shop__section-head">
-          <h2>Order history</h2>
-          <span className="shop__section-head-meta">
-            {orders.length.toString().padStart(2, '0')} record
-            {orders.length === 1 ? '' : 's'}
+      <div className="account-tiles">
+        <Link href="/account/orders" className="account-tile">
+          <Package aria-hidden="true" />
+          <span className="account-tile__count">{counts.orders}</span>
+          <span className="account-tile__label">{counts.orders === 1 ? 'Order' : 'Orders'}</span>
+        </Link>
+        <Link href="/account/nursery" className="account-tile">
+          <School aria-hidden="true" />
+          <span className="account-tile__count">{counts.nursery}</span>
+          <span className="account-tile__label">
+            Nursery {counts.nursery === 1 ? 'registration' : 'registrations'}
           </span>
-        </div>
+        </Link>
+        <Link href="/account/details" className="account-tile">
+          <UserRound aria-hidden="true" />
+          <span className="account-tile__count" style={{ fontSize: 18, lineHeight: 1.3 }}>
+            {user.email}
+          </span>
+          <span className="account-tile__label">Account details</span>
+        </Link>
+      </div>
 
-        {orders.length === 0 ? (
-          <div className="empty-state">
-            <p className="empty-state__eyebrow">No orders yet</p>
-            <h3 className="empty-state__title">Your history is empty</h3>
-            <p className="empty-state__body">
-              Pick something up from the shop — your orders will appear here.
-            </p>
-            <Link href="/shop" className="shop-link">
-              Browse the shop
+      {recentOrders.length > 0 ? (
+        <section className="account-section">
+          <div className="account-section__head">
+            <h3 className="account-section__title">Recent orders</h3>
+            <Link href="/account/orders" className="account-inline-link" style={{ fontSize: 13 }}>
+              View all
             </Link>
           </div>
-        ) : (
-          <ul className="orders-list">
-            {orders.map((o: any) => (
-              <li key={o.id} className="orders-list__item">
-                <div>
-                  <p
-                    className="shop__mono"
-                    style={{
-                      margin: 0,
-                      fontWeight: 700,
-                      letterSpacing: '0.06em',
-                      fontSize: 14,
-                    }}
-                  >
-                    № {o.orderNumber}
-                  </p>
-                  <p
-                    className="shop__mono"
-                    style={{
-                      margin: '6px 0 0',
-                      fontSize: 11,
-                      letterSpacing: '0.14em',
-                      textTransform: 'uppercase',
-                      color: 'var(--shop-muted)',
-                    }}
-                  >
-                    {new Date(o.createdAt).toLocaleDateString('en-MT', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}{' '}
-                    · {o.items?.length ?? 0} item{o.items?.length === 1 ? '' : 's'}
-                  </p>
-                </div>
-                <div
-                  style={{
-                    textAlign: 'right',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                  }}
-                >
-                  <span
-                    className="shop__mono"
-                    style={{ fontWeight: 700, fontSize: 16, color: 'var(--shop-ink)' }}
-                  >
-                    {formatPrice(o.total)}
-                  </span>
-                  <span className={`order-badge order-badge--${o.status}`}>{o.status}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+          <div className="account-table-wrap">
+            <table className="account-table">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" className="is-num">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td data-label="Order">
+                      <Link href={`/account/orders/${order.orderNumber}`} className="account-table__ref">
+                        #{order.orderNumber}
+                      </Link>
+                    </td>
+                    <td data-label="Date">{formatDate(order.createdAt)}</td>
+                    <td data-label="Status">
+                      <StatusBadge status={order.status} label={orderStatusLabels[order.status]} />
+                    </td>
+                    <td data-label="Total" className="is-num">
+                      {formatPrice(order.total, order.currency)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
     </>
   )
 }

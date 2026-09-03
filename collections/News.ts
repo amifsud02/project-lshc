@@ -1,4 +1,5 @@
 import { slugField, type CollectionConfig } from 'payload'
+import { collectionWriteAccess, publishedOrStaff } from '@/lib/auth/roles'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -11,10 +12,10 @@ export const News: CollectionConfig = {
     defaultColumns: ['title', 'category', 'publishedAt', '_status', 'updatedAt'],
   },
   access: {
-    read: ({ req: { user } }) => {
-      if (user) return true
-      return { _status: { equals: 'published' } }
-    },
+    create: collectionWriteAccess('news'),
+    delete: collectionWriteAccess('news'),
+    read: publishedOrStaff,
+    update: collectionWriteAccess('news'),
   },
   versions: {
     drafts: {

@@ -4,20 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "cross-env NODE_ENV=development next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types"
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "grant-role": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/grant-role.ts",
+    "seed-nursery": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-nursery.ts",
+    "import-fixtures": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/import-fixtures.ts"
   },
   "dependencies": {
-    "@ctrl/react-adsense": "^1.7.0",
-    "@payloadcms/db-mongodb": "^3.86.0",
-    "@payloadcms/next": "^3.86.0",
-    "@payloadcms/plugin-cloud-storage": "^3.86.0",
-    "@payloadcms/richtext-lexical": "^3.86.0",
-    "@payloadcms/ui": "3.86.0",
+    "@payloadcms/db-mongodb": "^3.88.0",
+    "@payloadcms/next": "^3.88.0",
+    "@payloadcms/plugin-cloud-storage": "^3.88.0",
+    "@payloadcms/richtext-lexical": "^3.88.0",
+    "@payloadcms/ui": "3.88.0",
     "@phntms/react-share": "^1.0.2-rc1",
     "@portabletext/react": "^6.0.3",
     "@prisma/client": "^4.14.1",
@@ -39,11 +41,11 @@
     "gsap": "^3.12.1",
     "lucide-react": "^1.8.0",
     "nanoid": "^5.1.9",
-    "next": "15.5.15",
+    "next": "15.5.24",
     "next-cloudinary": "^6.17.5",
     "next-sanity": "^12.1.1",
     "npm": "^11.12.1",
-    "payload": "^3.86.0",
+    "payload": "^3.88.0",
     "postcss": "^8.5.10",
     "prisma": "^4.14.1",
     "react": "19.2.5",
@@ -69,6 +71,6 @@
   "overrides": {
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@payloadcms/ui": "3.86.0"
+    "@payloadcms/ui": "3.88.0"
   }
 }

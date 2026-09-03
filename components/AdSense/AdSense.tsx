@@ -1,58 +1,79 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
+import { useEffect, useRef } from 'react'
 
 declare global {
   interface Window {
-    adsbygoogle: any[];
+    adsbygoogle: unknown[]
   }
 }
-// const AdSense = ({adSlot}: {adSlot: string}) => {
-//   useEffect(() => {
-//     const scriptElement = document.querySelector(
-//       'script[src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6327648024245847"]'
-//     )
 
-//     console.log(scriptElement);
+export const AD_CLIENT = 'ca-pub-6327648024245847'
 
-//     const handleScriptLoad = () => {
-//       try {
-//         if (window.adsbygoogle) {
-//           console.log('pushing ads');
-//           window.adsbygoogle.push({});
-//         } else {
-//           scriptElement!.addEventListener("load", handleScriptLoad);
-//           console.log("waiting until adsense lib is laoded");
-//         }
-//       } catch (err) {
-//         console.log("error in adsense", err)
-//       }
-//     }
-//   }, []);
+export type AdFormat = 'auto' | 'horizontal' | 'vertical' | 'rectangle' | 'fluid'
 
-//   return (
-//     <ins
-//       className="adsbygoogle"
-//       style={{ display: "block" }}
-//       data-ad-client="ca-pub-6327648024245847" // Replace with your publisher ID
-//       data-ad-slot={adSlot}
-//       data-ad-format="auto"
-//       data-full-width-responsive="true"
-//     ></ins>
-//   );
-// };
+type AdSenseProps = {
+  adSlot: string
+  format?: AdFormat | null
+  className?: string
+}
 
-import { Adsense } from '@ctrl/react-adsense';
-const AdSense = ({adSlot}: {adSlot: string}) => {
+// `fluid` is the only format that takes a layout, and it must not be marked
+// full-width-responsive. Everything else is a display format.
+const layoutFor = (format: AdFormat) => (format === 'fluid' ? 'in-article' : undefined)
+const responsiveFor = (format: AdFormat) => (format === 'auto' ? 'true' : 'false')
+
+const AdSense = ({ adSlot, format, className }: AdSenseProps) => {
+  const insRef = useRef<HTMLModElement>(null)
+  const pushed = useRef(false)
+
+  useEffect(() => {
+    const ins = insRef.current
+    if (!ins) return
+
+    // adsbygoogle.js binds each queued push to the next unprocessed <ins> and
+    // measures it immediately. Pushing before layout gives it a zero-width
+    // element, which throws "No slot size for availableWidth=0" and burns the
+    // slot for the rest of the page load. Wait for a real width instead.
+    const tryPush = () => {
+      if (pushed.current) return true
+      if (ins.getAttribute('data-ad-status')) return true
+      if (ins.getBoundingClientRect().width === 0) return false
+
+      pushed.current = true
+      try {
+        ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+      } catch {
+        pushed.current = false
+      }
+      return pushed.current
+    }
+
+    if (tryPush()) return
+
+    const observer = new ResizeObserver(() => {
+      if (tryPush()) observer.disconnect()
+    })
+    observer.observe(ins)
+    return () => observer.disconnect()
+  }, [])
+
+  const resolved: AdFormat = format ?? 'auto'
+
+  // The adsbygoogle.js loader itself lives in the root layout so that Auto ads
+  // also runs on pages without a manual unit.
   return (
-    <Adsense
-      client="ca-pub-6327648024245847"
-      slot={adSlot}
-      style={{ display: "block" }}
-      layout="in-article"
-      format="fluid"
+    <ins
+      ref={insRef}
+      className={className ? `adsbygoogle ${className}` : 'adsbygoogle'}
+      style={{ display: 'block' }}
+      data-ad-client={AD_CLIENT}
+      data-ad-slot={adSlot}
+      data-ad-format={resolved}
+      data-ad-layout={layoutFor(resolved)}
+      data-full-width-responsive={responsiveFor(resolved)}
     />
   )
 }
 
-export default AdSense;
+export default AdSense

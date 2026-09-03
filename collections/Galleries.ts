@@ -1,4 +1,5 @@
 import { slugField, type CollectionConfig, type CollectionSlug } from 'payload'
+import { collectionWriteAccess, publishedOrStaff } from '@/lib/auth/roles'
 
 export const Galleries: CollectionConfig = {
   slug: 'galleries',
@@ -33,10 +34,10 @@ export const Galleries: CollectionConfig = {
     },
   },
   access: {
-    read: ({ req: { user } }) => {
-      if (user) return true
-      return { _status: { equals: 'published' } }
-    },
+    create: collectionWriteAccess('galleries'),
+    delete: collectionWriteAccess('galleries'),
+    read: publishedOrStaff,
+    update: collectionWriteAccess('galleries'),
   },
   versions: {
     drafts: {

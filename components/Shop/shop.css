@@ -1,5 +1,5 @@
 /* ============================================================
-   Shop / Cart / Checkout — inherits site's Raleway + navy language.
+   Shop / Cart / Checkout — inherits site's Manrope + navy language.
    Designed to sit under the shared PageHeader inside a .parent.
    ============================================================ */
 
@@ -15,13 +15,13 @@
   --shop-gradient: linear-gradient(95deg, #01296F 10%, #000D24 90%);
 
   color: var(--shop-ink);
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   padding-top: 40px;
   padding-bottom: 80px;
 }
 
 .shop__mono {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-feature-settings: 'tnum' 1;
   font-variant-numeric: tabular-nums;
 }
@@ -44,7 +44,7 @@
 }
 
 .shop__section-head h2 {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: 16px;
   text-transform: uppercase;
@@ -53,7 +53,7 @@
 }
 
 .shop__section-head-meta {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -97,7 +97,7 @@
   top: 14px;
   left: 14px;
   z-index: 2;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.22em;
   font-weight: 600;
@@ -112,7 +112,7 @@
   top: 14px;
   right: 14px;
   z-index: 2;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.26em;
   font-weight: 700;
@@ -143,7 +143,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: clamp(56px, 10vw, 96px);
   letter-spacing: -0.02em;
@@ -170,7 +170,7 @@
 }
 
 .product-card__kicker {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -179,7 +179,7 @@
 }
 
 .product-card__title {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 800;
   font-size: 18px;
   text-transform: uppercase;
@@ -189,7 +189,7 @@
 }
 
 .product-card__price {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 16px;
   color: var(--shop-ink);
@@ -200,7 +200,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 12px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -241,7 +241,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: clamp(96px, 14vw, 160px);
   letter-spacing: -0.02em;
@@ -263,7 +263,7 @@
 .pdp__body { display: flex; flex-direction: column; }
 
 .pdp__kicker {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -273,7 +273,7 @@
 }
 
 .pdp__title {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: clamp(28px, 4vw, 42px);
   text-transform: uppercase;
@@ -293,14 +293,14 @@
 }
 
 .pdp__price {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 26px;
   color: var(--shop-ink);
 }
 
 .pdp__price-label {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -323,7 +323,7 @@
 }
 
 .pdp__includes-label {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -352,7 +352,7 @@
 .pdp__includes-list li::before {
   content: '✕';
   color: var(--shop-accent);
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
 }
 
@@ -363,19 +363,25 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 13px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 14px 24px;
+  min-height: 48px;
+  padding: 12px 24px;
   border: 2px solid var(--shop-accent);
   background: var(--shop-accent);
   color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease;
   text-decoration: none;
-  border-radius: 2px;
+  border-radius: 10px;
+}
+
+.shop-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(1, 41, 111, 0.22);
 }
 
 .shop-btn:hover:not(:disabled) {
@@ -383,7 +389,7 @@
   color: var(--shop-accent);
 }
 
-.shop-btn:disabled { opacity: 0.6; cursor: wait; }
+.shop-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .shop-btn--block { width: 100%; }
 
@@ -447,7 +453,7 @@
 }
 
 .cart-line__title {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: 22px;
   text-transform: uppercase;
@@ -458,7 +464,7 @@
 
 .cart-line__kicker {
   display: block;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -468,7 +474,7 @@
 }
 
 .cart-line__price {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 13px;
   color: var(--shop-muted);
   margin-top: 8px;
@@ -490,7 +496,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -502,19 +508,19 @@
   width: 54px;
   padding: 8px 10px;
   border: 1px solid var(--shop-rule);
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 13px;
   font-weight: 600;
   text-align: center;
   color: var(--shop-ink);
   background: #fff;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .cart-line__remove {
   background: transparent;
   border: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -550,7 +556,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -582,43 +588,152 @@
 .shop-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  min-width: 0;
 }
 
 .shop-field__label {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--shop-muted);
+  line-height: 1.3;
+  color: var(--shop-ink);
 }
 
 .shop-field__label--required::after {
   content: '*';
-  color: var(--shop-accent);
-  margin-left: 4px;
+  color: var(--shop-danger);
+  font-weight: 700;
+}
+
+.shop-field__optional {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #8a93a6;
 }
 
 .shop-field__input,
-.shop-field__select {
+.shop-field__select,
+.shop-field__textarea {
   width: 100%;
+  min-height: 48px;
   padding: 12px 14px;
-  border: 1px solid var(--shop-rule);
+  border: 1.5px solid #cdd3dd;
+  border-radius: 10px;
   background: #fff;
-  font-family: 'Raleway', sans-serif;
-  font-size: 14px;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
   color: var(--shop-ink);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  border-radius: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   -webkit-appearance: none;
+  appearance: none;
+}
+
+.shop-field__textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.shop-field__input::placeholder,
+.shop-field__textarea::placeholder {
+  color: #98a1b3;
+}
+
+.shop-field__input:hover:not(:disabled):not(:focus),
+.shop-field__select:hover:not(:disabled):not(:focus),
+.shop-field__textarea:hover:not(:disabled):not(:focus) {
+  border-color: #a3acbd;
 }
 
 .shop-field__input:focus,
-.shop-field__select:focus {
+.shop-field__select:focus,
+.shop-field__textarea:focus {
   outline: none;
   border-color: var(--shop-accent);
-  box-shadow: 0 0 0 3px rgba(1, 41, 111, 0.12);
+  box-shadow: 0 0 0 4px rgba(1, 41, 111, 0.14);
+}
+
+.shop-field__input:disabled,
+.shop-field__select:disabled,
+.shop-field__textarea:disabled {
+  background: #f3f4f7;
+  color: #8a93a6;
+  cursor: not-allowed;
+}
+
+.shop-field__select {
+  padding-right: 44px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%235a667a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+}
+
+/* Only flag a field once the person has interacted with it, never on first paint. */
+.shop-field__input:user-invalid,
+.shop-field__select:user-invalid,
+.shop-field__textarea:user-invalid,
+.shop-field--error .shop-field__input,
+.shop-field--error .shop-field__select,
+.shop-field--error .shop-field__textarea,
+.shop-field__input[aria-invalid='true'] {
+  border-color: var(--shop-danger);
+}
+
+.shop-field--error .shop-field__input:focus,
+.shop-field__input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 4px rgba(194, 52, 52, 0.12);
+}
+
+.shop-field__hint {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--shop-muted);
+}
+
+.shop-field__error {
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--shop-danger);
+}
+
+/* Input with an inline action, e.g. show/hide password. */
+.shop-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.shop-input-wrap .shop-field__input {
+  padding-right: 84px;
+}
+
+.shop-input-wrap__action {
+  position: absolute;
+  right: 8px;
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--shop-accent);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.shop-input-wrap__action:hover,
+.shop-input-wrap__action:focus-visible {
+  background: rgba(1, 41, 111, 0.07);
+  outline: none;
 }
 
 /* ---------- Checkout section (no card, just hairline rule) ---------- */
@@ -632,7 +747,7 @@
 .checkout-section:last-child { border-bottom: none; }
 
 .checkout-section__title {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: 16px;
   text-transform: uppercase;
@@ -644,7 +759,7 @@
 }
 
 .checkout-section__number {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.22em;
   font-weight: 600;
@@ -698,7 +813,7 @@
 }
 
 .checkout-section__list-amount {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -724,7 +839,7 @@
 }
 
 .summary__label {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -742,7 +857,7 @@
 }
 
 .summary__row--total {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 18px;
   font-weight: 900;
   text-transform: uppercase;
@@ -755,7 +870,7 @@
 .summary__row--total .summary__amount { font-size: 20px; }
 
 .summary__amount {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 15px;
 }
@@ -763,7 +878,7 @@
 .summary__cta { margin-top: 20px; }
 
 .summary__help {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.5;
@@ -799,7 +914,7 @@
 }
 
 .summary__list-amount {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 13px;
   white-space: nowrap;
@@ -808,13 +923,15 @@
 /* ---------- Error banner ---------- */
 
 .shop-error {
+  border: 1px solid rgba(194, 52, 52, 0.28);
   border-left: 3px solid var(--shop-danger);
-  padding: 8px 12px;
+  border-radius: 10px;
+  padding: 10px 14px;
   color: var(--shop-danger);
   font-size: 13px;
   font-weight: 600;
   margin: 0 0 12px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   letter-spacing: 0.02em;
   background: rgba(194, 52, 52, 0.06);
 }
@@ -828,7 +945,7 @@
 }
 
 .empty-state__eyebrow {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -838,7 +955,7 @@
 }
 
 .empty-state__title {
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: 24px;
   text-transform: uppercase;
@@ -863,7 +980,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 11px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -876,7 +993,7 @@
 }
 
 .receipt__order {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 14px;
   color: var(--shop-ink);
@@ -924,7 +1041,7 @@
 .receipt__row-title { font-weight: 600; }
 
 .receipt__row-amount {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
 }
 
@@ -932,7 +1049,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-family: 'Raleway', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 900;
   font-size: 20px;
   text-transform: uppercase;
@@ -941,7 +1058,7 @@
 }
 
 .receipt__total-amount {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
 }
 
@@ -950,7 +1067,7 @@
 .shop-link {
   position: relative;
   color: var(--shop-accent);
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-weight: 700;
   font-size: 12px;
   letter-spacing: 0.22em;
@@ -979,7 +1096,7 @@
 
 .order-badge {
   display: inline-block;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-manrope), sans-serif;
   font-size: 10px;
   letter-spacing: 0.26em;
   text-transform: uppercase;

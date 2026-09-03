@@ -1,5 +1,6 @@
 import { PageLayoutBlocks } from '@/blocks'
 import { slugField, type CollectionConfig } from 'payload'
+import { collectionWriteAccess } from '@/lib/auth/roles'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -12,7 +13,10 @@ export const Pages: CollectionConfig = {
     },
   },
   access: {
+    create: collectionWriteAccess('pages'),
+    delete: collectionWriteAccess('pages'),
     read: () => true,
+    update: collectionWriteAccess('pages'),
   },
   versions: {
     drafts: {

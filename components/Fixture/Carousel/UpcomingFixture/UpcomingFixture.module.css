@@ -73,14 +73,14 @@
 
 .fixtureType {
   font-size: 12px;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
 }
 
 .fixtureDate {
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
 }
 
 .countdown {
@@ -91,14 +91,14 @@
   margin: 15px 0;
   font-weight: 700;
   font-size: 18px;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
 }
 
 .fixtureLink {
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-manrope), sans-serif !important;
   padding-bottom: 5px;
   border-bottom: 1px solid white;
   

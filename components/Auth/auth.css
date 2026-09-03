@@ -1,0 +1,238 @@
+/* Sign in / create account. Builds on the field system in shop.css. */
+
+.auth {
+  padding-top: 48px;
+}
+
+.auth-card {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 32px 28px;
+  background: var(--shop-paper);
+  border: 1px solid var(--shop-rule-soft);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px -30px rgba(0, 13, 36, 0.35);
+}
+
+@media (min-width: 520px) {
+  .auth-card { padding: 36px 36px 32px; }
+}
+
+.auth-card__title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--shop-ink);
+}
+
+.auth-card__lead {
+  margin: 0 0 24px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--shop-muted);
+}
+
+.auth-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid #cdd3dd;
+  border-radius: 10px;
+  background: #fff;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--shop-ink);
+  text-decoration: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-google:hover {
+  border-color: #a3acbd;
+  background: #fafbfc;
+}
+
+.auth-google:focus-visible {
+  outline: none;
+  border-color: var(--shop-accent);
+  box-shadow: 0 0 0 4px rgba(1, 41, 111, 0.14);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a93a6;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--shop-rule-soft);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 460px) {
+  .auth-form__row { grid-template-columns: 1fr 1fr; }
+}
+
+.auth-form__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.auth-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--shop-muted);
+}
+
+.auth-textbtn {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--shop-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+}
+
+.auth-textbtn:hover { text-decoration-thickness: 2px; }
+
+.auth-textbtn:focus-visible {
+  outline: 2px solid var(--shop-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.auth-switch {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--shop-muted);
+}
+
+.auth-switch a {
+  font-weight: 700;
+  color: var(--shop-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth-alert {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-alert svg { flex: none; margin-top: 2px; }
+
+.auth-alert--error {
+  background: rgba(194, 52, 52, 0.07);
+  border: 1px solid rgba(194, 52, 52, 0.25);
+  color: var(--shop-danger);
+}
+
+.auth-alert--info {
+  background: rgba(1, 41, 111, 0.06);
+  border: 1px solid rgba(1, 41, 111, 0.18);
+  color: var(--shop-accent);
+}
+
+/* "Check your inbox" and "Signing you in" states */
+.auth-status {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.auth-status__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(1, 41, 111, 0.08);
+  color: var(--shop-accent);
+}
+
+.auth-status__icon--error {
+  background: rgba(194, 52, 52, 0.08);
+  color: var(--shop-danger);
+}
+
+.auth-status__title {
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--shop-ink);
+}
+
+.auth-status__body {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--shop-muted);
+}
+
+.auth-status__body strong {
+  color: var(--shop-ink);
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.auth-status__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.auth-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid rgba(1, 41, 111, 0.2);
+  border-top-color: var(--shop-accent);
+  border-radius: 50%;
+  animation: auth-spin 0.8s linear infinite;
+}
+
+@keyframes auth-spin { to { transform: rotate(360deg); } }

@@ -1,4 +1,5 @@
 import { slugField, type CollectionConfig } from 'payload'
+import { collectionWriteAccess } from '@/lib/auth/roles'
 
 export const GalleryCategories: CollectionConfig = {
   slug: 'gallery-categories',
@@ -12,7 +13,10 @@ export const GalleryCategories: CollectionConfig = {
     group: 'Gallery',
   },
   access: {
+    create: collectionWriteAccess('gallery-categories'),
+    delete: collectionWriteAccess('gallery-categories'),
     read: () => true,
+    update: collectionWriteAccess('gallery-categories'),
   },
   fields: [
     {

@@ -36,7 +36,7 @@
   font-weight: 800;
   line-height: 1em;
   text-align: center;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-manrope), sans-serif;
 }
 
 .pageMap {

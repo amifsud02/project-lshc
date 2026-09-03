@@ -1,4 +1,5 @@
 import { slugField, type CollectionConfig } from 'payload'
+import { collectionWriteAccess } from '@/lib/auth/roles'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -8,7 +9,10 @@ export const Products: CollectionConfig = {
     defaultColumns: ['title', 'type', 'price', 'active', 'updatedAt'],
   },
   access: {
+    create: collectionWriteAccess('products'),
+    delete: collectionWriteAccess('products'),
     read: () => true,
+    update: collectionWriteAccess('products'),
   },
   fields: [
     { name: 'title', type: 'text', required: true },

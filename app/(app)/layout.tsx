@@ -1,10 +1,18 @@
 import "./globals.css";
-import "./fonts.css";
+import { Manrope } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from '@vercel/analytics/react';
 import SiteNavbar from "@/components/Site/SiteNavbar";
 import SiteFooter from "@/components/Site/SiteFooter";
 import StyledComponentsRegistry from "@/lib/registry";
+import { AD_CLIENT } from "@/components/AdSense/AdSense";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-manrope",
+});
 
 const title =  "La Salle Handball | Official Website"
 const description = "Visit the La Salle Handball Club official website: all the latest news on the team and club, and fixtures."
@@ -30,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={manrope.variable}>
       <body>
         <Script
           strategy="afterInteractive"
@@ -49,10 +57,12 @@ export default function RootLayout({
           strategy="afterInteractive"
           src="https://cdn-cookieyes.com/client_data/bf6579391a8ef2247d80d05c/script.js"
         />
-        <Script
-          id="adsense"
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6327648024245847"
+        {/* Plain async script rather than next/script: React 19 hoists this into
+            <head> and leaves off the data-nscript attribute, both of which
+            AdSense requires for Auto ads and site verification. */}
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT}`}
           crossOrigin="anonymous"
         />
         <StyledComponentsRegistry>

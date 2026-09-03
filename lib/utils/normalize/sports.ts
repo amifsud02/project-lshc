@@ -7,6 +7,7 @@ export type NormalizedTeam = {
 
 export type NormalizedFixture = {
   id: string
+  slug: string
   startDate: string
   venue?: string
   isFinished: boolean
@@ -41,6 +42,7 @@ export const fixtureFromPayload = (f: any): NormalizedFixture => {
   const comp = typeof f.competition === 'object' && f.competition ? f.competition : null
   return {
     id: String(f.id),
+    slug: f.slug ?? String(f.id),
     startDate: f.startDate,
     venue: f.venue,
     isFinished: isFinishedStatus(f.status),
@@ -64,6 +66,7 @@ export const fixtureFromSanity = (f: any): NormalizedFixture => {
   const comp = f?.fixtureInfo?.competition?.[0]
   return {
     id: String(f._id),
+    slug: String(f._id),
     startDate: f.startDate,
     venue: f.venue,
     isFinished: isFinishedStatus(f.status),

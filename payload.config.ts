@@ -26,6 +26,11 @@ import { GalleryCategories } from "./collections/GalleryCategories";
 import { NewsCategories } from "./collections/NewsCategories";
 import { Products } from "./collections/Products";
 import { Orders } from "./collections/Orders";
+import { Venues } from "./collections/Venues";
+import { NurserySeasons } from "./collections/NurserySeasons";
+import { NurseryCategories } from "./collections/NurseryCategories";
+import { NurseryRegistrations } from "./collections/NurseryRegistrations";
+import { MagicLinkTokens } from "./collections/MagicLinkTokens";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -33,6 +38,9 @@ const dirname = path.dirname(filename);
 export default buildConfig({
   admin: {
     user: Users.slug,
+    components: {
+      beforeLogin: ['@/components/admin/GoogleSignInButton#GoogleSignInButton'],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -53,6 +61,11 @@ export default buildConfig({
     GalleryCategories,
     Products,
     Orders,
+    Venues,
+    NurserySeasons,
+    NurseryCategories,
+    NurseryRegistrations,
+    MagicLinkTokens,
   ],
   globals: [Header, Footer, General],
   editor: lexicalEditor(),

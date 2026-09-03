@@ -75,7 +75,8 @@ export const Countdown = styled.div`
     display: none;
 `
 
-export const Team = styled.div<{ isSecond: boolean }>`
+// Transient prop ($ prefix) so styled-components keeps it out of the DOM.
+export const Team = styled.div<{ $isSecond: boolean }>`
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
@@ -84,11 +85,11 @@ export const Team = styled.div<{ isSecond: boolean }>`
     max-height: 50px;
     justify-content: center;
 
-    text-align: ${props => (props.isSecond ? 'left' : 'right')};
+    text-align: ${props => (props.$isSecond ? 'left' : 'right')};
 
     @media (min-width: 700px) {
         gap: 30px;
-        flex-direction: ${props => (props.isSecond ? 'row-reverse' : 'row')};
+        flex-direction: ${props => (props.$isSecond ? 'row-reverse' : 'row')};
     }
 `;
 
@@ -164,7 +165,7 @@ export const TimeScore = styled.div`
     margin: 15px 0;
     font-weight: 700;
     font-size: 18px;
-    font-family: "Montserrat", sans-serif !important; 
+    font-family: var(--font-manrope), sans-serif !important; 
     padding: 10px 15px; 
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.2)

@@ -78,7 +78,7 @@ const Fixtures = ({
                   </div>
                   <div>
                     <span className={styles.fixtureLink}>
-                      <Link href={`/fixtures/${fixture.id}`}>Match Report</Link>
+                      <Link href={`/fixtures/${fixture.slug}`}>Match Report</Link>
                     </span>
                   </div>
                 </div>

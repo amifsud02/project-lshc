@@ -7,7 +7,7 @@ import Hero from '@/components/Hero/Hero'
 import PageHeader from '@/components/PageHeader/PageHeader'
 import JoinUs from '@/components/JoinUs/JoinUs'
 import TeamCarousel from '@/components/Carousel/Team'
-import AdSense from '@/components/AdSense/AdSense'
+import AdSense, { type AdFormat } from '@/components/AdSense/AdSense'
 import CountdownTimer from '@/components/Countdown/CountdownTimerDynamic'
 import SponsorCard from '@/components/Sponsor/sponsorCard'
 import PlayerCard from '@/components/PlayerCard/PlayerCard'
@@ -137,7 +137,9 @@ const NewsSectionAdapter = async ({
   )
 }
 
-const AdSlotAdapter = ({ adSlot }: { adSlot: string }) => <AdSense adSlot={adSlot} />
+const AdSlotAdapter = ({ adSlot, format }: { adSlot: string; format?: AdFormat | null }) => (
+  <AdSense adSlot={adSlot} format={format} />
+)
 
 const CountdownAdapter = ({ heading, targetDate }: { heading?: string; targetDate: string }) => (
   <section className="parent">

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { collectionWriteAccess } from '@/lib/auth/roles'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -7,7 +8,10 @@ export const Media: CollectionConfig = {
     group: 'Gallery',
   },
   access: {
+    create: collectionWriteAccess('media'),
+    delete: collectionWriteAccess('media'),
     read: () => true,
+    update: collectionWriteAccess('media'),
   },
   fields: [
     {

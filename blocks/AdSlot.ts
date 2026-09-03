@@ -23,6 +23,7 @@ export const AdSlotBlock: Block = {
         { label: 'Horizontal', value: 'horizontal' },
         { label: 'Vertical', value: 'vertical' },
         { label: 'Rectangle', value: 'rectangle' },
+        { label: 'In-article (fluid)', value: 'fluid' },
       ],
     },
   ],

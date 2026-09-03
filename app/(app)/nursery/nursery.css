@@ -1,0 +1,349 @@
+.nursery {
+  padding: 48px 0 72px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.nursery__lede {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #333;
+}
+
+.nursery__section {
+  margin-top: 44px;
+}
+
+.nursery__section-title {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a7f6d;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e6ddd0;
+}
+
+.nursery__prose {
+  line-height: 1.7;
+  color: #333;
+}
+
+.nursery__prose p { margin: 0 0 14px; }
+.nursery__prose ul { margin: 0 0 14px 20px; }
+
+.nursery__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 32px 0 0;
+  padding: 24px;
+  background: #faf7f2;
+  border: 1px solid #e6ddd0;
+}
+
+.nursery__cta-copy {
+  flex: 1 1 260px;
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+}
+
+.nursery__closed {
+  margin: 32px 0 0;
+  padding: 20px 24px;
+  background: #f5f5f5;
+  border-left: 3px solid #999;
+  color: #555;
+}
+
+/* Schedule ---------------------------------------------------------------- */
+
+.nursery__group {
+  margin-bottom: 28px;
+  border: 1px solid #e6ddd0;
+}
+
+.nursery__group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #faf7f2;
+  border-bottom: 1px solid #e6ddd0;
+}
+
+.nursery__group-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.nursery__group-years {
+  color: #8a7f6d;
+  font-size: 14px;
+}
+
+.nursery__group-full {
+  margin-left: auto;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a04040;
+}
+
+.nursery__sessions {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.nursery__sessions td {
+  padding: 10px 18px;
+  border-bottom: 1px solid #f0ece5;
+  vertical-align: top;
+}
+
+.nursery__sessions tr:last-child td { border-bottom: none; }
+
+.nursery__sessions td:first-child { width: 110px; font-weight: 600; }
+.nursery__sessions td:nth-child(2) { width: 190px; color: #555; white-space: nowrap; }
+
+.nursery__session-note {
+  display: block;
+  font-size: 13px;
+  color: #8a7f6d;
+}
+
+.nursery__group-note {
+  margin: 0;
+  padding: 12px 18px;
+  font-size: 14px;
+  color: #555;
+  background: #fbfaf8;
+  border-top: 1px solid #f0ece5;
+}
+
+/* Fees -------------------------------------------------------------------- */
+
+.nursery__fees {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.nursery__fee {
+  padding: 20px;
+  border: 1px solid #e6ddd0;
+}
+
+.nursery__fee-price {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.nursery__fee-label {
+  margin: 8px 0 0;
+  color: #555;
+  font-size: 15px;
+}
+
+/* Contact ----------------------------------------------------------------- */
+
+.nursery__contact {
+  margin-top: 44px;
+  padding-top: 20px;
+  border-top: 1px solid #e6ddd0;
+  color: #555;
+  line-height: 1.7;
+}
+
+.nursery__print {
+  margin-top: 24px;
+}
+
+@media (max-width: 640px) {
+  .nursery__sessions td:first-child,
+  .nursery__sessions td:nth-child(2) { width: auto; }
+  .nursery__sessions,
+  .nursery__sessions tbody,
+  .nursery__sessions tr,
+  .nursery__sessions td { display: block; }
+  .nursery__sessions td { border-bottom: none; padding: 2px 18px; }
+  .nursery__sessions td:first-child { padding-top: 12px; }
+  .nursery__sessions tr { border-bottom: 1px solid #f0ece5; padding-bottom: 10px; }
+}
+
+/* The letter is still circulated as a PDF, so the page has to print as one. */
+@media print {
+  .nursery { max-width: none; padding: 0; }
+  .nursery__cta,
+  .nursery__print,
+  .nursery__closed { display: none; }
+  .nursery__group { break-inside: avoid; }
+  .nursery__section { margin-top: 28px; }
+  .nursery__group-head,
+  .nursery__fee,
+  .nursery__group-note { background: none; }
+}
+
+/* Registration form ------------------------------------------------------- */
+
+.nursery-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nursery-choice__option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid #e6ddd0;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.nursery-choice__option:hover:not(.nursery-choice__option--disabled) {
+  border-color: #c9b89a;
+}
+
+.nursery-choice__option--selected {
+  border-color: #8a1538;
+  background: #fdf7f8;
+}
+
+.nursery-choice__option--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.nursery-choice__option input {
+  margin-top: 4px;
+  flex: none;
+}
+
+.nursery-choice__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.nursery-choice__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.nursery-choice__meta {
+  font-weight: 400;
+  font-size: 14px;
+  color: #8a7f6d;
+}
+
+.nursery-choice__flag {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a04040;
+}
+
+.nursery-choice__price {
+  margin-left: auto;
+  font-size: 18px;
+}
+
+.nursery-choice__sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: #555;
+}
+
+.nursery-consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  cursor: pointer;
+}
+
+.nursery-consent input {
+  margin-top: 4px;
+  flex: none;
+}
+
+.nursery-notice {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 1px solid #e6ddd0;
+  background: #faf7f2;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.nursery-notice p { margin: 0 0 10px; }
+
+.nursery-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin: 20px 0 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e6ddd0;
+  font-size: 16px;
+}
+
+.nursery-total strong { font-size: 22px; }
+
+/* Submitted --------------------------------------------------------------- */
+
+.nursery-submitted {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 48px 0 72px;
+}
+
+.nursery-submitted__ref {
+  display: inline-block;
+  margin: 4px 0 24px;
+  padding: 6px 12px;
+  background: #faf7f2;
+  border: 1px solid #e6ddd0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+}
+
+.nursery-submitted__bank {
+  margin: 24px 0;
+  padding: 20px;
+  background: #faf7f2;
+  border: 1px solid #e6ddd0;
+}
+
+.nursery-submitted__bank dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 18px;
+  margin: 0;
+  font-size: 15px;
+}
+
+.nursery-submitted__bank dt { color: #8a7f6d; }
+.nursery-submitted__bank dd { margin: 0; }

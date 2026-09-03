@@ -36,6 +36,20 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
+        const registrationId = session.metadata?.nurseryRegistrationId
+        if (registrationId) {
+          await payload.update({
+            collection: 'nursery-registrations',
+            id: registrationId,
+            data: {
+              status: 'paid',
+              paidAt: new Date().toISOString(),
+              stripePaymentIntentId:
+                typeof session.payment_intent === 'string' ? session.payment_intent : undefined,
+            } as any,
+          })
+          break
+        }
         const orderId = session.metadata?.orderId
         if (!orderId) break
         await payload.update({
@@ -52,6 +66,15 @@ export async function POST(req: Request) {
       }
       case 'checkout.session.expired': {
         const session = event.data.object as Stripe.Checkout.Session
+        const registrationId = session.metadata?.nurseryRegistrationId
+        if (registrationId) {
+          await payload.update({
+            collection: 'nursery-registrations',
+            id: registrationId,
+            data: { status: 'cancelled' } as any,
+          })
+          break
+        }
         const orderId = session.metadata?.orderId
         if (!orderId) break
         await payload.update({
@@ -75,6 +98,20 @@ export async function POST(req: Request) {
           await payload.update({
             collection: 'orders',
             id: order.id,
+            data: { status: 'refunded' } as any,
+          })
+          break
+        }
+        const { docs: registrations } = await payload.find({
+          collection: 'nursery-registrations',
+          where: { stripePaymentIntentId: { equals: pi } },
+          limit: 1,
+        })
+        const registration = registrations[0]
+        if (registration) {
+          await payload.update({
+            collection: 'nursery-registrations',
+            id: registration.id,
             data: { status: 'refunded' } as any,
           })
         }

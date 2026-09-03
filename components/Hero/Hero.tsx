@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import styles from "./Hero.module.css";
 import Slider from "react-slick";
 import { RichText } from "@payloadcms/richtext-lexical/react";
@@ -62,11 +63,13 @@ const HeroSection = ({
     <section className={styles.hero} style={{ position: 'relative', overflow: 'hidden' }}>
       <Slider {...settings}>
         {resolvedSlides.map((slide, i) => (
-          <div key={i}>
-            <img
+          <div key={i} style={{ position: 'relative', width: '100%', height: '100vh' }}>
+            <Image
               src={slide.src}
               alt={slide.alt ?? ""}
-              style={{ width: '100%', height: '100vh', objectFit: 'cover' }}
+              fill
+              className="object-cover"
+              priority={i === 0}
             />
           </div>
         ))}

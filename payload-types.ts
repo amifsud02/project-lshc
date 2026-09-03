@@ -82,6 +82,11 @@ export interface Config {
     'gallery-categories': GalleryCategory;
     products: Product;
     orders: Order;
+    venues: Venue;
+    'nursery-seasons': NurserySeason;
+    'nursery-categories': NurseryCategory;
+    'nursery-registrations': NurseryRegistration;
+    'magic-link-tokens': MagicLinkToken;
     'payload-kv': PayloadKv;
     'payload-folders': FolderInterface;
     'payload-locked-documents': PayloadLockedDocument;
@@ -109,6 +114,11 @@ export interface Config {
     'gallery-categories': GalleryCategoriesSelect<false> | GalleryCategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
+    venues: VenuesSelect<false> | VenuesSelect<true>;
+    'nursery-seasons': NurserySeasonsSelect<false> | NurserySeasonsSelect<true>;
+    'nursery-categories': NurseryCategoriesSelect<false> | NurseryCategoriesSelect<true>;
+    'nursery-registrations': NurseryRegistrationsSelect<false> | NurseryRegistrationsSelect<true>;
+    'magic-link-tokens': MagicLinkTokensSelect<false> | MagicLinkTokensSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -166,6 +176,24 @@ export interface User {
   firstName?: string | null;
   lastName?: string | null;
   phone?: string | null;
+  /**
+   * Grants access to the admin panel. Leave empty for storefront customers.
+   */
+  roles?:
+    | (
+        | 'admin'
+        | 'content-creator'
+        | 'coach'
+        | 'competitions-manager'
+        | 'shop-manager'
+        | 'photographer'
+        | 'nursery-manager'
+      )[]
+    | null;
+  /**
+   * Google account ID, set automatically on Google sign-in.
+   */
+  googleSub?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -584,7 +612,7 @@ export interface AdSlotBlock {
    * Google AdSense slot ID.
    */
   adSlot: string;
-  format?: ('auto' | 'horizontal' | 'vertical' | 'rectangle') | null;
+  format?: ('auto' | 'horizontal' | 'vertical' | 'rectangle' | 'fluid') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'adSlot';
@@ -595,6 +623,10 @@ export interface AdSlotBlock {
  */
 export interface Fixture {
   id: string;
+  /**
+   * Public match-report URL. Generated from the teams and kick-off date.
+   */
+  slug?: string | null;
   fixtureCode: string;
   homeTeam: string | Team;
   awayTeam: string | Team;
@@ -871,6 +903,398 @@ export interface Order {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "venues".
+ */
+export interface Venue {
+  id: string;
+  /**
+   * As it should appear to parents, e.g. "De La Salle College Gym".
+   */
+  name: string;
+  locality?: string | null;
+  mapUrl?: string | null;
+  address?: string | null;
+  /**
+   * Parking, which entrance to use, and anything else parents ask about.
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nursery-seasons".
+ */
+export interface NurserySeason {
+  id: string;
+  /**
+   * e.g. "2026/2027"
+   */
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * The season shown on /nursery and open on the registration form.
+   */
+  isActive?: boolean | null;
+  /**
+   * Leave empty to open immediately.
+   */
+  registrationOpensAt?: string | null;
+  /**
+   * Leave empty to stay open.
+   */
+  registrationClosesAt?: string | null;
+  /**
+   * The Monday training starts. Shown as "the week beginning Monday …".
+   */
+  firstTrainingDate?: string | null;
+  /**
+   * The opening paragraphs addressed to parents.
+   */
+  introduction?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  attendanceNote?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Shown once under the full schedule.
+   */
+  festivalNote?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  trainingAttire?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The sign-off, above the contact details.
+   */
+  closingNote?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * A group is offered every tier between its own minimum and the number of sessions it actually runs.
+   */
+  feeTiers: {
+    /**
+     * Machine key, e.g. two-sessions
+     */
+    value: string;
+    /**
+     * e.g. "2 training sessions per week"
+     */
+    label: string;
+    sessionsPerWeek: number;
+    /**
+     * Price in cents for the whole season (18000 = €180.00).
+     */
+    priceCents: number;
+    id?: string | null;
+  }[];
+  taxRebate?: {
+    enabled?: boolean | null;
+    copy?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    consentLabel?: string | null;
+  };
+  /**
+   * Pay now by card through Stripe.
+   */
+  allowCardPayment?: boolean | null;
+  /**
+   * Register now, transfer the fee after.
+   */
+  allowBankTransfer?: boolean | null;
+  bankTransfer?: {
+    accountName?: string | null;
+    iban?: string | null;
+    swift?: string | null;
+    /**
+     * Shown on the confirmation page and in the email, under the account details.
+     */
+    instructions?: string | null;
+  };
+  contact?: {
+    name?: string | null;
+    phone?: string | null;
+    email?: string | null;
+  };
+  /**
+   * Shown on the registration form. Covers what is collected about the child, why, and how long it is kept.
+   */
+  privacyNotice?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  privacyConsentLabel?: string | null;
+  photoConsentLabel?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nursery-categories".
+ */
+export interface NurseryCategory {
+  id: string;
+  season: string | NurserySeason;
+  /**
+   * Low numbers first — youngest group at the top.
+   */
+  displayOrder?: number | null;
+  /**
+   * Untick when the group is full. It still shows on the schedule.
+   */
+  acceptingRegistrations?: boolean | null;
+  /**
+   * e.g. "Under 13/15 Girls"
+   */
+  name: string;
+  /**
+   * e.g. "Years 7–10"
+   */
+  schoolYearsLabel: string;
+  gender: 'any' | 'boys' | 'girls';
+  /**
+   * Earliest year of birth accepted.
+   */
+  birthYearFrom: number;
+  /**
+   * Latest year of birth accepted.
+   */
+  birthYearTo: number;
+  /**
+   * The fewest sessions a week this group may register for. Fee tiers below this are not offered. Under 6 is the exception at 1.
+   */
+  minSessionsPerWeek: number;
+  /**
+   * The weekly training slots for this group.
+   */
+  sessions: {
+    day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    /**
+     * 24-hour, e.g. 17:00
+     */
+    startTime: string;
+    /**
+     * 24-hour, e.g. 18:30
+     */
+    endTime: string;
+    venue: string | Venue;
+    /**
+     * Optional, shown next to the slot.
+     */
+    note?: string | null;
+    id?: string | null;
+  }[];
+  /**
+   * Shown under this group’s schedule, e.g. the monthly Saturday festival at De La Salle.
+   */
+  festivalNote?: string | null;
+  /**
+   * What this group wears for festivals and competitions.
+   */
+  kitNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nursery-registrations".
+ */
+export interface NurseryRegistration {
+  id: string;
+  registrationNumber?: string | null;
+  status: 'pending' | 'awaiting-transfer' | 'paid' | 'cancelled' | 'refunded';
+  paymentMethod: 'card' | 'bank-transfer';
+  /**
+   * Set when the parent was signed in.
+   */
+  user?: (string | null) | User;
+  /**
+   * Link once the child has a squad record.
+   */
+  player?: (string | null) | Player;
+  season: string | NurserySeason;
+  category: string | NurseryCategory;
+  childName?: string | null;
+  child: {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: 'boy' | 'girl';
+    /**
+     * e.g. Year 4, KG2
+     */
+    schoolYear: string;
+    school?: string | null;
+    /**
+     * Shirt size for the club kit.
+     */
+    kitSize?: string | null;
+  };
+  parent: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    /**
+     * e.g. Mother, Father, Guardian
+     */
+    relationshipToChild?: string | null;
+    /**
+     * Needed only for the tax rebate documentation.
+     */
+    idCardNumber?: string | null;
+  };
+  emergencyContact?: {
+    name?: string | null;
+    phone?: string | null;
+    relationship?: string | null;
+  };
+  /**
+   * Visible to admins and nursery managers only.
+   */
+  medical?: {
+    conditions?: string | null;
+    allergies?: string | null;
+    medication?: string | null;
+    consentToTreatment?: boolean | null;
+  };
+  /**
+   * Snapshotted at registration so a later price change never rewrites what this parent agreed to.
+   */
+  fee: {
+    tierValue: string;
+    tierLabel: string;
+    sessionsPerWeek: number;
+    /**
+     * Cents
+     */
+    priceCents: number;
+  };
+  consents?: {
+    privacy?: boolean | null;
+    photo?: boolean | null;
+    taxRebate?: boolean | null;
+  };
+  parentNotes?: string | null;
+  /**
+   * Staff only — never shown to the parent.
+   */
+  internalNotes?: string | null;
+  stripeCheckoutSessionId?: string | null;
+  stripePaymentIntentId?: string | null;
+  paidAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "magic-link-tokens".
+ */
+export interface MagicLinkToken {
+  id: string;
+  tokenHash: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  redirectTo?: string | null;
+  expiresAt: string;
+  usedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -954,6 +1378,26 @@ export interface PayloadLockedDocument {
         value: string | Order;
       } | null)
     | ({
+        relationTo: 'venues';
+        value: string | Venue;
+      } | null)
+    | ({
+        relationTo: 'nursery-seasons';
+        value: string | NurserySeason;
+      } | null)
+    | ({
+        relationTo: 'nursery-categories';
+        value: string | NurseryCategory;
+      } | null)
+    | ({
+        relationTo: 'nursery-registrations';
+        value: string | NurseryRegistration;
+      } | null)
+    | ({
+        relationTo: 'magic-link-tokens';
+        value: string | MagicLinkToken;
+      } | null)
+    | ({
         relationTo: 'payload-folders';
         value: string | FolderInterface;
       } | null);
@@ -1007,6 +1451,8 @@ export interface UsersSelect<T extends boolean = true> {
   firstName?: T;
   lastName?: T;
   phone?: T;
+  roles?: T;
+  googleSub?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1331,6 +1777,7 @@ export interface TeamsSelect<T extends boolean = true> {
  * via the `definition` "fixtures_select".
  */
 export interface FixturesSelect<T extends boolean = true> {
+  slug?: T;
   fixtureCode?: T;
   homeTeam?: T;
   awayTeam?: T;
@@ -1506,6 +1953,191 @@ export interface OrdersSelect<T extends boolean = true> {
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;
   paidAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "venues_select".
+ */
+export interface VenuesSelect<T extends boolean = true> {
+  name?: T;
+  locality?: T;
+  mapUrl?: T;
+  address?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nursery-seasons_select".
+ */
+export interface NurserySeasonsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  isActive?: T;
+  registrationOpensAt?: T;
+  registrationClosesAt?: T;
+  firstTrainingDate?: T;
+  introduction?: T;
+  attendanceNote?: T;
+  festivalNote?: T;
+  trainingAttire?: T;
+  closingNote?: T;
+  feeTiers?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sessionsPerWeek?: T;
+        priceCents?: T;
+        id?: T;
+      };
+  taxRebate?:
+    | T
+    | {
+        enabled?: T;
+        copy?: T;
+        consentLabel?: T;
+      };
+  allowCardPayment?: T;
+  allowBankTransfer?: T;
+  bankTransfer?:
+    | T
+    | {
+        accountName?: T;
+        iban?: T;
+        swift?: T;
+        instructions?: T;
+      };
+  contact?:
+    | T
+    | {
+        name?: T;
+        phone?: T;
+        email?: T;
+      };
+  privacyNotice?: T;
+  privacyConsentLabel?: T;
+  photoConsentLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nursery-categories_select".
+ */
+export interface NurseryCategoriesSelect<T extends boolean = true> {
+  season?: T;
+  displayOrder?: T;
+  acceptingRegistrations?: T;
+  name?: T;
+  schoolYearsLabel?: T;
+  gender?: T;
+  birthYearFrom?: T;
+  birthYearTo?: T;
+  minSessionsPerWeek?: T;
+  sessions?:
+    | T
+    | {
+        day?: T;
+        startTime?: T;
+        endTime?: T;
+        venue?: T;
+        note?: T;
+        id?: T;
+      };
+  festivalNote?: T;
+  kitNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "nursery-registrations_select".
+ */
+export interface NurseryRegistrationsSelect<T extends boolean = true> {
+  registrationNumber?: T;
+  status?: T;
+  paymentMethod?: T;
+  user?: T;
+  player?: T;
+  season?: T;
+  category?: T;
+  childName?: T;
+  child?:
+    | T
+    | {
+        firstName?: T;
+        lastName?: T;
+        dateOfBirth?: T;
+        gender?: T;
+        schoolYear?: T;
+        school?: T;
+        kitSize?: T;
+      };
+  parent?:
+    | T
+    | {
+        firstName?: T;
+        lastName?: T;
+        email?: T;
+        phone?: T;
+        relationshipToChild?: T;
+        idCardNumber?: T;
+      };
+  emergencyContact?:
+    | T
+    | {
+        name?: T;
+        phone?: T;
+        relationship?: T;
+      };
+  medical?:
+    | T
+    | {
+        conditions?: T;
+        allergies?: T;
+        medication?: T;
+        consentToTreatment?: T;
+      };
+  fee?:
+    | T
+    | {
+        tierValue?: T;
+        tierLabel?: T;
+        sessionsPerWeek?: T;
+        priceCents?: T;
+      };
+  consents?:
+    | T
+    | {
+        privacy?: T;
+        photo?: T;
+        taxRebate?: T;
+      };
+  parentNotes?: T;
+  internalNotes?: T;
+  stripeCheckoutSessionId?: T;
+  stripePaymentIntentId?: T;
+  paidAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "magic-link-tokens_select".
+ */
+export interface MagicLinkTokensSelect<T extends boolean = true> {
+  tokenHash?: T;
+  email?: T;
+  firstName?: T;
+  lastName?: T;
+  redirectTo?: T;
+  expiresAt?: T;
+  usedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
