@@ -24,7 +24,7 @@ export default async function AccountOrdersPage() {
         <div className="account-empty">
           <p className="account-empty__title">No orders yet</p>
           <p className="account-empty__body">When you buy something from the shop it will show up here.</p>
-          <Link href="/shop" className="shop-btn">
+          <Link href="/shop" className="btn">
             Browse the shop
           </Link>
         </div>
@@ -63,7 +63,7 @@ export default async function AccountOrdersPage() {
                       </span>
                     </td>
                     <td data-label="" className="is-actions">
-                      <Link href={`/account/orders/${order.orderNumber}`} className="shop-btn shop-btn--ghost">
+                      <Link href={`/account/orders/${order.orderNumber}`} className="btn btn--ghost">
                         View
                       </Link>
                     </td>

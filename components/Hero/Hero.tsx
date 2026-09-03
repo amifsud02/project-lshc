@@ -41,18 +41,21 @@ const HeroSection = ({
   slides,
   social,
 }: HeroProps = {}) => {
+  const resolvedSlides = slides?.length ? slides : DEFAULT_SLIDES;
+  // react-slick stacks cloned slides vertically when it is asked to loop a
+  // single slide, so only enable looping/autoplay/dots with 2+ slides
+  const hasMultiple = resolvedSlides.length > 1;
+
   const settings = {
-    dots: true,
-    infinite: true,
+    dots: hasMultiple,
+    infinite: hasMultiple,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: hasMultiple,
     autoplaySpeed: 4000,
     arrows: false,
   };
-
-  const resolvedSlides = slides?.length ? slides : DEFAULT_SLIDES;
   const resolvedSocial: Required<HeroSocial> = {
     facebook: social?.facebook || DEFAULT_SOCIAL.facebook!,
     instagram: social?.instagram || DEFAULT_SOCIAL.instagram!,
@@ -63,14 +66,19 @@ const HeroSection = ({
     <section className={styles.hero} style={{ position: 'relative', overflow: 'hidden' }}>
       <Slider {...settings}>
         {resolvedSlides.map((slide, i) => (
-          <div key={i} style={{ position: 'relative', width: '100%', height: '100vh' }}>
-            <Image
-              src={slide.src}
-              alt={slide.alt ?? ""}
-              fill
-              className="object-cover"
-              priority={i === 0}
-            />
+          <div key={i}>
+            {/* react-slick overwrites the direct child's inline style, so the
+                sizing lives on a nested element instead */}
+            <div className={styles.slide}>
+              <Image
+                src={slide.src}
+                alt={slide.alt ?? ""}
+                fill
+                className="object-cover"
+                priority={i === 0}
+              />
+              <div className={styles.slideOverlay} />
+            </div>
           </div>
         ))}
       </Slider>

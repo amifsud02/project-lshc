@@ -12,6 +12,7 @@ import {
   isRegistrationOpen,
   tiersForCategory,
 } from '@/lib/nursery/data'
+import { buildFormConfig, collectExtraAnswers, type ExtraAnswerInput } from '@/lib/nursery/form'
 
 export type RegistrationInput = {
   categoryId: string
@@ -41,6 +42,7 @@ export type RegistrationInput = {
     medication: string
     consentToTreatment: boolean
   }
+  extraAnswers?: ExtraAnswerInput
   consents: { privacy: boolean; photo: boolean; taxRebate: boolean }
   parentNotes: string
 }
@@ -95,6 +97,19 @@ export async function submitNurseryRegistration(
   if (!input.consents?.privacy) {
     return { ok: false, error: 'The privacy notice must be accepted to register.' }
   }
+
+  // What the form asks is configured per season, so what counts as required —
+  // and which extra questions even exist — is read from the same place.
+  const formConfig = buildFormConfig(season)
+  if (
+    formConfig.fields.emergencyContact &&
+    formConfig.fields.emergencyContactRequired &&
+    (!trim(input.emergencyContact?.name) || !trim(input.emergencyContact?.phone))
+  ) {
+    return { ok: false, error: 'Please give us an emergency contact name and number.' }
+  }
+  const extra = collectExtraAnswers(formConfig.extraQuestions, input.extraAnswers)
+  if (!extra.ok) return extra
 
   // The child must genuinely be eligible for the group that was picked — the
   // select is populated client-side and nothing stops a crafted request.
@@ -174,7 +189,9 @@ export async function submitNurseryRegistration(
         lastName: trim(input.parent.lastName),
         email: parentEmail,
         phone: trim(input.parent.phone),
-        relationshipToChild: trim(input.parent.relationshipToChild) || undefined,
+        relationshipToChild: formConfig.fields.relationship
+          ? trim(input.parent.relationshipToChild) || undefined
+          : undefined,
         idCardNumber: input.consents?.taxRebate ? trim(input.parent.idCardNumber) || undefined : undefined,
       },
       child: {
@@ -183,20 +200,24 @@ export async function submitNurseryRegistration(
         dateOfBirth: dob.toISOString(),
         gender: input.child.gender,
         schoolYear: trim(input.child.schoolYear),
-        school: trim(input.child.school) || undefined,
-        kitSize: trim(input.child.kitSize) || undefined,
+        school: formConfig.fields.school ? trim(input.child.school) || undefined : undefined,
+        kitSize: formConfig.fields.kitSize ? trim(input.child.kitSize) || undefined : undefined,
       },
-      emergencyContact: {
-        name: trim(input.emergencyContact?.name) || undefined,
-        phone: trim(input.emergencyContact?.phone) || undefined,
-        relationship: trim(input.emergencyContact?.relationship) || undefined,
-      },
-      medical: {
-        conditions: trim(input.medical?.conditions) || undefined,
-        allergies: trim(input.medical?.allergies) || undefined,
-        medication: trim(input.medical?.medication) || undefined,
-        consentToTreatment: Boolean(input.medical?.consentToTreatment),
-      },
+      emergencyContact: formConfig.fields.emergencyContact
+        ? {
+            name: trim(input.emergencyContact?.name) || undefined,
+            phone: trim(input.emergencyContact?.phone) || undefined,
+            relationship: trim(input.emergencyContact?.relationship) || undefined,
+          }
+        : undefined,
+      medical: formConfig.fields.medical
+        ? {
+            conditions: trim(input.medical?.conditions) || undefined,
+            allergies: trim(input.medical?.allergies) || undefined,
+            medication: trim(input.medical?.medication) || undefined,
+            consentToTreatment: Boolean(input.medical?.consentToTreatment),
+          }
+        : undefined,
       fee: {
         tierValue: tier.value,
         tierLabel: tier.label,
@@ -208,7 +229,8 @@ export async function submitNurseryRegistration(
         photo: Boolean(input.consents?.photo),
         taxRebate: Boolean(input.consents?.taxRebate),
       },
-      parentNotes: trim(input.parentNotes) || undefined,
+      parentNotes: formConfig.fields.notes ? trim(input.parentNotes) || undefined : undefined,
+      extraAnswers: extra.answers,
     } as any,
   })
 

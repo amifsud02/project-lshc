@@ -4,7 +4,7 @@
   color: white;
   width: 100%;
   z-index: 999;
-  background: rgb(0, 13, 36);
+  background: var(--color-ink);
   background: -moz-linear-gradient(
     180deg,
     rgba(0, 13, 36, 1) 0%,

@@ -340,6 +340,24 @@ export const NurseryRegistrations: CollectionConfig = {
             },
             { name: 'parentNotes', type: 'textarea', label: 'Anything the parent told us' },
             {
+              name: 'extraAnswers',
+              type: 'array',
+              label: 'Extra questions',
+              admin: {
+                description: 'Answers to the season-specific questions configured on the season.',
+                readOnly: true,
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'question', type: 'text', required: true, admin: { width: '50%' } },
+                    { name: 'answer', type: 'text', admin: { width: '50%' } },
+                  ],
+                },
+              ],
+            },
+            {
               name: 'internalNotes',
               type: 'textarea',
               access: { read: medicalAccess, create: medicalAccess, update: medicalAccess },

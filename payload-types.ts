@@ -1091,6 +1091,132 @@ export interface NurserySeason {
      */
     instructions?: string | null;
   };
+  registrationForm?: {
+    /**
+     * Shown above the form. Leave empty for no introduction.
+     */
+    intro?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Shown instead of the form when registration is closed. Leave empty for the default message.
+     */
+    closedMessage?: string | null;
+    sections?: {
+      parent?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      child?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      group?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      sessions?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      health?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      extra?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      consents?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+      payment?: {
+        title?: string | null;
+        /**
+         * Short line under the heading. Optional.
+         */
+        description?: string | null;
+      };
+    };
+    /**
+     * Name, email, mobile, date of birth, school year and the age group are always asked.
+     */
+    fields?: {
+      relationship?: boolean | null;
+      school?: boolean | null;
+      kitSize?: boolean | null;
+      kitSizeHint?: string | null;
+      emergencyContact?: boolean | null;
+      emergencyContactRequired?: boolean | null;
+      medical?: boolean | null;
+      /**
+       * Leave empty to hide the checkbox.
+       */
+      medicalConsentLabel?: string | null;
+      notes?: boolean | null;
+      notesLabel?: string | null;
+    };
+    /**
+     * Season-specific questions asked after the health section. Answers are stored with the registration and shown to staff.
+     */
+    extraQuestions?:
+      | {
+          /**
+           * e.g. "Has your child played handball before?"
+           */
+          label: string;
+          type: 'text' | 'textarea' | 'select' | 'checkbox';
+          required?: boolean | null;
+          /**
+           * Optional help text shown under the question.
+           */
+          hint?: string | null;
+          options?:
+            | {
+                label: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    submitLabelCard?: string | null;
+    submitLabelTransfer?: string | null;
+  };
   contact?: {
     name?: string | null;
     phone?: string | null;
@@ -1267,6 +1393,16 @@ export interface NurseryRegistration {
     taxRebate?: boolean | null;
   };
   parentNotes?: string | null;
+  /**
+   * Answers to the season-specific questions configured on the season.
+   */
+  extraAnswers?:
+    | {
+        question: string;
+        answer?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Staff only — never shown to the parent.
    */
@@ -2012,6 +2148,95 @@ export interface NurserySeasonsSelect<T extends boolean = true> {
         swift?: T;
         instructions?: T;
       };
+  registrationForm?:
+    | T
+    | {
+        intro?: T;
+        closedMessage?: T;
+        sections?:
+          | T
+          | {
+              parent?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              child?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              group?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              sessions?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              health?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              extra?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              consents?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+              payment?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                  };
+            };
+        fields?:
+          | T
+          | {
+              relationship?: T;
+              school?: T;
+              kitSize?: T;
+              kitSizeHint?: T;
+              emergencyContact?: T;
+              emergencyContactRequired?: T;
+              medical?: T;
+              medicalConsentLabel?: T;
+              notes?: T;
+              notesLabel?: T;
+            };
+        extraQuestions?:
+          | T
+          | {
+              label?: T;
+              type?: T;
+              required?: T;
+              hint?: T;
+              options?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        submitLabelCard?: T;
+        submitLabelTransfer?: T;
+      };
   contact?:
     | T
     | {
@@ -2119,6 +2344,13 @@ export interface NurseryRegistrationsSelect<T extends boolean = true> {
         taxRebate?: T;
       };
   parentNotes?: T;
+  extraAnswers?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   internalNotes?: T;
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;

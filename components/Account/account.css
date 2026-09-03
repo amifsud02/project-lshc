@@ -24,8 +24,8 @@
   gap: 4px;
   overflow-x: auto;
   padding: 6px;
-  background: var(--shop-paper);
-  border: 1px solid var(--shop-rule-soft);
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule-soft);
   border-radius: 14px;
   scrollbar-width: none;
 }
@@ -50,11 +50,11 @@
   flex: none;
   padding: 10px 14px;
   border-radius: 9px;
-  font-family: var(--font-manrope), sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
-  color: var(--shop-ink);
+  color: var(--color-ink);
   text-decoration: none;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -63,7 +63,7 @@
   width: 18px;
   height: 18px;
   flex: none;
-  color: var(--shop-muted);
+  color: var(--color-muted);
   transition: color 0.2s ease;
 }
 
@@ -74,26 +74,26 @@
 .account-nav__link--active,
 .account-nav__link--active:hover {
   background: rgba(1, 41, 111, 0.07);
-  color: var(--shop-accent);
+  color: var(--color-accent);
 }
 
-.account-nav__link--active svg { color: var(--shop-accent); }
+.account-nav__link--active svg { color: var(--color-accent); }
 
-.account-nav__link--signout { color: var(--shop-muted); }
+.account-nav__link--signout { color: var(--color-muted); }
 
 @media (min-width: 900px) {
   .account-nav__link {
     padding: 15px 20px;
     border-radius: 0;
     border-left: 3px solid transparent;
-    border-bottom: 1px solid var(--shop-rule-soft);
+    border-bottom: 1px solid var(--color-rule-soft);
   }
 
   .account-nav__link:last-child { border-bottom: 0; }
 
   .account-nav__link--active,
   .account-nav__link--active:hover {
-    border-left-color: var(--shop-accent);
+    border-left-color: var(--color-accent);
   }
 }
 
@@ -102,8 +102,8 @@
 .account-panel {
   min-width: 0;
   padding: 26px 20px;
-  background: var(--shop-paper);
-  border: 1px solid var(--shop-rule-soft);
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule-soft);
   border-radius: 14px;
 }
 
@@ -116,7 +116,7 @@
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: var(--shop-ink);
+  color: var(--color-ink);
 }
 
 .account-lead {
@@ -124,13 +124,13 @@
   max-width: 62ch;
   font-size: 14.5px;
   line-height: 1.65;
-  color: var(--shop-muted);
+  color: var(--color-muted);
 }
 
 .account-lead a,
 .account-inline-link {
   font-weight: 700;
-  color: var(--shop-accent);
+  color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -139,7 +139,7 @@
   font-size: 15px;
 }
 
-.account-hello strong { color: var(--shop-ink); }
+.account-hello strong { color: var(--color-ink); }
 
 .account-section { margin-top: 32px; }
 
@@ -150,7 +150,7 @@
   gap: 16px;
   margin: 0 0 14px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--shop-rule);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .account-section__title {
@@ -159,7 +159,7 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--shop-ink);
+  color: var(--color-ink);
 }
 
 /* ---------- Dashboard tiles ---------- */
@@ -175,23 +175,23 @@
   flex-direction: column;
   gap: 10px;
   padding: 18px;
-  border: 1px solid var(--shop-rule);
+  border: 1px solid var(--color-rule);
   border-radius: 12px;
-  color: var(--shop-ink);
+  color: var(--color-ink);
   text-decoration: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .account-tile:hover {
-  border-color: var(--shop-accent);
-  box-shadow: 0 10px 28px -20px rgba(0, 13, 36, 0.4);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-lift);
   transform: translateY(-1px);
 }
 
 .account-tile svg {
   width: 20px;
   height: 20px;
-  color: var(--shop-accent);
+  color: var(--color-accent);
 }
 
 .account-tile__count {
@@ -205,7 +205,7 @@
 .account-tile__label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--shop-muted);
+  color: var(--color-muted);
 }
 
 /* ---------- Tables ---------- */
@@ -220,19 +220,19 @@
 
 .account-table th {
   padding: 10px 12px;
-  border-bottom: 2px solid var(--shop-rule);
+  border-bottom: 2px solid var(--color-rule);
   text-align: left;
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--shop-muted);
+  color: var(--color-muted);
   white-space: nowrap;
 }
 
 .account-table td {
   padding: 14px 12px;
-  border-bottom: 1px solid var(--shop-rule-soft);
+  border-bottom: 1px solid var(--color-rule-soft);
   vertical-align: middle;
 }
 
@@ -246,7 +246,7 @@
 
 .account-table__ref {
   font-weight: 700;
-  color: var(--shop-accent);
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -256,10 +256,10 @@
   display: block;
   margin-top: 3px;
   font-size: 12.5px;
-  color: var(--shop-muted);
+  color: var(--color-muted);
 }
 
-.account-table .shop-btn {
+.account-table .btn {
   min-height: 36px;
   padding: 0 14px;
   font-size: 11.5px;
@@ -282,7 +282,7 @@
   .account-table tr {
     margin-bottom: 12px;
     padding: 4px 14px;
-    border: 1px solid var(--shop-rule);
+    border: 1px solid var(--color-rule);
     border-radius: 12px;
   }
 
@@ -292,7 +292,7 @@
     align-items: center;
     gap: 12px;
     padding: 10px 0;
-    border-bottom: 1px dashed var(--shop-rule-soft);
+    border-bottom: 1px dashed var(--color-rule-soft);
     text-align: right;
   }
 
@@ -305,39 +305,12 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--shop-muted);
+    color: var(--color-muted);
     text-align: left;
   }
 
-  .account-table td.is-actions .shop-btn { width: auto; }
+  .account-table td.is-actions .btn { width: auto; }
 }
-
-/* ---------- Status badge ---------- */
-
-.account-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-
-.account-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.account-badge--ok { color: #0a7d2d; background: rgba(10, 125, 45, 0.1); }
-.account-badge--warn { color: #9a5b00; background: rgba(214, 137, 16, 0.14); }
-.account-badge--bad { color: var(--shop-danger); background: rgba(194, 52, 52, 0.1); }
-.account-badge--muted { color: var(--shop-muted); background: rgba(90, 102, 122, 0.12); }
 
 /* ---------- Order detail ---------- */
 
@@ -345,17 +318,17 @@
   padding: 14px 18px;
   margin: 0 0 24px;
   border-radius: 12px;
-  background: #f6f7fa;
+  background: var(--color-paper-soft);
   font-size: 14.5px;
   line-height: 1.6;
-  color: var(--shop-muted);
+  color: var(--color-muted);
 }
 
-.account-order-meta strong { color: var(--shop-ink); }
+.account-order-meta strong { color: var(--color-ink); }
 
 .account-totals {
   margin: 0;
-  border-top: 2px solid var(--shop-rule);
+  border-top: 2px solid var(--color-rule);
 }
 
 .account-totals div {
@@ -363,11 +336,11 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px;
-  border-bottom: 1px solid var(--shop-rule-soft);
+  border-bottom: 1px solid var(--color-rule-soft);
   font-size: 14px;
 }
 
-.account-totals dt { color: var(--shop-muted); font-weight: 600; }
+.account-totals dt { color: var(--color-muted); font-weight: 600; }
 .account-totals dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
 
 .account-totals div:last-child {
@@ -375,7 +348,7 @@
   font-size: 16px;
 }
 
-.account-totals div:last-child dt { color: var(--shop-ink); }
+.account-totals div:last-child dt { color: var(--color-ink); }
 
 .account-dl {
   display: grid;
@@ -393,7 +366,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--shop-muted);
+  color: var(--color-muted);
   margin-bottom: 4px;
 }
 
@@ -408,7 +381,7 @@
   padding: 0;
   list-style: none;
   font-size: 12.5px;
-  color: var(--shop-muted);
+  color: var(--color-muted);
 }
 
 /* ---------- Forms ---------- */
@@ -438,32 +411,13 @@
   margin-top: 4px;
 }
 
-.account-form .shop-btn { width: auto; }
-
-.account-alert {
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.account-alert--ok {
-  color: #0a7d2d;
-  background: rgba(10, 125, 45, 0.08);
-  border: 1px solid rgba(10, 125, 45, 0.25);
-}
-
-.account-alert--error {
-  color: var(--shop-danger);
-  background: rgba(194, 52, 52, 0.07);
-  border: 1px solid rgba(194, 52, 52, 0.25);
-}
+.account-form .btn { width: auto; }
 
 /* ---------- Empty states inside the panel ---------- */
 
 .account-empty {
   padding: 36px 20px;
-  border: 1px dashed var(--shop-rule);
+  border: 1px dashed var(--color-rule);
   border-radius: 12px;
   text-align: center;
 }
@@ -477,5 +431,5 @@
 .account-empty__body {
   margin: 0 0 18px;
   font-size: 14px;
-  color: var(--shop-muted);
+  color: var(--color-muted);
 }

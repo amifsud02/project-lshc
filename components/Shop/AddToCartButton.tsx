@@ -27,7 +27,7 @@ export default function AddToCartButton({ product }: Props) {
   }
 
   return (
-    <button type="button" onClick={onClick} disabled={busy} className="shop-btn shop-btn--block">
+    <button type="button" onClick={onClick} disabled={busy} className="btn btn--block">
       {busy ? 'Adding…' : 'Add to cart'}
       {!busy && (
         <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>

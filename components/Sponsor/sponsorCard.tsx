@@ -17,7 +17,7 @@ const SponsorCard = (props: sponsorCardProps) => {
             <div className={styles.sponsorName}>{props.sponsorName}</div>
             <div className={styles.sponsorLink}>
                 <Link href={props.sponsorLink}>
-                    <button className='primary-button'>More</button>
+                    <button className='btn'>More</button>
                 </Link>
             </div>
         </div>

@@ -77,10 +77,10 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
               <span className="receipt__total-amount shop__mono">{formatPrice(order.total)}</span>
             </div>
             <div style={{ marginTop: 28, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-              <Link href="/shop" className="shop-btn">
+              <Link href="/shop" className="btn">
                 Continue shopping
               </Link>
-              <Link href="/account" className="shop-btn shop-btn--ghost">
+              <Link href="/account" className="btn btn--ghost">
                 View orders
               </Link>
             </div>
@@ -93,7 +93,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
               If this page doesn&apos;t update in a moment, check your email for the receipt.
             </p>
             <div style={{ marginTop: 16 }}>
-              <Link href="/shop" className="shop-btn">
+              <Link href="/shop" className="btn">
                 Continue shopping
               </Link>
             </div>

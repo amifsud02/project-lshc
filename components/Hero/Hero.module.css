@@ -38,6 +38,48 @@
   background-position: top center;
 }
 
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+}
+
+/* keep the same tint as the CSS fallback background so the title stays readable */
+.slideOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(1, 41, 111, 0.85) 0%,
+    rgba(0, 13, 36, 0.7) 100%
+  );
+}
+
+.hero :global(.slick-slider),
+.hero :global(.slick-list),
+.hero :global(.slick-track) {
+  height: 100%;
+}
+
+.hero :global(.slick-slide > div) {
+  height: 100%;
+}
+
+.hero :global(.slick-slide > div > div) {
+  display: block !important;
+  height: 100%;
+}
+
+.hero :global(.slick-dots) {
+  bottom: 20px;
+  z-index: 3;
+}
+
+.hero :global(.slick-dots li button:before) {
+  color: #fff;
+  font-size: 10px;
+}
+
 .heroContent {
   width: 100%;
   position: relative;

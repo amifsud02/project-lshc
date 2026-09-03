@@ -122,11 +122,11 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
             We sent a sign-in link to <strong>{sentTo}</strong>. It works once and expires in 15 minutes.
             If you cannot see it, check your spam folder.
           </p>
-          {error ? <p className="shop-field__error" style={{ marginTop: 14 }}>{error}</p> : null}
+          {error ? <p className="field__error" style={{ marginTop: 14 }}>{error}</p> : null}
           <div className="auth-status__actions">
             <button
               type="button"
-              className="shop-btn shop-btn--ghost"
+              className="btn btn--ghost"
               disabled={busy || cooldown > 0}
               onClick={() => void requestLink(sentTo)}
             >
@@ -134,7 +134,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
             </button>
             <button
               type="button"
-              className="auth-textbtn"
+              className="btn-text"
               style={{ alignSelf: 'center' }}
               onClick={() => {
                 setSentTo(null)
@@ -164,7 +164,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
             <GoogleMark />
             Continue with Google
           </a>
-          <div className="auth-divider" aria-hidden="true">
+          <div className="divider" aria-hidden="true">
             or
           </div>
         </>
@@ -173,12 +173,12 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
       <form onSubmit={onSubmit} className="auth-form" noValidate={false}>
         {mode === 'register' ? (
           <div className="auth-form__row">
-            <label className="shop-field">
-              <span className="shop-field__label">
-                First name <span className="shop-field__optional">(optional)</span>
+            <label className="field">
+              <span className="field__label">
+                First name <span className="field__optional">(optional)</span>
               </span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type="text"
                 name="given-name"
                 autoComplete="given-name"
@@ -188,12 +188,12 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </label>
-            <label className="shop-field">
-              <span className="shop-field__label">
-                Last name <span className="shop-field__optional">(optional)</span>
+            <label className="field">
+              <span className="field__label">
+                Last name <span className="field__optional">(optional)</span>
               </span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type="text"
                 name="family-name"
                 autoComplete="family-name"
@@ -206,10 +206,10 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
           </div>
         ) : null}
 
-        <label className="shop-field">
-          <span className="shop-field__label shop-field__label--required">Email</span>
+        <label className="field">
+          <span className="field__label">Email</span>
           <input
-            className="shop-field__input"
+            className="field__input"
             type="email"
             name="email"
             inputMode="email"
@@ -225,11 +225,11 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
         </label>
 
         {method === 'password' ? (
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Password</span>
-            <div className="shop-input-wrap">
+          <label className="field">
+            <span className="field__label">Password</span>
+            <div className="input-wrap">
               <input
-                className="shop-field__input"
+                className="field__input"
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 autoComplete="current-password"
@@ -239,7 +239,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
               />
               <button
                 type="button"
-                className="shop-input-wrap__action"
+                className="input-wrap__action"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-pressed={showPassword}
               >
@@ -250,12 +250,12 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
         ) : null}
 
         {error ? (
-          <p className="shop-field__error" role="alert">
+          <p className="field__error" role="alert">
             {error}
           </p>
         ) : null}
 
-        <button type="submit" className="shop-btn shop-btn--block" disabled={busy}>
+        <button type="submit" className="btn btn--block" disabled={busy}>
           {busy ? 'One moment…' : method === 'password' ? 'Sign in' : text.submit}
         </button>
 
@@ -268,7 +268,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
           {mode === 'login' ? (
             <button
               type="button"
-              className="auth-textbtn"
+              className="btn-text"
               onClick={() => {
                 setError(null)
                 setMethod((m) => (m === 'link' ? 'password' : 'link'))
@@ -298,7 +298,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
 
 function Alert({ tone, children }: { tone: 'error' | 'info'; children: React.ReactNode }) {
   return (
-    <div className={`auth-alert auth-alert--${tone}`} role={tone === 'error' ? 'alert' : 'status'}>
+    <div className={`alert alert--${tone}`} role={tone === 'error' ? 'alert' : 'status'}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="10" />
         <path d="M12 8v4M12 16h.01" />

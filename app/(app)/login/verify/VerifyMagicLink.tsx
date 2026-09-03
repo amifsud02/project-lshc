@@ -57,7 +57,7 @@ export default function VerifyMagicLink({ token }: { token: string | null }) {
           <h2 className="auth-status__title">That link did not work</h2>
           <p className="auth-status__body">{state.message}</p>
           <div className="auth-status__actions">
-            <Link href="/login" className="shop-btn">
+            <Link href="/login" className="btn">
               Request a new link
             </Link>
           </div>
@@ -70,7 +70,7 @@ export default function VerifyMagicLink({ token }: { token: string | null }) {
     <div className="auth-card">
       <div className="auth-status" role="status" aria-live="polite">
         <div className="auth-status__icon">
-          <span className="auth-spinner" />
+          <span className="spinner" />
         </div>
         <h2 className="auth-status__title">
           {state.kind === 'done' ? 'You are signed in' : 'Signing you in…'}

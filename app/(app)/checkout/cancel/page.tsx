@@ -14,10 +14,10 @@ export default function CancelPage() {
           you left off.
         </p>
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 16 }}>
-          <Link href="/cart" className="shop-btn">
+          <Link href="/cart" className="btn">
             Back to cart
           </Link>
-          <Link href="/shop" className="shop-btn shop-btn--ghost">
+          <Link href="/shop" className="btn btn--ghost">
             Keep browsing
           </Link>
         </div>

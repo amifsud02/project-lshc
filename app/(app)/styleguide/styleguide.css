@@ -1,0 +1,11 @@
+.sg { max-width: var(--measure-prose); margin: 0 auto; padding-bottom: 72px; }
+.sg .section-title { margin-top: 40px; }
+.sg code { font-size: 13px; padding: 1px 5px; border-radius: 4px; background: var(--color-accent-soft); color: var(--color-accent); }
+.sg__stack { display: flex; flex-direction: column; gap: 14px; }
+.sg__row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.sg__dark { display: inline-flex; padding: 10px; border-radius: var(--radius-md); background: var(--gradient-brand); }
+.sg__swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.sg__swatch { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.sg__swatch-chip { height: 48px; border-radius: var(--radius-md); border: 1px solid var(--color-rule-soft); }
+.sg__swatch-label { font-weight: 600; color: var(--color-ink); }
+.sg__swatch-token { font-size: 11.5px !important; align-self: flex-start; }

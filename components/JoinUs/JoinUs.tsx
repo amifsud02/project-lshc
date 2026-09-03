@@ -6,7 +6,7 @@ const JoinUs = () => {
         <section className={`${styles.joinUsContainer}`}>
             <div className={`parent ${styles.joinUsWrapper}`} >
                 <h2 className={`${styles.joinUsTitle}`}>Become Part of a Great Team</h2>
-                <Link href={'/contact'}><button className={`primary-button ${styles.joinUsButton}`}>Join Us</button></Link>
+                <Link href={'/contact'} className="btn btn--light">Join Us</Link>
             </div>
         </section>
     )

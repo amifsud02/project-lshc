@@ -9,6 +9,7 @@ import {
   tiersForCategory,
 } from '@/lib/nursery/data'
 import { sortSessions } from '@/lib/nursery/schedule'
+import { buildFormConfig } from '@/lib/nursery/form'
 import RegistrationForm, { type FormSeason } from './RegistrationForm'
 import { submitNurseryRegistration } from './actions'
 import '@/components/Shop/shop.css'
@@ -25,16 +26,21 @@ export const dynamic = 'force-dynamic'
 export default async function NurseryRegisterPage() {
   const season = await getActiveSeason()
 
-  if (!season || !isRegistrationOpen(season)) {
+  const config = season ? buildFormConfig(season) : null
+
+  if (!season || !config || !isRegistrationOpen(season)) {
     return (
       <>
         <PageHeader pageName="Nursery registration" />
-        <section className="parent">
-          <div className="nursery">
-            <p className="nursery__lede">
-              Online registration is closed at the moment.{' '}
-              <Link href="/nursery">See this season&apos;s programme</Link> or get in touch with the
-              Club.
+        <section className="parent shop">
+          <div className="reg reg--closed">
+            <p className="reg__closed">
+              {config?.closedMessage ?? 'Online registration is closed at the moment.'}
+            </p>
+            <p className="reg__closed-links">
+              <Link href="/nursery" className="btn btn--ghost">
+                See this season&apos;s programme
+              </Link>
             </p>
           </div>
         </section>
@@ -87,19 +93,23 @@ export default async function NurseryRegisterPage() {
     <>
       <PageHeader pageName="Nursery registration" />
       <section className="parent shop">
-        <div className="nursery">
-          <RegistrationForm
-            season={formSeason}
-            privacyNotice={season.privacyNotice ? <RichText data={season.privacyNotice} /> : null}
-            defaults={{
-              email: user?.email ?? '',
-              firstName: user?.firstName ?? '',
-              lastName: user?.lastName ?? '',
-              phone: user?.phone ?? '',
-            }}
-            submitAction={submitNurseryRegistration}
-          />
-        </div>
+        <RegistrationForm
+          season={formSeason}
+          config={config}
+          intro={
+            season.registrationForm?.intro ? (
+              <RichText data={season.registrationForm.intro} />
+            ) : null
+          }
+          privacyNotice={season.privacyNotice ? <RichText data={season.privacyNotice} /> : null}
+          defaults={{
+            email: user?.email ?? '',
+            firstName: user?.firstName ?? '',
+            lastName: user?.lastName ?? '',
+            phone: user?.phone ?? '',
+          }}
+          submitAction={submitNurseryRegistration}
+        />
       </section>
     </>
   )

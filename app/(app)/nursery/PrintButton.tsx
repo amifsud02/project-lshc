@@ -6,7 +6,7 @@
  */
 export default function PrintButton() {
   return (
-    <button type="button" className="shop-btn shop-btn--ghost" onClick={() => window.print()}>
+    <button type="button" className="btn btn--ghost" onClick={() => window.print()}>
       Download as PDF
     </button>
   )

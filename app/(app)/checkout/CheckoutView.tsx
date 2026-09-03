@@ -76,29 +76,29 @@ export default function CheckoutView({ defaults }: Props) {
             We&apos;ll send the receipt and any follow-ups to the email below.
           </p>
           <div className="checkout-section__fields">
-            <label className="shop-field shop-field--wide">
-              <span className="shop-field__label shop-field__label--required">Email</span>
+            <label className="field field--wide">
+              <span className="field__label field__label--required">Email</span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </label>
-            <label className="shop-field">
-              <span className="shop-field__label">Full name</span>
+            <label className="field">
+              <span className="field__label">Full name</span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </label>
-            <label className="shop-field">
-              <span className="shop-field__label">Phone</span>
+            <label className="field">
+              <span className="field__label">Phone</span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -145,7 +145,7 @@ export default function CheckoutView({ defaults }: Props) {
         </div>
         {error && (
           <p
-            className="shop-error"
+            className="alert alert--error"
             style={{ background: 'rgba(255,255,255,0.08)', color: '#ffb4b4', marginTop: 16 }}
           >
             {error}
@@ -154,7 +154,7 @@ export default function CheckoutView({ defaults }: Props) {
         <div className="summary__cta">
           <button
             type="button"
-            className="shop-btn shop-btn--light shop-btn--block"
+            className="btn btn--light btn--block"
             onClick={onPay}
             disabled={busy}
           >

@@ -29,7 +29,7 @@ export default async function NurseryPage() {
     return (
       <>
         <PageHeader pageName="Nursery" />
-        <section className="parent">
+        <section className="parent shop">
           <div className="nursery">
             <p className="nursery__lede">
               Next season&apos;s nursery programme has not been published yet. Please check back
@@ -48,10 +48,10 @@ export default async function NurseryPage() {
   return (
     <>
       <PageHeader pageName={`Nursery ${season.title}`} />
-      <section className="parent">
+      <section className="parent shop">
         <article className="nursery">
           {season.introduction && (
-            <div className="nursery__prose nursery__lede">
+            <div className="prose nursery__lede">
               <RichText data={season.introduction} />
             </div>
           )}
@@ -64,7 +64,7 @@ export default async function NurseryPage() {
                   ? ` Applications close on ${formatLongDate(season.registrationClosesAt)}.`
                   : ''}
               </p>
-              <Link href="/nursery/register" className="shop-btn">
+              <Link href="/nursery/register" className="btn">
                 Register your child
               </Link>
             </div>
@@ -77,15 +77,15 @@ export default async function NurseryPage() {
 
           {season.attendanceNote && (
             <section className="nursery__section">
-              <h2 className="nursery__section-title">Regular attendance matters</h2>
-              <div className="nursery__prose">
+              <h2 className="section-title">Regular attendance matters</h2>
+              <div className="prose">
                 <RichText data={season.attendanceNote} />
               </div>
             </section>
           )}
 
           <section className="nursery__section">
-            <h2 className="nursery__section-title">Training schedule</h2>
+            <h2 className="section-title">Training schedule</h2>
             {categories.map((category) => (
               <div key={category.id} className="nursery__group">
                 <div className="nursery__group-head">
@@ -117,14 +117,14 @@ export default async function NurseryPage() {
               </div>
             ))}
             {season.festivalNote && (
-              <div className="nursery__prose">
+              <div className="prose">
                 <RichText data={season.festivalNote} />
               </div>
             )}
           </section>
 
           <section className="nursery__section">
-            <h2 className="nursery__section-title">Registration fees (entire season)</h2>
+            <h2 className="section-title">Registration fees (entire season)</h2>
             <div className="nursery__fees">
               {(season.feeTiers ?? []).map((tier) => (
                 <div key={tier.value} className="nursery__fee">
@@ -137,8 +137,8 @@ export default async function NurseryPage() {
 
           {season.taxRebate?.enabled && season.taxRebate.copy && (
             <section className="nursery__section">
-              <h2 className="nursery__section-title">Tax rebate</h2>
-              <div className="nursery__prose">
+              <h2 className="section-title">Tax rebate</h2>
+              <div className="prose">
                 <RichText data={season.taxRebate.copy} />
               </div>
             </section>
@@ -146,12 +146,12 @@ export default async function NurseryPage() {
 
           {season.trainingAttire && (
             <section className="nursery__section">
-              <h2 className="nursery__section-title">Training attire</h2>
-              <div className="nursery__prose">
+              <h2 className="section-title">Training attire</h2>
+              <div className="prose">
                 <RichText data={season.trainingAttire} />
               </div>
               {categories.some((category) => category.kitNote) && (
-                <ul className="nursery__prose">
+                <ul className="prose">
                   {categories
                     .filter((category) => category.kitNote)
                     .map((category) => (
@@ -165,7 +165,7 @@ export default async function NurseryPage() {
           )}
 
           {season.firstTrainingDate && (
-            <p className="nursery__prose">
+            <p className="prose">
               <strong>
                 The first training sessions will commence during the week beginning{' '}
                 {formatLongDate(season.firstTrainingDate)}.
@@ -174,7 +174,7 @@ export default async function NurseryPage() {
           )}
 
           {season.closingNote && (
-            <div className="nursery__prose">
+            <div className="prose">
               <RichText data={season.closingNote} />
             </div>
           )}

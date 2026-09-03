@@ -32,7 +32,7 @@
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 500;
-  color: #000d34;
+  color: var(--color-ink);
 }
 
 .show-all {
@@ -46,7 +46,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: #01296f;
+  background-color: var(--color-accent);
 }
 
 .tablinks {
@@ -61,7 +61,7 @@
   width: 100%;
   transform: scaleX(0);
   height: 2px;
-  background-color: #01296f;
+  background-color: var(--color-accent);
   transform-origin: bottom right;
   transition: transform 0.25s ease-out;
 }

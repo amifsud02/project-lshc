@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react'
 import { dayLabel, formatTimeRange } from '@/lib/nursery/schedule'
+import type { ExtraAnswerInput, FormConfig, FormSectionKey } from '@/lib/nursery/form'
 
 export type FormSession = {
   day: string
@@ -43,6 +44,8 @@ export type FormSeason = {
 
 type Props = {
   season: FormSeason
+  config: FormConfig
+  intro?: ReactNode
   privacyNotice?: ReactNode
   defaults: { email: string; firstName: string; lastName: string; phone: string }
   submitAction: (input: any) => Promise<{ ok: true; redirectTo: string } | { ok: false; error: string }>
@@ -51,7 +54,16 @@ type Props = {
 const formatFee = (cents: number) =>
   new Intl.NumberFormat('en-MT', { style: 'currency', currency: 'EUR' }).format(cents / 100)
 
-export default function RegistrationForm({ season, privacyNotice, defaults, submitAction }: Props) {
+const Optional = () => <span className="field__optional">(optional)</span>
+
+export default function RegistrationForm({
+  season,
+  config,
+  intro,
+  privacyNotice,
+  defaults,
+  submitAction,
+}: Props) {
   const [parent, setParent] = useState({
     firstName: defaults.firstName,
     lastName: defaults.lastName,
@@ -82,6 +94,7 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
     medication: '',
     consentToTreatment: false,
   })
+  const [extraAnswers, setExtraAnswers] = useState<ExtraAnswerInput>({})
   const [consents, setConsents] = useState({ privacy: false, photo: false, taxRebate: false })
   const [parentNotes, setParentNotes] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank-transfer'>(
@@ -90,6 +103,7 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const { fields, sections, extraQuestions } = config
   const birthYear = child.dateOfBirth ? Number(child.dateOfBirth.slice(0, 4)) : null
 
   // Age groups overlap — a Year 4 child fits both Under 8 and Under 10 — so this
@@ -107,6 +121,23 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
   const selected = eligible.find((category) => category.id === categoryId) ?? null
   const tiers = selected?.tiers ?? []
   const selectedTier = tiers.find((tier) => tier.value === tierValue) ?? null
+
+  const showHealth = fields.emergencyContact || fields.medical
+  const showExtra = extraQuestions.length > 0
+
+  // Section numbers follow whatever the season actually asks, so hiding the
+  // health step in the CMS never leaves a gap in the count.
+  const visibleSections: FormSectionKey[] = [
+    'parent',
+    'child',
+    'group',
+    'sessions',
+    ...(showHealth ? (['health'] as const) : []),
+    ...(showExtra ? (['extra'] as const) : []),
+    'consents',
+    'payment',
+  ]
+  const stepNumber = (key: FormSectionKey) => visibleSections.indexOf(key) + 1
 
   const chooseCategory = (id: string) => {
     setCategoryId(id)
@@ -142,6 +173,7 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
         child,
         emergencyContact,
         medical,
+        extraAnswers,
         consents,
         parentNotes,
       })
@@ -158,90 +190,119 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
     }
   }
 
+  const stepHead = (id: FormSectionKey) => (
+    <header className="step-head">
+      <span className="step-head__num" aria-hidden="true">
+        {stepNumber(id)}
+      </span>
+      <div>
+        <h2 className="step-head__title">{sections[id].title}</h2>
+        {sections[id].description && <p className="step-head__desc">{sections[id].description}</p>}
+      </div>
+    </header>
+  )
+
   return (
-    <form onSubmit={onSubmit} className="shop__stack">
-      <section className="checkout-section">
-        <h2 className="checkout-section__title">
-          <span className="checkout-section__number">01 —</span> Parent or guardian
-        </h2>
-        <div className="checkout-section__fields">
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">First name</span>
+    <form onSubmit={onSubmit} className="reg">
+      <div className="reg__intro">
+        <p className="reg__season">Nursery {season.title}</p>
+        {intro ? (
+          <div className="reg__intro-copy">{intro}</div>
+        ) : (
+          <p className="reg__intro-copy">
+            It takes about five minutes. You&apos;ll need your child&apos;s date of birth and school
+            year, and we&apos;ll email you a confirmation as soon as you&apos;re done.
+          </p>
+        )}
+      </div>
+
+      <section className="reg-step">
+        {stepHead('parent')}
+        <div className="form-grid">
+          <label className="field">
+            <span className="field__label">First name</span>
             <input
-              className="shop-field__input"
+              className="field__input"
+              autoComplete="given-name"
               required
               value={parent.firstName}
               onChange={(e) => setParent({ ...parent, firstName: e.target.value })}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Last name</span>
+          <label className="field">
+            <span className="field__label">Last name</span>
             <input
-              className="shop-field__input"
+              className="field__input"
+              autoComplete="family-name"
               required
               value={parent.lastName}
               onChange={(e) => setParent({ ...parent, lastName: e.target.value })}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Email</span>
+          <label className="field">
+            <span className="field__label">Email</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               type="email"
+              autoComplete="email"
               required
               value={parent.email}
               onChange={(e) => setParent({ ...parent, email: e.target.value })}
             />
+            <span className="field__hint">Your confirmation and the schedule go here.</span>
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Mobile</span>
+          <label className="field">
+            <span className="field__label">Mobile</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               type="tel"
+              autoComplete="tel"
               required
               value={parent.phone}
               onChange={(e) => setParent({ ...parent, phone: e.target.value })}
             />
           </label>
-          <label className="shop-field shop-field--wide">
-            <span className="shop-field__label">Relationship to child</span>
-            <input
-              className="shop-field__input"
-              placeholder="Mother, father, guardian…"
-              value={parent.relationshipToChild}
-              onChange={(e) => setParent({ ...parent, relationshipToChild: e.target.value })}
-            />
-          </label>
+          {fields.relationship && (
+            <label className="field field--wide">
+              <span className="field__label">
+                Relationship to child <Optional />
+              </span>
+              <input
+                className="field__input"
+                placeholder="Mother, father, guardian…"
+                value={parent.relationshipToChild}
+                onChange={(e) => setParent({ ...parent, relationshipToChild: e.target.value })}
+              />
+            </label>
+          )}
         </div>
       </section>
 
-      <section className="checkout-section">
-        <h2 className="checkout-section__title">
-          <span className="checkout-section__number">02 —</span> Your child
-        </h2>
-        <div className="checkout-section__fields">
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">First name</span>
+      <section className="reg-step">
+        {stepHead('child')}
+        <div className="form-grid">
+          <label className="field">
+            <span className="field__label">First name</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               required
               value={child.firstName}
               onChange={(e) => setChild({ ...child, firstName: e.target.value })}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Last name</span>
+          <label className="field">
+            <span className="field__label">Last name</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               required
               value={child.lastName}
               onChange={(e) => setChild({ ...child, lastName: e.target.value })}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Date of birth</span>
+          <label className="field">
+            <span className="field__label">Date of birth</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               type="date"
               required
               value={child.dateOfBirth}
@@ -252,10 +313,10 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
               }}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Boy or girl</span>
+          <label className="field">
+            <span className="field__label">Boy or girl</span>
             <select
-              className="shop-field__select"
+              className="field__select"
               required
               value={child.gender}
               onChange={(e) => {
@@ -269,59 +330,65 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
               <option value="girl">Girl</option>
             </select>
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">School year</span>
+          <label className="field">
+            <span className="field__label">School year</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               required
               placeholder="KG2, Year 4, Year 9…"
               value={child.schoolYear}
               onChange={(e) => setChild({ ...child, schoolYear: e.target.value })}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label">School</span>
-            <input
-              className="shop-field__input"
-              value={child.school}
-              onChange={(e) => setChild({ ...child, school: e.target.value })}
-            />
-          </label>
-          <label className="shop-field">
-            <span className="shop-field__label">Kit size</span>
-            <input
-              className="shop-field__input"
-              placeholder="e.g. 9–10 years"
-              value={child.kitSize}
-              onChange={(e) => setChild({ ...child, kitSize: e.target.value })}
-            />
-          </label>
+          {fields.school && (
+            <label className="field">
+              <span className="field__label">
+                School <Optional />
+              </span>
+              <input
+                className="field__input"
+                value={child.school}
+                onChange={(e) => setChild({ ...child, school: e.target.value })}
+              />
+            </label>
+          )}
+          {fields.kitSize && (
+            <label className="field">
+              <span className="field__label">
+                Kit size <Optional />
+              </span>
+              <input
+                className="field__input"
+                placeholder={fields.kitSizeHint}
+                value={child.kitSize}
+                onChange={(e) => setChild({ ...child, kitSize: e.target.value })}
+              />
+            </label>
+          )}
         </div>
       </section>
 
-      <section className="checkout-section">
-        <h2 className="checkout-section__title">
-          <span className="checkout-section__number">03 —</span> Age group
-        </h2>
+      <section className="reg-step">
+        {stepHead('group')}
         {!birthYear || !child.gender ? (
-          <p className="checkout-section__subtitle">
+          <p className="reg-step__placeholder">
             Enter your child&apos;s date of birth above and we&apos;ll show the groups they can join.
           </p>
         ) : eligible.length === 0 ? (
-          <p className="shop-error">
+          <p className="alert alert--error">
             We don&apos;t have a group for that age this season. Please get in touch and we&apos;ll
             help.
           </p>
         ) : (
-          <div className="nursery-choice">
+          <div className="choice">
             {eligible.map((category) => {
               const disabled = !category.acceptingRegistrations
               return (
                 <label
                   key={category.id}
-                  className={`nursery-choice__option${
-                    categoryId === category.id ? ' nursery-choice__option--selected' : ''
-                  }${disabled ? ' nursery-choice__option--disabled' : ''}`}
+                  className={`choice__option${
+                    categoryId === category.id ? ' choice__option--selected' : ''
+                  }${disabled ? ' choice__option--disabled' : ''}`}
                 >
                   <input
                     type="radio"
@@ -331,13 +398,13 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
                     checked={categoryId === category.id}
                     onChange={() => chooseCategory(category.id)}
                   />
-                  <span className="nursery-choice__body">
-                    <span className="nursery-choice__title">
+                  <span className="choice__body">
+                    <span className="choice__title">
                       {category.name}
-                      <span className="nursery-choice__meta">{category.schoolYearsLabel}</span>
-                      {disabled && <span className="nursery-choice__flag">Full</span>}
+                      <span className="choice__meta">{category.schoolYearsLabel}</span>
+                      {disabled && <span className="choice__flag">Full</span>}
                     </span>
-                    <span className="nursery-choice__sessions">
+                    <span className="choice__lines">
                       {category.sessions.map((session, index) => (
                         <span key={index}>
                           {dayLabel(session.day)} · {formatTimeRange(session.startTime, session.endTime)} ·{' '}
@@ -353,17 +420,17 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
         )}
       </section>
 
-      {selected && (
-        <section className="checkout-section">
-          <h2 className="checkout-section__title">
-            <span className="checkout-section__number">04 —</span> Sessions per week
-          </h2>
-          <div className="nursery-choice">
+      <section className="reg-step">
+        {stepHead('sessions')}
+        {!selected ? (
+          <p className="reg-step__placeholder">Choose an age group first.</p>
+        ) : (
+          <div className="choice">
             {tiers.map((tier) => (
               <label
                 key={tier.value}
-                className={`nursery-choice__option${
-                  tierValue === tier.value ? ' nursery-choice__option--selected' : ''
+                className={`choice__option${
+                  tierValue === tier.value ? ' choice__option--selected' : ''
                 }`}
               >
                 <input
@@ -373,148 +440,256 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
                   checked={tierValue === tier.value}
                   onChange={() => setTierValue(tier.value)}
                 />
-                <span className="nursery-choice__body">
-                  <span className="nursery-choice__title">
+                <span className="choice__body">
+                  <span className="choice__title">
                     {tier.label}
-                    <span className="nursery-choice__price">{formatFee(tier.priceCents)}</span>
+                    <span className="choice__price">{formatFee(tier.priceCents)}</span>
                   </span>
                 </span>
               </label>
             ))}
           </div>
+        )}
+      </section>
+
+      {showHealth && (
+        <section className="reg-step">
+          {stepHead('health')}
+          <div className="form-grid">
+            {fields.emergencyContact && (
+              <>
+                <label className="field">
+                  <span className="field__label">
+                    Emergency contact name {!fields.emergencyContactRequired && <Optional />}
+                  </span>
+                  <input
+                    className="field__input"
+                    required={fields.emergencyContactRequired}
+                    value={emergencyContact.name}
+                    onChange={(e) =>
+                      setEmergencyContact({ ...emergencyContact, name: e.target.value })
+                    }
+                  />
+                </label>
+                <label className="field">
+                  <span className="field__label">
+                    Emergency contact number {!fields.emergencyContactRequired && <Optional />}
+                  </span>
+                  <input
+                    className="field__input"
+                    type="tel"
+                    required={fields.emergencyContactRequired}
+                    value={emergencyContact.phone}
+                    onChange={(e) =>
+                      setEmergencyContact({ ...emergencyContact, phone: e.target.value })
+                    }
+                  />
+                </label>
+              </>
+            )}
+            {fields.medical && (
+              <>
+                <label className="field field--wide">
+                  <span className="field__label">
+                    Medical conditions <Optional />
+                  </span>
+                  <textarea
+                    className="field__textarea field__textarea--short"
+                    rows={2}
+                    value={medical.conditions}
+                    onChange={(e) => setMedical({ ...medical, conditions: e.target.value })}
+                  />
+                </label>
+                <label className="field">
+                  <span className="field__label">
+                    Allergies <Optional />
+                  </span>
+                  <textarea
+                    className="field__textarea field__textarea--short"
+                    rows={2}
+                    value={medical.allergies}
+                    onChange={(e) => setMedical({ ...medical, allergies: e.target.value })}
+                  />
+                </label>
+                <label className="field">
+                  <span className="field__label">
+                    Regular medication <Optional />
+                  </span>
+                  <textarea
+                    className="field__textarea field__textarea--short"
+                    rows={2}
+                    value={medical.medication}
+                    onChange={(e) => setMedical({ ...medical, medication: e.target.value })}
+                  />
+                </label>
+              </>
+            )}
+          </div>
+          {fields.medical && fields.medicalConsentLabel && (
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={medical.consentToTreatment}
+                onChange={(e) => setMedical({ ...medical, consentToTreatment: e.target.checked })}
+              />
+              <span>{fields.medicalConsentLabel}</span>
+            </label>
+          )}
         </section>
       )}
 
-      <section className="checkout-section">
-        <h2 className="checkout-section__title">
-          <span className="checkout-section__number">05 —</span> Emergency contact and health
-        </h2>
-        <p className="checkout-section__subtitle">
-          Health details are seen only by the nursery coordinator and are used to keep your child
-          safe at training.
-        </p>
-        <div className="checkout-section__fields">
-          <label className="shop-field">
-            <span className="shop-field__label">Emergency contact name</span>
-            <input
-              className="shop-field__input"
-              value={emergencyContact.name}
-              onChange={(e) => setEmergencyContact({ ...emergencyContact, name: e.target.value })}
-            />
-          </label>
-          <label className="shop-field">
-            <span className="shop-field__label">Emergency contact number</span>
-            <input
-              className="shop-field__input"
-              type="tel"
-              value={emergencyContact.phone}
-              onChange={(e) => setEmergencyContact({ ...emergencyContact, phone: e.target.value })}
-            />
-          </label>
-          <label className="shop-field shop-field--wide">
-            <span className="shop-field__label">Medical conditions</span>
-            <textarea
-              className="shop-field__input"
-              rows={2}
-              value={medical.conditions}
-              onChange={(e) => setMedical({ ...medical, conditions: e.target.value })}
-            />
-          </label>
-          <label className="shop-field">
-            <span className="shop-field__label">Allergies</span>
-            <textarea
-              className="shop-field__input"
-              rows={2}
-              value={medical.allergies}
-              onChange={(e) => setMedical({ ...medical, allergies: e.target.value })}
-            />
-          </label>
-          <label className="shop-field">
-            <span className="shop-field__label">Regular medication</span>
-            <textarea
-              className="shop-field__input"
-              rows={2}
-              value={medical.medication}
-              onChange={(e) => setMedical({ ...medical, medication: e.target.value })}
-            />
-          </label>
-        </div>
-        <label className="nursery-consent">
-          <input
-            type="checkbox"
-            checked={medical.consentToTreatment}
-            onChange={(e) => setMedical({ ...medical, consentToTreatment: e.target.checked })}
-          />
-          <span>
-            I consent to my child receiving emergency medical treatment if I cannot be reached.
-          </span>
-        </label>
-      </section>
+      {showExtra && (
+        <section className="reg-step">
+          {stepHead('extra')}
+          <div className="form-grid">
+            {extraQuestions.map((question) => {
+              const value = extraAnswers[question.id]
+              const set = (next: string | boolean) =>
+                setExtraAnswers({ ...extraAnswers, [question.id]: next })
+              if (question.type === 'checkbox') {
+                return (
+                  <label key={question.id} className="check field--wide">
+                    <input
+                      type="checkbox"
+                      required={question.required}
+                      checked={value === true}
+                      onChange={(e) => set(e.target.checked)}
+                    />
+                    <span>
+                      {question.label}
+                      {question.hint && <span className="check__hint">{question.hint}</span>}
+                    </span>
+                  </label>
+                )
+              }
+              const label = (
+                <span className="field__label">
+                  {question.label} {!question.required && <Optional />}
+                </span>
+              )
+              const hint = question.hint && <span className="field__hint">{question.hint}</span>
+              if (question.type === 'select') {
+                return (
+                  <label key={question.id} className="field">
+                    {label}
+                    <select
+                      className="field__select"
+                      required={question.required}
+                      value={typeof value === 'string' ? value : ''}
+                      onChange={(e) => set(e.target.value)}
+                    >
+                      <option value="">Select…</option>
+                      {question.options.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    {hint}
+                  </label>
+                )
+              }
+              if (question.type === 'textarea') {
+                return (
+                  <label key={question.id} className="field field--wide">
+                    {label}
+                    <textarea
+                      className="field__textarea field__textarea--short"
+                      rows={3}
+                      required={question.required}
+                      value={typeof value === 'string' ? value : ''}
+                      onChange={(e) => set(e.target.value)}
+                    />
+                    {hint}
+                  </label>
+                )
+              }
+              return (
+                <label key={question.id} className="field">
+                  {label}
+                  <input
+                    className="field__input"
+                    required={question.required}
+                    value={typeof value === 'string' ? value : ''}
+                    onChange={(e) => set(e.target.value)}
+                  />
+                  {hint}
+                </label>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
-      <section className="checkout-section">
-        <h2 className="checkout-section__title">
-          <span className="checkout-section__number">06 —</span> Consents
-        </h2>
-        {privacyNotice && <div className="nursery-notice">{privacyNotice}</div>}
-        <label className="nursery-consent">
-          <input
-            type="checkbox"
-            required
-            checked={consents.privacy}
-            onChange={(e) => setConsents({ ...consents, privacy: e.target.checked })}
-          />
-          <span>{season.privacyConsentLabel}</span>
-        </label>
-        <label className="nursery-consent">
-          <input
-            type="checkbox"
-            checked={consents.photo}
-            onChange={(e) => setConsents({ ...consents, photo: e.target.checked })}
-          />
-          <span>{season.photoConsentLabel}</span>
-        </label>
-        {season.taxRebateEnabled && (
-          <>
-            <label className="nursery-consent">
+      <section className="reg-step">
+        {stepHead('consents')}
+        {privacyNotice && <div className="reg-notice">{privacyNotice}</div>}
+        <div className="check-group">
+          <label className="check">
+            <input
+              type="checkbox"
+              required
+              checked={consents.privacy}
+              onChange={(e) => setConsents({ ...consents, privacy: e.target.checked })}
+            />
+            <span>{season.privacyConsentLabel}</span>
+          </label>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={consents.photo}
+              onChange={(e) => setConsents({ ...consents, photo: e.target.checked })}
+            />
+            <span>
+              {season.photoConsentLabel} <Optional />
+            </span>
+          </label>
+          {season.taxRebateEnabled && (
+            <label className="check">
               <input
                 type="checkbox"
                 checked={consents.taxRebate}
                 onChange={(e) => setConsents({ ...consents, taxRebate: e.target.checked })}
               />
-              <span>{season.taxRebateConsentLabel}</span>
+              <span>
+                {season.taxRebateConsentLabel} <Optional />
+              </span>
             </label>
-            {consents.taxRebate && (
-              <label className="shop-field">
-                <span className="shop-field__label">ID card number of the claiming parent</span>
-                <input
-                  className="shop-field__input"
-                  value={parent.idCardNumber}
-                  onChange={(e) => setParent({ ...parent, idCardNumber: e.target.value })}
-                />
-              </label>
-            )}
-          </>
+          )}
+        </div>
+        {season.taxRebateEnabled && consents.taxRebate && (
+          <label className="field reg-step__single">
+            <span className="field__label">ID card number of the claiming parent</span>
+            <input
+              className="field__input"
+              value={parent.idCardNumber}
+              onChange={(e) => setParent({ ...parent, idCardNumber: e.target.value })}
+            />
+            <span className="field__hint">Needed only for the tax rebate paperwork.</span>
+          </label>
         )}
-        <label className="shop-field">
-          <span className="shop-field__label">Anything else we should know</span>
-          <textarea
-            className="shop-field__input"
-            rows={3}
-            value={parentNotes}
-            onChange={(e) => setParentNotes(e.target.value)}
-          />
-        </label>
+        {fields.notes && (
+          <label className="field reg-step__single">
+            <span className="field__label">
+              {fields.notesLabel} <Optional />
+            </span>
+            <textarea
+              className="field__textarea field__textarea--short"
+              rows={3}
+              value={parentNotes}
+              onChange={(e) => setParentNotes(e.target.value)}
+            />
+          </label>
+        )}
       </section>
 
-      <section className="checkout-section">
-        <h2 className="checkout-section__title">
-          <span className="checkout-section__number">07 —</span> Payment
-        </h2>
-        <div className="nursery-choice">
+      <section className="reg-step">
+        {stepHead('payment')}
+        <div className="choice">
           {season.allowCardPayment && (
             <label
-              className={`nursery-choice__option${
-                paymentMethod === 'card' ? ' nursery-choice__option--selected' : ''
+              className={`choice__option${
+                paymentMethod === 'card' ? ' choice__option--selected' : ''
               }`}
             >
               <input
@@ -523,9 +698,9 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
                 checked={paymentMethod === 'card'}
                 onChange={() => setPaymentMethod('card')}
               />
-              <span className="nursery-choice__body">
-                <span className="nursery-choice__title">Pay now by card</span>
-                <span className="nursery-choice__sessions">
+              <span className="choice__body">
+                <span className="choice__title">Pay now by card</span>
+                <span className="choice__lines">
                   <span>You&apos;ll be taken to our secure payment page.</span>
                 </span>
               </span>
@@ -533,8 +708,8 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
           )}
           {season.allowBankTransfer && (
             <label
-              className={`nursery-choice__option${
-                paymentMethod === 'bank-transfer' ? ' nursery-choice__option--selected' : ''
+              className={`choice__option${
+                paymentMethod === 'bank-transfer' ? ' choice__option--selected' : ''
               }`}
             >
               <input
@@ -543,9 +718,9 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
                 checked={paymentMethod === 'bank-transfer'}
                 onChange={() => setPaymentMethod('bank-transfer')}
               />
-              <span className="nursery-choice__body">
-                <span className="nursery-choice__title">Pay by bank transfer</span>
-                <span className="nursery-choice__sessions">
+              <span className="choice__body">
+                <span className="choice__title">Pay by bank transfer</span>
+                <span className="choice__lines">
                   <span>We&apos;ll email you the account details and your reference.</span>
                 </span>
               </span>
@@ -553,22 +728,36 @@ export default function RegistrationForm({ season, privacyNotice, defaults, subm
           )}
         </div>
 
-        {selectedTier && (
-          <p className="nursery-total">
-            <span>Total for the {season.title} season</span>
-            <strong>{formatFee(selectedTier.priceCents)}</strong>
-          </p>
-        )}
+        <div className="reg-summary">
+          <dl className="rows">
+            <div>
+              <dt>Age group</dt>
+              <dd>{selected ? selected.name : '—'}</dd>
+            </div>
+            <div>
+              <dt>Sessions</dt>
+              <dd>{selectedTier ? selectedTier.label : '—'}</dd>
+            </div>
+            <div className="rows__total">
+              <dt>Total for {season.title}</dt>
+              <dd>{selectedTier ? formatFee(selectedTier.priceCents) : '—'}</dd>
+            </div>
+          </dl>
 
-        {error && <p className="shop-error">{error}</p>}
+          {error && (
+            <p className="alert alert--error" role="alert">
+              {error}
+            </p>
+          )}
 
-        <button type="submit" className="shop-btn shop-btn--block" disabled={busy}>
-          {busy
-            ? 'Please wait…'
-            : paymentMethod === 'card'
-              ? 'Continue to payment'
-              : 'Complete registration'}
-        </button>
+          <button type="submit" className="btn btn--block" disabled={busy}>
+            {busy
+              ? 'Please wait…'
+              : paymentMethod === 'card'
+                ? config.submitLabelCard
+                : config.submitLabelTransfer}
+          </button>
+        </div>
       </section>
     </form>
   )

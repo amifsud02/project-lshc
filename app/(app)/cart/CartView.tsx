@@ -108,7 +108,7 @@ export default function CartView() {
         </div>
         {error && (
           <p
-            className="shop-error"
+            className="alert alert--error"
             style={{ background: 'rgba(255,255,255,0.08)', color: '#ffb4b4', marginTop: 16 }}
           >
             {error}
@@ -117,7 +117,7 @@ export default function CartView() {
         <div className="summary__cta">
           <button
             type="button"
-            className="shop-btn shop-btn--light shop-btn--block"
+            className="btn btn--light btn--block"
             onClick={onCheckout}
           >
             Proceed to checkout
@@ -238,13 +238,13 @@ function FieldInput({
   onChange: (value: string) => void
 }) {
   return (
-    <label className="shop-field">
-      <span className={`shop-field__label${field.required ? ' shop-field__label--required' : ''}`}>
+    <label className="field">
+      <span className={`field__label${field.required ? ' field__label--required' : ''}`}>
         {field.label}
       </span>
       {field.kind === 'select' ? (
         <select
-          className="shop-field__select"
+          className="field__select"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
@@ -257,7 +257,7 @@ function FieldInput({
         </select>
       ) : (
         <input
-          className="shop-field__input"
+          className="field__input"
           type={field.kind === 'email' ? 'email' : field.kind === 'phone' ? 'tel' : 'text'}
           value={value}
           onChange={(e) => onChange(e.target.value)}

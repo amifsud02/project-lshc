@@ -66,12 +66,12 @@ export default async function AccountOrderPage({ params }: { params: Params }) {
                 const lineTotal = (item.unitPrice ?? 0) * (item.quantity ?? 1)
                 return (
                   <tr key={item.id ?? index}>
-                    <td data-label="Product" style={isChild ? { paddingLeft: 32, color: 'var(--shop-muted)' } : undefined}>
+                    <td data-label="Product" style={isChild ? { paddingLeft: 32, color: 'var(--color-muted)' } : undefined}>
                       <span style={{ fontWeight: isChild ? 500 : 700 }}>
                         {isChild ? '↳ ' : ''}
                         {item.productTitle}
                       </span>{' '}
-                      <span style={{ color: 'var(--shop-muted)' }}>× {item.quantity ?? 1}</span>
+                      <span style={{ color: 'var(--color-muted)' }}>× {item.quantity ?? 1}</span>
                       {fields.length > 0 ? (
                         <ul className="account-item-fields">
                           {fields.map(([key, value]) => (

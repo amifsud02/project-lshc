@@ -1,5 +1,30 @@
-import { slugField, type CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig, type Field } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
+
+/** Title and optional lead paragraph for one fixed step of the registration form. */
+const sectionCopy = (name: string, defaultTitle: string): Field => ({
+  name,
+  type: 'group',
+  label: defaultTitle,
+  fields: [
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          defaultValue: defaultTitle,
+          admin: { width: '40%' },
+        },
+        {
+          name: 'description',
+          type: 'text',
+          admin: { width: '60%', description: 'Short line under the heading. Optional.' },
+        },
+      ],
+    },
+  ],
+})
 
 /**
  * Everything the twice-yearly parents' letter says that is not a training slot:
@@ -237,6 +262,250 @@ export const NurserySeasons: CollectionConfig = {
                     description:
                       'Shown on the confirmation page and in the email, under the account details.',
                   },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Registration form',
+          description:
+            'Controls what the online form says and which optional questions it asks. Age groups, fees, payment methods and consents come from the other tabs.',
+          fields: [
+            {
+              name: 'registrationForm',
+              type: 'group',
+              label: false,
+              fields: [
+                {
+                  name: 'intro',
+                  type: 'richText',
+                  admin: {
+                    description: 'Shown above the form. Leave empty for no introduction.',
+                  },
+                },
+                {
+                  name: 'closedMessage',
+                  type: 'textarea',
+                  admin: {
+                    description:
+                      'Shown instead of the form when registration is closed. Leave empty for the default message.',
+                  },
+                },
+                {
+                  type: 'collapsible',
+                  label: 'Section headings',
+                  admin: { initCollapsed: true },
+                  fields: [
+                    {
+                      name: 'sections',
+                      type: 'group',
+                      label: false,
+                      fields: [
+                        sectionCopy('parent', 'Parent or guardian'),
+                        sectionCopy('child', 'Your child'),
+                        sectionCopy('group', 'Age group'),
+                        sectionCopy('sessions', 'Sessions per week'),
+                        sectionCopy('health', 'Emergency contact and health'),
+                        sectionCopy('extra', 'A few more questions'),
+                        sectionCopy('consents', 'Consents'),
+                        sectionCopy('payment', 'Payment'),
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: 'collapsible',
+                  label: 'Optional questions',
+                  admin: { initCollapsed: true },
+                  fields: [
+                    {
+                      name: 'fields',
+                      type: 'group',
+                      label: false,
+                      admin: {
+                        description:
+                          'Name, email, mobile, date of birth, school year and the age group are always asked.',
+                      },
+                      fields: [
+                        {
+                          type: 'row',
+                          fields: [
+                            {
+                              name: 'relationship',
+                              type: 'checkbox',
+                              label: 'Ask relationship to child',
+                              defaultValue: true,
+                              admin: { width: '50%' },
+                            },
+                            {
+                              name: 'school',
+                              type: 'checkbox',
+                              label: 'Ask which school',
+                              defaultValue: true,
+                              admin: { width: '50%' },
+                            },
+                          ],
+                        },
+                        {
+                          type: 'row',
+                          fields: [
+                            {
+                              name: 'kitSize',
+                              type: 'checkbox',
+                              label: 'Ask kit size',
+                              defaultValue: true,
+                              admin: { width: '50%' },
+                            },
+                            {
+                              name: 'kitSizeHint',
+                              type: 'text',
+                              label: 'Kit size hint',
+                              defaultValue: 'e.g. 9–10 years',
+                              admin: {
+                                width: '50%',
+                                condition: (_, siblingData) => Boolean(siblingData?.kitSize),
+                              },
+                            },
+                          ],
+                        },
+                        {
+                          type: 'row',
+                          fields: [
+                            {
+                              name: 'emergencyContact',
+                              type: 'checkbox',
+                              label: 'Ask for an emergency contact',
+                              defaultValue: true,
+                              admin: { width: '50%' },
+                            },
+                            {
+                              name: 'emergencyContactRequired',
+                              type: 'checkbox',
+                              label: 'Emergency contact is required',
+                              defaultValue: false,
+                              admin: {
+                                width: '50%',
+                                condition: (_, siblingData) => Boolean(siblingData?.emergencyContact),
+                              },
+                            },
+                          ],
+                        },
+                        {
+                          name: 'medical',
+                          type: 'checkbox',
+                          label: 'Ask about medical conditions, allergies and medication',
+                          defaultValue: true,
+                        },
+                        {
+                          name: 'medicalConsentLabel',
+                          type: 'textarea',
+                          label: 'Emergency treatment consent',
+                          defaultValue:
+                            'I consent to my child receiving emergency medical treatment if I cannot be reached.',
+                          admin: {
+                            description: 'Leave empty to hide the checkbox.',
+                            condition: (_, siblingData) => Boolean(siblingData?.medical),
+                          },
+                        },
+                        {
+                          type: 'row',
+                          fields: [
+                            {
+                              name: 'notes',
+                              type: 'checkbox',
+                              label: 'Ask "anything else we should know"',
+                              defaultValue: true,
+                              admin: { width: '50%' },
+                            },
+                            {
+                              name: 'notesLabel',
+                              type: 'text',
+                              label: 'Notes question',
+                              defaultValue: 'Anything else we should know',
+                              admin: {
+                                width: '50%',
+                                condition: (_, siblingData) => Boolean(siblingData?.notes),
+                              },
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  name: 'extraQuestions',
+                  type: 'array',
+                  labels: { singular: 'Extra question', plural: 'Extra questions' },
+                  admin: {
+                    description:
+                      'Season-specific questions asked after the health section. Answers are stored with the registration and shown to staff.',
+                    initCollapsed: true,
+                  },
+                  fields: [
+                    {
+                      type: 'row',
+                      fields: [
+                        {
+                          name: 'label',
+                          type: 'text',
+                          required: true,
+                          admin: { width: '50%', description: 'e.g. "Has your child played handball before?"' },
+                        },
+                        {
+                          name: 'type',
+                          type: 'select',
+                          required: true,
+                          defaultValue: 'text',
+                          admin: { width: '25%' },
+                          options: [
+                            { label: 'Short answer', value: 'text' },
+                            { label: 'Long answer', value: 'textarea' },
+                            { label: 'Choose one', value: 'select' },
+                            { label: 'Yes / no', value: 'checkbox' },
+                          ],
+                        },
+                        {
+                          name: 'required',
+                          type: 'checkbox',
+                          defaultValue: false,
+                          admin: { width: '25%' },
+                        },
+                      ],
+                    },
+                    {
+                      name: 'hint',
+                      type: 'text',
+                      admin: { description: 'Optional help text shown under the question.' },
+                    },
+                    {
+                      name: 'options',
+                      type: 'array',
+                      labels: { singular: 'Option', plural: 'Options' },
+                      admin: { condition: (_, siblingData) => siblingData?.type === 'select' },
+                      fields: [{ name: 'label', type: 'text', required: true }],
+                    },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'submitLabelCard',
+                      type: 'text',
+                      label: 'Button when paying by card',
+                      defaultValue: 'Continue to payment',
+                      admin: { width: '50%' },
+                    },
+                    {
+                      name: 'submitLabelTransfer',
+                      type: 'text',
+                      label: 'Button when paying by bank transfer',
+                      defaultValue: 'Complete registration',
+                      admin: { width: '50%' },
+                    },
+                  ],
                 },
               ],
             },

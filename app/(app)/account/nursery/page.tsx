@@ -34,7 +34,7 @@ export default async function AccountNurseryPage() {
           <p className="account-empty__body">
             Registrations made with this email address will appear here.
           </p>
-          <Link href="/nursery" className="shop-btn">
+          <Link href="/nursery" className="btn">
             About the nursery
           </Link>
         </div>

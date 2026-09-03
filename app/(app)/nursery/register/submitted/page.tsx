@@ -42,7 +42,7 @@ export default async function SubmittedPage({
     return (
       <>
         <PageHeader pageName="Registration received" />
-        <section className="parent">
+        <section className="parent shop">
           <div className="nursery-submitted">
             <p className="nursery__lede">
               We couldn&apos;t find that registration. If you completed the form, check your email
@@ -66,7 +66,7 @@ export default async function SubmittedPage({
   return (
     <>
       <PageHeader pageName="Registration received" />
-      <section className="parent">
+      <section className="parent shop">
         <div className="nursery-submitted">
           <h2>
             {paid
@@ -131,7 +131,7 @@ export default async function SubmittedPage({
           </p>
 
           <p>
-            <Link href="/nursery" className="shop-btn shop-btn--ghost">
+            <Link href="/nursery" className="btn btn--ghost">
               Back to the nursery programme
             </Link>
           </p>

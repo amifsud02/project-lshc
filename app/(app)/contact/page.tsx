@@ -30,8 +30,15 @@ export default function ContactPage() {
       <section className="parent">
         <AdSense adSlot='4410526483'></AdSense>
       </section>
-      <section className="parent">
-        <ContactForm />
+      <section className="parent shop">
+        <div className="contact">
+          <h2 className="heading">Get in touch</h2>
+          <p className="lead">
+            Questions about the club, the nursery or anything else? Send us a message and we&apos;ll
+            get back to you.
+          </p>
+          <ContactForm />
+        </div>
       </section>
     </>
   );

@@ -14,10 +14,10 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
     <>
       <form action={detailsAction} className="account-form">
         <div className="account-form__row">
-          <label className="shop-field">
-            <span className="shop-field__label">First name</span>
+          <label className="field">
+            <span className="field__label">First name</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               type="text"
               name="firstName"
               autoComplete="given-name"
@@ -25,10 +25,10 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
               maxLength={80}
             />
           </label>
-          <label className="shop-field">
-            <span className="shop-field__label">Last name</span>
+          <label className="field">
+            <span className="field__label">Last name</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               type="text"
               name="lastName"
               autoComplete="family-name"
@@ -38,21 +38,21 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
           </label>
         </div>
 
-        <label className="shop-field">
-          <span className="shop-field__label">Email address</span>
-          <input className="shop-field__input" type="email" value={email} readOnly disabled />
-          <span className="shop-field__hint">
+        <label className="field">
+          <span className="field__label">Email address</span>
+          <input className="field__input" type="email" value={email} readOnly disabled />
+          <span className="field__hint">
             Your email is how you sign in and how we match orders to you, so it cannot be changed here.
             Contact the club if you need to move to a new address.
           </span>
         </label>
 
-        <label className="shop-field">
-          <span className="shop-field__label">
-            Phone <span className="shop-field__optional">(optional)</span>
+        <label className="field">
+          <span className="field__label">
+            Phone <span className="field__optional">(optional)</span>
           </span>
           <input
-            className="shop-field__input"
+            className="field__input"
             type="tel"
             name="phone"
             inputMode="tel"
@@ -63,13 +63,13 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
         </label>
 
         {detailsState ? (
-          <p className={`account-alert account-alert--${detailsState.ok ? 'ok' : 'error'}`} role="status">
+          <p className={`alert alert--${detailsState.ok ? 'ok' : 'error'}`} role="status">
             {detailsState.message}
           </p>
         ) : null}
 
         <div className="account-form__actions">
-          <button type="submit" className="shop-btn" disabled={detailsPending}>
+          <button type="submit" className="btn" disabled={detailsPending}>
             {detailsPending ? 'Saving…' : 'Save changes'}
           </button>
         </div>
@@ -85,24 +85,24 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
         </p>
 
         <form action={passwordAction} className="account-form">
-          <label className="shop-field">
-            <span className="shop-field__label shop-field__label--required">Current password</span>
+          <label className="field">
+            <span className="field__label field__label--required">Current password</span>
             <input
-              className="shop-field__input"
+              className="field__input"
               type={showPasswords ? 'text' : 'password'}
               name="currentPassword"
               autoComplete="current-password"
               required
             />
-            <span className="shop-field__hint">
+            <span className="field__hint">
               Never set one? Use the sign-in link or Google instead. There is nothing to change.
             </span>
           </label>
           <div className="account-form__row">
-            <label className="shop-field">
-              <span className="shop-field__label shop-field__label--required">New password</span>
+            <label className="field">
+              <span className="field__label field__label--required">New password</span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type={showPasswords ? 'text' : 'password'}
                 name="newPassword"
                 autoComplete="new-password"
@@ -110,10 +110,10 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
                 required
               />
             </label>
-            <label className="shop-field">
-              <span className="shop-field__label shop-field__label--required">Confirm new password</span>
+            <label className="field">
+              <span className="field__label field__label--required">Confirm new password</span>
               <input
-                className="shop-field__input"
+                className="field__input"
                 type={showPasswords ? 'text' : 'password'}
                 name="confirmPassword"
                 autoComplete="new-password"
@@ -124,16 +124,16 @@ export default function DetailsForm({ email, firstName, lastName, phone }: Props
           </div>
 
           {passwordState ? (
-            <p className={`account-alert account-alert--${passwordState.ok ? 'ok' : 'error'}`} role="status">
+            <p className={`alert alert--${passwordState.ok ? 'ok' : 'error'}`} role="status">
               {passwordState.message}
             </p>
           ) : null}
 
           <div className="account-form__actions">
-            <button type="submit" className="shop-btn" disabled={passwordPending}>
+            <button type="submit" className="btn" disabled={passwordPending}>
               {passwordPending ? 'Updating…' : 'Change password'}
             </button>
-            <button type="button" className="auth-textbtn account-inline-link" style={{ background: 'none', border: 0, cursor: 'pointer', fontSize: 14, fontFamily: 'inherit' }} onClick={() => setShowPasswords((v) => !v)}>
+            <button type="button" className="btn-text account-inline-link" style={{ background: 'none', border: 0, cursor: 'pointer', fontSize: 14, fontFamily: 'inherit' }} onClick={() => setShowPasswords((v) => !v)}>
               {showPasswords ? 'Hide passwords' : 'Show passwords'}
             </button>
           </div>
