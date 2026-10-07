@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/shop/cart'
-import { formatPrice } from '@/lib/shop/types'
+import { formatPrice, isValidPhone } from '@/lib/shop/types'
 import { createCheckoutSession } from './actions'
 
 type Props = {
@@ -21,6 +21,7 @@ const emptySubscribe = () => () => {}
 export default function CheckoutView({ defaults }: Props) {
   const items = useCart((s) => s.items)
   const subtotal = useCart((s) => s.subtotal())
+  const needsPhone = items.some((i) => i.productType === 'membership')
   const [email, setEmail] = useState(defaults.email)
   const [name, setName] = useState(defaults.name)
   const [phone, setPhone] = useState(defaults.phone)
@@ -56,6 +57,14 @@ export default function CheckoutView({ defaults }: Props) {
     setError(null)
     if (!email.trim()) {
       setError('Please enter an email address.')
+      return
+    }
+    if (needsPhone && !phone.trim()) {
+      setError('Please enter a mobile number — it is required for memberships.')
+      return
+    }
+    if (phone.trim() && !isValidPhone(phone)) {
+      setError('Please enter a valid mobile number.')
       return
     }
     setBusy(true)
@@ -131,8 +140,21 @@ export default function CheckoutView({ defaults }: Props) {
                 <Input type="text" value={name} onChange={(e) => setName(e.target.value)} />
               </Label>
               <Label className="flex flex-col items-start gap-1.5">
-                Phone
-                <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                <span>
+                  Mobile {needsPhone ? <span className="text-destructive">*</span> : null}
+                </span>
+                <Input
+                  type="tel"
+                  autoComplete="tel"
+                  required={needsPhone}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+                {needsPhone ? (
+                  <span className="text-xs font-normal text-muted-foreground">
+                    Required for memberships.
+                  </span>
+                ) : null}
               </Label>
             </div>
           </CardContent>

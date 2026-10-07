@@ -1,6 +1,6 @@
 const TOKENS = [
   ['--color-ink', 'Ink'],
-  ['--color-accent', 'Accent'],
+  ['--color-club', 'Club navy'],
   ['--color-accent-hover', 'Accent hover'],
   ['--color-canvas', 'Canvas'],
   ['--color-paper', 'Paper'],

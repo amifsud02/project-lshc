@@ -5,7 +5,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { getStripe } from '@/lib/stripe/server'
 import { getProductById } from '@/lib/shop/products'
-import type { CartItem } from '@/lib/shop/types'
+import { hasBundleItems, isValidPhone, type CartItem } from '@/lib/shop/types'
 import { canViewShop } from '@/lib/shop/access'
 
 type Buyer = { email: string; name: string; phone: string }
@@ -40,6 +40,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
     productTitle: string
     product: string
     bundleParentLineId?: string
+    membershipSeason?: string
     quantity: number
     unitPrice: number
     customFieldValues: Record<string, string>
@@ -55,6 +56,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
   }> = []
 
   let subtotal = 0
+  let hasMembership = false
 
   for (const item of items) {
     const product = await getProductById(item.productId)
@@ -62,21 +64,37 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
       return { ok: false, error: `"${item.productTitle}" is no longer available.` }
     }
 
-    if (product.type === 'bundle') {
-      const unitsPerQty = item.units.length / Math.max(1, item.quantity)
+    if (hasBundleItems(product.type)) {
+      const isMembership = product.type === 'membership'
+      if (isMembership) hasMembership = true
+      // Units come from the browser, so check them against the product as it is
+      // now: a stale or tampered cart must not skip any member's details.
+      const unitsPerQty = product.unitTemplates.length
+      if (item.units.length !== unitsPerQty * item.quantity) {
+        return { ok: false, error: `"${product.title}" has changed since it was added. Please remove it and add it again.` }
+      }
       for (let q = 0; q < item.quantity; q++) {
+        // The first unit of each purchase carries the price; a couple membership's
+        // second member and every included product hang off it at 0.
+        let priced = false
         for (let u = 0; u < unitsPerQty; u++) {
+          const template = product.unitTemplates[u]
           const unit = item.units[q * unitsPerQty + u]
-          if (!unit) continue
-          const validationError = validateUnit(unit)
+          if (!unit || unit.productId !== template.productId) {
+            return { ok: false, error: `"${product.title}" has changed since it was added. Please remove it and add it again.` }
+          }
+          const validationError = validateUnit({ customFields: template.customFields, values: unit.values })
           if (validationError) return { ok: false, error: `${product.title}: ${validationError}` }
           const isBundleSelf = unit.productId === product.id
+          const carriesPrice = isBundleSelf && !priced
+          if (carriesPrice) priced = true
           orderItems.push({
-            productTitle: unit.productTitle,
-            product: unit.productId,
-            bundleParentLineId: isBundleSelf ? undefined : item.lineId,
+            productTitle: template.productTitle,
+            product: template.productId,
+            bundleParentLineId: carriesPrice ? undefined : item.lineId,
+            membershipSeason: isMembership && isBundleSelf ? product.membership?.season : undefined,
             quantity: 1,
-            unitPrice: isBundleSelf ? product.price : 0,
+            unitPrice: carriesPrice ? product.price : 0,
             customFieldValues: unit.values ?? {},
           })
         }
@@ -93,7 +111,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
       })
     } else {
       for (const unit of item.units) {
-        const validationError = validateUnit(unit)
+        const validationError = validateUnit({ customFields: product.customFields, values: unit.values })
         if (validationError) return { ok: false, error: `${product.title}: ${validationError}` }
         orderItems.push({
           productTitle: product.title,
@@ -114,6 +132,13 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
         quantity: item.quantity,
       })
     }
+  }
+
+  if (hasMembership && !buyer.phone) {
+    return { ok: false, error: 'A mobile number is required when buying a membership.' }
+  }
+  if (buyer.phone && !isValidPhone(buyer.phone)) {
+    return { ok: false, error: 'Please enter a valid mobile number.' }
   }
 
   const total = subtotal
@@ -178,6 +203,9 @@ function validateUnit(unit: {
     }
     if (value && field.kind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       return `invalid email in "${field.label}"`
+    }
+    if (value && field.kind === 'phone' && !isValidPhone(value)) {
+      return `invalid phone number in "${field.label}"`
     }
   }
   return null

@@ -1,5 +1,6 @@
 import type { CollectionConfig, Where } from 'payload'
 import { sendOrderConfirmation } from '@/lib/email/orderConfirmation'
+import { cancelMembershipsForOrder, createMembershipsForOrder } from '@/lib/shop/memberships'
 import { collectionWriteAccess, hasRole } from '@/lib/auth/roles'
 
 export const Orders: CollectionConfig = {
@@ -37,16 +38,21 @@ export const Orders: CollectionConfig = {
       },
     ],
     afterChange: [
-      async ({ doc, previousDoc, operation }) => {
+      async ({ doc, previousDoc, operation, req }) => {
         const becamePaid =
           doc?.status === 'paid' && (operation === 'create' || previousDoc?.status !== 'paid')
         if (becamePaid) {
+          await createMembershipsForOrder(doc, req)
           try {
             await sendOrderConfirmation(doc)
           } catch (err) {
             console.error('[orders] failed to send confirmation email', err)
           }
         }
+
+        const becameVoid =
+          (doc?.status === 'refunded' || doc?.status === 'cancelled') && previousDoc?.status !== doc?.status
+        if (becameVoid) await cancelMembershipsForOrder(doc, req)
       },
     ],
   },
@@ -87,6 +93,14 @@ export const Orders: CollectionConfig = {
           name: 'bundleParentLineId',
           type: 'text',
           admin: { description: 'Set when this line was expanded from a bundle cart line.' },
+        },
+        {
+          name: 'membershipSeason',
+          type: 'text',
+          admin: {
+            readOnly: true,
+            description: 'Set on each member of a membership; a membership record is created for it once paid.',
+          },
         },
         { name: 'quantity', type: 'number', required: true, defaultValue: 1 },
         { name: 'unitPrice', type: 'number', required: true, admin: { description: 'Cents' } },

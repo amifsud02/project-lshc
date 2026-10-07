@@ -24,9 +24,9 @@ export default function ProductCard({ product }: Props) {
             LS
           </div>
         )}
-        {product.type === 'bundle' && (
+        {product.type !== 'single' && (
           <Badge className="absolute left-4 top-4 rounded-full bg-background/90 px-2.5 py-0.5 text-xs text-primary">
-            Bundle
+            {product.type === 'membership' ? 'Membership' : 'Bundle'}
           </Badge>
         )}
       </div>

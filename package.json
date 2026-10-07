@@ -12,7 +12,8 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "grant-role": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/grant-role.ts",
     "seed-nursery": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-nursery.ts",
-    "import-fixtures": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/import-fixtures.ts"
+    "import-fixtures": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/import-fixtures.ts",
+    "seed-memberships": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-memberships.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

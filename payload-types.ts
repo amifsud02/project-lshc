@@ -82,6 +82,7 @@ export interface Config {
     'gallery-categories': GalleryCategory;
     products: Product;
     orders: Order;
+    memberships: Membership;
     venues: Venue;
     'nursery-seasons': NurserySeason;
     'nursery-categories': NurseryCategory;
@@ -114,6 +115,7 @@ export interface Config {
     'gallery-categories': GalleryCategoriesSelect<false> | GalleryCategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
+    memberships: MembershipsSelect<false> | MembershipsSelect<true>;
     venues: VenuesSelect<false> | VenuesSelect<true>;
     'nursery-seasons': NurserySeasonsSelect<false> | NurserySeasonsSelect<true>;
     'nursery-categories': NurseryCategoriesSelect<false> | NurseryCategoriesSelect<true>;
@@ -801,12 +803,25 @@ export interface Product {
    */
   generateSlug?: boolean | null;
   slug: string;
-  type: 'single' | 'bundle';
+  type: 'single' | 'bundle' | 'membership';
   active?: boolean | null;
   /**
-   * Price in cents (e.g. 2500 = €25.00). For bundles this is the bundle price the customer pays.
+   * Price in cents (e.g. 2500 = €25.00). For bundles and memberships this is the price the customer pays for everything included.
    */
   price: number;
+  /**
+   * Each member covered is asked for their name and mobile number at checkout. Anything in "Included products" is added to the order alongside the membership.
+   */
+  membership?: {
+    /**
+     * e.g. "2026/2027"
+     */
+    season?: string | null;
+    /**
+     * 1 for a single membership, 2 for a couple.
+     */
+    membersCovered?: number | null;
+  };
   image?: (string | null) | Media;
   description?: {
     root: {
@@ -846,7 +861,7 @@ export interface Product {
       }[]
     | null;
   /**
-   * Products that make up this bundle.
+   * Products that make up this bundle, or that come with this membership.
    */
   bundleItems?:
     | {
@@ -877,6 +892,10 @@ export interface Order {
      * Set when this line was expanded from a bundle cart line.
      */
     bundleParentLineId?: string | null;
+    /**
+     * Set on each member of a membership; a membership record is created for it once paid.
+     */
+    membershipSeason?: string | null;
     quantity: number;
     /**
      * Cents
@@ -902,6 +921,39 @@ export interface Order {
   stripeCheckoutSessionId?: string | null;
   stripePaymentIntentId?: string | null;
   paidAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "memberships".
+ */
+export interface Membership {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName?: string | null;
+  mobile: string;
+  email?: string | null;
+  season: string;
+  status: 'active' | 'cancelled';
+  product?: (string | null) | Product;
+  /**
+   * Empty for members added by hand.
+   */
+  order?: (string | null) | Order;
+  /**
+   * Any extra answers given at checkout, e.g. card pick-up location.
+   */
+  details?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1518,6 +1570,10 @@ export interface PayloadLockedDocument {
         value: string | Order;
       } | null)
     | ({
+        relationTo: 'memberships';
+        value: string | Membership;
+      } | null)
+    | ({
         relationTo: 'venues';
         value: string | Venue;
       } | null)
@@ -2038,6 +2094,12 @@ export interface ProductsSelect<T extends boolean = true> {
   type?: T;
   active?: T;
   price?: T;
+  membership?:
+    | T
+    | {
+        season?: T;
+        membersCovered?: T;
+      };
   image?: T;
   description?: T;
   customFields?:
@@ -2083,6 +2145,7 @@ export interface OrdersSelect<T extends boolean = true> {
         productTitle?: T;
         product?: T;
         bundleParentLineId?: T;
+        membershipSeason?: T;
         quantity?: T;
         unitPrice?: T;
         customFieldValues?: T;
@@ -2094,6 +2157,24 @@ export interface OrdersSelect<T extends boolean = true> {
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;
   paidAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "memberships_select".
+ */
+export interface MembershipsSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  fullName?: T;
+  mobile?: T;
+  email?: T;
+  season?: T;
+  status?: T;
+  product?: T;
+  order?: T;
+  details?: T;
   updatedAt?: T;
   createdAt?: T;
 }

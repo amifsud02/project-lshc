@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/shop/cart'
-import { formatPrice } from '@/lib/shop/types'
+import { formatPrice, isValidPhone } from '@/lib/shop/types'
 import type { CartItem, CartUnit, CustomFieldDef } from '@/lib/shop/types'
 
 const emptySubscribe = () => () => {}
@@ -60,6 +60,9 @@ export default function CartView() {
           }
           if (f.kind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
             return `"${f.label}" for ${item.productTitle} is not a valid email.`
+          }
+          if (f.kind === 'phone' && !isValidPhone(v)) {
+            return `"${f.label}" for ${item.productTitle} is not a valid phone number.`
           }
         }
       }
@@ -167,7 +170,7 @@ function CartLine({
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Line {String(index + 1).padStart(2, '0')} ·{' '}
-              {item.productType === 'bundle' ? 'Bundle' : 'Item'}
+              {item.productType === 'membership' ? 'Membership' : item.productType === 'bundle' ? 'Bundle' : 'Item'}
             </span>
             <h3 className="text-lg font-semibold">{item.productTitle}</h3>
             <p className="text-sm text-muted-foreground tabular-nums">

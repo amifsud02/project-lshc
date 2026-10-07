@@ -1,23 +1,52 @@
 import { PageLayoutBlocks } from '@/blocks'
 import { slugField, type CollectionConfig } from 'payload'
-import { collectionWriteAccess } from '@/lib/auth/roles'
+import { canEditCollection, collectionWriteAccess, publishedOrStaff } from '@/lib/auth/roles'
+import { seedPages } from '@/lib/seed/pages'
+
+const previewUrl = (slug?: string) =>
+  `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/api/preview?path=${encodeURIComponent(
+    `/${slug === 'home' ? '' : (slug ?? '')}`,
+  )}`
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
-    livePreview: {
-      url: ({ data }) =>
-        `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/${data?.slug === 'home' ? '' : (data?.slug ?? '')}`,
+    components: {
+      beforeListTable: ['@/components/admin/SeedPages#SeedPages'],
     },
+    // Both go through /api/preview so the site renders the latest draft, which
+    // matters for pages that have never been published.
+    livePreview: {
+      url: ({ data }) => previewUrl(data?.slug),
+    },
+    preview: (doc) => previewUrl(doc?.slug as string | undefined),
   },
   access: {
     create: collectionWriteAccess('pages'),
     delete: collectionWriteAccess('pages'),
-    read: () => true,
+    read: publishedOrStaff,
     update: collectionWriteAccess('pages'),
   },
+  endpoints: [
+    {
+      /**
+       * POST /api/pages/seed — writes the starter page content as drafts for
+       * review. Only the pages collection is touched; nothing goes live until
+       * each page is published from the admin.
+       */
+      path: '/seed',
+      method: 'post',
+      handler: async (req) => {
+        if (!canEditCollection('pages', req.user)) {
+          return Response.json({ error: 'Forbidden' }, { status: 403 })
+        }
+        const results = await seedPages(req.payload)
+        return Response.json({ results })
+      },
+    },
+  ],
   versions: {
     drafts: {
       autosave: { interval: 2000 },

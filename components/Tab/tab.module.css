@@ -46,7 +46,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background-color: var(--color-accent);
+  background-color: var(--color-club);
 }
 
 .tablinks {
@@ -61,7 +61,7 @@
   width: 100%;
   transform: scaleX(0);
   height: 2px;
-  background-color: var(--color-accent);
+  background-color: var(--color-club);
   transform-origin: bottom right;
   transition: transform 0.25s ease-out;
 }

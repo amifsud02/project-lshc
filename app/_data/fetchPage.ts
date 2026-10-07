@@ -38,10 +38,12 @@ export const fetchPage = async ({ slug: slugSegments = ['home'] }: PageParams): 
         ]
     };
 
+    // A page that has never been published still exists as a draft document, so
+    // the public site must ask for published pages explicitly.
     const query = {
         collection: 'pages' as const,
         limit: 1,
-        where: slugConstraint,
+        where: draft ? slugConstraint : { and: [slugConstraint, { _status: { equals: 'published' } }] },
     };
     // Published pages come from the shared cache; drafts (admin preview) always go to the database.
     const pageQuery = draft

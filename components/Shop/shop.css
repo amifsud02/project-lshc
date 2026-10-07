@@ -105,7 +105,7 @@
   letter-spacing: 0.26em;
   font-weight: 700;
   color: #fff;
-  background: var(--color-accent);
+  background: var(--color-club);
   padding: 5px 10px;
   text-transform: uppercase;
 }
@@ -193,7 +193,7 @@
   letter-spacing: 0.24em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .product-card:hover .product-card__arrow svg { transform: translateX(4px); }
@@ -256,7 +256,7 @@
   letter-spacing: 0.26em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-club);
   margin: 0 0 10px;
 }
 
@@ -316,7 +316,7 @@
   letter-spacing: 0.26em;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-club);
   margin: 0 0 10px;
 }
 
@@ -339,7 +339,7 @@
 
 .pdp__includes-list li::before {
   content: '✕';
-  color: var(--color-accent);
+  color: var(--color-club);
   font-family: var(--font-sans);
   font-size: 10px;
 }
@@ -490,7 +490,7 @@
   letter-spacing: 0.28em;
   text-transform: uppercase;
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-club);
   margin: 0 0 14px;
 }
 
@@ -499,7 +499,7 @@
   display: inline-block;
   width: 20px;
   height: 1px;
-  background: var(--color-accent);
+  background: var(--color-club);
 }
 
 .cart-line__fields {
@@ -539,7 +539,7 @@
   font-size: 11px;
   letter-spacing: 0.22em;
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .checkout-section__subtitle {
@@ -744,8 +744,8 @@
   font-size: 11px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-accent);
-  border: 2px solid var(--color-accent);
+  color: var(--color-club);
+  border: 2px solid var(--color-club);
   padding: 8px 14px;
   font-weight: 700;
   transform: rotate(-1deg);
@@ -795,7 +795,7 @@
 .receipt__row--child::before {
   content: '↳';
   margin-right: 8px;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .receipt__row-title { font-weight: 600; }
@@ -826,7 +826,7 @@
 
 .shop-link {
   position: relative;
-  color: var(--color-accent);
+  color: var(--color-club);
   font-family: var(--font-sans);
   font-weight: 700;
   font-size: 12px;
@@ -841,7 +841,7 @@
   position: absolute;
   left: 0; right: 0; bottom: 0;
   height: 1px;
-  background: var(--color-accent);
+  background: var(--color-club);
   transform: scaleX(1);
   transform-origin: bottom left;
   transition: transform 0.25s ease-out;
@@ -868,7 +868,7 @@
 .order-badge--paid { color: #0a7d2d; }
 .order-badge--pending { color: var(--color-muted); }
 .order-badge--cancelled, .order-badge--refunded { color: var(--color-danger); }
-.order-badge--fulfilled { color: var(--color-accent); }
+.order-badge--fulfilled { color: var(--color-club); }
 
 /* ---------- Orders list (account) ---------- */
 

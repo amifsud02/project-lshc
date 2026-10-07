@@ -7,7 +7,7 @@
   flex-flow: column;
   justify-content: flex-end;
 
-  background: var(--color-accent), url("/template.svg") no-repeat center;
+  background: var(--color-club), url("/template.svg") no-repeat center;
   background: -moz-linear-gradient(
       125deg,
       rgba(1, 41, 111, 1) 0%,

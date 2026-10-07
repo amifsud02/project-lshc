@@ -16,9 +16,9 @@
   gap: 10px;
   min-height: var(--control-height);
   padding: 12px 24px;
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-club);
   border-radius: var(--radius-md);
-  background: var(--color-accent);
+  background: var(--color-club);
   color: #fff;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -38,7 +38,7 @@
 .btn:hover:not(:disabled),
 .primary-button:hover:not(:disabled) {
   background: #fff;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .btn:focus-visible,
@@ -62,18 +62,18 @@
 
 .btn--ghost {
   background: transparent;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .btn--ghost:hover:not(:disabled) {
-  background: var(--color-accent);
+  background: var(--color-club);
   color: #fff;
 }
 
 .btn--light {
   background: #fff;
   border-color: #fff;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .btn--light:hover:not(:disabled) {
@@ -90,7 +90,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-club);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
@@ -100,7 +100,7 @@
 .btn-text:hover { text-decoration-thickness: 2px; }
 
 .btn-text:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-club);
   outline-offset: 3px;
   border-radius: 3px;
 }
@@ -108,7 +108,7 @@
 /* ---------- Links inside copy ---------- */
 
 .link {
-  color: var(--color-accent);
+  color: var(--color-club);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -189,7 +189,7 @@
 .field__select:focus,
 .field__textarea:focus {
   outline: none;
-  border-color: var(--color-accent);
+  border-color: var(--color-club);
   box-shadow: var(--ring-accent);
 }
 
@@ -259,7 +259,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-club);
   cursor: pointer;
   transition: background-color var(--duration-base) ease;
 }
@@ -307,7 +307,7 @@
   width: 20px;
   height: 20px;
   margin: 2px 0 0;
-  accent-color: var(--color-accent);
+  accent-color: var(--color-club);
   cursor: pointer;
 }
 
@@ -359,7 +359,7 @@
 
 .choice__option--selected,
 .choice__option--selected:hover:not(.choice__option--disabled) {
-  border-color: var(--color-accent);
+  border-color: var(--color-club);
   background: var(--color-accent-tint);
   box-shadow: 0 0 0 3px rgba(1, 41, 111, 0.12);
 }
@@ -376,7 +376,7 @@
   width: 20px;
   height: 20px;
   margin: 1px 0 0;
-  accent-color: var(--color-accent);
+  accent-color: var(--color-club);
   cursor: inherit;
 }
 
@@ -483,7 +483,7 @@
 .alert--info {
   border-color: rgba(1, 41, 111, 0.18);
   background: rgba(1, 41, 111, 0.06);
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 /* ---------- Badges ---------- */
@@ -514,7 +514,7 @@
 .badge--warn { color: var(--color-warning); background: var(--color-warning-soft); }
 .badge--bad { color: var(--color-danger); background: rgba(194, 52, 52, 0.1); }
 .badge--muted { color: var(--color-muted); background: rgba(90, 102, 122, 0.12); }
-.badge--accent { color: var(--color-accent); background: var(--color-accent-soft); }
+.badge--accent { color: var(--color-club); background: var(--color-accent-soft); }
 
 /* ---------- Headings and copy ---------- */
 
@@ -523,7 +523,7 @@
   margin: 0 0 6px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 /* Page or panel title. */
@@ -570,8 +570,15 @@
 
 .prose p { margin: 0 0 14px; }
 .prose ul, .prose ol { margin: 0 0 14px 20px; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li { margin-bottom: 4px; }
+.prose h2, .prose h3 { color: var(--color-ink); font-weight: 800; line-height: 1.25; }
+.prose h2 { font-size: 1.5rem; margin: 32px 0 12px; text-transform: uppercase; }
+.prose h3 { font-size: 1.125rem; margin: 24px 0 8px; }
+.prose > :first-child { margin-top: 0; }
 .prose p:last-child { margin-bottom: 0; }
-.prose a { color: var(--color-accent); font-weight: 600; }
+.prose a { color: var(--color-club); font-weight: 600; }
 .prose strong { color: var(--color-ink); }
 
 /* Numbered step header for multi-part forms. */
@@ -591,7 +598,7 @@
   height: 30px;
   margin-top: 1px;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--color-club);
   color: #fff;
   font-family: var(--font-sans);
   font-size: 13.5px;
@@ -641,7 +648,7 @@
   width: 22px;
   height: 22px;
   border: 2.5px solid rgba(1, 41, 111, 0.2);
-  border-top-color: var(--color-accent);
+  border-top-color: var(--color-club);
   border-radius: 50%;
   animation: ui-spin 0.8s linear infinite;
 }

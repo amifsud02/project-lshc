@@ -11,7 +11,8 @@
 :root {
   /* ---- Brand colour ---- */
   --color-ink: #000d24;            /* deepest navy: headings, dark panels */
-  --color-accent: #01296f;         /* club navy: buttons, links, focus */
+  /* Not --color-accent: the shadcn theme in globals.css owns that name. */
+  --color-club: #01296f;           /* club navy: buttons, links, focus */
   --color-accent-hover: #0a3a8f;
   --color-accent-soft: rgba(1, 41, 111, 0.07);
   --color-accent-tint: rgba(1, 41, 111, 0.04);
@@ -104,10 +105,10 @@
   --background-color: var(--color-canvas);
   --primary-color: var(--color-paper);
   --secondary-color: var(--color-ink);
-  --accent-color: var(--color-accent);
-  --gradient: linear-gradient(to right, var(--color-accent), var(--color-ink));
+  --accent-color: var(--color-club);
+  --gradient: linear-gradient(to right, var(--color-club), var(--color-ink));
   --shop-ink: var(--color-ink);
-  --shop-accent: var(--color-accent);
+  --shop-accent: var(--color-club);
   --shop-paper: var(--color-paper);
   --shop-canvas: var(--color-canvas);
   --shop-rule: var(--color-rule);

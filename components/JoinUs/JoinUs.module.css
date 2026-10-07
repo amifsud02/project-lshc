@@ -12,6 +12,17 @@
     justify-content: space-between;
 }
 
+.joinUsWrapper {
+    align-items: center;
+    gap: 30px;
+}
+
+.joinUsBody {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 8px;
+    max-width: 40rem;
+}
+
 .joinUsTitle {
     font-size: 1.25em;
     font-weight: 800;

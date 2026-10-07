@@ -74,10 +74,10 @@
 .account-nav__link--active,
 .account-nav__link--active:hover {
   background: rgba(1, 41, 111, 0.07);
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
-.account-nav__link--active svg { color: var(--color-accent); }
+.account-nav__link--active svg { color: var(--color-club); }
 
 .account-nav__link--signout { color: var(--color-muted); }
 
@@ -93,7 +93,7 @@
 
   .account-nav__link--active,
   .account-nav__link--active:hover {
-    border-left-color: var(--color-accent);
+    border-left-color: var(--color-club);
   }
 }
 
@@ -130,7 +130,7 @@
 .account-lead a,
 .account-inline-link {
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-club);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -183,7 +183,7 @@
 }
 
 .account-tile:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-club);
   box-shadow: var(--shadow-lift);
   transform: translateY(-1px);
 }
@@ -191,7 +191,7 @@
 .account-tile svg {
   width: 20px;
   height: 20px;
-  color: var(--color-accent);
+  color: var(--color-club);
 }
 
 .account-tile__count {
@@ -246,7 +246,7 @@
 
 .account-table__ref {
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-club);
   text-decoration: none;
 }
 

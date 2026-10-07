@@ -13,7 +13,7 @@
   color: #32384a;
 }
 
-.nursery__lede a { color: var(--color-accent); font-weight: 600; }
+.nursery__lede a { color: var(--color-club); font-weight: 600; }
 
 .nursery__section {
   margin-top: 44px;
@@ -169,7 +169,7 @@
   line-height: 1.7;
 }
 
-.nursery__contact a { color: var(--color-accent); font-weight: 600; }
+.nursery__contact a { color: var(--color-club); font-weight: 600; }
 
 .nursery__print {
   margin-top: 20px;
@@ -317,8 +317,8 @@
   color: var(--color-ink);
 }
 
-.nursery-submitted a { color: var(--color-accent); font-weight: 600; }
-.nursery-submitted a.btn { color: var(--color-accent); }
+.nursery-submitted a { color: var(--color-club); font-weight: 600; }
+.nursery-submitted a.btn { color: var(--color-club); }
 .nursery-submitted a.btn:hover { color: #fff; }
 
 .nursery-submitted__ref {

@@ -1,14 +1,16 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import type { CustomFieldDef } from './types'
+import { hasBundleItems, MEMBER_FIELDS, type CustomFieldDef, type ProductType } from './types'
 import { cachedFind } from '@/lib/utils/payload/cached'
 
 export type ShopProduct = {
   id: string
   slug: string
   title: string
-  type: 'single' | 'bundle'
+  type: ProductType
   price: number
+  /** Memberships only: the season sold and how many people one purchase covers. */
+  membership?: { season: string; membersCovered: number }
   active: boolean
   imageUrl?: string
   description?: unknown
@@ -76,12 +78,24 @@ export async function getProductById(id: string): Promise<ShopProduct | null> {
 }
 
 async function mapProduct(doc: any): Promise<ShopProduct> {
-  const type = (doc?.type as 'single' | 'bundle') ?? 'single'
+  const type = (doc?.type as ProductType) ?? 'single'
   const unitTemplates: ShopProduct['unitTemplates'] = []
   const ownFields = normalizeCustomFields(doc.customFields)
+  const membersCovered = Math.max(1, Number(doc.membership?.membersCovered) || 1)
 
-  if (type === 'bundle' && Array.isArray(doc.bundleItems)) {
-    if (ownFields.length > 0) {
+  if (type === 'membership') {
+    // One unit per person covered, each asking for that member's details.
+    for (let i = 0; i < membersCovered; i++) {
+      unitTemplates.push({
+        productId: String(doc.id),
+        productTitle: membersCovered > 1 ? `${doc.title ?? ''} — member ${i + 1}` : String(doc.title ?? ''),
+        customFields: [...MEMBER_FIELDS, ...ownFields],
+      })
+    }
+  }
+
+  if (hasBundleItems(type) && Array.isArray(doc.bundleItems)) {
+    if (type === 'bundle' && ownFields.length > 0) {
       unitTemplates.push({
         productId: String(doc.id),
         productTitle: String(doc.title ?? ''),
@@ -101,7 +115,7 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
         })
       }
     }
-  } else {
+  } else if (type !== 'membership') {
     unitTemplates.push({
       productId: String(doc.id),
       productTitle: String(doc.title ?? ''),
@@ -120,5 +134,9 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
     description: doc.description,
     customFields: ownFields,
     unitTemplates,
+    membership:
+      type === 'membership'
+        ? { season: String(doc.membership?.season ?? ''), membersCovered }
+        : undefined,
   }
 }

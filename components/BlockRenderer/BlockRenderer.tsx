@@ -78,7 +78,9 @@ const PageHeaderAdapter = (props: {
   return <PageHeader pageName={props.pageName ?? ''} />
 }
 
-const JoinUsAdapter = () => <JoinUs />
+const JoinUsAdapter = (props: { heading?: string; body?: string; ctaLabel?: string; ctaLink?: string }) => (
+  <JoinUs heading={props.heading} body={props.body} ctaLabel={props.ctaLabel} ctaLink={props.ctaLink} />
+)
 const PartnersAdapter = () => <Partners />
 const CarouselAdapter = () => <TeamCarousel />
 

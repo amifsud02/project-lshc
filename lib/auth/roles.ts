@@ -43,6 +43,7 @@ const collectionEditors: Partial<Record<CollectionSlug, Role[]>> = {
   galleries: ['content-creator', 'photographer'],
   'gallery-categories': ['content-creator', 'photographer'],
   media: ['content-creator', 'coach', 'shop-manager', 'photographer'],
+  memberships: ['shop-manager'],
   'nursery-categories': ['nursery-manager'],
   'nursery-registrations': ['nursery-manager'],
   'nursery-seasons': ['nursery-manager'],

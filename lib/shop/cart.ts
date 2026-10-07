@@ -3,13 +3,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { nanoid } from 'nanoid'
-import type { CartItem, CartUnit, CustomFieldDef } from './types'
+import type { CartItem, CartUnit, CustomFieldDef, ProductType } from './types'
 
 type AddInput = {
   productId: string
   productSlug: string
   productTitle: string
-  productType: 'single' | 'bundle'
+  productType: ProductType
   unitPrice: number
   quantity: number
   unitTemplates: Array<{

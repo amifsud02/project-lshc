@@ -85,7 +85,11 @@ export default async function ProductPage({ params }: { params: Params }) {
               <div className="sticky top-8 flex flex-col gap-6 rounded-2xl border bg-card p-6 md:p-8">
                 <div className="flex flex-col gap-3">
                   <Badge variant="secondary" className="w-fit rounded-full px-3 py-0.5">
-                    {product.type === 'bundle' ? 'Club bundle' : 'Club item'}
+                    {product.type === 'membership'
+                      ? `Membership ${product.membership?.season ?? ''}`.trim()
+                      : product.type === 'bundle'
+                        ? 'Club bundle'
+                        : 'Club item'}
                   </Badge>
                   <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
                     {product.title}
@@ -102,7 +106,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </div>
                 ) : null}
 
-                {product.type === 'bundle' && included.length > 0 && (
+                {product.type !== 'single' && included.length > 0 && (
                   <div className="flex flex-col gap-3 rounded-xl bg-muted/60 p-4">
                     <p className="text-sm font-semibold text-foreground">What&apos;s included</p>
                     <ul className="flex flex-col gap-2">
