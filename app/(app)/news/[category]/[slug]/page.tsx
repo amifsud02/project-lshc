@@ -9,6 +9,13 @@ import NewsCard from "@/components/News/NewsCard/NewsCard";
 import { getNewsBySlug, getAdjacentNewsPosts } from "@/lib/data/news";
 import type { Media, News } from "@/payload-types";
 
+export const revalidate = 60
+
+// Nothing is pre-built; each page renders on its first visit and is then cached (see `revalidate`).
+export function generateStaticParams() {
+  return []
+}
+
 type Params = { category: string; slug: string }
 
 function getMediaUrl(m: string | Media | null | undefined): string {

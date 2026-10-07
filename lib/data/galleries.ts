@@ -1,6 +1,7 @@
 import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
 import type { Gallery, GalleryCategory, Media } from '@/payload-types'
+import { cachedFind } from '@/lib/utils/payload/cached'
 
 type ListQuery = {
   tag?: string
@@ -9,7 +10,7 @@ type ListQuery = {
 
 export async function getGalleryCategories(): Promise<GalleryCategory[]> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'gallery-categories',
     depth: 0,
     limit: 100,
@@ -20,7 +21,7 @@ export async function getGalleryCategories(): Promise<GalleryCategory[]> {
 
 export async function getGalleryCategoryBySlug(slug: string): Promise<GalleryCategory | null> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'gallery-categories',
     where: { slug: { equals: slug } },
     depth: 0,
@@ -39,7 +40,7 @@ export async function getGalleries(q: ListQuery = {}): Promise<Gallery[]> {
     where.tag = { equals: cat.id }
   }
 
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'galleries',
     where,
     depth: 1,
@@ -51,7 +52,7 @@ export async function getGalleries(q: ListQuery = {}): Promise<Gallery[]> {
 
 export async function getGalleryBySlug(slug: string): Promise<Gallery | null> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'galleries',
     where: { slug: { equals: slug } },
     depth: 1,
@@ -65,7 +66,7 @@ export async function getGalleryImages(folder: Gallery['folder']): Promise<Media
   if (!folderId) return []
 
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'media',
     where: { folder: { equals: folderId } },
     depth: 0,

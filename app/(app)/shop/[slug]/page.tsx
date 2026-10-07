@@ -17,6 +17,8 @@ import { Separator } from '@/components/ui/separator'
 import { getProductBySlug } from '@/lib/shop/products'
 import { formatPrice } from '@/lib/shop/types'
 
+export const revalidate = 60
+
 type Params = Promise<{ slug: string }>
 
 export async function generateMetadata({ params }: { params: Params }) {

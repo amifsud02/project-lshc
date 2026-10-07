@@ -11,6 +11,8 @@ import { Media } from '@/payload-types'
 import BlockRenderer from '@/components/BlockRenderer/BlockRenderer'
 import SiteFooter from '@/components/Site/SiteFooter'
 
+export const revalidate = 60
+
 export default async function Page({
   params: paramsPromise,
 }: {
@@ -24,7 +26,6 @@ export default async function Page({
   }
 
   const { layout } = page;
-  console.log('layout', layout)
 
   return (
     <>

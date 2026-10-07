@@ -3,6 +3,8 @@ import { getActiveProducts } from '@/lib/shop/products'
 import ProductCard from '@/components/Shop/ProductCard'
 import { Card, CardContent } from '@/components/ui/card'
 
+export const revalidate = 60
+
 export const metadata = { title: 'Shop | La Salle Handball' }
 
 export default async function ShopPage() {

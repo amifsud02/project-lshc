@@ -1,6 +1,7 @@
 import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
 import type { News, NewsCategory } from '@/payload-types'
+import { cachedFind } from '@/lib/utils/payload/cached'
 
 type ListQuery = {
   category?: string
@@ -10,7 +11,7 @@ type ListQuery = {
 
 export async function getNewsCategories(): Promise<NewsCategory[]> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'news-categories',
     depth: 0,
     limit: 100,
@@ -21,7 +22,7 @@ export async function getNewsCategories(): Promise<NewsCategory[]> {
 
 export async function getNewsCategoryBySlug(slug: string): Promise<NewsCategory | null> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'news-categories',
     where: { slug: { equals: slug } },
     depth: 0,
@@ -41,7 +42,7 @@ export async function getNewsPosts(q: ListQuery = {}): Promise<News[]> {
   }
   if (q.tag) where.tags = { in: [q.tag] }
 
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'news',
     where,
     depth: 1,
@@ -53,7 +54,7 @@ export async function getNewsPosts(q: ListQuery = {}): Promise<News[]> {
 
 export async function getNewsBySlug(slug: string): Promise<News | null> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'news',
     where: { slug: { equals: slug } },
     depth: 1,
@@ -76,7 +77,7 @@ export async function getAdjacentNewsPosts(
 
   const payload = await getPayload({ config })
   const [prevResult, nextResult] = await Promise.all([
-    payload.find({
+    cachedFind({
       collection: 'news',
       where: {
         category: { equals: categoryId },
@@ -86,7 +87,7 @@ export async function getAdjacentNewsPosts(
       limit: 1,
       sort: '-publishedAt',
     }),
-    payload.find({
+    cachedFind({
       collection: 'news',
       where: {
         category: { equals: categoryId },

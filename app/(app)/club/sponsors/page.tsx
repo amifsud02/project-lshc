@@ -3,6 +3,8 @@ import SponsorCard from "@/components/Sponsor/sponsorCard";
 import styles from "@/components/Sponsor/sponsors.module.css";
 import Footer from "@/components/Footer/Footer";
 
+export const revalidate = 60
+
 const title = 'Official La Salle Handball Sponsors'
 const description = 'Explore the valued partners and official sponsors of La Salle Handball Club, standing by our players in every match.'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;

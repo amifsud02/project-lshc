@@ -20,6 +20,14 @@ import {
   Bottom,
 } from '@/components/Fixture/SinglePageComponents'
 import { fixtureFromPayload, type NormalizedFixture } from '@/lib/utils/normalize/sports'
+import { cachedFind } from '@/lib/utils/payload/cached'
+
+export const revalidate = 60
+
+// Nothing is pre-built; each page renders on its first visit and is then cached (see `revalidate`).
+export function generateStaticParams() {
+  return []
+}
 
 const DISPLAY_TZ = 'Europe/Malta'
 
@@ -51,7 +59,7 @@ const formatDateTime = (iso: string) => ({
 const getFixture = async (slug: string) => {
   const payload = await getPayload({ config })
 
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'fixtures',
     where: { slug: { equals: slug } },
     depth: 2,

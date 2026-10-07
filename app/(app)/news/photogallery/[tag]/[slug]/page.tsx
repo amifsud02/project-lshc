@@ -6,6 +6,13 @@ import Image from "next/image";
 import { getGalleryBySlug, getGalleryImages } from "@/lib/data/galleries";
 import type { Gallery, Media } from "@/payload-types";
 
+export const revalidate = 60
+
+// Nothing is pre-built; each page renders on its first visit and is then cached (see `revalidate`).
+export function generateStaticParams() {
+  return []
+}
+
 type Params = { tag: string; slug: string }
 
 function getMediaUrl(m: string | Media | null | undefined): string {

@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { CustomFieldDef } from './types'
+import { cachedFind } from '@/lib/utils/payload/cached'
 
 export type ShopProduct = {
   id: string
@@ -43,8 +44,7 @@ const mediaUrl = (image: any): string | undefined => {
 }
 
 export async function getActiveProducts(): Promise<ShopProduct[]> {
-  const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'products',
     where: { active: { equals: true } },
     depth: 2,
@@ -55,8 +55,7 @@ export async function getActiveProducts(): Promise<ShopProduct[]> {
 }
 
 export async function getProductBySlug(slug: string): Promise<ShopProduct | null> {
-  const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'products',
     where: { slug: { equals: slug } },
     depth: 2,
