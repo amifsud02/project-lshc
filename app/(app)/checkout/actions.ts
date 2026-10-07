@@ -6,6 +6,7 @@ import config from '@payload-config'
 import { getStripe } from '@/lib/stripe/server'
 import { getProductById } from '@/lib/shop/products'
 import type { CartItem } from '@/lib/shop/types'
+import { canViewShop } from '@/lib/shop/access'
 
 type Buyer = { email: string; name: string; phone: string }
 
@@ -20,6 +21,10 @@ type Result =
 
 export async function createCheckoutSession(input: Input): Promise<Result> {
   const { items, buyer } = input
+
+  if (!(await canViewShop())) {
+    return { ok: false, error: 'The shop is currently unavailable.' }
+  }
 
   if (!buyer.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email)) {
     return { ok: false, error: 'A valid email is required.' }

@@ -66,6 +66,34 @@ export const General: GlobalConfig = {
                             },
                         },
                     ]
+                },
+                {
+                    label: 'Shop',
+                    name: 'shop',
+                    description: 'These settings only affect the e-commerce shop. The rest of the site is always public.',
+                    fields: [
+                        {
+                            name: 'visibility',
+                            label: 'Shop visibility',
+                            type: 'radio',
+                            defaultValue: 'admins',
+                            required: true,
+                            options: [
+                                {
+                                    label: 'Admins only — the shop and its pages (shop, cart, checkout, orders) are hidden from visitors and only admins can view them.',
+                                    value: 'admins',
+                                },
+                                {
+                                    label: 'Public — the shop is visible to everyone.',
+                                    value: 'public',
+                                },
+                            ],
+                            admin: {
+                                layout: 'vertical',
+                                description: 'Controls who can see the e-commerce shop. Takes effect within a minute of saving.',
+                            },
+                        },
+                    ]
                 }
             ]
         }

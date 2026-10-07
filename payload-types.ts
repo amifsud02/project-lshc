@@ -2549,6 +2549,12 @@ export interface General {
      */
     postsPerPage?: number | null;
   };
+  shop: {
+    /**
+     * Controls who can see the e-commerce shop. Takes effect within a minute of saving.
+     */
+    visibility: 'admins' | 'public';
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2646,6 +2652,11 @@ export interface GeneralSelect<T extends boolean = true> {
     | T
     | {
         postsPerPage?: T;
+      };
+  shop?:
+    | T
+    | {
+        visibility?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -8,7 +8,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import type { NavItem } from './Header';
 import CartIcon from '@/components/Shop/CartIcon';
 import AccountIcon from '@/components/Shop/AccountIcon';
-import { SHOP_ENABLED, isShopHref } from '@/lib/shop/visibility';
+import { isShopHref } from '@/lib/shop/visibility';
 
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
 import { usePathname } from 'next/navigation';
@@ -57,15 +57,17 @@ export const MobileNavbar = ({
     logo,
     navItems,
     isAuthed = false,
+    shopEnabled = false,
 }: {
     logo?: string
     navItems?: NavItem[]
     isAuthed?: boolean
+    shopEnabled?: boolean
 } = {}) => {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const items = (navItems && navItems.length > 0 ? navItems : DEFAULT_NAV_ITEMS)
-        .filter((item) => SHOP_ENABLED || !isShopHref(item.href))
+        .filter((item) => shopEnabled || !isShopHref(item.href))
     const logoSrc = logo ?? '/lshc.png'
 
     useEffect(() => {
@@ -93,7 +95,7 @@ export const MobileNavbar = ({
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#fff' }}>
                             <AccountIcon isAuthed={isAuthed} />
-                            {SHOP_ENABLED ? <CartIcon /> : null}
+                            {shopEnabled ? <CartIcon /> : null}
                             {
                                 isOpen
                                     ? <X color='white' size={40} onClick={() => setIsOpen(!isOpen)} />

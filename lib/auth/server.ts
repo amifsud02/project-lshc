@@ -1,6 +1,7 @@
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { isAdmin } from '@/lib/auth/roles'
 
 export type CurrentUser = {
   id: string
@@ -8,6 +9,7 @@ export type CurrentUser = {
   firstName?: string
   lastName?: string
   phone?: string
+  isAdmin: boolean
 }
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -22,6 +24,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
       firstName: (user as any).firstName ?? undefined,
       lastName: (user as any).lastName ?? undefined,
       phone: (user as any).phone ?? undefined,
+      isAdmin: isAdmin(user),
     }
   } catch {
     return null
