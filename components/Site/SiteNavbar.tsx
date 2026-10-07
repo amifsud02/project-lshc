@@ -13,6 +13,7 @@ export default async function SiteNavbar() {
       logo={general.logoUrl}
       navItems={header.navItems}
       isAuthed={Boolean(user)}
+      shopEnabled={general.shopVisibility === 'public' || Boolean(user?.isAdmin)}
     />
   )
 }

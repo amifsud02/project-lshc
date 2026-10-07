@@ -18,6 +18,7 @@ export type NormalizedGeneral = {
   logoUrl?: string
   faviconUrl?: string
   fallbackImageUrl?: string
+  shopVisibility: 'admins' | 'public'
 }
 
 export type NormalizedFooter = {
@@ -84,6 +85,8 @@ export const generalFromPayload = (doc: any): NormalizedGeneral => {
     logoUrl: mediaUrl(g.logo),
     faviconUrl: mediaUrl(g.favicon),
     fallbackImageUrl: mediaUrl(g.fallbackImage),
+    // Anything other than an explicit 'public' keeps the shop hidden.
+    shopVisibility: doc?.shop?.visibility === 'public' ? 'public' : 'admins',
   }
 }
 

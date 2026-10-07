@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react';
 import CartIcon from '@/components/Shop/CartIcon';
 import AccountIcon from '@/components/Shop/AccountIcon';
-import { SHOP_ENABLED, isShopHref } from '@/lib/shop/visibility';
+import { isShopHref } from '@/lib/shop/visibility';
 
 export type NavLink = {
     label: string;
@@ -39,15 +39,17 @@ export function DesktopNavbar({
     logo,
     navItems,
     isAuthed = false,
+    shopEnabled = false,
 }: {
     logo?: string
     navItems?: NavItem[]
     isAuthed?: boolean
+    shopEnabled?: boolean
 } = {}) {
 
     const pathname = usePathname();
     const items = (navItems && navItems.length > 0 ? navItems : DEFAULT_NAV_ITEMS)
-        .filter((item) => SHOP_ENABLED || !isShopHref(item.href))
+        .filter((item) => shopEnabled || !isShopHref(item.href))
     const logoSrc = logo ?? '/lshc.png'
 
     const [dropdownState, setDropdownState] = useState<{ [key: string]: boolean }>({});
@@ -103,7 +105,7 @@ export function DesktopNavbar({
                     {/* The account is used for nursery registrations too, so it stays visible when the shop is off. */}
                     <div className={styles.shopActions}>
                         <AccountIcon isAuthed={isAuthed} />
-                        {SHOP_ENABLED ? <CartIcon /> : null}
+                        {shopEnabled ? <CartIcon /> : null}
                     </div>
                 </div>
             </div>

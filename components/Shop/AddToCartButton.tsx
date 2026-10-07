@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { ArrowRight, ShoppingCart } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { useCart } from '@/lib/shop/cart'
 import type { ShopProduct } from '@/lib/shop/products'
 
@@ -27,13 +29,22 @@ export default function AddToCartButton({ product }: Props) {
   }
 
   return (
-    <button type="button" onClick={onClick} disabled={busy} className="btn btn--block">
-      {busy ? 'Adding…' : 'Add to cart'}
-      {!busy && (
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
-          <path d="M1 5H13M13 5L9 1M13 5L9 9" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
+    <Button
+      type="button"
+      size="lg"
+      onClick={onClick}
+      disabled={busy}
+      className="h-12 w-full cursor-pointer rounded-lg text-base font-medium"
+    >
+      {busy ? (
+        'Adding…'
+      ) : (
+        <>
+          <ShoppingCart />
+          Add to cart
+          <ArrowRight />
+        </>
       )}
-    </button>
+    </Button>
   )
 }

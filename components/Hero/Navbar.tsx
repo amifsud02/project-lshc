@@ -8,19 +8,21 @@ export default function Navbar({
   logo,
   navItems,
   isAuthed = false,
+  shopEnabled = false,
 }: {
   logo?: string
   navItems?: NavItem[]
   isAuthed?: boolean
+  shopEnabled?: boolean
 } = {}) {
   return (
     <>
       <div className={styles.mobileNavbar}>
-        <MobileNavbar logo={logo} navItems={navItems} isAuthed={isAuthed} />
+        <MobileNavbar logo={logo} navItems={navItems} isAuthed={isAuthed} shopEnabled={shopEnabled} />
       </div>
 
       <div className={styles.desktopNavbar}>
-        <DesktopNavbar logo={logo} navItems={navItems} isAuthed={isAuthed} />
+        <DesktopNavbar logo={logo} navItems={navItems} isAuthed={isAuthed} shopEnabled={shopEnabled} />
       </div>
     </>
   );

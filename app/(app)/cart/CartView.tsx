@@ -3,6 +3,12 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useSyncExternalStore } from 'react'
+import { ArrowRight, Lock, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/shop/cart'
 import { formatPrice } from '@/lib/shop/types'
 import type { CartItem, CartUnit, CustomFieldDef } from '@/lib/shop/types'
@@ -26,16 +32,20 @@ export default function CartView() {
 
   if (mounted && items.length === 0) {
     return (
-      <div className="empty-state">
-        <p className="empty-state__eyebrow">Empty cart</p>
-        <h2 className="empty-state__title">Nothing here yet</h2>
-        <p className="empty-state__body">
-          Browse the shop and add a membership or bundle to get started.
-        </p>
-        <Link href="/shop" className="shop-link">
-          Continue shopping
-        </Link>
-      </div>
+      <Card>
+        <CardContent className="flex flex-col items-center gap-2 py-12 text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Empty cart
+          </p>
+          <h2 className="text-xl font-semibold">Nothing here yet</h2>
+          <p className="text-muted-foreground">
+            Browse the shop and add a membership or bundle to get started.
+          </p>
+          <Button render={<Link href="/shop" />} className="mt-3">
+            Continue shopping
+          </Button>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -68,12 +78,12 @@ export default function CartView() {
   }
 
   return (
-    <div className="shop__columns">
-      <div className="shop__stack">
-        <div className="shop__section-head">
-          <h2>Your items</h2>
-          <span className="shop__section-head-meta">
-            {items.length.toString().padStart(2, '0')} line{items.length === 1 ? '' : 's'}
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+      <div className="flex flex-col gap-4 lg:col-span-7">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-xl font-semibold">Your items</h2>
+          <span className="text-sm text-muted-foreground">
+            {items.length} line{items.length === 1 ? '' : 's'}
           </span>
         </div>
         {items.map((item, i) => (
@@ -88,53 +98,50 @@ export default function CartView() {
         ))}
       </div>
 
-      <aside className="summary">
-        <p className="summary__label">Order summary</p>
-        <ul className="summary__list">
-          {items.map((item) => (
-            <li key={item.lineId}>
-              <span className="summary__list-title">
-                {item.productTitle} × {item.quantity}
-              </span>
-              <span className="summary__list-amount">
-                {formatPrice(item.unitPrice * item.quantity)}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <div className="summary__row summary__row--total">
-          <span>Total</span>
-          <span className="summary__amount">{formatPrice(subtotal)}</span>
-        </div>
-        {error && (
-          <p
-            className="alert alert--error"
-            style={{ background: 'rgba(255,255,255,0.08)', color: '#ffb4b4', marginTop: 16 }}
-          >
-            {error}
-          </p>
-        )}
-        <div className="summary__cta">
-          <button
-            type="button"
-            className="btn btn--light btn--block"
-            onClick={onCheckout}
-          >
-            Proceed to checkout
-            <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
-              <path d="M1 5H13M13 5L9 1M13 5L9 9" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-          </button>
-        </div>
-        <p className="summary__help">
-          <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden>
-            <path
-              d="M6 1a3 3 0 0 0-3 3v2H2v7h8V6H9V4a3 3 0 0 0-3-3zm-2 5V4a2 2 0 1 1 4 0v2z"
-              fill="currentColor"
-            />
-          </svg>
-          Secure payment by Stripe · EUR
-        </p>
+      <aside className="lg:col-span-5">
+        <Card className="sticky top-8">
+          <CardContent className="flex flex-col gap-4">
+            <p className="text-lg font-semibold">Order summary</p>
+            <ul className="flex flex-col gap-2">
+              {items.map((item) => (
+                <li key={item.lineId} className="flex justify-between gap-4 text-sm">
+                  <span className="text-muted-foreground">
+                    {item.productTitle} × {item.quantity}
+                  </span>
+                  <span className="font-medium tabular-nums">
+                    {formatPrice(item.unitPrice * item.quantity)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <Separator />
+            <div className="flex justify-between text-base font-semibold">
+              <span>Total</span>
+              <span className="tabular-nums">{formatPrice(subtotal)}</span>
+            </div>
+            {error && (
+              <p
+                role="alert"
+                className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              >
+                {error}
+              </p>
+            )}
+            <Button
+              type="button"
+              size="lg"
+              className="h-12 w-full cursor-pointer text-base"
+              onClick={onCheckout}
+            >
+              Proceed to checkout
+              <ArrowRight />
+            </Button>
+            <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <Lock className="size-3" />
+              Secure payment by Stripe · EUR
+            </p>
+          </CardContent>
+        </Card>
       </aside>
     </div>
   )
@@ -154,45 +161,57 @@ function CartLine({
   onField: (unitIdx: number, field: string, value: string) => void
 }) {
   return (
-    <div className="cart-line">
-      <div className="cart-line__head">
-        <div>
-          <span className="cart-line__kicker">
-            Line {String(index + 1).padStart(2, '0')} ·{' '}
-            {item.productType === 'bundle' ? 'Bundle' : 'Item'}
-          </span>
-          <h3 className="cart-line__title">{item.productTitle}</h3>
-          <p className="cart-line__price shop__mono">
-            {formatPrice(item.unitPrice)} × {item.quantity} ={' '}
-            <strong>{formatPrice(item.unitPrice * item.quantity)}</strong>
-          </p>
+    <Card>
+      <CardContent className="flex flex-col gap-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Line {String(index + 1).padStart(2, '0')} ·{' '}
+              {item.productType === 'bundle' ? 'Bundle' : 'Item'}
+            </span>
+            <h3 className="text-lg font-semibold">{item.productTitle}</h3>
+            <p className="text-sm text-muted-foreground tabular-nums">
+              {formatPrice(item.unitPrice)} × {item.quantity} ={' '}
+              <strong className="text-foreground">
+                {formatPrice(item.unitPrice * item.quantity)}
+              </strong>
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Label className="flex items-center gap-2 text-sm">
+              Qty
+              <Input
+                type="number"
+                min={1}
+                value={item.quantity}
+                onChange={(e) => onQty(Number(e.target.value))}
+                className="w-20"
+              />
+            </Label>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="cursor-pointer text-destructive hover:text-destructive"
+              onClick={onRemove}
+            >
+              <Trash2 />
+              Remove
+            </Button>
+          </div>
         </div>
-        <div className="cart-line__controls">
-          <label className="cart-line__qty">
-            Qty
-            <input
-              type="number"
-              min={1}
-              value={item.quantity}
-              onChange={(e) => onQty(Number(e.target.value))}
-            />
-          </label>
-          <button type="button" className="cart-line__remove" onClick={onRemove}>
-            Remove
-          </button>
-        </div>
-      </div>
 
-      {item.units.map((unit, unitIdx) => (
-        <UnitForm
-          key={unitIdx}
-          index={unitIdx}
-          total={item.units.length}
-          unit={unit}
-          onField={(field, value) => onField(unitIdx, field, value)}
-        />
-      ))}
-    </div>
+        {item.units.map((unit, unitIdx) => (
+          <UnitForm
+            key={unitIdx}
+            index={unitIdx}
+            total={item.units.length}
+            unit={unit}
+            onField={(field, value) => onField(unitIdx, field, value)}
+          />
+        ))}
+      </CardContent>
+    </Card>
   )
 }
 
@@ -209,12 +228,12 @@ function UnitForm({
 }) {
   if (unit.customFields.length === 0) return null
   return (
-    <div className="cart-line__unit">
-      <p className="cart-line__unit-label">
+    <div className="flex flex-col gap-3 rounded-xl bg-muted/60 p-4">
+      <p className="text-sm font-semibold">
         {unit.productTitle}
         {total > 1 ? ` · #${index + 1}` : ''}
       </p>
-      <div className="cart-line__fields">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {unit.customFields.map((field) => (
           <FieldInput
             key={field.name}
@@ -238,13 +257,14 @@ function FieldInput({
   onChange: (value: string) => void
 }) {
   return (
-    <label className="field">
-      <span className={`field__label${field.required ? ' field__label--required' : ''}`}>
+    <Label className="flex flex-col items-start gap-1.5">
+      <span>
         {field.label}
+        {field.required && <span className="text-destructive"> *</span>}
       </span>
       {field.kind === 'select' ? (
         <select
-          className="field__select"
+          className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
@@ -256,13 +276,12 @@ function FieldInput({
           ))}
         </select>
       ) : (
-        <input
-          className="field__input"
+        <Input
           type={field.kind === 'email' ? 'email' : field.kind === 'phone' ? 'tel' : 'text'}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
       )}
-    </label>
+    </Label>
   )
 }

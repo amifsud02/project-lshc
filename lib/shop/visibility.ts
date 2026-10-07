@@ -1,6 +1,5 @@
-// Flip to true to show the shop/account UI again (nav links, cart icon, sign in).
-export const SHOP_ENABLED = false
-
+// Client-safe helpers. Whether the shop is visible is controlled by Site Settings → Shop in the
+// admin panel; the server-side check lives in `lib/shop/access.ts`.
 const SHOP_HREFS = ['/shop', '/cart', '/checkout', '/account', '/login', '/register']
 
 export const isShopHref = (href: string) =>
