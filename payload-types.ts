@@ -479,6 +479,10 @@ export interface Team {
   generateSlug?: boolean | null;
   slug: string;
   teamLogo?: (string | null) | Media;
+  /**
+   * Malta Handball Association team ids (e.g. "TEAM-LASALLE-SM-001") that the fixtures sync maps onto this team. Filled in automatically; add an id here to point an MHA team at this one instead.
+   */
+  mhaTeamIds?: string[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -633,7 +637,7 @@ export interface Fixture {
   homeScore?: number | null;
   awayScore?: number | null;
   startDate: string;
-  venue: 'USH' | 'SHPH';
+  venue: 'USH' | 'SHPH' | 'LBSH' | 'KSH' | 'TBC';
   status: 'Scheduled' | 'Finished' | 'Cancelled' | 'Postponed';
   competition: string | Competition;
   updatedAt: string;
@@ -1905,6 +1909,7 @@ export interface TeamsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   teamLogo?: T;
+  mhaTeamIds?: T;
   updatedAt?: T;
   createdAt?: T;
 }

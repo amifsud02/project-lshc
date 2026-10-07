@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { collectionWriteAccess } from '@/lib/auth/roles'
+import { canEditCollection, collectionWriteAccess } from '@/lib/auth/roles'
 import { buildFixtureSlug } from '@/lib/utils/fixtureSlug'
+import { syncMhaFixtures } from '@/lib/mha/syncFixtures'
 
 export const Fixtures: CollectionConfig = {
   slug: 'fixtures',
@@ -19,6 +20,9 @@ export const Fixtures: CollectionConfig = {
       'competition',
     ],
     group: 'Handball Management',
+    components: {
+      beforeListTable: ['@/components/admin/MhaFixturesSync#MhaFixturesSync'],
+    },
   },
   access: {
     create: collectionWriteAccess('fixtures'),
@@ -26,6 +30,41 @@ export const Fixtures: CollectionConfig = {
     read: () => true,
     update: collectionWriteAccess('fixtures'),
   },
+  endpoints: [
+    {
+      /**
+       * POST /api/fixtures/sync-mha — pulls La Salle's fixtures from the Malta
+       * Handball Association feed. Body `{ "dryRun": true }` previews the changes
+       * without writing anything.
+       */
+      path: '/sync-mha',
+      method: 'post',
+      handler: async (req) => {
+        if (!canEditCollection('fixtures', req.user)) {
+          return Response.json({ error: 'Forbidden' }, { status: 403 })
+        }
+
+        let dryRun = false
+        try {
+          const body = req.json ? await req.json() : {}
+          dryRun = body?.dryRun === true
+        } catch {
+          // No body means a real sync.
+        }
+
+        try {
+          const result = await syncMhaFixtures(req.payload, { dryRun })
+          return Response.json(result)
+        } catch (err) {
+          req.payload.logger.error({ msg: 'MHA fixtures sync failed', err })
+          return Response.json(
+            { error: err instanceof Error ? err.message : 'MHA fixtures sync failed' },
+            { status: 502 },
+          )
+        }
+      },
+    },
+  ],
   hooks: {
     /**
      * The public match-report URL is derived from the two clubs and the kick-off
@@ -130,6 +169,9 @@ export const Fixtures: CollectionConfig = {
       options: [
         { label: 'USH', value: 'USH' },
         { label: 'SHPH', value: 'SHPH' },
+        { label: 'LBSH', value: 'LBSH' },
+        { label: 'Kirkop Sports Hall', value: 'KSH' },
+        { label: 'TBC', value: 'TBC' },
       ],
     },
     {

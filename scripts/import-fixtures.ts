@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 
 import config from '../payload.config'
+import { maltaTimeToUTC } from '../lib/utils/maltaTime'
 
 /**
  * Imports the LSHC fixtures published on the Malta Handball livescore site
@@ -51,46 +52,6 @@ const MATCHES: {
   { matchId: 1111, home: 'LSHC', away: 'SWQ', kickOff: '2026-03-28T13:00', homeScore: 27, awayScore: 26 },
   { matchId: 1112, home: 'KAV', away: 'LSHC', kickOff: '2026-04-18T15:30', homeScore: 33, awayScore: 33 },
 ]
-
-/**
- * Turns a wall-clock time in Malta into a UTC instant, so that summer and winter
- * kick-offs both land on the right hour. Guesses the offset, then re-checks it
- * against how the candidate instant actually renders in Europe/Malta.
- */
-const maltaTimeToUTC = (localTime: string): Date => {
-  const [datePart, timePart] = localTime.split('T')
-  const [year, month, day] = datePart.split('-').map(Number)
-  const [hour, minute] = timePart.split(':').map(Number)
-  const asIfUTC = Date.UTC(year, month - 1, day, hour, minute)
-
-  const formatter = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Malta',
-    hour12: false,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
-  let candidate = asIfUTC
-  for (let pass = 0; pass < 2; pass++) {
-    const parts = Object.fromEntries(
-      formatter.formatToParts(new Date(candidate)).map((p) => [p.type, p.value]),
-    )
-    const rendered = Date.UTC(
-      Number(parts.year),
-      Number(parts.month) - 1,
-      Number(parts.day),
-      Number(parts.hour) % 24,
-      Number(parts.minute),
-    )
-    if (rendered === asIfUTC) break
-    candidate -= rendered - asIfUTC
-  }
-
-  return new Date(candidate)
-}
 
 const payload = await getPayload({ config })
 
