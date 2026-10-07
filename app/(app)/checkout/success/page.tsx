@@ -3,8 +3,10 @@ import PageHeader from '@/components/PageHeader/PageHeader'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import ClearCartOnMount from './ClearCartOnMount'
-import { formatPrice } from '@/lib/shop/types'
-import '@/components/Shop/shop.css'
+import OrderReceipt, { type ReceiptLine } from '@/components/Shop/OrderReceipt'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 export const metadata = { title: 'Order confirmed | La Salle Handball' }
 
@@ -25,80 +27,61 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
     order = docs[0] ?? null
   }
 
+  const lines: ReceiptLine[] = (order?.items ?? []).map((it: any) => ({
+    title: it.productTitle,
+    quantity: it.quantity ?? 1,
+    lineTotal: (it.unitPrice ?? 0) * (it.quantity ?? 1),
+    isChild: Boolean(it.bundleParentLineId),
+  }))
+
   return (
     <>
       <PageHeader pageName="Order confirmed" />
-      <section className="parent shop">
+      <section className="parent">
         <ClearCartOnMount />
-        <p className="shop__intro">
-          Your support means the world to the club. A receipt has been sent to your email — you can
-          close this page safely.
-        </p>
+        <div className="mx-auto flex max-w-2xl flex-col gap-6">
+          <p className="text-base text-muted-foreground">
+            Your support means the world to the club. A receipt has been sent to your email — you
+            can close this page safely.
+          </p>
 
-        {order ? (
-          <div className="receipt">
-            <span className="receipt__stamp">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-                <path
-                  d="M2 7l3.2 3.2L12 3.4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="square"
-                />
-              </svg>
-              Paid ·{' '}
-              {new Date().toLocaleDateString('en-MT', {
+          {order ? (
+            <OrderReceipt
+              orderNumber={order.orderNumber}
+              email={order.customerEmail}
+              statusLabel="Paid"
+              paid
+              dateLabel={new Date().toLocaleDateString('en-MT', {
                 day: '2-digit',
                 month: 'short',
                 year: 'numeric',
               })}
-            </span>
-            <p className="receipt__order shop__mono">Order № {order.orderNumber}</p>
-            <p className="receipt__email">
-              Receipt sent to <strong>{order.customerEmail}</strong>
-            </p>
-            <ul className="receipt__table">
-              {(order.items ?? []).map((it: any, i: number) => {
-                const isChild = Boolean(it.bundleParentLineId)
-                return (
-                  <li key={i} className={`receipt__row${isChild ? ' receipt__row--child' : ''}`}>
-                    <span className="receipt__row-title">
-                      {it.productTitle} × {it.quantity}
-                    </span>
-                    <span className="receipt__row-amount shop__mono">
-                      {it.unitPrice > 0 ? formatPrice(it.unitPrice * it.quantity) : ''}
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
-            <div className="receipt__total">
-              <span>Total</span>
-              <span className="receipt__total-amount shop__mono">{formatPrice(order.total)}</span>
-            </div>
-            <div style={{ marginTop: 28, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-              <Link href="/shop" className="btn">
-                Continue shopping
-              </Link>
-              <Link href="/account" className="btn btn--ghost">
-                View orders
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="receipt">
-            <span className="receipt__stamp">Processing</span>
-            <p className="receipt__order">We&apos;re confirming your payment…</p>
-            <p className="receipt__email">
-              If this page doesn&apos;t update in a moment, check your email for the receipt.
-            </p>
-            <div style={{ marginTop: 16 }}>
-              <Link href="/shop" className="btn">
-                Continue shopping
-              </Link>
-            </div>
-          </div>
-        )}
+              lines={lines}
+              total={order.total}
+              actions={
+                <>
+                  <Button render={<Link href="/shop" />}>Continue shopping</Button>
+                  <Button variant="outline" render={<Link href="/account" />}>
+                    View orders
+                  </Button>
+                </>
+              }
+            />
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-start gap-3">
+                <Badge variant="secondary" className="rounded-full px-3 py-0.5">
+                  Processing
+                </Badge>
+                <p className="text-lg font-semibold">We&apos;re confirming your payment…</p>
+                <p className="text-sm text-muted-foreground">
+                  If this page doesn&apos;t update in a moment, check your email for the receipt.
+                </p>
+                <Button render={<Link href="/shop" />}>Continue shopping</Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </section>
     </>
   )

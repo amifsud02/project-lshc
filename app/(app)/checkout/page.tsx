@@ -1,7 +1,6 @@
 import PageHeader from '@/components/PageHeader/PageHeader'
 import { getCurrentUser } from '@/lib/auth/server'
 import CheckoutView from './CheckoutView'
-import '@/components/Shop/shop.css'
 
 export const metadata = { title: 'Checkout | La Salle Handball' }
 
@@ -10,7 +9,7 @@ export default async function CheckoutPage() {
   return (
     <>
       <PageHeader pageName="Checkout" />
-      <section className="parent shop">
+      <section className="parent">
         <CheckoutView
           defaults={{
             email: user?.email ?? '',
