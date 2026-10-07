@@ -4,6 +4,8 @@ import Footer from "@/components/Footer/Footer";
 import { Partners } from "@/components/Partners/Partners";
 import AdSense from "@/components/AdSense/AdSense";
 
+export const revalidate = 60
+
 const title = 'La Salle Handball | Contact Us'
 const description = 'Click here to reach out to our team regarding inquiries, job opportunities, future projects, or any other matters you find important.'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;

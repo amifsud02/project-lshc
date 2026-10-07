@@ -85,7 +85,6 @@ const FixtureCarousel = ({ data }: { data: IFixture[] }) => {
         >
 
             {data.map((fixture: IFixture) => {
-                console.log(fixture.startDate);
                 return (
                     <div className="carousel-match-container" key={fixture._id}>
                         <div className="carousel-match-content-element">

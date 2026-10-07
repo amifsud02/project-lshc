@@ -12,6 +12,13 @@ import {
 import { OtherArticles } from "@/components/StyledComponents";
 import type { Metadata } from "next";
 
+export const revalidate = 60
+
+// Nothing is pre-built; each page renders on its first visit and is then cached (see `revalidate`).
+export function generateStaticParams() {
+  return []
+}
+
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 
 type Params = { tag: string }

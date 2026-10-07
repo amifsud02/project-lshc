@@ -13,12 +13,12 @@ const nextConfig = {
             { protocol: 'https', hostname: 'res.cloudinary.com' },
             { protocol: 'https', hostname: 'cdn.sanity.io' },
         ],
-        formats: ["image/avif"],
+        // WebP is much cheaper to generate than AVIF, which matters for first-request latency.
+        formats: ["image/webp"],
     },
     turbopack: {
         root: import.meta.dirname,
     },
-    output: 'standalone'
 }
 
 export default withPayload(nextConfig)

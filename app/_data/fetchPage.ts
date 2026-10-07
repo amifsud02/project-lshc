@@ -2,6 +2,7 @@ import { draftMode } from "next/headers";
 import { getPayload, Where } from "payload";
 import config from "@payload-config";
 import { Page } from "@/payload-types";
+import { cachedFind } from "@/lib/utils/payload/cached";
 
 type PageParams = {
     slug: string[];
@@ -37,13 +38,15 @@ export const fetchPage = async ({ slug: slugSegments = ['home'] }: PageParams): 
         ]
     };
 
-    const pageQuery = await payload.find({
-        collection: 'pages',
-        draft,
+    const query = {
+        collection: 'pages' as const,
         limit: 1,
         where: slugConstraint,
-            
-    });
+    };
+    // Published pages come from the shared cache; drafts (admin preview) always go to the database.
+    const pageQuery = draft
+        ? await payload.find({ ...query, draft })
+        : await cachedFind(query);
 
     if (!pageQuery.totalDocs) {
         return null;

@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { NurseryCategory, NurserySeason } from '@/payload-types'
+import { cachedFind } from '@/lib/utils/payload/cached'
 
 export type FeeTier = NonNullable<NurserySeason['feeTiers']>[number]
 
@@ -12,7 +13,7 @@ export type NurseryLetter = {
 /** The one season marked active, or null when the club is between seasons. */
 export async function getActiveSeason(): Promise<NurserySeason | null> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'nursery-seasons',
     where: { isActive: { equals: true } },
     limit: 1,
@@ -24,7 +25,7 @@ export async function getActiveSeason(): Promise<NurserySeason | null> {
 /** Categories for a season, venues resolved, in the order the admin set. */
 export async function getSeasonCategories(seasonId: string): Promise<NurseryCategory[]> {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'nursery-categories',
     where: { season: { equals: seasonId } },
     sort: 'displayOrder',

@@ -31,6 +31,7 @@ import { NurserySeasons } from "./collections/NurserySeasons";
 import { NurseryCategories } from "./collections/NurseryCategories";
 import { NurseryRegistrations } from "./collections/NurseryRegistrations";
 import { MagicLinkTokens } from "./collections/MagicLinkTokens";
+import { revalidateContentPlugin } from "./collections/hooks/revalidateContent";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -78,6 +79,7 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
+    revalidateContentPlugin,
     cloudStoragePlugin({
       collections: {
         media: {

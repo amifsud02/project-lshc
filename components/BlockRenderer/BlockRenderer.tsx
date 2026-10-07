@@ -18,6 +18,7 @@ import Fixtures from '@/components/Fixture/Fixture'
 import Standings from '@/components/Standings/Standings'
 import { fixtureFromPayload, standingFromPayload } from '@/lib/utils/normalize/sports'
 import { Partners } from '../Partners/Partners'
+import { cachedFind } from '@/lib/utils/payload/cached'
 
 type Media = { url?: string; alt?: string; filename?: string } | string | null | undefined
 type Ref = { id: string | number } | string | number | null | undefined
@@ -97,7 +98,7 @@ const NewsSectionAdapter = async ({
   const tagValues = tags?.map((t) => t.tag).filter(Boolean) ?? []
   if (tagValues.length) where.tags = { in: tagValues }
 
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'news',
     where,
     depth: 1,
@@ -197,7 +198,7 @@ const PlayerGridAdapter = async ({
   const where: Record<string, any> = { team: { equals: teamId } }
   if (position && position !== 'all') where.position = { equals: position }
 
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'players',
     where,
     depth: 1,
@@ -267,7 +268,7 @@ const FixtureListAdapter = async ({
 
   if (statuses?.length) where.status = { in: statuses }
 
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'fixtures',
     where,
     depth: 2,
@@ -300,7 +301,7 @@ const StandingsAdapter = async ({
   if (!competitionId) return null
 
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
+  const { docs } = await cachedFind({
     collection: 'standings',
     where: { competition: { equals: competitionId } },
     depth: 2,

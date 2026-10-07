@@ -3,6 +3,8 @@ import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { Partners }from "@/components/Partners/Partners";
 
+export const revalidate = 60
+
 const YouthTeams = () => {   
 
     return (

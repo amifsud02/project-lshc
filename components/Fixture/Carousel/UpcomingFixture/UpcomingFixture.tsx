@@ -10,7 +10,6 @@ const UpcomingFixture: React.FC<{ fixture: IFixture }> = ({ fixture }) => {
     const dateObj = new Date(fixture.startDate);
     const timeObj = dateObj.toLocaleString("de-De", { timeZone: "Europe/Berlin" })
 
-    console.log('TIME OBJ', timeObj);
 
     let day = dateObj.getDate();
     let month = monthNames[dateObj.getMonth()]; // getting the month name

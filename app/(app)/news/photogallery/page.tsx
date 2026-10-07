@@ -6,6 +6,8 @@ import GalleryCard from "@/components/Gallery/GalleryCard";
 import { getGalleries, getGalleryCategories } from "@/lib/data/galleries";
 import { OtherArticles } from "@/components/StyledComponents";
 
+export const revalidate = 60
+
 const title = 'Galleries — La Salle Handball';
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 const canonical = `${baseSiteUrl}/news/photogallery`;

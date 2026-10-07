@@ -1,19 +1,15 @@
 import Navbar from '@/components/Hero/Navbar'
 import { getHeaderGlobal, getGeneralGlobal } from '@/lib/utils/payload/globals'
-import { getCurrentUser } from '@/lib/auth/server'
 
+// Deliberately reads no cookies or headers: that keeps every page cacheable. The logged-in
+// state (and the admin-only shop preview) is filled in on the client by `useSession`.
 export default async function SiteNavbar() {
-  const [header, general, user] = await Promise.all([
-    getHeaderGlobal(),
-    getGeneralGlobal(),
-    getCurrentUser(),
-  ])
+  const [header, general] = await Promise.all([getHeaderGlobal(), getGeneralGlobal()])
   return (
     <Navbar
       logo={general.logoUrl}
       navItems={header.navItems}
-      isAuthed={Boolean(user)}
-      shopEnabled={general.shopVisibility === 'public' || Boolean(user?.isAdmin)}
+      shopPublic={general.shopVisibility === 'public'}
     />
   )
 }
