@@ -642,6 +642,88 @@ export interface Fixture {
   venue: 'USH' | 'SHPH' | 'LBSH' | 'KSH' | 'TBC';
   status: 'Scheduled' | 'Finished' | 'Cancelled' | 'Postponed';
   competition: string | Competition;
+  homeLineup?:
+    | {
+        number?: number | null;
+        name: string;
+        /**
+         * Set for La Salle players only.
+         */
+        player?: (string | null) | Player;
+        goals?: number | null;
+        penaltyGoals?: number | null;
+        penaltyAttempts?: number | null;
+        mvp?: boolean | null;
+        yellowCard?: string | null;
+        /**
+         * Match clock of each suspension.
+         */
+        suspensions?: string[] | null;
+        redCard?: string | null;
+        mhaPlayerId?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  awayLineup?:
+    | {
+        number?: number | null;
+        name: string;
+        /**
+         * Set for La Salle players only.
+         */
+        player?: (string | null) | Player;
+        goals?: number | null;
+        penaltyGoals?: number | null;
+        penaltyAttempts?: number | null;
+        mvp?: boolean | null;
+        yellowCard?: string | null;
+        /**
+         * Match clock of each suspension.
+         */
+        suspensions?: string[] | null;
+        redCard?: string | null;
+        mhaPlayerId?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "players".
+ */
+export interface Player {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName?: string | null;
+  number?: number | null;
+  /**
+   * Not on the MHA feed, so players added by the fixtures sync start without one.
+   */
+  position?: ('Goalkeeper' | 'LinePlayer' | 'Winger' | 'PlayMaker' | 'Lateral' | 'Coach') | null;
+  team: string | Team;
+  profilePicture?: (string | null) | Media;
+  /**
+   * Malta Handball Association registration id (e.g. "MHA-LASP-008"). Filled in by the fixtures sync, which links match-report line-ups and season stats on it.
+   */
+  mhaPlayerId?: string | null;
+  /**
+   * Season totals across every MHA competition, refreshed by the fixtures sync.
+   */
+  seasonStats?: {
+    season?: string | null;
+    appearances?: number | null;
+    goals?: number | null;
+    penaltyGoals?: number | null;
+    yellowCards?: number | null;
+    suspensions?: number | null;
+    redCards?: number | null;
+    blueCards?: number | null;
+    mvp?: number | null;
+    syncedAt?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -667,22 +749,6 @@ export interface Standing {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "players".
- */
-export interface Player {
-  id: string;
-  firstName: string;
-  lastName: string;
-  fullName?: string | null;
-  number?: number | null;
-  position: 'Goalkeeper' | 'LinePlayer' | 'Winger' | 'PlayMaker' | 'Lateral' | 'Coach';
-  team: string | Team;
-  profilePicture?: (string | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -1984,6 +2050,38 @@ export interface FixturesSelect<T extends boolean = true> {
   venue?: T;
   status?: T;
   competition?: T;
+  homeLineup?:
+    | T
+    | {
+        number?: T;
+        name?: T;
+        player?: T;
+        goals?: T;
+        penaltyGoals?: T;
+        penaltyAttempts?: T;
+        mvp?: T;
+        yellowCard?: T;
+        suspensions?: T;
+        redCard?: T;
+        mhaPlayerId?: T;
+        id?: T;
+      };
+  awayLineup?:
+    | T
+    | {
+        number?: T;
+        name?: T;
+        player?: T;
+        goals?: T;
+        penaltyGoals?: T;
+        penaltyAttempts?: T;
+        mvp?: T;
+        yellowCard?: T;
+        suspensions?: T;
+        redCard?: T;
+        mhaPlayerId?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2023,6 +2121,21 @@ export interface PlayersSelect<T extends boolean = true> {
   position?: T;
   team?: T;
   profilePicture?: T;
+  mhaPlayerId?: T;
+  seasonStats?:
+    | T
+    | {
+        season?: T;
+        appearances?: T;
+        goals?: T;
+        penaltyGoals?: T;
+        yellowCards?: T;
+        suspensions?: T;
+        redCards?: T;
+        blueCards?: T;
+        mvp?: T;
+        syncedAt?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

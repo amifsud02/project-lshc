@@ -25,6 +25,7 @@ import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997e
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { SeedPages as SeedPages_cd3154deb36673600052bac05f1ed156 } from '@/components/admin/SeedPages'
+import { LineupRowLabel as LineupRowLabel_56d562825069ba798bf2defdb9848a17 } from '@/components/admin/LineupRowLabel'
 import { MhaFixturesSync as MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d } from '@/components/admin/MhaFixturesSync'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { GoogleSignInButton as GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6 } from '@/components/admin/GoogleSignInButton'
@@ -59,6 +60,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/components/admin/SeedPages#SeedPages": SeedPages_cd3154deb36673600052bac05f1ed156,
+  "@/components/admin/LineupRowLabel#LineupRowLabel": LineupRowLabel_56d562825069ba798bf2defdb9848a17,
   "@/components/admin/MhaFixturesSync#MhaFixturesSync": MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/components/admin/GoogleSignInButton#GoogleSignInButton": GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6,
