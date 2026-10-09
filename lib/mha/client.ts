@@ -57,7 +57,7 @@ export const fetchMhaFixtures = async (): Promise<MhaFixturesResponse> => {
   const res = await fetch(`${MHA_FIXTURES_ENDPOINT}?_=${Date.now()}`, {
     headers: { Accept: 'application/json' },
     cache: 'no-store',
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(15_000),
   })
 
   if (!res.ok) {
@@ -90,7 +90,7 @@ const getJson = async (url: string): Promise<{ status: number; body: any }> => {
   const res = await fetch(url, {
     headers: { Accept: 'application/json' },
     cache: 'no-store',
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(15_000),
   })
   const body = await res.json().catch(() => null)
   return { status: res.status, body }

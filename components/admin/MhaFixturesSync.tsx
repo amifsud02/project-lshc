@@ -4,7 +4,20 @@ import { Button, toast, useConfig } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import type { SyncAction, SyncResult } from '@/lib/mha/syncFixtures'
+import {
+  emptySyncResult,
+  mergeSyncResults,
+  SYNC_STAGES,
+  type SyncAction,
+  type SyncResult,
+  type SyncStage,
+} from '@/lib/mha/syncResult'
+
+const STAGE_LABELS: Record<SyncStage, string> = {
+  fixtures: 'Fixtures',
+  lineups: 'Line-ups',
+  stats: 'Player stats',
+}
 
 const ACTION_COLOURS: Record<SyncAction, string> = {
   created: 'var(--theme-success-500)',
@@ -30,28 +43,47 @@ export const MhaFixturesSync = () => {
   const [result, setResult] = useState<SyncResult | null>(null)
   const [showUnchanged, setShowUnchanged] = useState(false)
   const [refreshLineups, setRefreshLineups] = useState(false)
+  const [progress, setProgress] = useState<string | null>(null)
 
+  const step = async (body: object): Promise<SyncResult> => {
+    const res = await fetch(`${serverURL}${api}/mha-sync`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    // A platform error (e.g. a function timeout) comes back as an HTML page, not JSON.
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data) throw new Error(data?.error ?? `HTTP ${res.status}`)
+    return data as SyncResult
+  }
+
+  /** Walks every stage, one short request at a time, folding each response into the running result. */
   const run = async (dryRun: boolean) => {
     setBusy(dryRun ? 'preview' : 'sync')
+    setResult(null)
+    let merged = emptySyncResult(dryRun)
     try {
-      const res = await fetch(`${serverURL}${api}/fixtures/sync-mha`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dryRun, refreshLineups }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.error ?? `HTTP ${res.status}`)
+      for (const stage of SYNC_STAGES) {
+        let offset: number | null = 0
+        while (offset !== null) {
+          setProgress(`${STAGE_LABELS[stage]}${offset ? ` (${offset} done)` : ''}…`)
+          const data = await step({ dryRun, refreshLineups, stage, offset })
+          merged = mergeSyncResults(merged, data)
+          setResult(merged)
+          offset = data.nextOffset
+        }
+      }
 
-      setResult(data)
-      const { created, updated, error } = (data as SyncResult).counts
+      const { created, updated, error } = merged.counts
       const verb = dryRun ? 'would be' : ''
       toast.success(`${created} ${verb} created, ${updated} ${verb} updated${error ? `, ${error} failed` : ''}`)
-      if (!dryRun) router.refresh()
     } catch (err) {
       toast.error(`MHA sync failed: ${err instanceof Error ? err.message : String(err)}`)
     } finally {
       setBusy(null)
+      setProgress(null)
+      if (!dryRun) router.refresh()
     }
   }
 
@@ -84,6 +116,8 @@ export const MhaFixturesSync = () => {
           {busy === 'sync' ? 'Syncing…' : 'Sync now'}
         </Button>
       </div>
+
+      {progress ? <p style={{ color: 'var(--theme-elevation-600)', margin: '0.5rem 0 0' }}>{progress}</p> : null}
 
       {result ? (
         <div style={{ marginTop: 'var(--base)' }}>

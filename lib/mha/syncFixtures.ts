@@ -12,47 +12,19 @@ import {
 } from './client'
 import { mapMhaFixture, type MappedFixture, type MhaTeamRef } from './mapFixture'
 import { mapLineup, nameKey, splitName, type MappedLineupRow } from './mapLineup'
+import {
+  emptySyncResult,
+  mergeSyncResults,
+  SYNC_STAGES,
+  type SyncAction,
+  type SyncResult,
+  type SyncStage,
+} from './syncResult'
+
+export type { SyncAction, SyncItem, SyncResult, SyncStage } from './syncResult'
 
 /** The club whose fixtures are pulled in, as named in the feed's `homeClub` / `awayClub`. */
 export const MHA_CLUB_NAME = 'La Salle'
-
-export type SyncAction = 'created' | 'updated' | 'unchanged' | 'skipped' | 'error'
-
-export type SyncItem = {
-  fixtureCode: string
-  label: string
-  action: SyncAction
-  detail?: string
-}
-
-export type SyncResult = {
-  dryRun: boolean
-  fetched: number
-  considered: number
-  counts: Record<SyncAction, number>
-  teamsCreated: string[]
-  teamsLinked: string[]
-  competitionsCreated: string[]
-  items: SyncItem[]
-  lineups: {
-    /** Finished fixtures whose line-ups were written (or would be, in a dry run). */
-    saved: number
-    unchanged: number
-    /** Finished on the feed, but MHA has not published the match report yet. */
-    pending: number
-    failed: number
-  }
-  playersCreated: string[]
-  playersLinked: string[]
-  playerStats: {
-    season: string | null
-    updated: number
-    unchanged: number
-    failed: number
-  }
-  /** Problems that did not stop the sync, e.g. a match report that failed to load. */
-  warnings: string[]
-}
 
 export type SyncOptions = {
   dryRun?: boolean
@@ -61,24 +33,25 @@ export type SyncOptions = {
    * line-up yet. For when MHA corrects a score sheet after the fact.
    */
   refreshLineups?: boolean
+  stage?: SyncStage
+  /** Position in the stage's list to start from, as returned in `nextOffset`. */
+  offset?: number
+  /**
+   * Epoch ms after which no new item is started; the result's `nextOffset` says
+   * where to carry on. Keeps each request inside a serverless time limit.
+   */
+  deadline?: number
 }
 
-type LineupJob = {
-  /** Null for a fixture a dry run would create — there is nothing to write to. */
-  fixtureId: string | null
-  matchId: string
-  label: string
-  homeTeam: string
-  awayTeam: string
-  homeIsOurs: boolean
-  awayIsOurs: boolean
-  existing: { homeLineup?: unknown; awayLineup?: unknown } | null
+type StageContext = {
+  payload: Payload
+  dryRun: boolean
+  refreshLineups: boolean
+  offset: number
+  /** True once the deadline has passed. Always false for the first item, so every request makes progress. */
+  outOfTime: (index: number) => boolean
+  result: SyncResult
 }
-
-type LineupRow = MappedLineupRow & { player: string | null }
-
-/** MHA's server is a small WordPress install; keep parallel requests modest. */
-const MHA_CONCURRENCY = 4
 
 type Id = string | number
 
@@ -90,76 +63,126 @@ const idOf = (value: unknown): string | null => {
 
 const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase())
 
+const errorMessage = (err: unknown) => (err instanceof Error ? err.message : String(err))
+
+/** MHA's server is a small WordPress install; keep parallel requests modest. */
+const MHA_CONCURRENCY = 4
+
 /**
- * Pulls the MHA fixtures feed and upserts every La Salle fixture into Payload.
+ * Runs one stage of the MHA sync from `offset`, stopping at `deadline`.
  *
- * - Fixtures are matched on `fixtureCode` (the MHA match id), so re-running only
- *   writes what changed. Fixtures that disappear from the feed are left alone.
- * - Teams are linked through their `mhaTeamIds`. A team seen for the first time
- *   is matched by name — a club's first team ("…-001") against the club's full
- *   name, so it lands on the existing "La Salle Handball Club" rather than this
- *   season's sponsor name — and only created when nothing matches.
- * - Competitions are matched on name + season and created as needed.
- * - Finished fixtures get both line-ups with each player's goals, 7m, cards and
- *   suspensions from the MHA match report. Reports are only read for fixtures
- *   without a line-up yet (or all of them with `refreshLineups`).
- * - La Salle players on those line-ups are linked through `mhaPlayerId` — matched
- *   by name the first time, created when nothing matches — and every linked
- *   player's season totals are refreshed from MHA.
+ * - **fixtures** — upserts every La Salle fixture on `fixtureCode` (the MHA match
+ *   id), so re-running only writes what changed. Fixtures that disappear from the
+ *   feed are left alone. Teams are linked through their `mhaTeamIds`; a team seen
+ *   for the first time is matched by name — a club's first team ("…-001") against
+ *   the club's full name, so it lands on the existing "La Salle Handball Club"
+ *   rather than this season's sponsor name — and only created when nothing
+ *   matches. Competitions are matched on name + season and created as needed.
+ * - **lineups** — stores both line-ups of each finished fixture, with every
+ *   player's goals, 7m, cards and suspensions, from the MHA match report. Reports
+ *   are only read for fixtures without a line-up yet (all of them with
+ *   `refreshLineups`). La Salle players are linked through `mhaPlayerId` —
+ *   matched by name the first time, created when nothing matches.
+ * - **stats** — refreshes the season totals of every player linked to MHA.
  *
  * With `dryRun` nothing is written; the result reports what would happen.
  */
+export const runMhaSyncStage = async (
+  payload: Payload,
+  { dryRun = false, refreshLineups = false, stage = 'fixtures', offset = 0, deadline }: SyncOptions = {},
+): Promise<SyncResult> => {
+  const ctx: StageContext = {
+    payload,
+    dryRun,
+    refreshLineups,
+    offset,
+    outOfTime: (index) => index > offset && deadline != null && Date.now() > deadline,
+    result: emptySyncResult(dryRun, stage, offset),
+  }
+
+  if (stage === 'fixtures') await syncFixtures(ctx)
+  else if (stage === 'lineups') await syncLineups(ctx)
+  else await syncPlayerStats(ctx)
+
+  return ctx.result
+}
+
+/** Runs every stage to the end in one go — for scripts, where there is no time limit. */
 export const syncMhaFixtures = async (
   payload: Payload,
-  { dryRun = false, refreshLineups = false }: SyncOptions = {},
+  options: Omit<SyncOptions, 'stage' | 'offset' | 'deadline'> = {},
 ): Promise<SyncResult> => {
+  let merged = emptySyncResult(options.dryRun ?? false)
+  for (const stage of SYNC_STAGES) {
+    let offset: number | null = 0
+    while (offset !== null) {
+      const result = await runMhaSyncStage(payload, { ...options, stage, offset })
+      merged = mergeSyncResults(merged, result)
+      offset = result.nextOffset
+    }
+  }
+  return merged
+}
+
+/** La Salle's fixtures on the feed, in a stable order so offsets mean the same thing across requests. */
+const ourFixtures = (fixtures: MhaFixture[]) =>
+  fixtures
+    .filter((f) => f.homeClub === MHA_CLUB_NAME || f.awayClub === MHA_CLUB_NAME)
+    .sort((a, b) => a.matchId.localeCompare(b.matchId))
+
+/** MHA team id → our team id, for every team already linked. One query instead of one per fixture. */
+const loadLinkedTeams = async (payload: Payload): Promise<Map<string, string>> => {
+  const { docs } = await payload.find({
+    collection: 'teams',
+    where: { mhaTeamIds: { exists: true } },
+    pagination: false,
+    depth: 0,
+    select: { mhaTeamIds: true },
+  })
+  const map = new Map<string, string>()
+  for (const team of docs) for (const mhaId of team.mhaTeamIds ?? []) map.set(mhaId, String(team.id))
+  return map
+}
+
+const syncFixtures = async ({ payload, dryRun, offset, outOfTime, result }: StageContext) => {
   const feed = await fetchMhaFixtures()
+  const ours = ourFixtures(feed.fixtures)
+
+  result.fetched = feed.fixtures.length
+  result.considered = ours.length
+  result.total = ours.length
 
   // "la salle handball club" → "La Salle", inverted so a short club name finds its full name.
   const clubFullNames = new Map(
     Object.entries(feed.clubAliases).map(([full, short]) => [short.toLowerCase(), titleCase(full)]),
   )
 
-  const ours = feed.fixtures.filter(
-    (f: MhaFixture) => f.homeClub === MHA_CLUB_NAME || f.awayClub === MHA_CLUB_NAME,
-  )
-
-  const result: SyncResult = {
-    dryRun,
-    fetched: feed.fixtures.length,
-    considered: ours.length,
-    counts: { created: 0, updated: 0, unchanged: 0, skipped: 0, error: 0 },
-    teamsCreated: [],
-    teamsLinked: [],
-    competitionsCreated: [],
-    items: [],
-    lineups: { saved: 0, unchanged: 0, pending: 0, failed: 0 },
-    playersCreated: [],
-    playersLinked: [],
-    playerStats: { season: null, updated: 0, unchanged: 0, failed: 0 },
-    warnings: [],
-  }
-
-  const lineupJobs: LineupJob[] = []
-
-  const teamCache = new Map<string, string>()
+  const teamCache = await loadLinkedTeams(payload)
   const competitionCache = new Map<string, string>()
   const competitionTypeCache = new Map<string, string>()
+
+  const { docs: existingDocs } = await payload.find({
+    collection: 'fixtures',
+    where: { fixtureCode: { in: ours.map((f) => f.matchId) } },
+    pagination: false,
+    depth: 0,
+    select: {
+      fixtureCode: true,
+      homeTeam: true,
+      awayTeam: true,
+      competition: true,
+      homeScore: true,
+      awayScore: true,
+      startDate: true,
+      venue: true,
+      status: true,
+    },
+  })
+  const existingByCode = new Map(existingDocs.map((f) => [f.fixtureCode, f]))
 
   const resolveTeam = async (ref: MhaTeamRef): Promise<string> => {
     const cached = teamCache.get(ref.mhaTeamId)
     if (cached) return cached
-
-    const linked = await payload.find({
-      collection: 'teams',
-      where: { mhaTeamIds: { in: [ref.mhaTeamId] } },
-      limit: 1,
-      depth: 0,
-    })
-    if (linked.docs[0]) {
-      teamCache.set(ref.mhaTeamId, String(linked.docs[0].id))
-      return String(linked.docs[0].id)
-    }
 
     const clubFullName = clubFullNames.get(ref.club.toLowerCase())
     const isFirstTeam = /-001$/.test(ref.mhaTeamId)
@@ -261,7 +284,13 @@ export const syncMhaFixtures = async (
     return id
   }
 
-  for (const mha of ours) {
+  for (let i = offset; i < ours.length; i++) {
+    if (outOfTime(i)) {
+      result.nextOffset = i
+      return
+    }
+
+    const mha = ours[i]
     const label = `${mha.homeTeam || 'TBC'} v ${mha.awayTeam || 'TBC'} (${mha.date})`
     const push = (action: SyncAction, detail?: string) => {
       result.counts[action]++
@@ -296,38 +325,13 @@ export const syncMhaFixtures = async (
         competition,
       }
 
-      const { docs } = await payload.find({
-        collection: 'fixtures',
-        where: { fixtureCode: { equals: fixture.fixtureCode } },
-        limit: 1,
-        depth: 0,
-      })
-      const existing = docs[0]
-
-      const queueLineup = (fixtureId: string | null) => {
-        if (data.status !== 'Finished') return
-        const hasLineup = Boolean(existing?.homeLineup?.length || existing?.awayLineup?.length)
-        if (hasLineup && !refreshLineups) return
-        lineupJobs.push({
-          fixtureId,
-          matchId: fixture.fixtureCode,
-          label,
-          homeTeam,
-          awayTeam,
-          homeIsOurs: mha.homeClub === MHA_CLUB_NAME,
-          awayIsOurs: mha.awayClub === MHA_CLUB_NAME,
-          existing: existing ?? null,
-        })
-      }
+      const existing = existingByCode.get(fixture.fixtureCode)
 
       if (!existing) {
-        const created = dryRun ? null : await payload.create({ collection: 'fixtures', data })
+        if (!dryRun) await payload.create({ collection: 'fixtures', data })
         push('created', detail)
-        queueLineup(created ? String(created.id) : null)
         continue
       }
-
-      queueLineup(String(existing.id))
 
       const changed =
         idOf(existing.homeTeam) !== homeTeam ||
@@ -348,31 +352,12 @@ export const syncMhaFixtures = async (
       push('updated', detail)
     } catch (err) {
       payload.logger.error({ msg: `MHA sync failed for ${mha.matchId}`, err })
-      push('error', err instanceof Error ? err.message : String(err))
+      push('error', errorMessage(err))
     }
   }
-
-  await syncLineups(payload, lineupJobs, result, dryRun)
-  await syncPlayerStats(payload, result, dryRun)
-
-  return result
 }
 
-const errorMessage = (err: unknown) => (err instanceof Error ? err.message : String(err))
-
-/** Runs `fn` over `items` with at most `limit` in flight, keeping input order. */
-const mapLimit = async <T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> => {
-  const out = new Array<R>(items.length)
-  let next = 0
-  const worker = async () => {
-    while (next < items.length) {
-      const i = next++
-      out[i] = await fn(items[i])
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker))
-  return out
-}
+type LineupRow = MappedLineupRow & { player: string | null }
 
 /** The stored fields of a line-up row, without Payload's row `id`, for change detection. */
 const comparableRows = (rows: unknown): string =>
@@ -392,23 +377,24 @@ const comparableRows = (rows: unknown): string =>
     })),
   )
 
-/**
- * Reads the match report of each queued fixture and stores both line-ups. La Salle
- * rows are linked to `players` docs — by `mhaPlayerId`, else by an unambiguous
- * name match on an unlinked player, else a new player on that fixture's team.
- */
-const syncLineups = async (payload: Payload, jobs: LineupJob[], result: SyncResult, dryRun: boolean) => {
-  if (!jobs.length) return
-
-  // Reports are fetched in parallel; everything that writes runs in order afterwards
-  // so a player appearing in two reports is only created once.
-  const reports = await mapLimit(jobs, MHA_CONCURRENCY, async (job) => {
-    try {
-      return { job, report: await fetchMhaMatchReport(job.matchId) }
-    } catch (err) {
-      return { job, error: errorMessage(err) }
-    }
+const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime, result }: StageContext) => {
+  const feed = await fetchMhaFixtures()
+  const finished = ourFixtures(feed.fixtures).filter((f) => {
+    const mapped = mapMhaFixture(f)
+    return mapped.ok && mapped.fixture.status === 'Finished'
   })
+  result.total = finished.length
+  if (!finished.length) return
+
+  const { docs: fixtureDocs } = await payload.find({
+    collection: 'fixtures',
+    where: { fixtureCode: { in: finished.map((f) => f.matchId) } },
+    pagination: false,
+    depth: 0,
+    select: { fixtureCode: true, homeTeam: true, awayTeam: true, homeLineup: true, awayLineup: true },
+  })
+  const fixtureByCode = new Map(fixtureDocs.map((f) => [f.fixtureCode, f]))
+  const linkedTeams = await loadLinkedTeams(payload)
 
   const { docs: players } = await payload.find({
     collection: 'players',
@@ -466,50 +452,93 @@ const syncLineups = async (payload: Payload, jobs: LineupJob[], result: SyncResu
     return id
   }
 
+  // Players are resolved one row at a time so a player appearing in two reports is only created once.
   const buildRows = async (
-    players: MhaMatchReport['homePlayers'],
+    sheet: MhaMatchReport['homePlayers'],
     isOurs: boolean,
     teamId: string,
   ): Promise<LineupRow[]> => {
     const rows: LineupRow[] = []
-    for (const row of mapLineup(players)) {
+    for (const row of mapLineup(sheet)) {
       rows.push({ ...row, player: isOurs ? await resolvePlayer(row, teamId) : null })
     }
     return rows
   }
 
-  for (const { job, report, error } of reports) {
-    if (error) {
-      result.lineups.failed++
-      result.warnings.push(`${job.label}: match report failed — ${error}`)
-      continue
-    }
-    if (!report) {
-      result.lineups.pending++
-      continue
+  const teamFor = (mhaTeamId: string, stored: unknown) =>
+    idOf(stored) ?? linkedTeams.get(mhaTeamId) ?? `new-team:${mhaTeamId}`
+
+  let i = offset
+  while (i < finished.length) {
+    if (outOfTime(i)) {
+      result.nextOffset = i
+      return
     }
 
-    try {
-      const homeLineup = await buildRows(report.homePlayers, job.homeIsOurs, job.homeTeam)
-      const awayLineup = await buildRows(report.awayPlayers, job.awayIsOurs, job.awayTeam)
+    // Fixtures that already have a line-up are passed over without a request, so a
+    // batch is the next few that actually need their report read.
+    const batch: MhaFixture[] = []
+    while (i < finished.length && batch.length < MHA_CONCURRENCY) {
+      const mha = finished[i++]
+      const doc = fixtureByCode.get(mha.matchId)
+      const hasLineup = Boolean(doc?.homeLineup?.length || doc?.awayLineup?.length)
+      if (!hasLineup || refreshLineups) batch.push(mha)
+    }
 
-      const unchanged =
-        job.existing &&
-        comparableRows(job.existing.homeLineup) === comparableRows(homeLineup) &&
-        comparableRows(job.existing.awayLineup) === comparableRows(awayLineup)
-      if (unchanged) {
-        result.lineups.unchanged++
+    const reports = await Promise.all(
+      batch.map(async (mha) => {
+        try {
+          return { mha, report: await fetchMhaMatchReport(mha.matchId) }
+        } catch (err) {
+          return { mha, error: errorMessage(err) }
+        }
+      }),
+    )
+
+    for (const { mha, report, error } of reports) {
+      const label = `${mha.homeTeam} v ${mha.awayTeam} (${mha.date})`
+      if (error) {
+        result.lineups.failed++
+        result.warnings.push(`${label}: match report failed — ${error}`)
+        continue
+      }
+      if (!report) {
+        result.lineups.pending++
         continue
       }
 
-      if (!dryRun && job.fixtureId) {
-        await payload.update({ collection: 'fixtures', id: job.fixtureId, data: { homeLineup, awayLineup } })
+      const doc = fixtureByCode.get(mha.matchId)
+      try {
+        const homeLineup = await buildRows(
+          report.homePlayers,
+          mha.homeClub === MHA_CLUB_NAME,
+          teamFor(mha.homeTeamId, doc?.homeTeam),
+        )
+        const awayLineup = await buildRows(
+          report.awayPlayers,
+          mha.awayClub === MHA_CLUB_NAME,
+          teamFor(mha.awayTeamId, doc?.awayTeam),
+        )
+
+        if (
+          doc &&
+          comparableRows(doc.homeLineup) === comparableRows(homeLineup) &&
+          comparableRows(doc.awayLineup) === comparableRows(awayLineup)
+        ) {
+          result.lineups.unchanged++
+          continue
+        }
+
+        // A fixture only a dry run would create has nothing to write to yet.
+        if (!dryRun && doc) {
+          await payload.update({ collection: 'fixtures', id: doc.id, data: { homeLineup, awayLineup } })
+        }
+        result.lineups.saved++
+      } catch (err) {
+        payload.logger.error({ msg: `MHA line-up sync failed for ${mha.matchId}`, err })
+        result.lineups.failed++
+        result.warnings.push(`${label}: ${errorMessage(err)}`)
       }
-      result.lineups.saved++
-    } catch (err) {
-      payload.logger.error({ msg: `MHA line-up sync failed for ${job.matchId}`, err })
-      result.lineups.failed++
-      result.warnings.push(`${job.label}: ${errorMessage(err)}`)
     }
   }
 }
@@ -529,7 +558,7 @@ const STAT_FIELDS = [
  * Refreshes `seasonStats` on every player linked to MHA with their totals for the
  * active MHA season. These cover all competitions, including any we don't sync.
  */
-const syncPlayerStats = async (payload: Payload, result: SyncResult, dryRun: boolean) => {
+const syncPlayerStats = async ({ payload, dryRun, offset, outOfTime, result }: StageContext) => {
   let season: Awaited<ReturnType<typeof fetchMhaActiveSeason>>
   try {
     season = await fetchMhaActiveSeason()
@@ -548,46 +577,57 @@ const syncPlayerStats = async (payload: Payload, result: SyncResult, dryRun: boo
     where: { mhaPlayerId: { exists: true } },
     pagination: false,
     depth: 0,
+    sort: 'mhaPlayerId',
     select: { firstName: true, lastName: true, mhaPlayerId: true, seasonStats: true },
   })
+  result.total = players.length
 
-  const fetched = await mapLimit(players, MHA_CONCURRENCY, async (player) => {
-    try {
-      return { player, stats: await fetchMhaPlayerStats(player.mhaPlayerId!, season.seasonId) }
-    } catch (err) {
-      return { player, error: errorMessage(err) }
-    }
-  })
-
-  for (const { player, stats, error } of fetched) {
-    const name = `${player.firstName} ${player.lastName}`
-    if (error || !stats) {
-      result.playerStats.failed++
-      result.warnings.push(`${name}: season stats failed — ${error}`)
-      continue
+  for (let i = offset; i < players.length; i += MHA_CONCURRENCY) {
+    if (outOfTime(i)) {
+      result.nextOffset = i
+      return
     }
 
-    const current = player.seasonStats ?? {}
-    const next = Object.fromEntries(STAT_FIELDS.map((f) => [f, Number(stats.totals[f] ?? 0) || 0]))
-    const changed =
-      current.season !== season.seasonName || STAT_FIELDS.some((f) => (current[f] ?? null) !== next[f])
-    if (!changed) {
-      result.playerStats.unchanged++
-      continue
-    }
+    const fetched = await Promise.all(
+      players.slice(i, i + MHA_CONCURRENCY).map(async (player) => {
+        try {
+          return { player, stats: await fetchMhaPlayerStats(player.mhaPlayerId!, season.seasonId) }
+        } catch (err) {
+          return { player, error: errorMessage(err) }
+        }
+      }),
+    )
 
-    try {
-      if (!dryRun) {
-        await payload.update({
-          collection: 'players',
-          id: player.id,
-          data: { seasonStats: { season: season.seasonName, ...next, syncedAt: new Date().toISOString() } },
-        })
+    for (const { player, stats, error } of fetched) {
+      const name = `${player.firstName} ${player.lastName}`
+      if (error || !stats) {
+        result.playerStats.failed++
+        result.warnings.push(`${name}: season stats failed — ${error}`)
+        continue
       }
-      result.playerStats.updated++
-    } catch (err) {
-      result.playerStats.failed++
-      result.warnings.push(`${name}: ${errorMessage(err)}`)
+
+      const current = player.seasonStats ?? {}
+      const next = Object.fromEntries(STAT_FIELDS.map((f) => [f, Number(stats.totals[f] ?? 0) || 0]))
+      const changed =
+        current.season !== season.seasonName || STAT_FIELDS.some((f) => (current[f] ?? null) !== next[f])
+      if (!changed) {
+        result.playerStats.unchanged++
+        continue
+      }
+
+      try {
+        if (!dryRun) {
+          await payload.update({
+            collection: 'players',
+            id: player.id,
+            data: { seasonStats: { season: season.seasonName, ...next, syncedAt: new Date().toISOString() } },
+          })
+        }
+        result.playerStats.updated++
+      } catch (err) {
+        result.playerStats.failed++
+        result.warnings.push(`${name}: ${errorMessage(err)}`)
+      }
     }
   }
 }
