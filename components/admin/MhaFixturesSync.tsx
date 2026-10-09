@@ -29,6 +29,7 @@ export const MhaFixturesSync = () => {
   const [busy, setBusy] = useState<'preview' | 'sync' | null>(null)
   const [result, setResult] = useState<SyncResult | null>(null)
   const [showUnchanged, setShowUnchanged] = useState(false)
+  const [refreshLineups, setRefreshLineups] = useState(false)
 
   const run = async (dryRun: boolean) => {
     setBusy(dryRun ? 'preview' : 'sync')
@@ -37,7 +38,7 @@ export const MhaFixturesSync = () => {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dryRun }),
+        body: JSON.stringify({ dryRun, refreshLineups }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error ?? `HTTP ${res.status}`)
@@ -69,8 +70,12 @@ export const MhaFixturesSync = () => {
         <div style={{ flex: '1 1 16rem' }}>
           <strong>Malta Handball Association</strong>
           <p style={{ color: 'var(--theme-elevation-600)', margin: 0 }}>
-            Import La Salle fixtures and results from maltahandball.com.
+            Import La Salle fixtures, results, line-ups and player stats from maltahandball.com.
           </p>
+          <label style={{ display: 'inline-flex', gap: '0.4rem', marginTop: '0.25rem' }}>
+            <input checked={refreshLineups} onChange={(e) => setRefreshLineups(e.target.checked)} type="checkbox" />
+            Re-read every finished match&apos;s line-up
+          </label>
         </div>
         <Button buttonStyle="secondary" disabled={busy !== null} margin={false} onClick={() => run(true)}>
           {busy === 'preview' ? 'Checking…' : 'Preview'}
@@ -91,11 +96,27 @@ export const MhaFixturesSync = () => {
               .join(', ')}
             .
           </p>
+          <p style={{ margin: '0.25rem 0 0' }}>
+            Line-ups: {result.lineups.saved} {result.dryRun ? 'to save' : 'saved'}
+            {result.lineups.unchanged ? `, ${result.lineups.unchanged} unchanged` : ''}
+            {result.lineups.pending ? `, ${result.lineups.pending} awaiting MHA report` : ''}
+            {result.lineups.failed ? `, ${result.lineups.failed} failed` : ''}.{' '}
+            {result.playerStats.season
+              ? `Player stats (${result.playerStats.season}): ${result.playerStats.updated} ${
+                  result.dryRun ? 'to update' : 'updated'
+                }, ${result.playerStats.unchanged} unchanged${
+                  result.playerStats.failed ? `, ${result.playerStats.failed} failed` : ''
+                }.`
+              : null}
+          </p>
 
           {[
             ['New teams', result.teamsCreated],
             ['Teams linked', result.teamsLinked],
             ['New competitions', result.competitionsCreated],
+            ['New players', result.playersCreated],
+            ['Players linked', result.playersLinked],
+            ['Warnings', result.warnings],
           ].map(([title, list]) =>
             (list as string[]).length ? (
               <p key={title as string} style={{ color: 'var(--theme-elevation-600)', margin: '0.25rem 0 0' }}>

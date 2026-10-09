@@ -9,7 +9,7 @@ export const Players: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['fullName', 'number', 'position', 'team', 'updatedAt'],
-    listSearchableFields: ['firstName', 'lastName'],
+    listSearchableFields: ['firstName', 'lastName', 'mhaPlayerId'],
     group: 'Handball Management',
   },
   access: {
@@ -54,8 +54,10 @@ export const Players: CollectionConfig = {
         {
           name: 'position',
           type: 'select',
-          required: true,
-          admin: { width: '70%' },
+          admin: {
+            width: '70%',
+            description: 'Not on the MHA feed, so players added by the fixtures sync start without one.',
+          },
           options: [
             { label: 'Goalkeeper', value: 'Goalkeeper' },
             { label: 'Line Player', value: 'LinePlayer' },
@@ -78,6 +80,38 @@ export const Players: CollectionConfig = {
       name: 'profilePicture',
       type: 'upload',
       relationTo: 'media',
+    },
+    {
+      name: 'mhaPlayerId',
+      label: 'MHA player ID',
+      type: 'text',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Malta Handball Association registration id (e.g. "MHA-LASP-008"). Filled in by the fixtures sync, which links match-report line-ups and season stats on it.',
+      },
+    },
+    {
+      name: 'seasonStats',
+      type: 'group',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Season totals across every MHA competition, refreshed by the fixtures sync.',
+      },
+      fields: [
+        { name: 'season', type: 'text' },
+        { name: 'appearances', type: 'number' },
+        { name: 'goals', type: 'number' },
+        { name: 'penaltyGoals', label: '7m goals', type: 'number' },
+        { name: 'yellowCards', type: 'number' },
+        { name: 'suspensions', label: '2-minute suspensions', type: 'number' },
+        { name: 'redCards', type: 'number' },
+        { name: 'blueCards', type: 'number' },
+        { name: 'mvp', label: 'MVP awards', type: 'number' },
+        { name: 'syncedAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
+      ],
     },
   ],
 }

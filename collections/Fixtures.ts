@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
 import { canEditCollection, collectionWriteAccess } from '@/lib/auth/roles'
 import { buildFixtureSlug } from '@/lib/utils/fixtureSlug'
 import { syncMhaFixtures } from '@/lib/mha/syncFixtures'
@@ -34,8 +34,9 @@ export const Fixtures: CollectionConfig = {
     {
       /**
        * POST /api/fixtures/sync-mha — pulls La Salle's fixtures from the Malta
-       * Handball Association feed. Body `{ "dryRun": true }` previews the changes
-       * without writing anything.
+       * Handball Association feed, with line-ups and player season stats. Body
+       * `{ "dryRun": true }` previews the changes without writing anything;
+       * `{ "refreshLineups": true }` re-reads every finished match's report.
        */
       path: '/sync-mha',
       method: 'post',
@@ -45,15 +46,17 @@ export const Fixtures: CollectionConfig = {
         }
 
         let dryRun = false
+        let refreshLineups = false
         try {
           const body = req.json ? await req.json() : {}
           dryRun = body?.dryRun === true
+          refreshLineups = body?.refreshLineups === true
         } catch {
           // No body means a real sync.
         }
 
         try {
-          const result = await syncMhaFixtures(req.payload, { dryRun })
+          const result = await syncMhaFixtures(req.payload, { dryRun, refreshLineups })
           return Response.json(result)
         } catch (err) {
           req.payload.logger.error({ msg: 'MHA fixtures sync failed', err })
@@ -193,5 +196,74 @@ export const Fixtures: CollectionConfig = {
       required: true,
       index: true,
     },
+    {
+      type: 'collapsible',
+      label: 'Line-ups',
+      admin: {
+        initCollapsed: true,
+        condition: (_, siblingData) => siblingData?.status === 'Finished',
+        description: 'Filled from the MHA match report by the fixtures sync once the match has ended.',
+      },
+      fields: [lineupField('homeLineup', 'Home line-up'), lineupField('awayLineup', 'Away line-up')],
+    },
   ],
+}
+
+/** A team sheet with each player's match stats, as recorded on the MHA match report. */
+function lineupField(name: string, label: string): Field {
+  return {
+    name,
+    label,
+    type: 'array',
+    labels: { singular: 'Player', plural: 'Players' },
+    admin: {
+      components: { RowLabel: '@/components/admin/LineupRowLabel#LineupRowLabel' },
+    },
+    fields: [
+      {
+        type: 'row',
+        fields: [
+          { name: 'number', type: 'number', min: 0, max: 99, admin: { width: '15%' } },
+          { name: 'name', type: 'text', required: true, admin: { width: '45%' } },
+          {
+            name: 'player',
+            type: 'relationship',
+            relationTo: 'players',
+            admin: { width: '40%', description: 'Set for La Salle players only.' },
+          },
+        ],
+      },
+      {
+        type: 'row',
+        fields: [
+          { name: 'goals', type: 'number', min: 0, defaultValue: 0, admin: { width: '20%' } },
+          { name: 'penaltyGoals', label: '7m goals', type: 'number', min: 0, defaultValue: 0, admin: { width: '20%' } },
+          { name: 'penaltyAttempts', label: '7m given', type: 'number', min: 0, defaultValue: 0, admin: { width: '20%' } },
+          { name: 'mvp', label: 'MVP', type: 'checkbox', admin: { width: '20%' } },
+        ],
+      },
+      {
+        type: 'row',
+        fields: [
+          { name: 'yellowCard', type: 'text', admin: { width: '25%', placeholder: 'MM:SS' } },
+          {
+            name: 'suspensions',
+            label: '2-minute suspensions',
+            type: 'text',
+            hasMany: true,
+            maxRows: 3,
+            admin: { width: '50%', description: 'Match clock of each suspension.' },
+          },
+          { name: 'redCard', type: 'text', admin: { width: '25%', placeholder: 'MM:SS' } },
+        ],
+      },
+      {
+        name: 'mhaPlayerId',
+        label: 'MHA player ID',
+        type: 'text',
+        index: true,
+        admin: { readOnly: true },
+      },
+    ],
+  }
 }
