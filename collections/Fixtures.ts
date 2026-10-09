@@ -1,7 +1,6 @@
 import type { CollectionConfig, Field } from 'payload'
-import { canEditCollection, collectionWriteAccess } from '@/lib/auth/roles'
+import { collectionWriteAccess } from '@/lib/auth/roles'
 import { buildFixtureSlug } from '@/lib/utils/fixtureSlug'
-import { syncMhaFixtures } from '@/lib/mha/syncFixtures'
 
 export const Fixtures: CollectionConfig = {
   slug: 'fixtures',
@@ -30,44 +29,6 @@ export const Fixtures: CollectionConfig = {
     read: () => true,
     update: collectionWriteAccess('fixtures'),
   },
-  endpoints: [
-    {
-      /**
-       * POST /api/fixtures/sync-mha — pulls La Salle's fixtures from the Malta
-       * Handball Association feed, with line-ups and player season stats. Body
-       * `{ "dryRun": true }` previews the changes without writing anything;
-       * `{ "refreshLineups": true }` re-reads every finished match's report.
-       */
-      path: '/sync-mha',
-      method: 'post',
-      handler: async (req) => {
-        if (!canEditCollection('fixtures', req.user)) {
-          return Response.json({ error: 'Forbidden' }, { status: 403 })
-        }
-
-        let dryRun = false
-        let refreshLineups = false
-        try {
-          const body = req.json ? await req.json() : {}
-          dryRun = body?.dryRun === true
-          refreshLineups = body?.refreshLineups === true
-        } catch {
-          // No body means a real sync.
-        }
-
-        try {
-          const result = await syncMhaFixtures(req.payload, { dryRun, refreshLineups })
-          return Response.json(result)
-        } catch (err) {
-          req.payload.logger.error({ msg: 'MHA fixtures sync failed', err })
-          return Response.json(
-            { error: err instanceof Error ? err.message : 'MHA fixtures sync failed' },
-            { status: 502 },
-          )
-        }
-      },
-    },
-  ],
   hooks: {
     /**
      * The public match-report URL is derived from the two clubs and the kick-off
