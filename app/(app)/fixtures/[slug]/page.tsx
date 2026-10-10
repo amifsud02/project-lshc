@@ -6,8 +6,8 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 
 import Navbar from '@/components/Hero/Navbar'
-import AdSense from '@/components/AdSense/AdSense'
 import DynamicCountdown from '@/components/Countdown/CountdownTimerDynamic'
+import Lineup from '@/components/Fixture/Lineup/Lineup'
 import {
   FixtureHeader,
   HeaderContent,
@@ -166,13 +166,13 @@ export default async function FixturePage({ params }: Props) {
         <FixturePageHeader fixture={fixture} />
       </section>
 
-      <section className="parent">
-        <AdSense adSlot="4410526483" />
-      </section>
-
       <article className="parent">
-        {/* Lineups and per-match scorers aren't modelled in Payload yet. */}
-        <p style={{ textAlign: 'center' }}>Line Up Not Available</p>
+        <Lineup
+          homeTeam={fixture.homeTeam}
+          awayTeam={fixture.awayTeam}
+          homeLineup={fixture.homeLineup}
+          awayLineup={fixture.awayLineup}
+        />
       </article>
     </>
   )

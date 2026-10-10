@@ -5,6 +5,19 @@ export type NormalizedTeam = {
   logoUrl?: string
 }
 
+export type NormalizedLineupRow = {
+  id: string
+  number: number | null
+  name: string
+  goals: number
+  penaltyGoals: number
+  penaltyAttempts: number
+  mvp: boolean
+  yellowCard: string | null
+  suspensions: string[]
+  redCard: string | null
+}
+
 export type NormalizedFixture = {
   id: string
   slug: string
@@ -16,6 +29,8 @@ export type NormalizedFixture = {
   homeTeam: NormalizedTeam
   awayTeam: NormalizedTeam
   competition?: { name: string }
+  homeLineup: NormalizedLineupRow[]
+  awayLineup: NormalizedLineupRow[]
 }
 
 export type NormalizedStandingRow = {
@@ -35,6 +50,20 @@ export type NormalizedStanding = {
 }
 
 const isFinishedStatus = (s?: string) => s === 'Finished' || s === 'Completed'
+
+const lineupFromPayload = (rows: any[] | null | undefined): NormalizedLineupRow[] =>
+  (rows ?? []).map((row: any, i: number) => ({
+    id: String(row.id ?? i),
+    number: typeof row.number === 'number' ? row.number : null,
+    name: row.name ?? '—',
+    goals: Number(row.goals ?? 0),
+    penaltyGoals: Number(row.penaltyGoals ?? 0),
+    penaltyAttempts: Number(row.penaltyAttempts ?? 0),
+    mvp: row.mvp === true,
+    yellowCard: row.yellowCard ?? null,
+    suspensions: Array.isArray(row.suspensions) ? row.suspensions : [],
+    redCard: row.redCard ?? null,
+  }))
 
 export const fixtureFromPayload = (f: any): NormalizedFixture => {
   const home = typeof f.homeTeam === 'object' && f.homeTeam ? f.homeTeam : null
@@ -57,6 +86,8 @@ export const fixtureFromPayload = (f: any): NormalizedFixture => {
       logoUrl: away?.teamLogo?.url,
     },
     competition: comp ? { name: comp.competitionName } : undefined,
+    homeLineup: lineupFromPayload(f.homeLineup),
+    awayLineup: lineupFromPayload(f.awayLineup),
   }
 }
 
@@ -85,6 +116,8 @@ export const fixtureFromSanity = (f: any): NormalizedFixture => {
         : undefined,
     },
     competition: comp?.name ? { name: comp.name } : undefined,
+    homeLineup: [],
+    awayLineup: [],
   }
 }
 
