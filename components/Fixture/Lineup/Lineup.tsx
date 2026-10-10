@@ -1,6 +1,10 @@
 import React from 'react'
 
-import type { NormalizedLineupRow, NormalizedTeam } from '@/lib/utils/normalize/sports'
+import {
+  teamInitials,
+  type NormalizedLineupRow,
+  type NormalizedTeam,
+} from '@/lib/utils/normalize/sports'
 import styles from './Lineup.module.css'
 
 const Discipline = ({ row }: { row: NormalizedLineupRow }) => (
@@ -22,7 +26,13 @@ const Discipline = ({ row }: { row: NormalizedLineupRow }) => (
 const TeamSheet = ({ team, rows }: { team: NormalizedTeam; rows: NormalizedLineupRow[] }) => (
   <div className={styles.team}>
     <div className={styles.teamHeader}>
-      {team.logoUrl ? <img src={team.logoUrl} alt="" className={styles.logo} /> : null}
+      {team.logoUrl ? (
+        <img src={team.logoUrl} alt="" className={styles.logo} />
+      ) : (
+        <span className={styles.logoPlaceholder} aria-hidden>
+          {teamInitials(team.name)}
+        </span>
+      )}
       <h3>{team.name}</h3>
     </div>
 
@@ -35,14 +45,14 @@ const TeamSheet = ({ team, rows }: { team: NormalizedTeam; rows: NormalizedLineu
             <th className={styles.stat} title="Goals (penalties scored / taken)">
               Goals
             </th>
-            <th className={styles.stat}>Discipline</th>
+            <th className={styles.stat}>Cards</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
             <tr key={row.id}>
               <td className={`${styles.num} numbers`}>{row.number ?? '–'}</td>
-              <td>
+              <td className={styles.name}>
                 {row.name}
                 {row.mvp ? <span className={styles.mvp}>MVP</span> : null}
               </td>

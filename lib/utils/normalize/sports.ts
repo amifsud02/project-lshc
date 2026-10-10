@@ -49,6 +49,15 @@ export type NormalizedStanding = {
   rows: NormalizedStandingRow[]
 }
 
+/** "Phoenix Handball Club" → "P", "Phoenix Black" → "PB": shown when a team has no logo. */
+export const teamInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter((w) => w && !/^(fc|hc|club|handball)$/i.test(w))
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+
 const isFinishedStatus = (s?: string) => s === 'Finished' || s === 'Completed'
 
 const lineupFromPayload = (rows: any[] | null | undefined): NormalizedLineupRow[] =>

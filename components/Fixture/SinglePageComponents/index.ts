@@ -11,28 +11,29 @@ export const Divider = styled.hr`
 
 export const FixtureHeader = styled.header`
     width: 100%;
-    height: 600px;
     z-index: -1;
     display: flex;
     flex-flow: column;
-    justify-content: space-evenly;
+    padding-bottom: 48px;
     background: linear-gradient(125deg, rgba(1, 41, 111, 1) 0%, rgba(0, 13, 36, 0.95) 100%), url('/template.svg') no-repeat center;
     background-size: cover;
     color: white;
 
     @media (min-width: 768px) {
-        justify-content: flex-end;
+        min-height: 600px;
+        justify-content: space-between;
+        padding-bottom: 72px;
     }
 `;
 
 export const HeaderContent = styled.div`
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 300px;
+    gap: 32px;
+    margin-top: 24px;
 
     @media (min-width: 768px) {
-        gap: 0px;
+        gap: 48px;
     }
 `
 
@@ -43,18 +44,18 @@ export const Top = styled.div`
     font-size: 0.75em;
     font-weight: 600;
     opacity: 0.8;
-    flex-basis: 0;
-    flex-grow: 1;
     gap: 10px;
 `;
 
-export const Middle = styled.div`    
-    flex-grow: 6;
-    flex-basis: 0;
+export const Middle = styled.div`
     display: grid;
-    grid-template-columns: 1fr 100px 1fr;
-    place-items: center;
-    -webkit-box-align: center;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+
+    @media (min-width: 768px) {
+        gap: 40px;
+    }
 `;
 
 export const Bottom = styled.div`
@@ -64,8 +65,6 @@ export const Bottom = styled.div`
     justify-content: center;
     text-align: center;
     flex-flow: column;
-    flex-grow: 1;
-    flex-basis: 0;
     font-size: 0.75em;
     font-weight: 600;
     opacity: 1;
@@ -80,16 +79,15 @@ export const Team = styled.div<{ $isSecond: boolean }>`
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
-    gap: 15px;
-    height: 50px;
-    max-height: 50px;
-    justify-content: center;
+    gap: 12px;
+    min-width: 0;
+    text-align: center;
 
-    text-align: ${props => (props.$isSecond ? 'left' : 'right')};
-
-    @media (min-width: 700px) {
+    @media (min-width: 768px) {
         gap: 30px;
         flex-direction: ${props => (props.$isSecond ? 'row-reverse' : 'row')};
+        justify-content: ${props => (props.$isSecond ? 'flex-start' : 'flex-end')};
+        text-align: ${props => (props.$isSecond ? 'left' : 'right')};
     }
 `;
 
@@ -117,23 +115,45 @@ export const TeamStats = styled.div<{ isSecond: boolean }>`
 `;
 
 export const TeamLogo = styled.img`
-
-    width: 60px;
-    height: 60px;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
 
     @media (min-width: 768px) {
         width: 75px;
         height: 75px;
     }
-    
+`;
+
+/** Stands in for a missing logo so both sides of the header line up. */
+export const TeamLogoPlaceholder = styled.div`
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: white;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+
+    @media (min-width: 768px) {
+        width: 75px;
+        height: 75px;
+    }
 `;
 
 
 export const TeamName = styled.h4`
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.1rem;
     font-weight: 700;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 
     @media (min-width: 768px) {
         font-size: 2rem;
@@ -159,16 +179,20 @@ export const TeamNameStats = styled.h4`
 `;
 
 export const TimeScore = styled.div`
-    margin: 0 20px;
     text-align: center;
-    
-    margin: 15px 0;
+    white-space: nowrap;
     font-weight: 700;
-    font-size: 18px;
-    font-family: var(--font-manrope), sans-serif !important; 
-    padding: 10px 15px; 
+    font-size: 22px;
+    font-family: var(--font-manrope), sans-serif !important;
+    padding: 10px 16px;
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.2)
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    @media (min-width: 768px) {
+        font-size: 32px;
+        padding: 14px 24px;
+    }
 `;
 
 export const TimeScoreV2 = styled.div`

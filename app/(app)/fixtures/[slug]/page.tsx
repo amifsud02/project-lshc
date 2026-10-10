@@ -16,10 +16,15 @@ import {
   Team,
   TeamName,
   TeamLogo,
+  TeamLogoPlaceholder,
   TimeScore,
   Bottom,
 } from '@/components/Fixture/SinglePageComponents'
-import { fixtureFromPayload, type NormalizedFixture } from '@/lib/utils/normalize/sports'
+import {
+  fixtureFromPayload,
+  teamInitials,
+  type NormalizedFixture,
+} from '@/lib/utils/normalize/sports'
 import { cachedFind } from '@/lib/utils/payload/cached'
 
 export const revalidate = 60
@@ -103,6 +108,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+const TeamCrest = ({ team }: { team: NormalizedFixture['homeTeam'] }) =>
+  team.logoUrl ? (
+    <TeamLogo src={team.logoUrl} alt="" />
+  ) : (
+    <TeamLogoPlaceholder aria-hidden>{teamInitials(team.name)}</TeamLogoPlaceholder>
+  )
+
 const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
   const { date, time } = formatDateTime(fixture.startDate)
   const isUpcoming = new Date(fixture.startDate) >= new Date()
@@ -125,7 +137,7 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
             <Middle>
               <Team $isSecond={false}>
                 <TeamName>{fixture.homeTeam.name}</TeamName>
-                {fixture.homeTeam.logoUrl ? <TeamLogo src={fixture.homeTeam.logoUrl} /> : null}
+                <TeamCrest team={fixture.homeTeam} />
               </Team>
 
               <TimeScore className="numbers">
@@ -134,18 +146,16 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
 
               <Team $isSecond={true}>
                 <TeamName>{fixture.awayTeam.name}</TeamName>
-                {fixture.awayTeam.logoUrl ? <TeamLogo src={fixture.awayTeam.logoUrl} /> : null}
+                <TeamCrest team={fixture.awayTeam} />
               </Team>
             </Middle>
 
-            <Bottom className="numbers">
-              {isUpcoming ? (
-                <>
-                  <h2>The match will start in:</h2>
-                  <DynamicCountdown targetDate={new Date(fixture.startDate)} />
-                </>
-              ) : null}
-            </Bottom>
+            {isUpcoming ? (
+              <Bottom className="numbers">
+                <h2>The match will start in:</h2>
+                <DynamicCountdown targetDate={new Date(fixture.startDate)} />
+              </Bottom>
+            ) : null}
           </HeaderContent>
         </div>
       </FixtureHeader>
