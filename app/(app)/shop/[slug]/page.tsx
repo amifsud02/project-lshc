@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
@@ -15,13 +16,20 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { getProductBySlug } from '@/lib/shop/products'
+import { requireShopCatalogueAccess } from '@/lib/shop/access'
 import { formatPrice } from '@/lib/shop/types'
 
 export const revalidate = 60
 
+// Nothing is pre-built; each page renders on its first visit and is then cached (see `revalidate`).
+export function generateStaticParams() {
+  return []
+}
+
 type Params = Promise<{ slug: string }>
 
 export async function generateMetadata({ params }: { params: Params }) {
+  await requireShopCatalogueAccess()
   const { slug } = await params
   const product = await getProductBySlug(slug)
   if (!product) return { title: 'Product not found' }
@@ -29,6 +37,7 @@ export async function generateMetadata({ params }: { params: Params }) {
 }
 
 export default async function ProductPage({ params }: { params: Params }) {
+  await requireShopCatalogueAccess()
   const { slug } = await params
   const product = await getProductBySlug(slug)
   if (!product || !product.active) notFound()
@@ -67,11 +76,13 @@ export default async function ProductPage({ params }: { params: Params }) {
             <div className="lg:col-span-7">
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted">
                 {product.imageUrl ? (
-                  <div
-                    className="size-full bg-cover bg-center"
-                    style={{ backgroundImage: `url(${product.imageUrl})` }}
-                    role="img"
-                    aria-label={product.title}
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 58vw, 100vw"
+                    className="object-cover"
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary to-foreground text-6xl font-extrabold tracking-wide text-primary-foreground/80">

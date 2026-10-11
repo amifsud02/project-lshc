@@ -1,2 +1,2 @@
-/** Cache tag cleared whenever an editor changes content in the admin. */
-export const CONTENT_TAG = 'content'
+/** Cache tag cleared whenever an editor changes a document in `collection` in the admin. */
+export const contentTag = (collection: string) => `content:${collection}`

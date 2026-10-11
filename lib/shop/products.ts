@@ -49,7 +49,7 @@ export async function getActiveProducts(): Promise<ShopProduct[]> {
   const { docs } = await cachedFind({
     collection: 'products',
     where: { active: { equals: true } },
-    depth: 2,
+    depth: 1,
     limit: 200,
     sort: 'title',
   })
@@ -60,7 +60,7 @@ export async function getProductBySlug(slug: string): Promise<ShopProduct | null
   const { docs } = await cachedFind({
     collection: 'products',
     where: { slug: { equals: slug } },
-    depth: 2,
+    depth: 1,
     limit: 1,
   })
   if (!docs[0]) return null

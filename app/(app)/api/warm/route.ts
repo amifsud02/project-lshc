@@ -7,7 +7,7 @@ export const maxDuration = 30
 
 // Pages requested on every ping so the functions that render them stay warm too. Fixed list:
 // the endpoint never fetches anything the caller supplies.
-const WARM_PATHS = ['/']
+const WARM_PATHS = ['/', '/shop', '/admin']
 
 const baseUrl = (request: NextRequest) => {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL
@@ -56,7 +56,8 @@ export async function GET(request: NextRequest) {
           cache: 'no-store',
           signal: AbortSignal.timeout(20_000),
         })
-        if (!res.ok) throw new Error(String(res.status))
+        // A 404 still warms the function (e.g. /shop while the shop is hidden), so only errors fail.
+        if (res.status >= 500) throw new Error(String(res.status))
       })),
     })),
   )

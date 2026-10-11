@@ -2,19 +2,35 @@ import { unstable_cache } from 'next/cache'
 import { getPayload, type CollectionSlug, type Payload, type TypedCollection } from 'payload'
 import type { PaginatedDocs } from 'payload'
 import config from '@payload-config'
-import { CONTENT_TAG } from './tags'
+import { contentDependencies } from './dependencies'
+import { contentTag } from './tags'
 
 
 type FindArgs = Parameters<Payload['find']>[0]
+type Runner = (args: FindArgs) => Promise<PaginatedDocs>
 
-const run = unstable_cache(
-  async (args: FindArgs) => {
-    const payload = await getPayload({ config })
-    return payload.find(args)
-  },
-  ['payload-find'],
-  { revalidate: 60, tags: [CONTENT_TAG] },
-)
+const runners = new Map<string, Runner>()
+
+/**
+ * One cache per collection, tagged with every collection its results can contain, so saving
+ * a news post leaves the cached products alone but replacing a product image refreshes them.
+ */
+async function runnerFor(collection: string): Promise<Runner> {
+  const existing = runners.get(collection)
+  if (existing) return existing
+
+  const tags = contentDependencies(await config, collection).map(contentTag)
+  const run = unstable_cache(
+    async (args: FindArgs) => {
+      const payload = await getPayload({ config })
+      return payload.find(args)
+    },
+    ['payload-find', collection],
+    { revalidate: 60, tags },
+  )
+  runners.set(collection, run)
+  return run
+}
 
 /**
  * `payload.find` for public, read-only content. Results are cached for 60 seconds and cleared
@@ -24,5 +40,6 @@ const run = unstable_cache(
 export async function cachedFind<T extends CollectionSlug>(
   args: FindArgs & { collection: T },
 ): Promise<PaginatedDocs<TypedCollection[T]>> {
+  const run = await runnerFor(args.collection)
   return (await run(args)) as unknown as PaginatedDocs<TypedCollection[T]>
 }

@@ -1,5 +1,6 @@
 import PageHeader from '@/components/PageHeader/PageHeader'
 import { getActiveProducts } from '@/lib/shop/products'
+import { requireShopCatalogueAccess } from '@/lib/shop/access'
 import ProductCard from '@/components/Shop/ProductCard'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -8,6 +9,7 @@ export const revalidate = 60
 export const metadata = { title: 'Shop | La Salle Handball' }
 
 export default async function ShopPage() {
+  await requireShopCatalogueAccess()
   const products = await getActiveProducts()
   const now = new Date()
   const season = `${now.getFullYear()}/${String((now.getFullYear() + 1) % 100).padStart(2, '0')}`
