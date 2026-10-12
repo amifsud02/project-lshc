@@ -1,7 +1,8 @@
 import React from 'react'
 import { MapPin } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import type { Metadata } from 'next'
+import type { Metadata, ResolvingMetadata } from 'next'
+import { siteOpenGraph } from '@/lib/utils/metadata'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
@@ -81,17 +82,17 @@ const getFixture = async (slug: string) => {
 
 type Props = { params: Promise<{ slug: string }> }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const { slug } = await params
   const doc = await getFixture(slug)
-  if (!doc) return { title: 'Fixture not found | La Salle Handball' }
+  if (!doc) return { title: 'Fixture not found' }
 
   const fixture = fixtureFromPayload(doc)
   const teams = `${fixture.homeTeam.name} vs ${fixture.awayTeam.name}`
   const competition = fixture.competition?.name ?? 'Handball'
   const { date } = formatDateTime(fixture.startDate)
 
-  const title = `${teams}: ${competition} | La Salle Handball`
+  const title = `${teams}: ${competition}`
   const description = fixture.isFinished
     ? `Full time: ${fixture.homeTeam.name} ${fixture.homeScore} - ${fixture.awayScore} ${fixture.awayTeam.name}. ${competition}, ${date}.`
     : `${teams} in the ${competition} on ${date}. Team news, kick-off time and live updates from La Salle Handball Club.`
@@ -103,7 +104,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
+    openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
   }
 }
 

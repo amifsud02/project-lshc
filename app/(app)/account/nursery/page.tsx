@@ -5,7 +5,7 @@ import { getCurrentUser } from '@/lib/auth/server'
 import { formatDate, getUserNurseryRegistrations, nurseryStatusLabels } from '@/lib/account/data'
 import { formatPrice } from '@/lib/shop/types'
 
-export const metadata = { title: 'Nursery registrations | La Salle Handball' }
+export const metadata = { title: 'Nursery registrations' }
 
 const titleOf = (value: unknown): string => {
   if (value && typeof value === 'object') {

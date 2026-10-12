@@ -5,17 +5,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import NewsCard from "@/components/News/NewsCard/NewsCard";
 import {
-    getNewsPosts,
+    getNewsPage,
     getNewsCategories,
     getNewsCategoryBySlug,
 } from "@/lib/data/news";
 import { OtherArticles } from "@/components/StyledComponents";
+import Pagination from "@/components/News/Pagination/Pagination";
 import type { Metadata } from "next";
 
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 
 type Params = { category: string }
-type SP = { tag?: string | string[] }
+type SP = { tag?: string | string[]; page?: string | string[] }
 
 export async function generateMetadata(
     { params }: { params: Promise<Params> }
@@ -24,7 +25,7 @@ export async function generateMetadata(
     const cat = await getNewsCategoryBySlug(category);
     if (!cat) return {};
     return {
-        title: `${cat.title} — La Salle Handball News`,
+        title: `${cat.title} — News`,
         alternates: { canonical: `${baseSiteUrl}/news/${cat.slug}` },
     };
 }
@@ -46,9 +47,10 @@ export default async function NewsCategoryPage({
     const resolvedSearchParams = (await searchParams) ?? {};
     const selectedTag = typeof resolvedSearchParams.tag === "string" ? resolvedSearchParams.tag : undefined;
 
-    const posts = await getNewsPosts({
+    const { posts, page, totalPages } = await getNewsPage({
         category: cat.slug,
         tag: selectedTag,
+        page: Number(resolvedSearchParams.page) || 1,
     });
 
     return (
@@ -78,6 +80,8 @@ export default async function NewsCategoryPage({
                         ))}
                     </OtherArticles>
                 )}
+
+                <Pagination basePath={`/news/${cat.slug}`} page={page} totalPages={totalPages} query={{ tag: selectedTag }} />
             </section>
 
 

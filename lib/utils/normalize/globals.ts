@@ -18,6 +18,8 @@ export type NormalizedGeneral = {
   logoUrl?: string
   faviconUrl?: string
   fallbackImageUrl?: string
+  /** News posts per page on the news listings. */
+  postsPerPage: number
   shopVisibility: 'admins' | 'public'
 }
 
@@ -85,6 +87,7 @@ export const generalFromPayload = (doc: any): NormalizedGeneral => {
     logoUrl: mediaUrl(g.logo),
     faviconUrl: mediaUrl(g.favicon),
     fallbackImageUrl: mediaUrl(g.fallbackImage),
+    postsPerPage: Math.max(1, Math.floor(Number(doc?.reading?.postsPerPage) || 10)),
     // Anything other than an explicit 'public' keeps the shop hidden.
     shopVisibility: doc?.shop?.visibility === 'public' ? 'public' : 'admins',
   }

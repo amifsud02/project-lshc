@@ -1,3 +1,5 @@
+import type { Metadata, ResolvingMetadata } from "next";
+import { siteOpenGraph } from "@/lib/utils/metadata";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import ContactForm from "./contact-form";
 import Footer from "@/components/Footer/Footer";
@@ -6,24 +8,26 @@ import AdSense from "@/components/AdSense/AdSense";
 
 export const revalidate = 60
 
-const title = 'La Salle Handball | Contact Us'
+const title = 'Contact us'
 const description = 'Click here to reach out to our team regarding inquiries, job opportunities, future projects, or any other matters you find important.'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 const canonical = `${baseSiteUrl}/contact`;
 
-export const metadata = {
-  title: title,
-  description: description,
-  alternates: {
-    canonical: canonical
-  },
-  openGraph: {
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
     title: title,
     description: description,
+    alternates: {
+      canonical: canonical
+    },
+    openGraph: await siteOpenGraph(parent, {
+      title: title,
+      description: description,
 
-    url: canonical,
-  }
-};
+      url: canonical,
+    }),
+  };
+}
 
 export default function ContactPage() {
   return (

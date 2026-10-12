@@ -6,7 +6,7 @@ import { getCurrentUser } from '@/lib/auth/server'
 import { countUserRecords, formatDate, getUserOrders, orderStatusLabels } from '@/lib/account/data'
 import { formatPrice } from '@/lib/shop/types'
 
-export const metadata = { title: 'My account | La Salle Handball' }
+export const metadata = { title: 'My account' }
 
 export default async function AccountDashboardPage() {
   const user = await getCurrentUser()

@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { hasBundleItems, MEMBER_FIELDS, type CustomFieldDef, type ProductType } from './types'
 import { cachedFind } from '@/lib/utils/payload/cached'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 
 export type ShopProduct = {
   id: string
@@ -130,7 +131,8 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
     type,
     price: Number(doc.price) || 0,
     active: Boolean(doc.active),
-    imageUrl: mediaUrl(doc.image),
+    // Falls back to the Fallback Image in Site Settings.
+    imageUrl: mediaUrl(doc.image) ?? (await getGeneralGlobal()).fallbackImageUrl,
     description: doc.description,
     customFields: ownFields,
     unitTemplates,

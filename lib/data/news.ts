@@ -2,6 +2,7 @@ import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
 import type { News, NewsCategory } from '@/payload-types'
 import { cachedFind } from '@/lib/utils/payload/cached'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 
 type ListQuery = {
   category?: string
@@ -50,6 +51,34 @@ export async function getNewsPosts(q: ListQuery = {}): Promise<News[]> {
     sort: '-publishedAt',
   })
   return docs as News[]
+}
+
+export type NewsPage = { posts: News[]; page: number; totalPages: number }
+
+/** One page of a news listing, sized by "posts per page" in Site Settings. */
+export async function getNewsPage(q: { category?: string; tag?: string; page?: number }): Promise<NewsPage> {
+  const where: Where = {}
+  if (q.category) {
+    const cat = await getNewsCategoryBySlug(q.category)
+    if (!cat) return { posts: [], page: 1, totalPages: 1 }
+    where.category = { equals: cat.id }
+  }
+  if (q.tag) where.tags = { in: [q.tag] }
+
+  const { postsPerPage } = await getGeneralGlobal()
+  const result = await cachedFind({
+    collection: 'news',
+    where,
+    depth: 1,
+    limit: postsPerPage,
+    page: Math.max(1, q.page ?? 1),
+    sort: '-publishedAt',
+  })
+  return {
+    posts: result.docs as News[],
+    page: result.page ?? 1,
+    totalPages: Math.max(1, result.totalPages),
+  }
 }
 
 export async function getNewsBySlug(slug: string): Promise<News | null> {

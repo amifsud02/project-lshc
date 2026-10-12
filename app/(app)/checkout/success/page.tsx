@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
-export const metadata = { title: 'Order confirmed | La Salle Handball' }
+export const metadata = { title: 'Order confirmed' }
 
 type SearchParams = Promise<{ session_id?: string }>
 

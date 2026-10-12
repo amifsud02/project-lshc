@@ -1,7 +1,7 @@
 import PageHeader from '@/components/PageHeader/PageHeader'
 import CartView from './CartView'
 
-export const metadata = { title: 'Cart | La Salle Handball' }
+export const metadata = { title: 'Cart' }
 
 export default function CartPage() {
   return (

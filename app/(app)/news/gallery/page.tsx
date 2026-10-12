@@ -1,3 +1,5 @@
+import type { Metadata, ResolvingMetadata } from "next";
+import { siteOpenGraph } from "@/lib/utils/metadata";
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { Partners } from "@/components/Partners/Partners";
@@ -8,15 +10,17 @@ import { OtherArticles } from "@/components/StyledComponents";
 
 export const revalidate = 60
 
-const title = 'Galleries — La Salle Handball';
+const title = 'Galleries';
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 const canonical = `${baseSiteUrl}/news/gallery`;
 
-export const metadata = {
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
     title,
     alternates: { canonical },
-    openGraph: { title, url: canonical },
-};
+    openGraph: await siteOpenGraph(parent, { title, url: canonical }),
+  };
+}
 
 export default async function GalleryIndexPage() {
     const [galleries, categories] = await Promise.all([

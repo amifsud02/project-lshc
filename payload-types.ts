@@ -2730,21 +2730,38 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Site-wide settings for the public website. Changes appear on the site within a minute of saving.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "general".
  */
 export interface General {
   id: string;
   general: {
+    /**
+     * Added after every page title in browser tabs and search results, e.g. "Contact us | La Salle Handball".
+     */
     name: string;
+    /**
+     * Shown by search engines and social media for pages that have no description of their own. Aim for one or two sentences.
+     */
     description: string;
+    /**
+     * Shown in the site header. Leave empty to use the club crest.
+     */
     logo?: (string | null) | Media;
+    /**
+     * The icon in the browser tab. Use a square PNG of at least 48 × 48 pixels. Leave empty to use the default icon.
+     */
     favicon?: (string | null) | Media;
+    /**
+     * Used when a news post, gallery or product has no image, and as the picture when a page is shared on social media.
+     */
     fallbackImage?: (string | null) | Media;
   };
   reading?: {
     /**
-     * Enter the number of posts to show per page.
+     * How many posts the News pages show before linking to the next page.
      */
     postsPerPage?: number | null;
   };

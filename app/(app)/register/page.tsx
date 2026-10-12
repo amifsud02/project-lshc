@@ -11,7 +11,7 @@ import {
 import '@/components/Shop/shop.css'
 import '@/components/Auth/auth.css'
 
-export const metadata = { title: 'Create an account | La Salle Handball' }
+export const metadata = { title: 'Create an account' }
 
 type SearchParams = Promise<{ redirect?: string; google?: string }>
 

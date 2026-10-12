@@ -1,4 +1,5 @@
 import "./globals.css";
+import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from '@vercel/analytics/react';
@@ -6,6 +7,7 @@ import SiteNavbar from "@/components/Site/SiteNavbar";
 import SiteFooter from "@/components/Site/SiteFooter";
 import StyledComponentsRegistry from "@/lib/registry";
 import { AD_CLIENT } from "@/components/AdSense/AdSense";
+import { getGeneralGlobal } from "@/lib/utils/payload/globals";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -14,23 +16,33 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
-const title =  "La Salle Handball | Official Website"
-const description = "Visit the La Salle Handball Club official website: all the latest news on the team and club, and fixtures."
+const DEFAULT_SITE_NAME = 'La Salle Handball'
+const DEFAULT_DESCRIPTION = "Visit the La Salle Handball Club official website: all the latest news on the team and club, and fixtures."
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
-const canonical = `${baseSiteUrl}`;
 
-export const metadata = {
-  title: title,
-    description: description,
-    alternates: {
-      canonical: canonical
-    },
+// Site name, description, favicon and share image come from Site Settings in the admin.
+export async function generateMetadata(): Promise<Metadata> {
+  const general = await getGeneralGlobal()
+  const siteName = general.siteName || DEFAULT_SITE_NAME
+  const description = general.siteDescription || DEFAULT_DESCRIPTION
+  const shareImage = general.fallbackImageUrl ? [general.fallbackImageUrl] : undefined
+
+  return {
+    metadataBase: baseSiteUrl ? new URL(baseSiteUrl) : undefined,
+    applicationName: siteName,
+    // Pages set their own title ("Contact us"); the site name is added after it.
+    title: { default: `${siteName} | Official Website`, template: `%s | ${siteName}` },
+    description,
+    icons: { icon: general.faviconUrl || '/favicon.ico' },
     openGraph: {
-        title: title,
-        description: description,        
-        url: canonical,
-    }
-};
+      siteName,
+      title: siteName,
+      description,
+      url: baseSiteUrl,
+      images: shareImage,
+    },
+  }
+}
 
 export default function RootLayout({
   children,

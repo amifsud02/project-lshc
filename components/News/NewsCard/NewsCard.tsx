@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getGeneralGlobal } from "@/lib/utils/payload/globals";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -39,11 +40,12 @@ function getCategorySlug(category: News['category']): string | null {
     return category.slug ?? null;
 }
 
-const NewsCard: React.FC<INewsCard> = ({ data }) => {
+const NewsCard = async ({ data }: INewsCard) => {
     const formattedDate = formatDateToCustomString(data.publishedAt);
     const categorySlug = getCategorySlug(data.category);
     const href = categorySlug ? `/news/${categorySlug}/${data.slug}` : '#';
-    const imageSrc = getMediaUrl(data.featuredImage);
+    // Falls back to the Fallback Image in Site Settings.
+    const imageSrc = getMediaUrl(data.featuredImage) || (await getGeneralGlobal()).fallbackImageUrl;
 
     return (
         <NewsWrapper>

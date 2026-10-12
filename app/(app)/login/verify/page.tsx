@@ -4,7 +4,7 @@ import '@/components/Shop/shop.css'
 import '@/components/Auth/auth.css'
 
 export const metadata = {
-  title: 'Signing you in | La Salle Handball',
+  title: 'Signing you in',
   robots: { index: false, follow: false },
 }
 

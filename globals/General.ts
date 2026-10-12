@@ -4,19 +4,21 @@ import { adminOnly } from '@/lib/auth/roles'
 
 export const General: GlobalConfig = {
     slug: 'general',
+    label: 'Site Settings',
     access: {
         read: ({ req: { user } }) => !!user,
       update: adminOnly,
     },
     admin: {
-        group: 'Theme Settings'
+        group: 'Global Settings',
+        description: 'Site-wide settings for the public website. Changes appear on the site within a minute of saving.',
     },
     fields: [
         {
             type: 'tabs',
             tabs: [
                 {
-                    label: 'Site Settings',
+                    label: 'General',
                     name: 'general',
                     fields: [
                         {
@@ -24,30 +26,45 @@ export const General: GlobalConfig = {
                             label: 'Site Name',
                             type: 'text',
                             required: true,
+                            admin: {
+                                description: 'Added after every page title in browser tabs and search results, e.g. "Contact us | La Salle Handball".',
+                            },
                         },
                         {
                             name: 'description',
                             label: 'Site Description',
-                            type: 'text',
+                            type: 'textarea',
                             required: true,
+                            admin: {
+                                description: 'Shown by search engines and social media for pages that have no description of their own. Aim for one or two sentences.',
+                            },
                         },
                         {
                             name: 'logo',
                             label: 'Logo',
                             type: 'upload',
                             relationTo: 'media',
+                            admin: {
+                                description: 'Shown in the site header. Leave empty to use the club crest.',
+                            },
                         },
                         {
                             name: 'favicon',
                             label: 'Favicon',
                             type: 'upload',
                             relationTo: 'media',
+                            admin: {
+                                description: 'The icon in the browser tab. Use a square PNG of at least 48 × 48 pixels. Leave empty to use the default icon.',
+                            },
                         },
                         {
                             name: 'fallbackImage',
                             label: 'Fallback Image',
                             type: 'upload',
                             relationTo: 'media',
+                            admin: {
+                                description: 'Used when a news post, gallery or product has no image, and as the picture when a page is shared on social media.',
+                            },
                         }
                     ]
                 },
@@ -57,12 +74,13 @@ export const General: GlobalConfig = {
                     fields: [
                         {
                             name: 'postsPerPage',
-                            label: 'Blog Pages show at most',
+                            label: 'News posts per page',
                             type: 'number',
                             defaultValue: 10,
                             min: 1,
+                            max: 100,
                             admin: {
-                                description: 'Enter the number of posts to show per page.',
+                                description: 'How many posts the News pages show before linking to the next page.',
                             },
                         },
                     ]

@@ -16,7 +16,7 @@ import '@/components/Shop/shop.css'
 import '../nursery.css'
 
 export const metadata = {
-  title: 'Nursery registration | La Salle Handball',
+  title: 'Nursery registration',
   description: 'Register your child for the La Salle Handball Club nursery.',
   robots: { index: false },
 }
