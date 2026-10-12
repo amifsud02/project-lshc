@@ -1,3 +1,5 @@
+import type { Metadata, ResolvingMetadata } from "next";
+import { siteOpenGraph } from "@/lib/utils/metadata";
 import Link from 'next/link'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import PageHeader from '@/components/PageHeader/PageHeader'
@@ -7,17 +9,19 @@ import PrintButton from './PrintButton'
 import '@/components/Shop/shop.css'
 import './nursery.css'
 
-const title = 'La Salle Handball | Nursery'
+const title = 'Nursery'
 const description =
   'Training programmes for boys and girls aged 5 to 16 — schedule, fees and online registration for the La Salle Handball Club nursery.'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL
 const canonical = `${baseSiteUrl}/nursery`
 
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical },
-  openGraph: { title, description, url: canonical },
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
+  };
 }
 
 export const revalidate = 300

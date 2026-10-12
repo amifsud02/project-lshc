@@ -30,7 +30,7 @@ export async function generateMetadata(
     const cat = await getGalleryCategoryBySlug(tag);
     if (!cat) return {};
     return {
-        title: `${cat.title} Galleries — La Salle Handball`,
+        title: `${cat.title} galleries`,
         alternates: { canonical: `${baseSiteUrl}/news/gallery/${cat.slug}` },
     };
 }

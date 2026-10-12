@@ -1,27 +1,31 @@
+import type { Metadata, ResolvingMetadata } from "next";
+import { siteOpenGraph } from "@/lib/utils/metadata";
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { Partners }from "@/components/Partners/Partners";
 
 export const revalidate = 60
 
-const title = 'History of La Salle Handball | La Salle Handball'
+const title = 'Club history'
 const description = 'Malta&apos;s handball legends: EHF Cup contenders, national league champions, and more. Explore our rich history!'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 const canonical = `${baseSiteUrl}/club/history`;
 
-export const metadata = {
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
     title: title,
     description: description,
     alternates: {
         canonical: canonical
     },
-    openGraph: {
+    openGraph: await siteOpenGraph(parent, {
         title: title,
         description: description,
         
         url: canonical,
-    }
-};
+    }),
+  };
+}
 
 const History = () => {
   return (

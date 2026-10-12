@@ -3,7 +3,7 @@ import Swatches from './Swatches'
 import './styleguide.css'
 
 export const metadata = {
-  title: 'Style guide | La Salle Handball',
+  title: 'Style guide',
   robots: { index: false, follow: false },
 }
 

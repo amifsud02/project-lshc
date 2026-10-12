@@ -2,7 +2,7 @@ import PageHeader from '@/components/PageHeader/PageHeader'
 import { getCurrentUser } from '@/lib/auth/server'
 import CheckoutView from './CheckoutView'
 
-export const metadata = { title: 'Checkout | La Salle Handball' }
+export const metadata = { title: 'Checkout' }
 
 export default async function CheckoutPage() {
   const user = await getCurrentUser()

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getGeneralGlobal } from "@/lib/utils/payload/globals";
 import type { Gallery, Media } from "@/payload-types";
 import { NewsDate, NewsImageWrapper, NewsInfo, NewsTitle, NewsWrapper } from "@/components/StyledComponents";
 
@@ -31,10 +32,11 @@ function getTagSlug(tag: Gallery['tag']): string | null {
     return tag.slug ?? null;
 }
 
-const GalleryCard: React.FC<Props> = ({ data }) => {
+const GalleryCard = async ({ data }: Props) => {
     const tagSlug = getTagSlug(data.tag);
     const href = tagSlug ? `/news/gallery/${tagSlug}/${data.slug}` : '#';
-    const imageSrc = getMediaUrl(data.coverImage);
+    // Falls back to the Fallback Image in Site Settings.
+    const imageSrc = getMediaUrl(data.coverImage) || (await getGeneralGlobal()).fallbackImageUrl;
 
     return (
         <NewsWrapper>

@@ -10,7 +10,7 @@ type Params = Promise<{ orderNumber: string }>
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { orderNumber } = await params
-  return { title: `Order #${orderNumber} | La Salle Handball` }
+  return { title: `Order #${orderNumber}` }
 }
 
 export default async function AccountOrderPage({ params }: { params: Params }) {

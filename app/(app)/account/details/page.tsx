@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/server'
 import DetailsForm from './DetailsForm'
 
-export const metadata = { title: 'Account details | La Salle Handball' }
+export const metadata = { title: 'Account details' }
 
 export default async function AccountDetailsPage() {
   const user = await getCurrentUser()

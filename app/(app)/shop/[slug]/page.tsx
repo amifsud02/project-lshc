@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params
   const product = await getProductBySlug(slug)
   if (!product) return { title: 'Product not found' }
-  return { title: `${product.title} | Club Shop` }
+  return { title: `${product.title} — Shop` }
 }
 
 export default async function ProductPage({ params }: { params: Params }) {

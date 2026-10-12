@@ -8,7 +8,7 @@ import '@/components/Shop/shop.css'
 import '../../nursery.css'
 
 export const metadata = {
-  title: 'Registration received | La Salle Handball',
+  title: 'Registration received',
   robots: { index: false },
 }
 

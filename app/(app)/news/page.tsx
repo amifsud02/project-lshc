@@ -1,24 +1,29 @@
+import type { Metadata, ResolvingMetadata } from "next";
+import { siteOpenGraph } from "@/lib/utils/metadata";
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { Partners } from "@/components/Partners/Partners";
 import Link from "next/link";
 import NewsCard from "@/components/News/NewsCard/NewsCard";
-import { getNewsPosts, getAllNewsTags, getNewsCategories } from "@/lib/data/news";
+import { getNewsPage, getAllNewsTags, getNewsCategories } from "@/lib/data/news";
+import Pagination from "@/components/News/Pagination/Pagination";
 import { OtherArticles } from "@/components/StyledComponents";
 
-const title = 'La Salle Handball News - Latest and real time updates'
+const title = 'News'
 const description = 'Stay up to date with news from the La Salle Handball world: all fixtures, training sessions, and much more. Live La Salle Handball together with its protagonists!'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 const canonical = `${baseSiteUrl}/news`;
 
-export const metadata = {
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
-};
+    openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
+  };
+}
 
-type SP = { tag?: string | string[] }
+type SP = { tag?: string | string[]; page?: string | string[] }
 
 export default async function NewsPage({
     searchParams,
@@ -28,8 +33,10 @@ export default async function NewsPage({
     const resolvedSearchParams = (await searchParams) ?? {};
     const selectedTag = typeof resolvedSearchParams.tag === "string" ? resolvedSearchParams.tag : undefined;
 
-    const [posts, tags, categories] = await Promise.all([
-        getNewsPosts({ tag: selectedTag }),
+    const requestedPage = Number(resolvedSearchParams.page) || 1;
+
+    const [{ posts, page, totalPages }, tags, categories] = await Promise.all([
+        getNewsPage({ tag: selectedTag, page: requestedPage }),
         getAllNewsTags(),
         getNewsCategories(),
     ]);
@@ -68,6 +75,8 @@ export default async function NewsPage({
                         <NewsCard key={post.id} data={post} />
                     ))}
                 </OtherArticles>
+
+                <Pagination basePath="/news" page={page} totalPages={totalPages} query={{ tag: selectedTag }} />
             </section>
 
 

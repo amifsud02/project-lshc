@@ -12,7 +12,7 @@ import { magicLinkErrorMessages, type MagicLinkError } from '@/lib/auth/magicLin
 import '@/components/Shop/shop.css'
 import '@/components/Auth/auth.css'
 
-export const metadata = { title: 'Sign in | La Salle Handball' }
+export const metadata = { title: 'Sign in' }
 
 type SearchParams = Promise<{ redirect?: string; google?: string; link?: string }>
 
