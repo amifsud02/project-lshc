@@ -11,7 +11,6 @@ const nextConfig = {
             { protocol: 'https', hostname: 'thumbs2.imgbox.com' },
             { protocol: 'http', hostname: 'localhost' },
             { protocol: 'https', hostname: 'res.cloudinary.com' },
-            { protocol: 'https', hostname: 'cdn.sanity.io' },
         ],
         // WebP is much cheaper to generate than AVIF, which matters for first-request latency.
         formats: ["image/webp"],

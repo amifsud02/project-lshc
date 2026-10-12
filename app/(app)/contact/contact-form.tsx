@@ -19,7 +19,7 @@ export default function ContactForm() {
     setBusy(true)
     setResult(null)
     try {
-      const response = await fetch('api/contact-form', {
+      const response = await fetch('/api/contact-form', {
         method: 'POST',
         body: new FormData(e.currentTarget),
       })
