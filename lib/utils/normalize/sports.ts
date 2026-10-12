@@ -1,3 +1,5 @@
+import { categoryFromCompetitionName, isFixtureCategory, type FixtureCategory } from '@/lib/fixtures/categories'
+
 
 export type NormalizedTeam = {
   name: string
@@ -28,6 +30,8 @@ export type NormalizedFixture = {
   homeTeam: NormalizedTeam
   awayTeam: NormalizedTeam
   competition?: { name: string }
+  /** Which category tab the fixture belongs to, when known. */
+  category?: FixtureCategory
   homeLineup: NormalizedLineupRow[]
   awayLineup: NormalizedLineupRow[]
 }
@@ -94,6 +98,9 @@ export const fixtureFromPayload = (f: any): NormalizedFixture => {
       logoUrl: away?.teamLogo?.url,
     },
     competition: comp ? { name: comp.competitionName } : undefined,
+    category: isFixtureCategory(comp?.category)
+      ? comp.category
+      : categoryFromCompetitionName(comp?.competitionName ?? ''),
     homeLineup: lineupFromPayload(f.homeLineup),
     awayLineup: lineupFromPayload(f.awayLineup),
   }

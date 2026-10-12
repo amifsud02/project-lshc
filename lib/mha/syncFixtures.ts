@@ -266,6 +266,10 @@ const syncFixtures = async ({ payload, dryRun, offset, outOfTime, result }: Stag
     let id: string
     if (docs[0]) {
       id = String(docs[0].id)
+      // Competitions created before categories existed pick theirs up on the next sync.
+      if (c.category && !docs[0].category && !dryRun) {
+        await payload.update({ collection: 'competitions', id, data: { category: c.category } })
+      }
     } else {
       result.competitionsCreated.push(`${c.competitionName} (${c.season})`)
       const competitionType = await resolveCompetitionType(c.competitionTypeName)
@@ -275,7 +279,7 @@ const syncFixtures = async ({ payload, dryRun, offset, outOfTime, result }: Stag
             (
               await payload.create({
                 collection: 'competitions',
-                data: { competitionName: c.competitionName, season: c.season, competitionType },
+                data: { competitionName: c.competitionName, season: c.season, competitionType, category: c.category },
               })
             ).id,
           )

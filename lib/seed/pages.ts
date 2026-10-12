@@ -54,14 +54,17 @@ export const SEED_PAGES: SeedPage[] = [
       { blockType: 'hero' },
       {
         blockType: 'fixtureList',
+        layout: 'cards',
+        showCategoryFilter: true,
         showTitle: true,
-        title: 'Upcoming Fixtures',
+        title: 'Upcoming Matches',
         statuses: ['Scheduled'],
         sortOrder: 'asc',
         limit: 6,
       },
       {
         blockType: 'fixtureList',
+        layout: 'list',
         showTitle: true,
         title: 'Latest Results',
         statuses: ['Finished'],

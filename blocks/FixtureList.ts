@@ -8,6 +8,28 @@ export const FixtureListBlock: Block = {
     plural: 'Fixture Lists',
   },
   fields: [
+    {
+      name: 'layout',
+      type: 'select',
+      options: [
+        { label: 'Match cards (upcoming matches)', value: 'cards' },
+        { label: 'List (results)', value: 'list' },
+      ],
+      admin: {
+        description:
+          'Match cards show large date tiles that scroll sideways. When empty, blocks that only show scheduled fixtures use match cards and the rest use the list.',
+      },
+    },
+    {
+      name: 'showCategoryFilter',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Show Men / Women / U19 / Youth tabs',
+      admin: {
+        description: 'Match cards only. Tabs appear for the categories that have fixtures.',
+        condition: (_, siblingData) => siblingData?.layout !== 'list',
+      },
+    },
     { name: 'showTitle', type: 'checkbox', defaultValue: true },
     { name: 'title', type: 'text' },
     {
@@ -40,6 +62,7 @@ export const FixtureListBlock: Block = {
       defaultValue: 10,
       min: 1,
       max: 100,
+      admin: { description: 'With category tabs, this is the number shown per tab.' },
     },
     {
       name: 'sortOrder',

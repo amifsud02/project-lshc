@@ -1,0 +1,257 @@
+/* Upcoming matches: dark band of large date cards that scroll sideways. */
+
+.section {
+  --um-bg: var(--color-ink);
+  --um-highlight: #0b3aa8;
+  --um-line: rgba(255, 255, 255, 0.14);
+  --um-soft: rgba(255, 255, 255, 0.6);
+
+  background: var(--um-bg);
+  color: #fff;
+  padding: 48px 0 56px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.headings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+}
+
+.tab {
+  position: relative;
+  padding: 0 0 8px;
+  border: 0;
+  background: none;
+  color: var(--um-soft);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.tab:hover,
+.tab:focus-visible {
+  color: #fff;
+}
+
+.tabActive {
+  color: #fff;
+}
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #fff;
+}
+
+.arrows {
+  display: none;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--um-line);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.arrow:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.empty {
+  margin: 0;
+  padding: 40px 0;
+  color: var(--um-soft);
+}
+
+.track {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-top: 1px solid var(--um-line);
+  border-bottom: 1px solid var(--um-line);
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  box-sizing: border-box;
+  container-type: inline-size;
+  flex: 0 0 82%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  min-height: 440px;
+  padding: 28px 24px 32px;
+  border-right: 1px solid var(--um-line);
+  scroll-snap-align: start;
+}
+
+.card:first-child {
+  border-left: 1px solid var(--um-line);
+}
+
+.cardNext {
+  background: var(--um-highlight);
+  border-color: var(--um-highlight);
+}
+
+.meta p,
+.bottom p {
+  margin: 0;
+}
+
+.competition {
+  margin-bottom: 28px !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metaStrong {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.metaSoft {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--um-soft);
+}
+
+.cardNext .metaSoft {
+  color: #fff;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+}
+
+.bigDate {
+  /* Sized to the card so "13 OCT" fills it without touching the edges. */
+  font-size: 56px;
+  font-size: min(29cqi, 88px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.teams {
+  margin: 20px 0 32px;
+}
+
+.team {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--um-soft);
+  overflow-wrap: anywhere;
+}
+
+.teamClub,
+.cardNext .team {
+  color: #fff;
+}
+
+.cta {
+  display: block;
+  padding: 10px 16px;
+  background: #fff;
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: opacity 0.15s;
+}
+
+.cardNext .cta {
+  color: var(--um-highlight);
+}
+
+.cta:hover,
+.cta:focus-visible {
+  opacity: 0.88;
+}
+
+@media (min-width: 640px) {
+  .card {
+    flex-basis: 50%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding: 64px 0 72px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .arrows {
+    display: flex;
+  }
+
+  .card {
+    flex-basis: 25%;
+    min-height: 520px;
+    padding: 32px 32px 36px;
+  }
+}
