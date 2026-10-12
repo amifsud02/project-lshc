@@ -1,5 +1,6 @@
 import type { Fixture } from '@/payload-types'
 import { maltaTimeToUTC } from '@/lib/utils/maltaTime'
+import { categoryForMhaCode, type FixtureCategory } from '@/lib/fixtures/categories'
 
 import type { MhaFixture } from './client'
 
@@ -62,6 +63,7 @@ export type MappedFixture = {
     competitionName: string
     season: string
     competitionTypeName: string
+    category?: FixtureCategory
   }
   warnings: string[]
 }
@@ -158,6 +160,7 @@ export const mapMhaFixture = (mha: MhaFixture): MapResult => {
         competitionName,
         season: seasonForDate(mha.date),
         competitionTypeName: mha.eventType === 'Friendly' ? 'Friendly' : competitionTypeFor(competitionName),
+        category: categoryForMhaCode(mha.category),
       },
       warnings,
     },

@@ -2,6 +2,7 @@ import React from 'react'
 import { MapPin } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { venueName } from '@/lib/fixtures/venues'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
@@ -35,10 +36,6 @@ export function generateStaticParams() {
 
 const DISPLAY_TZ = 'Europe/Malta'
 
-/** Codes without an entry here fall back to the code itself. */
-const VENUE_NAMES: Record<string, string> = {
-  USH: 'University Sports Hall (USH)',
-}
 
 const formatDateTime = (iso: string) => ({
   date: new Intl.DateTimeFormat('en-GB', {
@@ -127,7 +124,7 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
               <div className="numbers">{date}</div>
               {fixture.venue ? (
                 <div style={{ display: 'inline-flex' }}>
-                  <MapPin height={'16px'} /> {VENUE_NAMES[fixture.venue] ?? fixture.venue}
+                  <MapPin height={'16px'} /> {venueName(fixture.venue)}
                 </div>
               ) : null}
             </Top>

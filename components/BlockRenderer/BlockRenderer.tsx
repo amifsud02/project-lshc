@@ -16,6 +16,7 @@ import NewsCard from '@/components/News/NewsCard/NewsCard'
 import { OtherArticles } from '@/components/StyledComponents'
 import Link from 'next/link'
 import Fixtures from '@/components/Fixture/Fixture'
+import UpcomingMatches from '@/components/Fixture/UpcomingMatches/UpcomingMatches'
 import Standings from '@/components/Standings/Standings'
 import { fixtureFromPayload, standingFromPayload } from '@/lib/utils/normalize/sports'
 import { Partners } from '../Partners/Partners'
@@ -230,7 +231,14 @@ const PlayerGridAdapter = async ({
   )
 }
 
+const HOUR = 60 * 60 * 1000
+
+/** Three hours ago, rounded down to the hour so the query (and its cache key) changes hourly. */
+const playedCutoff = () => new Date(Math.floor(Date.now() / HOUR) * HOUR - 3 * HOUR).toISOString()
+
 const FixtureListAdapter = async ({
+  layout,
+  showCategoryFilter,
   showTitle,
   title,
   competition,
@@ -239,6 +247,8 @@ const FixtureListAdapter = async ({
   limit,
   sortOrder,
 }: {
+  layout?: 'cards' | 'list' | null
+  showCategoryFilter?: boolean | null
   showTitle?: boolean
   title?: string
   competition?: Ref
@@ -247,7 +257,9 @@ const FixtureListAdapter = async ({
   limit?: number
   sortOrder?: 'asc' | 'desc'
 }) => {
-  const payload = await getPayload({ config })
+  const onlyScheduled = statuses?.length === 1 && statuses[0] === 'Scheduled'
+  const asCards = layout ? layout === 'cards' : onlyScheduled
+  const withTabs = asCards && showCategoryFilter !== false
   const where: Record<string, any> = {}
 
   const competitionId = refId(competition)
@@ -263,13 +275,28 @@ const FixtureListAdapter = async ({
 
   if (statuses?.length) where.status = { in: statuses }
 
+  // Upcoming cards skip matches that have been played but not yet marked finished.
+  if (asCards && onlyScheduled) where.startDate = { greater_than: playedCutoff() }
+
   const { docs } = await cachedFind({
     collection: 'fixtures',
     where,
     depth: 2,
-    limit: limit ?? 10,
+    // With tabs every category needs its own `limit` cards, so fetch them all and split later.
+    limit: withTabs ? 100 : (limit ?? 10),
     sort: sortOrder === 'desc' ? '-startDate' : 'startDate',
   })
+
+  if (asCards) {
+    return (
+      <UpcomingMatches
+        title={showTitle ? (title ?? 'Upcoming Matches') : undefined}
+        fixtures={docs.map(fixtureFromPayload)}
+        limit={limit ?? 10}
+        showCategoryFilter={withTabs}
+      />
+    )
+  }
 
   return (
     <section className="parent" style={{ padding: '2rem 0' }}>

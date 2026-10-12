@@ -419,6 +419,14 @@ export interface NewsSectionBlock {
  * via the `definition` "FixtureListBlock".
  */
 export interface FixtureListBlock {
+  /**
+   * Match cards show large date tiles that scroll sideways. When empty, blocks that only show scheduled fixtures use match cards and the rest use the list.
+   */
+  layout?: ('cards' | 'list') | null;
+  /**
+   * Match cards only. Tabs appear for the categories that have fixtures.
+   */
+  showCategoryFilter?: boolean | null;
   showTitle?: boolean | null;
   title?: string | null;
   /**
@@ -433,6 +441,9 @@ export interface FixtureListBlock {
    * Leave empty to include all statuses.
    */
   statuses?: ('Scheduled' | 'Finished' | 'Cancelled' | 'Postponed')[] | null;
+  /**
+   * With category tabs, this is the number shown per tab.
+   */
   limit?: number | null;
   sortOrder?: ('asc' | 'desc') | null;
   id?: string | null;
@@ -451,6 +462,10 @@ export interface Competition {
    */
   season: string;
   competitionType: string | CompetitionType;
+  /**
+   * Which tab its fixtures appear under on the site. Filled in by the MHA sync; when empty it is guessed from the competition name.
+   */
+  category?: ('men' | 'women' | 'u19' | 'youth') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1860,6 +1875,8 @@ export interface NewsSectionBlockSelect<T extends boolean = true> {
  * via the `definition` "FixtureListBlock_select".
  */
 export interface FixtureListBlockSelect<T extends boolean = true> {
+  layout?: T;
+  showCategoryFilter?: T;
   showTitle?: T;
   title?: T;
   competition?: T;
@@ -2018,6 +2035,7 @@ export interface CompetitionsSelect<T extends boolean = true> {
   competitionName?: T;
   season?: T;
   competitionType?: T;
+  category?: T;
   updatedAt?: T;
   createdAt?: T;
 }
