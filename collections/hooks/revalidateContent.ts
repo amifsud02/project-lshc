@@ -16,6 +16,7 @@ const CONTENT_COLLECTIONS = [
   'competitionTypes',
   'galleries',
   'gallery-categories',
+  'videos',
   'venues',
   'products',
   'media',

@@ -1,11 +1,22 @@
 import type { CollectionConfig } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
+import { isVideoMime, toCloudinaryVideoUrl } from '@/lib/media/cloudinaryVideo'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
   admin: {
     group: 'Gallery',
+  },
+  hooks: {
+    afterRead: [
+      ({ doc }) => {
+        if (isVideoMime(doc?.mimeType) && typeof doc.url === 'string') {
+          doc.url = toCloudinaryVideoUrl(doc.url)
+        }
+        return doc
+      },
+    ],
   },
   access: {
     create: collectionWriteAccess('media'),

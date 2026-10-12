@@ -17,6 +17,7 @@ import { Standings } from "./collections/Standings";
 import { Players } from "./collections/Players";
 import { News } from "./collections/News";
 import { Galleries } from "./collections/Galleries";
+import { Videos } from "./collections/Videos";
 import { Header } from "./globals/Header";
 import { Footer } from "./globals/Footer";
 import { General } from "./globals/General";
@@ -61,6 +62,7 @@ export default buildConfig({
     NewsCategories,
     Galleries,
     GalleryCategories,
+    Videos,
     Products,
     Orders,
     Memberships,

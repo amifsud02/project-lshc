@@ -80,6 +80,7 @@ export interface Config {
     'news-categories': NewsCategory;
     galleries: Gallery;
     'gallery-categories': GalleryCategory;
+    videos: Video;
     products: Product;
     orders: Order;
     memberships: Membership;
@@ -113,6 +114,7 @@ export interface Config {
     'news-categories': NewsCategoriesSelect<false> | NewsCategoriesSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     'gallery-categories': GalleryCategoriesSelect<false> | GalleryCategoriesSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     memberships: MembershipsSelect<false> | MembershipsSelect<true>;
@@ -856,6 +858,66 @@ export interface GalleryCategory {
   slug: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: string;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Use YouTube for full matches and long videos; upload short clips directly.
+   */
+  source: 'youtube' | 'upload';
+  /**
+   * Paste the YouTube link or the video ID.
+   */
+  youtubeId?: string | null;
+  /**
+   * Upload an MP4 or pick one from Media (the “TV” folder keeps them tidy).
+   */
+  videoFile?: (string | null) | Media;
+  category:
+    | 'highlights'
+    | 'full-matches'
+    | 'interviews'
+    | 'press-conferences'
+    | 'behind-the-scenes'
+    | 'training'
+    | 'goals'
+    | 'club'
+    | 'classics';
+  /**
+   * Groups the video under this team’s channel on /tv.
+   */
+  team?: (string | null) | Team;
+  /**
+   * e.g. 2026/27. Used for the season archive.
+   */
+  season?: string | null;
+  publishedAt: string;
+  /**
+   * Show in the hero at the top of /tv. The newest featured video wins.
+   */
+  featured?: boolean | null;
+  /**
+   * Optional, e.g. 4:32.
+   */
+  duration?: string | null;
+  description?: string | null;
+  /**
+   * Optional. Falls back to the YouTube thumbnail or a frame from the uploaded video.
+   */
+  thumbnail?: (string | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1628,6 +1690,10 @@ export interface PayloadLockedDocument {
         value: string | GalleryCategory;
       } | null)
     | ({
+        relationTo: 'videos';
+        value: string | Video;
+      } | null)
+    | ({
         relationTo: 'products';
         value: string | Product;
       } | null)
@@ -2195,6 +2261,29 @@ export interface GalleryCategoriesSelect<T extends boolean = true> {
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  source?: T;
+  youtubeId?: T;
+  videoFile?: T;
+  category?: T;
+  team?: T;
+  season?: T;
+  publishedAt?: T;
+  featured?: T;
+  duration?: T;
+  description?: T;
+  thumbnail?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

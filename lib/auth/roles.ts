@@ -56,6 +56,7 @@ const collectionEditors: Partial<Record<CollectionSlug, Role[]>> = {
   standings: ['coach', 'competitions-manager'],
   teams: ['coach', 'competitions-manager'],
   venues: ['coach', 'competitions-manager', 'nursery-manager'],
+  videos: ['content-creator', 'photographer'],
 }
 
 /** Accepts `unknown` so it stays usable against both `User` and raw database documents. */

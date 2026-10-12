@@ -17,20 +17,23 @@ export const cloudinaryAdapter = () => ({
       // Since Cloudinary's upload_stream is callback-based, we wrap it in a Promise
       // so we can use async/await syntax for cleaner, easier handling.
       // It uploads the file with a specific public_id under "media/", without overwriting existing files.
+      const isVideo = file.mimeType?.startsWith('video/')
       const uploadResult = await new Promise<UploadApiResponse>((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            resource_type: 'auto', // auto-detect file type (image, video, etc.)
-            public_id: `media/${file.filename.replace(/\.[^/.]+$/, '')}`, // Set custom file name without extension, and it also previxed the cleaned filename with media/
-            overwrite: false, // Do not overwrite if a file with the same name exists
-            use_filename: true, // Use original filename
-          },
-          (error, result) => {
-            if (error) return reject(error)
-            if (!result) return reject(new Error('No result returned from Cloudinary'))
-            resolve(result) // hanlde result
-          },
-        )
+        const options = {
+          resource_type: isVideo ? ('video' as const) : ('auto' as const), // auto-detect file type (image, raw, etc.)
+          public_id: `media/${file.filename.replace(/\.[^/.]+$/, '')}`, // Set custom file name without extension, and it also previxed the cleaned filename with media/
+          overwrite: false, // Do not overwrite if a file with the same name exists
+          use_filename: true, // Use original filename
+        }
+        const callback = (error?: unknown, result?: UploadApiResponse) => {
+          if (error) return reject(error)
+          if (!result) return reject(new Error('No result returned from Cloudinary'))
+          resolve(result) // hanlde result
+        }
+        // Videos go up in 20MB chunks: Cloudinary rejects single-request video uploads over 100MB.
+        const uploadStream = isVideo
+          ? cloudinary.uploader.upload_chunked_stream({ ...options, chunk_size: 20_000_000 }, callback)
+          : cloudinary.uploader.upload_stream(options, callback)
         uploadStream.end(file.buffer) // this line send the file to cloudinary it means entire file is already in memory and will be send whole thing at once not in chunk
       })
       file.filename = uploadResult.public_id // Use Cloudinary's public_id as the file's unique name
@@ -48,7 +51,11 @@ export const cloudinaryAdapter = () => ({
     try {
       // We remove the file extension from the filename and then target the file
       // inside the "media/" folder on Cloudinary (which we used as the upload path)
-      await cloudinary.uploader.destroy(`media/${filename.replace(/\.[^/.]+$/, '')}`)
+      // Cloudinary assumes images unless told otherwise, so videos need their resource type.
+      const isVideo = typeof doc?.mimeType === 'string' && doc.mimeType.startsWith('video/')
+      await cloudinary.uploader.destroy(`media/${filename.replace(/\.[^/.]+$/, '')}`, {
+        resource_type: isVideo ? 'video' : 'image',
+      })
     } catch (error) {
       // if something error occured we will catch the error and respond the error in console
       console.error('Cloudinary Delete Error:', error)
