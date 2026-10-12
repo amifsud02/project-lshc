@@ -5,7 +5,6 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import Navbar from '@/components/Hero/Navbar'
 import DynamicCountdown from '@/components/Countdown/CountdownTimerDynamic'
 import Lineup from '@/components/Fixture/Lineup/Lineup'
 import {
@@ -122,7 +121,6 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
   return (
     <header>
       <FixtureHeader>
-        <Navbar />
         <div className="parent fixtures-page">
           <HeaderContent>
             <Top>

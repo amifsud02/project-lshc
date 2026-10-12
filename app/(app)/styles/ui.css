@@ -154,7 +154,7 @@
   width: 100%;
   min-height: var(--control-height);
   padding: 12px 14px;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-input-border);
   border-radius: var(--radius-md);
   background: var(--color-paper);
   font-family: var(--font-sans);
@@ -229,7 +229,7 @@
 .field__hint {
   font-size: var(--text-sm);
   line-height: 1.5;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .field__error {
@@ -314,7 +314,7 @@
 .check__hint {
   display: block;
   font-size: var(--text-sm);
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .check-group {
@@ -343,7 +343,7 @@
   gap: 14px;
   align-items: flex-start;
   padding: 16px 18px;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-input-border);
   border-radius: var(--radius-lg);
   background: var(--color-paper);
   cursor: pointer;
@@ -402,7 +402,7 @@
 .choice__meta {
   font-weight: 500;
   font-size: 14px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .choice__price {
@@ -434,7 +434,7 @@
 
 .card--dashed {
   background: transparent;
-  border: 1.5px dashed var(--color-border);
+  border: 1.5px dashed var(--color-input-border);
 }
 
 .card--inset {
@@ -498,7 +498,7 @@
   font-weight: 700;
   line-height: 1.4;
   white-space: nowrap;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   background: rgba(90, 102, 122, 0.12);
 }
 
@@ -513,7 +513,7 @@
 .badge--ok { color: var(--color-success); background: var(--color-success-soft); }
 .badge--warn { color: var(--color-warning); background: var(--color-warning-soft); }
 .badge--bad { color: var(--color-danger); background: rgba(194, 52, 52, 0.1); }
-.badge--muted { color: var(--color-muted); background: rgba(90, 102, 122, 0.12); }
+.badge--muted { color: var(--color-text-muted); background: rgba(90, 102, 122, 0.12); }
 .badge--accent { color: var(--color-club); background: var(--color-accent-soft); }
 
 /* ---------- Headings and copy ---------- */
@@ -558,7 +558,7 @@
   max-width: 62ch;
   font-size: var(--text-base);
   line-height: var(--leading-body);
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 /* Long-form copy from the CMS. */
@@ -619,7 +619,7 @@
   margin: 4px 0 0;
   font-size: 14px;
   line-height: 1.55;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 /* ---------- Misc ---------- */
@@ -672,7 +672,7 @@
   font-size: var(--text-base);
 }
 
-.rows dt { color: var(--color-muted); }
+.rows dt { color: var(--color-text-muted); }
 .rows dd { margin: 0; text-align: right; font-weight: 600; color: var(--color-ink); }
 
 .rows > .rows__total {

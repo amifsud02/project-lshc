@@ -45,7 +45,7 @@
   padding: 18px 20px;
   background: #fff;
   border: 1px solid var(--color-rule-soft);
-  border-left: 4px solid var(--color-muted);
+  border-left: 4px solid var(--color-text-muted);
   border-radius: 12px;
   color: #32384a;
   line-height: 1.6;
@@ -79,7 +79,7 @@
 }
 
 .nursery__group-years {
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   font-size: 14px;
   font-weight: 500;
 }
@@ -115,7 +115,7 @@
 .nursery__session-note {
   display: block;
   font-size: 13px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .nursery__group-note {
@@ -123,7 +123,7 @@
   padding: 12px 18px;
   font-size: 14px;
   line-height: 1.55;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   background: var(--color-paper-soft);
   border-top: 1px solid var(--color-rule-soft);
 }
@@ -154,7 +154,7 @@
 
 .nursery__fee-label {
   margin: 8px 0 0;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   font-size: 15px;
 }
 
@@ -252,11 +252,11 @@
 .reg-step__placeholder {
   margin: 0;
   padding: 16px 18px;
-  border: 1.5px dashed var(--color-border);
+  border: 1.5px dashed var(--color-input-border);
   border-radius: var(--radius-lg);
   font-size: var(--text-base);
   line-height: 1.55;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .reg-step__single { margin-top: 16px; }
@@ -326,7 +326,7 @@
   margin: 6px 0 20px;
   padding: 8px 14px;
   background: #fff;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-input-border);
   border-radius: 10px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 15px;
@@ -353,5 +353,5 @@
   font-size: 15px;
 }
 
-.nursery-submitted__bank dt { color: var(--color-muted); }
+.nursery-submitted__bank dt { color: var(--color-text-muted); }
 .nursery-submitted__bank dd { margin: 0; font-weight: 600; color: var(--color-ink); }

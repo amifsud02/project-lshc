@@ -11,6 +11,7 @@ import AdSense, { type AdFormat } from '@/components/AdSense/AdSense'
 import CountdownTimer from '@/components/Countdown/CountdownTimerDynamic'
 import SponsorCard from '@/components/Sponsor/sponsorCard'
 import PlayerCard from '@/components/PlayerCard/PlayerCard'
+import playerCardStyles from '@/components/PlayerCard/PlayerCard.module.css'
 import NewsCard from '@/components/News/NewsCard/NewsCard'
 import { OtherArticles } from '@/components/StyledComponents'
 import Link from 'next/link'
@@ -211,15 +212,7 @@ const PlayerGridAdapter = async ({
   return (
     <section className="parent" style={{ padding: '2rem 0' }}>
       {heading ? <h2 className="title">{heading}</h2> : null}
-      <ul
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: '16px',
-          listStyle: 'none',
-          padding: 0,
-        }}
-      >
+      <ul className={playerCardStyles.playerGrid}>
         {docs.map((p: any) => (
           <PlayerCard
             key={p.id}

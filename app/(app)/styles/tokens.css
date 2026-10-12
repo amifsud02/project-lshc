@@ -25,13 +25,13 @@
 
   /* ---- Text ---- */
   --color-text: #32384a;           /* body copy */
-  --color-muted: #5a667a;          /* secondary copy, hints */
+  --color-text-muted: #5a667a;          /* secondary copy, hints */
   --color-faint: #8a93a6;          /* placeholders, optional markers */
 
   /* ---- Lines ---- */
   --color-rule: #dfe1e6;           /* section dividers */
   --color-rule-soft: #ebecef;      /* card borders, row dividers */
-  --color-border: #cdd3dd;         /* input and choice borders */
+  --color-input-border: #cdd3dd;         /* input and choice borders */
   --color-border-hover: #a3acbd;
 
   /* ---- Status ---- */
@@ -113,7 +113,7 @@
   --shop-canvas: var(--color-canvas);
   --shop-rule: var(--color-rule);
   --shop-rule-soft: var(--color-rule-soft);
-  --shop-muted: var(--color-muted);
+  --shop-muted: var(--color-text-muted);
   --shop-danger: var(--color-danger);
   --shop-gradient: var(--gradient-brand);
 }

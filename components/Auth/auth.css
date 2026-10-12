@@ -30,7 +30,7 @@
   margin: 0 0 24px;
   font-size: 14.5px;
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .auth-google {
@@ -41,7 +41,7 @@
   width: 100%;
   min-height: 48px;
   padding: 0 16px;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-input-border);
   border-radius: 10px;
   background: #fff;
   font-family: var(--font-sans);
@@ -90,14 +90,14 @@
   margin: 0;
   font-size: 13px;
   line-height: 1.55;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .auth-switch {
   margin: 22px 0 0;
   text-align: center;
   font-size: 14px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .auth-switch a {
@@ -141,7 +141,7 @@
   margin: 0;
   font-size: 14.5px;
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .auth-status__body strong {

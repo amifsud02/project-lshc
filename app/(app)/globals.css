@@ -64,9 +64,10 @@ html,
 body {
   font-family: var(--font-manrope), sans-serif;
   background-color: var(--background-color);
-  width: 100vw;
-  max-width: 100vw;
+  max-width: 100%;
+  /* clip, not hidden: hidden makes body a scroll container, which stops position: sticky working. */
   overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   position: relative;
 }
@@ -337,6 +338,26 @@ body::-webkit-scrollbar {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
+}
+
+/* Phones: two player cards per row, and the position tabs wrap instead of hiding off-screen. */
+@media (max-width: 599px) {
+  .playercard-showcase {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .tabs__wrapper .category {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    column-gap: 20px;
+  }
+
+  .tabs__wrapper .category .tablinks {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
 }
 
 .fr-page-section{

@@ -82,7 +82,7 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   background: var(--color-paper-soft);
   padding: 10px 8px;
   border-bottom: 1px solid var(--color-rule-soft);
@@ -128,7 +128,7 @@
 .penalties {
   font-size: 12px;
   font-weight: 400;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .mvp {
@@ -176,5 +176,5 @@
 .empty {
   text-align: center;
   padding: 20px 16px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }

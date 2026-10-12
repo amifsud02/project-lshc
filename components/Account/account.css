@@ -63,7 +63,7 @@
   width: 18px;
   height: 18px;
   flex: none;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   transition: color 0.2s ease;
 }
 
@@ -79,7 +79,7 @@
 
 .account-nav__link--active svg { color: var(--color-club); }
 
-.account-nav__link--signout { color: var(--color-muted); }
+.account-nav__link--signout { color: var(--color-text-muted); }
 
 @media (min-width: 900px) {
   .account-nav__link {
@@ -124,7 +124,7 @@
   max-width: 62ch;
   font-size: 14.5px;
   line-height: 1.65;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .account-lead a,
@@ -205,7 +205,7 @@
 .account-tile__label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 /* ---------- Tables ---------- */
@@ -226,7 +226,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
@@ -256,7 +256,7 @@
   display: block;
   margin-top: 3px;
   font-size: 12.5px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .account-table .btn {
@@ -305,7 +305,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-muted);
+    color: var(--color-text-muted);
     text-align: left;
   }
 
@@ -321,7 +321,7 @@
   background: var(--color-paper-soft);
   font-size: 14.5px;
   line-height: 1.6;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 .account-order-meta strong { color: var(--color-ink); }
@@ -340,7 +340,7 @@
   font-size: 14px;
 }
 
-.account-totals dt { color: var(--color-muted); font-weight: 600; }
+.account-totals dt { color: var(--color-text-muted); font-weight: 600; }
 .account-totals dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
 
 .account-totals div:last-child {
@@ -366,7 +366,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   margin-bottom: 4px;
 }
 
@@ -381,7 +381,7 @@
   padding: 0;
   list-style: none;
   font-size: 12.5px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }
 
 /* ---------- Forms ---------- */
@@ -431,5 +431,5 @@
 .account-empty__body {
   margin: 0 0 18px;
   font-size: 14px;
-  color: var(--color-muted);
+  color: var(--color-text-muted);
 }

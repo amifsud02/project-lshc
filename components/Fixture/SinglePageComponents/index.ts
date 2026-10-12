@@ -26,14 +26,16 @@ export const FixtureHeader = styled.header`
     }
 `;
 
+// The site navbar sits on top of this header, so the content starts below it.
 export const HeaderContent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 32px;
-    margin-top: 24px;
+    padding-top: 130px;
 
     @media (min-width: 768px) {
         gap: 48px;
+        padding-top: 150px;
     }
 `
 
