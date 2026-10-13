@@ -114,7 +114,26 @@ export const Orders: CollectionConfig = {
     { name: 'subtotal', type: 'number', required: true },
     { name: 'total', type: 'number', required: true },
     { name: 'currency', type: 'text', required: true, defaultValue: 'eur' },
-    { name: 'stripeCheckoutSessionId', type: 'text', admin: { readOnly: true } },
+    {
+      name: 'paymentProvider',
+      type: 'select',
+      defaultValue: 'club',
+      options: [
+        { label: 'Club Stripe', value: 'club' },
+        { label: 'MEMBRS', value: 'membrs' },
+      ],
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Memberships are paid through MEMBRS; everything else through the club shop.',
+      },
+    },
+    {
+      name: 'stripeCheckoutSessionId',
+      type: 'text',
+      index: true,
+      admin: { readOnly: true, description: 'For MEMBRS orders this is the MEMBRS checkout id.' },
+    },
     { name: 'stripePaymentIntentId', type: 'text', admin: { readOnly: true } },
     { name: 'paidAt', type: 'date', admin: { readOnly: true } },
   ],
