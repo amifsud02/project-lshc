@@ -3,7 +3,14 @@
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { createMembrsCheckout, getMembrsPlan, includedProductFieldName, includedProducts as getIncludedProducts, MembrsError } from '@/lib/membrs/client'
+import {
+  createMembrsCheckout,
+  getMembrsPlan,
+  includedProductFieldName,
+  includedProducts as getIncludedProducts,
+  MembrsError,
+  serviceFeeCents,
+} from '@/lib/membrs/client'
 import { checkMembrsCompatibility, sameText } from '@/lib/membrs/compatibility'
 import { canViewShop } from '@/lib/shop/access'
 import { getProductById } from '@/lib/shop/products'
@@ -117,7 +124,8 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
         }
       }),
       subtotal: product.price,
-      total: product.price,
+      // MEMBRS adds its service fee on top when the buyer pays it.
+      total: product.price + serviceFeeCents(plan),
       currency: 'eur',
     } as any,
   })

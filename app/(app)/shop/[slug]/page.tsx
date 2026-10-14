@@ -16,7 +16,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
-import { getMembrsPlan, includedProductField } from '@/lib/membrs/client'
+import { getMembrsPlan, includedProductField, serviceFeeCents } from '@/lib/membrs/client'
 import { checkMembrsCompatibility } from '@/lib/membrs/compatibility'
 import { getProductBySlug } from '@/lib/shop/products'
 import { requireShopCatalogueAccess } from '@/lib/shop/access'
@@ -50,11 +50,13 @@ export default async function ProductPage({ params }: { params: Params }) {
   // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member,
   // unless one of our included products already asks for it (e.g. a T-shirt size).
   let memberFields: CustomFieldDef[] = []
+  let serviceFee = 0
   const planId = product.type === 'membership' ? product.membership?.membrsPlanId : undefined
   if (planId) {
     try {
       const plan = await getMembrsPlan(planId, revalidate)
       memberFields = checkMembrsCompatibility(product, plan).pickers.map(includedProductField)
+      serviceFee = plan ? serviceFeeCents(plan) : 0
     } catch (err) {
       console.error('[membrs] failed to load plan for product page', err)
     }
@@ -123,7 +125,9 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </h2>
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-semibold">{formatPrice(product.price)}</span>
-                    <span className="text-sm text-muted-foreground">All in · VAT incl.</span>
+                    <span className="text-sm text-muted-foreground">
+                      {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} service fee · VAT incl.` : 'All in · VAT incl.'}
+                    </span>
                   </div>
                 </div>
 
@@ -150,7 +154,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 <Separator />
 
                 {product.type === 'membership' ? (
-                  <BuyMembershipForm product={product} memberFields={memberFields} />
+                  <BuyMembershipForm product={product} memberFields={memberFields} serviceFee={serviceFee} />
                 ) : (
                   <AddToCartButton product={product} />
                 )}

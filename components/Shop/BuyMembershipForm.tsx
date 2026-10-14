@@ -12,13 +12,15 @@ type Props = {
   product: ShopProduct
   /** Extra questions for every member, e.g. which variant of a product included with the MEMBRS plan. */
   memberFields?: CustomFieldDef[]
+  /** MEMBRS's service fee in cents when the buyer pays it, charged on top of the price. */
+  serviceFee?: number
 }
 
 /**
  * Memberships skip the cart: the buyer fills in each member's details here and goes straight
  * to payment, which MEMBRS takes. Every member then gets a MEMBRS account and digital card.
  */
-export default function BuyMembershipForm({ product, memberFields = [] }: Props) {
+export default function BuyMembershipForm({ product, memberFields = [], serviceFee = 0 }: Props) {
   const membersCovered = product.membership?.membersCovered ?? 1
   const fieldsFor = (i: number) =>
     i < membersCovered ? [...product.unitTemplates[i].customFields, ...memberFields] : product.unitTemplates[i].customFields
@@ -84,7 +86,7 @@ export default function BuyMembershipForm({ product, memberFields = [] }: Props)
           'Starting secure payment…'
         ) : (
           <>
-            Buy membership · {formatPrice(product.price)}
+            Buy membership · {formatPrice(product.price + serviceFee)}
             <ArrowRight />
           </>
         )}

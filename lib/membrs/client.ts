@@ -12,6 +12,8 @@ export type MembrsPlan = {
   id: number
   name: string
   price: string
+  /** Charged on top of `price` when MEMBRS's fee is paid by the buyer ("0.00" otherwise). */
+  service_fee?: string
   currency?: string
   members_covered: number
   products: Array<{ id: number; name: string; included: boolean; variants: MembrsVariant[] }>
@@ -20,7 +22,9 @@ export type MembrsCheckout = {
   id: string
   reference: string | null
   status: 'pending' | 'completed' | 'expired' | 'failed' | 'refunded'
+  /** What the buyer paid, including `service_fee`. */
   amount: string
+  service_fee?: string
   currency: string
   members: Array<{
     transaction_id: number
@@ -68,6 +72,9 @@ export const getMembrsPlans = (revalidate?: number) =>
 
 export const getMembrsPlan = async (planId: number, revalidate?: number): Promise<MembrsPlan | undefined> =>
   (await getMembrsPlans(revalidate)).find((plan) => plan.id === planId)
+
+/** The service fee in cents, 0 when the club pays MEMBRS's fee itself. */
+export const serviceFeeCents = (plan: MembrsPlan) => Math.round(Number(plan.service_fee ?? 0) * 100)
 
 /** Products that come free with the plan; each member has to pick a variant (e.g. their size). */
 export const includedProducts = (plan: MembrsPlan) => plan.products.filter((p) => p.included && p.variants.length > 0)
