@@ -16,7 +16,8 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
-import { getMembrsPlan, includedProductField, includedProducts } from '@/lib/membrs/client'
+import { getMembrsPlan, includedProductField } from '@/lib/membrs/client'
+import { checkMembrsCompatibility } from '@/lib/membrs/compatibility'
 import { getProductBySlug } from '@/lib/shop/products'
 import { requireShopCatalogueAccess } from '@/lib/shop/access'
 import { formatPrice, type CustomFieldDef } from '@/lib/shop/types'
@@ -46,13 +47,14 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const included = product.unitTemplates.filter((t) => t.productId !== product.id)
 
-  // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member.
+  // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member,
+  // unless one of our included products already asks for it (e.g. a T-shirt size).
   let memberFields: CustomFieldDef[] = []
   const planId = product.type === 'membership' ? product.membership?.membrsPlanId : undefined
   if (planId) {
     try {
       const plan = await getMembrsPlan(planId, revalidate)
-      memberFields = plan ? includedProducts(plan).map(includedProductField) : []
+      memberFields = checkMembrsCompatibility(product, plan).pickers.map(includedProductField)
     } catch (err) {
       console.error('[membrs] failed to load plan for product page', err)
     }

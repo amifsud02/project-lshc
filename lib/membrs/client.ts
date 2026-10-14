@@ -12,6 +12,7 @@ export type MembrsPlan = {
   id: number
   name: string
   price: string
+  currency?: string
   members_covered: number
   products: Array<{ id: number; name: string; included: boolean; variants: MembrsVariant[] }>
 }
@@ -62,8 +63,11 @@ async function membrs<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 /** Pass `revalidate` (seconds) to allow a cached copy, e.g. when rendering the product page. */
+export const getMembrsPlans = (revalidate?: number) =>
+  membrs<MembrsPlan[]>('/plans', revalidate ? { next: { revalidate } } : {})
+
 export const getMembrsPlan = async (planId: number, revalidate?: number): Promise<MembrsPlan | undefined> =>
-  (await membrs<MembrsPlan[]>('/plans', revalidate ? { next: { revalidate } } : {})).find((plan) => plan.id === planId)
+  (await getMembrsPlans(revalidate)).find((plan) => plan.id === planId)
 
 /** Products that come free with the plan; each member has to pick a variant (e.g. their size). */
 export const includedProducts = (plan: MembrsPlan) => plan.products.filter((p) => p.included && p.variants.length > 0)

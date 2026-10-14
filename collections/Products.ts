@@ -1,5 +1,6 @@
 import { slugField, type CollectionConfig } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
+import { checkMembrsPlan } from './hooks/checkMembrsPlan'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -13,6 +14,9 @@ export const Products: CollectionConfig = {
     delete: collectionWriteAccess('products'),
     read: () => true,
     update: collectionWriteAccess('products'),
+  },
+  hooks: {
+    beforeChange: [checkMembrsPlan],
   },
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -85,7 +89,7 @@ export const Products: CollectionConfig = {
           type: 'number',
           admin: {
             description:
-              'The MEMBRS plan this membership is sold as. Payment is taken by MEMBRS and each member gets a MEMBRS account and digital card. Its "members covered" must match.',
+              'The MEMBRS plan this membership is sold as. Payment is taken by MEMBRS and each member gets a MEMBRS account and digital card. An active membership is checked against the plan on save: price and members covered must match, and any size question on an included product must only offer sizes MEMBRS has. Products included with the plan that nothing here asks about get a picker per member.',
           },
         },
       ],

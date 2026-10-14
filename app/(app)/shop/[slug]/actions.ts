@@ -3,13 +3,8 @@
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import {
-  createMembrsCheckout,
-  getMembrsPlan,
-  includedProductFieldName,
-  includedProducts as getIncludedProducts,
-  MembrsError,
-} from '@/lib/membrs/client'
+import { createMembrsCheckout, getMembrsPlan, includedProductFieldName, includedProducts as getIncludedProducts, MembrsError } from '@/lib/membrs/client'
+import { checkMembrsCompatibility, sameText } from '@/lib/membrs/compatibility'
 import { canViewShop } from '@/lib/shop/access'
 import { getProductById } from '@/lib/shop/products'
 import type { CartUnit } from '@/lib/shop/types'
@@ -21,9 +16,6 @@ type Input = {
 }
 
 type Result = { ok: true; url: string } | { ok: false; error: string }
-
-const sameText = (a?: string | null, b?: string | null) =>
-  Boolean(a && b && a.trim().toLowerCase() === b.trim().toLowerCase())
 
 /**
  * Memberships are bought on their own, straight from the product page: we record the order
@@ -57,8 +49,9 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
     console.error('[membrs] failed to load plan', err)
     return { ok: false, error: 'Memberships are temporarily unavailable. Please try again shortly.' }
   }
-  if (!plan || plan.members_covered !== product.membership!.membersCovered) {
-    console.error('[membrs] plan missing or members covered mismatch', { planId, product: product.id })
+  const { errors } = checkMembrsCompatibility(product, plan)
+  if (!plan || errors.length) {
+    console.error('[membrs] membership does not match its MEMBRS plan', { planId, product: product.id, errors })
     return { ok: false, error: 'This membership is not available online yet.' }
   }
 
@@ -75,8 +68,8 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
 
     const products = []
     for (const membrsProduct of includedProducts) {
-      // The member picks the variant on the membership form; older setups ask for it (e.g. "M")
-      // on an included product of our own instead, so fall back to matching those answers.
+      // The variant is picked on the membership form, or by an included product of ours that
+      // asks for it (e.g. a T-shirt size "M").
       const picked = unit.values[includedProductFieldName(membrsProduct.id)]
       const matches = (v: (typeof membrsProduct.variants)[number]) =>
         picked ? sameText(picked, v.name) : answers.some((a) => sameText(a, v.name) || sameText(a, v.sku))
