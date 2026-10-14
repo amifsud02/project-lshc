@@ -45,7 +45,8 @@ export const MEMBER_FIELDS: CustomFieldDef[] = [
   { name: 'firstName', label: 'First name', kind: 'text', required: true },
   { name: 'lastName', label: 'Last name', kind: 'text', required: true },
   { name: 'mobile', label: 'Mobile number', kind: 'phone', required: true },
-  { name: 'email', label: 'Email', kind: 'email', required: false },
+  // Each member gets their own MEMBRS account and digital card, so everyone needs an email.
+  { name: 'email', label: 'Email', kind: 'email', required: true },
 ]
 
 /** Accepts local ("7912 3456") and international ("+356 7912 3456") numbers: 8–15 digits. */

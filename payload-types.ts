@@ -953,7 +953,7 @@ export interface Product {
    */
   price: number;
   /**
-   * Each member covered is asked for their name and mobile number at checkout. Anything in "Included products" is added to the order alongside the membership.
+   * Each member covered is asked for their name, mobile number and email at checkout. Anything in "Included products" is added to the order alongside the membership.
    */
   membership?: {
     /**
@@ -964,6 +964,10 @@ export interface Product {
      * 1 for a single membership, 2 for a couple.
      */
     membersCovered?: number | null;
+    /**
+     * The MEMBRS plan this membership is sold as. Payment is taken by MEMBRS and each member gets a MEMBRS account and digital card. Its "members covered" must match.
+     */
+    membrsPlanId?: number | null;
   };
   image?: (string | null) | Media;
   description?: {
@@ -1061,6 +1065,13 @@ export interface Order {
   subtotal: number;
   total: number;
   currency: string;
+  /**
+   * Memberships are paid through MEMBRS; everything else through the club shop.
+   */
+  paymentProvider?: ('club' | 'membrs') | null;
+  /**
+   * For MEMBRS orders this is the MEMBRS checkout id.
+   */
   stripeCheckoutSessionId?: string | null;
   stripePaymentIntentId?: string | null;
   paidAt?: string | null;
@@ -2319,6 +2330,7 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         season?: T;
         membersCovered?: T;
+        membrsPlanId?: T;
       };
   image?: T;
   description?: T;
@@ -2374,6 +2386,7 @@ export interface OrdersSelect<T extends boolean = true> {
   subtotal?: T;
   total?: T;
   currency?: T;
+  paymentProvider?: T;
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;
   paidAt?: T;

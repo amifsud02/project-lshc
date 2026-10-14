@@ -3,12 +3,14 @@ import PageHeader from '@/components/PageHeader/PageHeader'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import ClearCartOnMount from './ClearCartOnMount'
+import RefreshWhilePending from './RefreshWhilePending'
 import OrderReceipt, { type ReceiptLine } from '@/components/Shop/OrderReceipt'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
 export const metadata = { title: 'Order confirmed' }
+export const dynamic = 'force-dynamic'
 
 type SearchParams = Promise<{ session_id?: string }>
 
@@ -27,6 +29,9 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
     order = docs[0] ?? null
   }
 
+  // The order is only marked paid once the payment webhook arrives, which can lag the redirect.
+  const confirmed = order && order.status !== 'pending'
+
   const lines: ReceiptLine[] = (order?.items ?? []).map((it: any) => ({
     title: it.productTitle,
     quantity: it.quantity ?? 1,
@@ -39,13 +44,14 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
       <PageHeader pageName="Order confirmed" />
       <section className="parent">
         <ClearCartOnMount />
+        {!confirmed && <RefreshWhilePending />}
         <div className="mx-auto flex max-w-2xl flex-col gap-6">
           <p className="text-base text-muted-foreground">
             Your support means the world to the club. A receipt has been sent to your email — you
             can close this page safely.
           </p>
 
-          {order ? (
+          {confirmed ? (
             <OrderReceipt
               orderNumber={order.orderNumber}
               email={order.customerEmail}

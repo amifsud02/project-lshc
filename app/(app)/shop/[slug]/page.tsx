@@ -5,6 +5,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { Check, Home, ChevronRight, Lock, ShieldCheck } from 'lucide-react'
 import PageHeader from '@/components/PageHeader/PageHeader'
 import AddToCartButton from '@/components/Shop/AddToCartButton'
+import BuyMembershipForm from '@/components/Shop/BuyMembershipForm'
 import { Badge } from '@/components/ui/badge'
 import {
   Breadcrumb,
@@ -133,7 +134,11 @@ export default async function ProductPage({ params }: { params: Params }) {
 
                 <Separator />
 
-                <AddToCartButton product={product} />
+                {product.type === 'membership' ? (
+                  <BuyMembershipForm product={product} />
+                ) : (
+                  <AddToCartButton product={product} />
+                )}
 
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">

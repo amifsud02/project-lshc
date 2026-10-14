@@ -56,7 +56,7 @@ export const Products: CollectionConfig = {
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'membership',
         description:
-          'Each member covered is asked for their name and mobile number at checkout. Anything in "Included products" is added to the order alongside the membership.',
+          'Each member covered is asked for their name, mobile number and email at checkout. Anything in "Included products" is added to the order alongside the membership.',
       },
       fields: [
         {
@@ -78,6 +78,15 @@ export const Products: CollectionConfig = {
               admin: { width: '50%', description: '1 for a single membership, 2 for a couple.' },
             },
           ],
+        },
+        {
+          name: 'membrsPlanId',
+          label: 'MEMBRS plan ID',
+          type: 'number',
+          admin: {
+            description:
+              'The MEMBRS plan this membership is sold as. Payment is taken by MEMBRS and each member gets a MEMBRS account and digital card. Its "members covered" must match.',
+          },
         },
       ],
     },

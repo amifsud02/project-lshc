@@ -11,7 +11,7 @@ export type ShopProduct = {
   type: ProductType
   price: number
   /** Memberships only: the season sold and how many people one purchase covers. */
-  membership?: { season: string; membersCovered: number }
+  membership?: { season: string; membersCovered: number; membrsPlanId?: number }
   active: boolean
   imageUrl?: string
   description?: unknown
@@ -138,7 +138,11 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
     unitTemplates,
     membership:
       type === 'membership'
-        ? { season: String(doc.membership?.season ?? ''), membersCovered }
+        ? {
+            season: String(doc.membership?.season ?? ''),
+            membersCovered,
+            membrsPlanId: Number(doc.membership?.membrsPlanId) || undefined,
+          }
         : undefined,
   }
 }

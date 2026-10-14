@@ -7,6 +7,7 @@ import { getStripe } from '@/lib/stripe/server'
 import { getProductById } from '@/lib/shop/products'
 import { hasBundleItems, isValidPhone, type CartItem } from '@/lib/shop/types'
 import { canViewShop } from '@/lib/shop/access'
+import { validateUnit } from '@/lib/shop/validation'
 
 type Buyer = { email: string; name: string; phone: string }
 
@@ -56,7 +57,6 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
   }> = []
 
   let subtotal = 0
-  let hasMembership = false
 
   for (const item of items) {
     const product = await getProductById(item.productId)
@@ -64,9 +64,12 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
       return { ok: false, error: `"${item.productTitle}" is no longer available.` }
     }
 
+    if (product.type === 'membership') {
+      // Memberships are bought on their own product page and paid through MEMBRS.
+      return { ok: false, error: `"${product.title}" is bought on its own. Please remove it from your cart and use "Buy membership" on its page.` }
+    }
+
     if (hasBundleItems(product.type)) {
-      const isMembership = product.type === 'membership'
-      if (isMembership) hasMembership = true
       // Units come from the browser, so check them against the product as it is
       // now: a stale or tampered cart must not skip any member's details.
       const unitsPerQty = product.unitTemplates.length
@@ -74,8 +77,8 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
         return { ok: false, error: `"${product.title}" has changed since it was added. Please remove it and add it again.` }
       }
       for (let q = 0; q < item.quantity; q++) {
-        // The first unit of each purchase carries the price; a couple membership's
-        // second member and every included product hang off it at 0.
+        // The first unit of each purchase carries the price; every included
+        // product hangs off it at 0.
         let priced = false
         for (let u = 0; u < unitsPerQty; u++) {
           const template = product.unitTemplates[u]
@@ -92,7 +95,6 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
             productTitle: template.productTitle,
             product: template.productId,
             bundleParentLineId: carriesPrice ? undefined : item.lineId,
-            membershipSeason: isMembership && isBundleSelf ? product.membership?.season : undefined,
             quantity: 1,
             unitPrice: carriesPrice ? product.price : 0,
             customFieldValues: unit.values ?? {},
@@ -134,9 +136,6 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
     }
   }
 
-  if (hasMembership && !buyer.phone) {
-    return { ok: false, error: 'A mobile number is required when buying a membership.' }
-  }
   if (buyer.phone && !isValidPhone(buyer.phone)) {
     return { ok: false, error: 'Please enter a valid mobile number.' }
   }
@@ -190,23 +189,4 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
   }
 
   return { ok: true, url: session.url }
-}
-
-function validateUnit(unit: {
-  customFields: { name: string; label: string; kind: string; required: boolean }[]
-  values: Record<string, string>
-}): string | null {
-  for (const field of unit.customFields) {
-    const value = unit.values?.[field.name]
-    if (field.required && (!value || String(value).trim() === '')) {
-      return `missing "${field.label}"`
-    }
-    if (value && field.kind === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return `invalid email in "${field.label}"`
-    }
-    if (value && field.kind === 'phone' && !isValidPhone(value)) {
-      return `invalid phone number in "${field.label}"`
-    }
-  }
-  return null
 }
