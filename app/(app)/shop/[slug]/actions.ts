@@ -3,7 +3,13 @@
 import { headers } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { createMembrsCheckout, getMembrsPlan, MembrsError } from '@/lib/membrs/client'
+import {
+  createMembrsCheckout,
+  getMembrsPlan,
+  includedProductFieldName,
+  includedProducts as getIncludedProducts,
+  MembrsError,
+} from '@/lib/membrs/client'
 import { canViewShop } from '@/lib/shop/access'
 import { getProductById } from '@/lib/shop/products'
 import type { CartUnit } from '@/lib/shop/types'
@@ -60,7 +66,7 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
   const memberCount = plan.members_covered
   const memberUnits = units.slice(0, memberCount)
   const extraUnits = units.slice(memberCount)
-  const includedProducts = plan.products.filter((p) => p.included && p.variants.length > 0)
+  const includedProducts = getIncludedProducts(plan)
 
   const members = []
   for (const [i, unit] of memberUnits.entries()) {
@@ -69,8 +75,12 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
 
     const products = []
     for (const membrsProduct of includedProducts) {
-      // Match the size picked on our site (e.g. "M") to the MEMBRS variant.
-      const variant = membrsProduct.variants.find((v) => answers.some((a) => sameText(a, v.name) || sameText(a, v.sku)))
+      // The member picks the variant on the membership form; older setups ask for it (e.g. "M")
+      // on an included product of our own instead, so fall back to matching those answers.
+      const picked = unit.values[includedProductFieldName(membrsProduct.id)]
+      const matches = (v: (typeof membrsProduct.variants)[number]) =>
+        picked ? sameText(picked, v.name) : answers.some((a) => sameText(a, v.name) || sameText(a, v.sku))
+      const variant = membrsProduct.variants.find(matches)
       if (!variant) {
         return { ok: false, error: `Choose a ${membrsProduct.name} option for ${firstName || `member ${i + 1}`}.` }
       }

@@ -16,9 +16,10 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
+import { getMembrsPlan, includedProductField, includedProducts } from '@/lib/membrs/client'
 import { getProductBySlug } from '@/lib/shop/products'
 import { requireShopCatalogueAccess } from '@/lib/shop/access'
-import { formatPrice } from '@/lib/shop/types'
+import { formatPrice, type CustomFieldDef } from '@/lib/shop/types'
 
 export const revalidate = 60
 
@@ -44,6 +45,18 @@ export default async function ProductPage({ params }: { params: Params }) {
   if (!product || !product.active) notFound()
 
   const included = product.unitTemplates.filter((t) => t.productId !== product.id)
+
+  // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member.
+  let memberFields: CustomFieldDef[] = []
+  const planId = product.type === 'membership' ? product.membership?.membrsPlanId : undefined
+  if (planId) {
+    try {
+      const plan = await getMembrsPlan(planId, revalidate)
+      memberFields = plan ? includedProducts(plan).map(includedProductField) : []
+    } catch (err) {
+      console.error('[membrs] failed to load plan for product page', err)
+    }
+  }
 
   return (
     <>
@@ -135,7 +148,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 <Separator />
 
                 {product.type === 'membership' ? (
-                  <BuyMembershipForm product={product} />
+                  <BuyMembershipForm product={product} memberFields={memberFields} />
                 ) : (
                   <AddToCartButton product={product} />
                 )}

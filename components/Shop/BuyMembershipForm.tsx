@@ -6,20 +6,36 @@ import { buyMembership } from '@/app/(app)/shop/[slug]/actions'
 import { Button } from '@/components/ui/button'
 import { UnitForm } from '@/components/Shop/UnitFields'
 import type { ShopProduct } from '@/lib/shop/products'
-import { formatPrice } from '@/lib/shop/types'
+import { formatPrice, type CustomFieldDef } from '@/lib/shop/types'
 
-type Props = { product: ShopProduct }
+type Props = {
+  product: ShopProduct
+  /** Extra questions for every member, e.g. which variant of a product included with the MEMBRS plan. */
+  memberFields?: CustomFieldDef[]
+}
 
 /**
  * Memberships skip the cart: the buyer fills in each member's details here and goes straight
  * to payment, which MEMBRS takes. Every member then gets a MEMBRS account and digital card.
  */
-export default function BuyMembershipForm({ product }: Props) {
-  const [values, setValues] = useState<Record<string, string>[]>(() => product.unitTemplates.map(() => ({})))
+export default function BuyMembershipForm({ product, memberFields = [] }: Props) {
+  const membersCovered = product.membership?.membersCovered ?? 1
+  const fieldsFor = (i: number) =>
+    i < membersCovered ? [...product.unitTemplates[i].customFields, ...memberFields] : product.unitTemplates[i].customFields
+
+  // Questions with a single answer (e.g. a one-size pack) are filled in already.
+  const [values, setValues] = useState<Record<string, string>[]>(() =>
+    product.unitTemplates.map((_, i) =>
+      Object.fromEntries(
+        fieldsFor(i)
+          .filter((f) => f.kind === 'select' && f.options?.length === 1)
+          .map((f) => [f.name, f.options![0].value]),
+      ),
+    ),
+  )
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  const membersCovered = product.membership?.membersCovered ?? 1
   // Included products follow the members in order, e.g. one T-shirt per member.
   const titleFor = (i: number) =>
     i >= membersCovered && membersCovered > 1
@@ -47,12 +63,12 @@ export default function BuyMembershipForm({ product }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      {product.unitTemplates.map((template, i) => (
+      {product.unitTemplates.map((_, i) => (
         <UnitForm
           key={i}
           index={0}
           total={1}
-          unit={{ productTitle: titleFor(i), customFields: template.customFields, values: values[i] }}
+          unit={{ productTitle: titleFor(i), customFields: fieldsFor(i), values: values[i] }}
           onField={(field, value) => onField(i, field, value)}
         />
       ))}

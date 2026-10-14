@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import type { CustomFieldDef } from '@/lib/shop/types'
 
 /**
  * MEMBRS sells and manages the club's memberships: our site collects each member's details,
@@ -46,8 +47,8 @@ async function membrs<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!baseUrl || !apiKey) throw new Error('MEMBRS_API_URL and MEMBRS_API_KEY must be set')
 
   const res = await fetch(`${baseUrl.replace(/\/$/, '')}/api/v1${path}`, {
+    cache: init.next ? undefined : 'no-store',
     ...init,
-    cache: 'no-store',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       Accept: 'application/json',
@@ -60,8 +61,23 @@ async function membrs<T>(path: string, init: RequestInit = {}): Promise<T> {
   return body.data as T
 }
 
-export const getMembrsPlan = async (planId: number): Promise<MembrsPlan | undefined> =>
-  (await membrs<MembrsPlan[]>('/plans')).find((plan) => plan.id === planId)
+/** Pass `revalidate` (seconds) to allow a cached copy, e.g. when rendering the product page. */
+export const getMembrsPlan = async (planId: number, revalidate?: number): Promise<MembrsPlan | undefined> =>
+  (await membrs<MembrsPlan[]>('/plans', revalidate ? { next: { revalidate } } : {})).find((plan) => plan.id === planId)
+
+/** Products that come free with the plan; each member has to pick a variant (e.g. their size). */
+export const includedProducts = (plan: MembrsPlan) => plan.products.filter((p) => p.included && p.variants.length > 0)
+
+/** The form field where a member picks their variant of an included product; the answer is the variant name. */
+export const includedProductFieldName = (productId: number) => `membrsProduct${productId}`
+
+export const includedProductField = (product: MembrsPlan['products'][number]): CustomFieldDef => ({
+  name: includedProductFieldName(product.id),
+  label: product.name,
+  kind: 'select',
+  required: true,
+  options: product.variants.map((v) => ({ value: v.name, label: v.in_stock ? v.name : `${v.name} (sold out)` })),
+})
 
 export const createMembrsCheckout = (input: {
   plan_id: number
