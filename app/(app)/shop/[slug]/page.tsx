@@ -126,7 +126,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-semibold">{formatPrice(product.price)}</span>
                     <span className="text-sm text-muted-foreground">
-                      {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} service fee · VAT incl.` : 'All in · VAT incl.'}
+                      {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} platform fee · VAT incl.` : 'All in · VAT incl.'}
                     </span>
                   </div>
                 </div>

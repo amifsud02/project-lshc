@@ -12,7 +12,7 @@ type Props = {
   product: ShopProduct
   /** Extra questions for every member, e.g. which variant of a product included with the MEMBRS plan. */
   memberFields?: CustomFieldDef[]
-  /** MEMBRS's service fee in cents when the buyer pays it, charged on top of the price. */
+  /** MEMBRS's platform fee in cents when the buyer pays it, charged on top of the price. */
   serviceFee?: number
 }
 

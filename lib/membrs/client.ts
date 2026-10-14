@@ -73,7 +73,7 @@ export const getMembrsPlans = (revalidate?: number) =>
 export const getMembrsPlan = async (planId: number, revalidate?: number): Promise<MembrsPlan | undefined> =>
   (await getMembrsPlans(revalidate)).find((plan) => plan.id === planId)
 
-/** The service fee in cents, 0 when the club pays MEMBRS's fee itself. */
+/** The platform fee the buyer pays on top, in cents; 0 when the club pays it from its sales. */
 export const serviceFeeCents = (plan: MembrsPlan) => Math.round(Number(plan.service_fee ?? 0) * 100)
 
 /** Products that come free with the plan; each member has to pick a variant (e.g. their size). */

@@ -124,7 +124,7 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
         }
       }),
       subtotal: product.price,
-      // MEMBRS adds its service fee on top when the buyer pays it.
+      // MEMBRS adds its platform fee on top when the buyer pays it.
       total: product.price + serviceFeeCents(plan),
       currency: 'eur',
     } as any,
