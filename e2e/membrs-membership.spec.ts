@@ -4,8 +4,8 @@ import path from 'node:path'
 
 /**
  * End-to-end check of selling a membership through MEMBRS, against locally running apps:
- *   club site (CLUB_URL, default http://localhost:3001) and MEMBRS (MEMBRS_URL, default http://localhost:8000),
- * with MEMBRS using Stripe test keys and `stripe listen --forward-to <MEMBRS_URL>/webhooks/stripe` running.
+ *   club site (CLUB_URL, default http://localhost:3001) and MEMBRS (MEMBRS_API_URL, default http://localhost:8000),
+ * with MEMBRS using Stripe test keys and `stripe listen --forward-to <MEMBRS_API_URL>/webhooks/stripe` running.
  *
  * Buys a couple membership with T-shirts on the club site, pays on Stripe Checkout with Stripe's
  * test card, then checks the order came back paid and a member can open their MEMBRS account.
@@ -13,7 +13,7 @@ import path from 'node:path'
  */
 
 const CLUB_URL = process.env.CLUB_URL ?? 'http://localhost:3001'
-const MEMBRS_URL = process.env.MEMBRS_URL ?? 'http://localhost:8000'
+const MEMBRS_API_URL = process.env.MEMBRS_API_URL ?? 'http://localhost:8000'
 const MEMBRS_LOG = process.env.MEMBRS_LOG // MEMBRS laravel.log, where MAIL_MAILER=log writes emails
 const PRODUCT_SLUG = process.env.PRODUCT_SLUG ?? 'couple-membership-with-merchandise-2026-2027'
 const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR ?? path.join(__dirname, '..', 'test-results', 'membrs-flow')
@@ -134,7 +134,7 @@ test('a couple membership bought on the club site is paid through MEMBRS', async
   await page.locator('#email').fill(members[0].email)
   await page.locator('#password').fill('Members-Test-2026')
   await page.getByRole('button', { name: /sign in/i }).click()
-  await page.waitForURL(new RegExp(`^${MEMBRS_URL}/customer`), { timeout: 30_000 })
+  await page.waitForURL(new RegExp(`^${MEMBRS_API_URL}/customer`), { timeout: 30_000 })
   await expect(page.getByText(/Couple Membership with Merchandise/).first()).toBeVisible()
   await shot(page, 'membrs-member-dashboard')
 
@@ -143,16 +143,16 @@ test('a couple membership bought on the club site is paid through MEMBRS', async
   const orgPassword = process.env.MEMBRS_ORG_PASSWORD
   test.skip(!orgEmail || !orgPassword, 'Set MEMBRS_ORG_EMAIL / MEMBRS_ORG_PASSWORD to check the organisation panel')
   const admin = await page.context().browser()!.newPage({ viewport: { width: 1280, height: 900 } })
-  await admin.goto(`${MEMBRS_URL}/login`)
+  await admin.goto(`${MEMBRS_API_URL}/login`)
   await admin.locator('#email').fill(orgEmail!)
   await admin.locator('#password').fill(orgPassword!)
   await admin.getByRole('button', { name: /sign in/i }).click()
-  await admin.waitForURL(new RegExp(`^${MEMBRS_URL}/organisation`), { timeout: 30_000 })
-  await admin.goto(`${MEMBRS_URL}/organisation/transactions`)
+  await admin.waitForURL(new RegExp(`^${MEMBRS_API_URL}/organisation`), { timeout: 30_000 })
+  await admin.goto(`${MEMBRS_API_URL}/organisation/transactions`)
   const name = (m: (typeof members)[number]) => `${m.firstName} ${m.lastName}`
   await expect(admin.getByRole('row', { name: new RegExp(`${name(members[1])}.*completed`) }).first()).toBeVisible({ timeout: 30_000 })
   await shot(admin, 'membrs-organisation-sales')
-  await admin.goto(`${MEMBRS_URL}/organisation/integrations`)
+  await admin.goto(`${MEMBRS_API_URL}/organisation/integrations`)
   await expect(admin.getByText('Club website (local)')).toBeVisible()
   await shot(admin, 'membrs-organisation-integrations')
   await admin.close()

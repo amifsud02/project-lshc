@@ -41,9 +41,9 @@ export class MembrsError extends Error {
 }
 
 async function membrs<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const baseUrl = process.env.MEMBRS_URL
+  const baseUrl = process.env.MEMBRS_API_URL
   const apiKey = process.env.MEMBRS_API_KEY
-  if (!baseUrl || !apiKey) throw new Error('MEMBRS_URL and MEMBRS_API_KEY must be set')
+  if (!baseUrl || !apiKey) throw new Error('MEMBRS_API_URL and MEMBRS_API_KEY must be set')
 
   const res = await fetch(`${baseUrl.replace(/\/$/, '')}/api/v1${path}`, {
     ...init,
