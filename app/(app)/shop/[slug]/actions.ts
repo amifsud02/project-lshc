@@ -69,8 +69,11 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
 
     const products = []
     for (const membrsProduct of includedProducts) {
-      // Match the size picked on our site (e.g. "M") to the MEMBRS variant.
-      const variant = membrsProduct.variants.find((v) => answers.some((a) => sameText(a, v.name) || sameText(a, v.sku)))
+      // Match the size picked on our site (e.g. "M") to the MEMBRS variant. A product with a
+      // single variant (e.g. a merchandise pack) has nothing to choose, so it needs no answer.
+      const variant =
+        membrsProduct.variants.find((v) => answers.some((a) => sameText(a, v.name) || sameText(a, v.sku))) ??
+        (membrsProduct.variants.length === 1 ? membrsProduct.variants[0] : undefined)
       if (!variant) {
         return { ok: false, error: `Choose a ${membrsProduct.name} option for ${firstName || `member ${i + 1}`}.` }
       }
