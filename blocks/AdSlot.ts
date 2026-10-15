@@ -7,6 +7,11 @@ export const AdSlotBlock: Block = {
     singular: 'Ad Slot',
     plural: 'Ad Slots',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/adslot.webp', alt: 'A reserved Google AdSense unit across the page' },
+    },
+  },
   fields: [
     {
       name: 'adSlot',

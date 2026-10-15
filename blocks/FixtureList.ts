@@ -7,6 +7,11 @@ export const FixtureListBlock: Block = {
     singular: 'Fixture List',
     plural: 'Fixture Lists',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/fixturelist.webp', alt: 'Upcoming match cards with Men, Women and Youth tabs' },
+    },
+  },
   fields: [
     {
       name: 'layout',

@@ -13,6 +13,11 @@ export const TabBlock: Block = {
     singular: 'Tabs',
     plural: 'Tab Groups',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/tab.webp', alt: 'Tab strip switching between other blocks, here showing results' },
+    },
+  },
   fields: [
     {
       name: 'tabs',

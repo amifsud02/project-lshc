@@ -7,6 +7,11 @@ export const NewsSectionBlock: Block = {
     singular: 'News Section',
     plural: 'News Sections',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/newssection.webp', alt: 'Latest news cards in a two-column grid with a View all link' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text', defaultValue: 'Latest News' },
     {

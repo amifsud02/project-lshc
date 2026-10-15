@@ -7,6 +7,11 @@ export const StandingsBlock: Block = {
     singular: 'Standings Table',
     plural: 'Standings Tables',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/standings.webp', alt: 'League table with position, team, games, wins, draws, losses, goal difference and points' },
+    },
+  },
   fields: [
     { name: 'showTitle', type: 'checkbox', defaultValue: true },
     { name: 'title', type: 'text' },

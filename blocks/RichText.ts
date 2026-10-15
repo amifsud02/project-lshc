@@ -7,6 +7,11 @@ export const RichTextBlock: Block = {
     singular: 'Rich Text',
     plural: 'Rich Text Blocks',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/richtext.webp', alt: 'Heading and paragraphs of formatted text' },
+    },
+  },
   fields: [
     { name: 'content', type: 'richText', required: true },
     {

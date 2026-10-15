@@ -7,6 +7,11 @@ export const PartnersBlock: Block = {
     singular: 'Partners Strip',
     plural: 'Partners Strips',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/partners.webp', alt: 'Row of partner logos under an Our Partners heading' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text', defaultValue: 'Our Partners' },
     {

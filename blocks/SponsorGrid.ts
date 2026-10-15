@@ -7,6 +7,11 @@ export const SponsorGridBlock: Block = {
     singular: 'Sponsor Grid',
     plural: 'Sponsor Grids',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/sponsorgrid.webp', alt: 'Sponsor cards with logo, name and a More button' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text', defaultValue: 'Our Sponsors' },
     {

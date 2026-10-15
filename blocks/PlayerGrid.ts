@@ -7,6 +7,11 @@ export const PlayerGridBlock: Block = {
     singular: 'Player Grid',
     plural: 'Player Grids',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/playergrid.webp', alt: 'Grid of player cards showing number and name' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text' },
     {

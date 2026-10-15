@@ -7,6 +7,11 @@ export const JoinUsBlock: Block = {
     singular: 'Join Us CTA',
     plural: 'Join Us CTAs',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/joinus.webp', alt: 'Call-to-action band with a heading, short text and a button over a photo' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text', required: true },
     { name: 'body', type: 'textarea' },

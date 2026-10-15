@@ -7,6 +7,11 @@ export const HeroBlock: Block = {
     singular: 'Hero',
     plural: 'Heroes',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/hero.webp', alt: 'Full-screen photo slider with the club title and social links' },
+    },
+  },
   fields: [
     {
       name: 'title',

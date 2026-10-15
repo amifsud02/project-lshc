@@ -7,6 +7,11 @@ export const CarouselBlock: Block = {
     singular: 'Carousel',
     plural: 'Carousels',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/carousel.webp', alt: 'Full-width image slider with a title, description and button on each slide' },
+    },
+  },
   fields: [
     {
       name: 'items',

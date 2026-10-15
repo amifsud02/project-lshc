@@ -7,6 +7,11 @@ export const PageHeaderBlock: Block = {
     singular: 'Page Header',
     plural: 'Page Headers',
   },
+  admin: {
+    images: {
+      thumbnail: { url: '/blocks/pageheader.webp', alt: 'Blue banner with the page name' },
+    },
+  },
   fields: [
     {
       name: 'variant',
