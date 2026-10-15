@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env*
+.vercel
+test-results
+playwright-report
+e2e
+tsconfig.tsbuildinfo
