@@ -27,6 +27,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { SeedPages as SeedPages_cd3154deb36673600052bac05f1ed156 } from '@/components/admin/SeedPages'
 import { LineupRowLabel as LineupRowLabel_56d562825069ba798bf2defdb9848a17 } from '@/components/admin/LineupRowLabel'
 import { MhaFixturesSync as MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d } from '@/components/admin/MhaFixturesSync'
+import { MatchSummariesAction as MatchSummariesAction_af7fb5cb323b2bd56f9c15aa5d4eb1aa } from '@/components/admin/MatchSummariesAction'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { GoogleSignInButton as GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6 } from '@/components/admin/GoogleSignInButton'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -62,6 +63,7 @@ export const importMap = {
   "@/components/admin/SeedPages#SeedPages": SeedPages_cd3154deb36673600052bac05f1ed156,
   "@/components/admin/LineupRowLabel#LineupRowLabel": LineupRowLabel_56d562825069ba798bf2defdb9848a17,
   "@/components/admin/MhaFixturesSync#MhaFixturesSync": MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d,
+  "@/components/admin/MatchSummariesAction#MatchSummariesAction": MatchSummariesAction_af7fb5cb323b2bd56f9c15aa5d4eb1aa,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/components/admin/GoogleSignInButton#GoogleSignInButton": GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1

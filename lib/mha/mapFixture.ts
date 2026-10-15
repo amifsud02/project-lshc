@@ -112,7 +112,7 @@ export const competitionNameFor = (mha: Pick<MhaFixture, 'competitionName' | 'ca
   return `${label} ${name}`
 }
 
-const cleanTeamName = (name: string) => String(name ?? '').trim().replace(/\.+$/, '').trim()
+export const cleanTeamName = (name: string) => String(name ?? '').trim().replace(/\.+$/, '').trim()
 
 const teamRef = (id: string, name: string, club: string): MhaTeamRef | null => {
   const cleaned = cleanTeamName(name)

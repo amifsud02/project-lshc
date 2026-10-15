@@ -3,7 +3,7 @@ import type { Payload } from 'payload'
 import { z } from 'zod'
 
 import { fetchMhaFixtures, fetchMhaMatchReport, type MhaFixture, type MhaMatchReport } from '@/lib/mha/client'
-import { competitionNameFor, MHA_CATEGORY_LABELS } from '@/lib/mha/mapFixture'
+import { cleanTeamName, competitionNameFor, MHA_CATEGORY_LABELS } from '@/lib/mha/mapFixture'
 import { MHA_CLUB_NAME } from '@/lib/mha/syncFixtures'
 import { p, richText } from '@/lib/seed/lexical'
 import { slugify } from '@/lib/utils/fixtureSlug'
@@ -39,7 +39,11 @@ export type MatchSummaryItem = {
   reason?: string
   title?: string
   writer?: 'gemini' | 'template'
+  /** The post written, or the one the match already had when skipped. */
   newsId?: string | number
+  /** Dry runs only: the text that would be posted. */
+  description?: string
+  paragraphs?: string[]
 }
 
 export type MatchSummaryResult = {
@@ -52,8 +56,11 @@ export type MatchSummaryResult = {
 type Options = {
   dryRun?: boolean
   lookbackDays?: number
-  /** Only this match, e.g. "MHA-FIX-2026-00457". Ignores the date window and existing posts check. */
-  matchId?: string
+  /**
+   * Only these matches, e.g. ["MHA-FIX-2026-00457"], whatever their date. Each is
+   * reported back, including those skipped as unfinished or already posted.
+   */
+  matchIds?: string[]
   /** Epoch ms after which no new match is started. */
   deadline?: number
   now?: Date
@@ -131,8 +138,8 @@ const teamSheet = (report: MhaMatchReport, side: Side) => {
 }
 
 export const matchFacts = (fixture: MhaFixture, report: MhaMatchReport) => {
-  const homeTeam = report.homeTeam || fixture.homeTeam
-  const awayTeam = report.awayTeam || fixture.awayTeam
+  const homeTeam = cleanTeamName(report.homeTeam || fixture.homeTeam)
+  const awayTeam = cleanTeamName(report.awayTeam || fixture.awayTeam)
   const ourSides: Side[] = [
     ...(isOurs(fixture.homeClub) ? (['home'] as const) : []),
     ...(isOurs(fixture.awayClub) ? (['away'] as const) : []),
@@ -293,8 +300,9 @@ const fallbackImageId = async (payload: Payload) => {
   return image && typeof image === 'object' ? image.id : (image ?? null)
 }
 
+/** Match id -> id of the post it already has. */
 const postedMatchIds = async (payload: Payload, matchIds: string[]) => {
-  if (!matchIds.length) return new Set<string>()
+  if (!matchIds.length) return new Map<string, string | number>()
   const existing = await payload.find({
     collection: 'news',
     where: { mhaMatchId: { in: matchIds } },
@@ -305,30 +313,51 @@ const postedMatchIds = async (payload: Payload, matchIds: string[]) => {
     overrideAccess: true,
     select: { mhaMatchId: true },
   })
-  return new Set(existing.docs.map((d) => d.mhaMatchId).filter((id): id is string => Boolean(id)))
+  return new Map(existing.docs.flatMap((d) => (d.mhaMatchId ? [[d.mhaMatchId, d.id] as const] : [])))
 }
 
+const describe = (f: MhaFixture) => ({ matchId: f.matchId, game: `${cleanTeamName(f.homeTeam)} v ${cleanTeamName(f.awayTeam)}`, date: f.date })
+
 /**
- * Finds La Salle matches that finished in the last `lookbackDays` and have no post
- * yet, and writes one for each whose MHA report is out.
+ * Finds La Salle matches that finished in the last `lookbackDays` (or the given
+ * `matchIds`) and have no post yet, and writes one for each whose MHA report is out.
  */
 export const createMatchSummaryPosts = async (
   payload: Payload,
-  { dryRun = false, lookbackDays = DEFAULT_LOOKBACK_DAYS, matchId, deadline, now = new Date() }: Options = {},
+  { dryRun = false, lookbackDays = DEFAULT_LOOKBACK_DAYS, matchIds, deadline, now = new Date() }: Options = {},
 ): Promise<MatchSummaryResult> => {
   const { fixtures } = await fetchMhaFixtures()
   const since = maltaDate(new Date(now.getTime() - lookbackDays * 86_400_000))
   const today = maltaDate(now)
 
   const ours = fixtures.filter((f) => isOurs(f.homeClub) || isOurs(f.awayClub))
-  const candidates = matchId
-    ? ours.filter((f) => f.matchId === matchId)
-    : ours.filter((f) => isFinished(f) && f.date >= since && f.date <= today)
-
-  const posted = matchId ? new Set<string>() : await postedMatchIds(payload, candidates.map((f) => f.matchId))
-  const todo = candidates.filter((f) => !posted.has(f.matchId)).sort((a, b) => a.date.localeCompare(b.date))
-
   const result: MatchSummaryResult = { dryRun, remaining: 0, items: [] }
+
+  let candidates: MhaFixture[]
+  if (matchIds) {
+    // Picked by hand: say why each one that cannot be written is left out.
+    candidates = []
+    for (const id of matchIds) {
+      const fixture = ours.find((f) => f.matchId === id)
+      if (!fixture) {
+        result.items.push({ matchId: id, game: id, date: '', action: 'skipped', reason: 'Not a La Salle match in the MHA feed' })
+      } else if (!isFinished(fixture)) {
+        result.items.push({ ...describe(fixture), action: 'skipped', reason: 'Match not finished yet' })
+      } else {
+        candidates.push(fixture)
+      }
+    }
+  } else {
+    candidates = ours.filter((f) => isFinished(f) && f.date >= since && f.date <= today)
+  }
+
+  const posted = await postedMatchIds(payload, candidates.map((f) => f.matchId))
+  if (matchIds) {
+    for (const f of candidates.filter((c) => posted.has(c.matchId))) {
+      result.items.push({ ...describe(f), action: 'skipped', reason: 'Already has a post', newsId: posted.get(f.matchId) })
+    }
+  }
+  const todo = candidates.filter((f) => !posted.has(f.matchId)).sort((a, b) => a.date.localeCompare(b.date))
   if (!todo.length) return result
 
   const categoryId = await matchReportsCategoryId(payload, dryRun)
@@ -341,7 +370,7 @@ export const createMatchSummaryPosts = async (
       break
     }
 
-    const base = { matchId: fixture.matchId, game: `${fixture.homeTeam} v ${fixture.awayTeam}`, date: fixture.date }
+    const base = describe(fixture)
     try {
       const report = await fetchMhaMatchReport(fixture.matchId)
       if (!report) {
@@ -353,7 +382,14 @@ export const createMatchSummaryPosts = async (
       const summary = await writeSummary(facts, payload)
 
       if (dryRun) {
-        result.items.push({ ...base, action: 'created', title: summary.title, writer: summary.writer, reason: summary.paragraphs.join('\n\n') })
+        result.items.push({
+          ...base,
+          action: 'created',
+          title: summary.title,
+          writer: summary.writer,
+          description: summary.description,
+          paragraphs: summary.paragraphs,
+        })
         continue
       }
       if (!categoryId) throw new Error('No Match Reports news category')

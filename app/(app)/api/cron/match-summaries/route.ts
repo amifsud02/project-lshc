@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   try {
     const result = await createMatchSummaryPosts(payload, {
       dryRun: params.get('dryRun') === '1' || params.get('dryRun') === 'true',
-      matchId: params.get('matchId') ?? undefined,
+      matchIds: params.get('matchId')?.split(',').filter(Boolean),
       lookbackDays: Number.isInteger(days) && days > 0 && days <= 60 ? days : undefined,
       deadline: started + TIME_BUDGET_MS,
     })

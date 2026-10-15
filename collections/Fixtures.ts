@@ -20,7 +20,10 @@ export const Fixtures: CollectionConfig = {
     ],
     group: 'Handball Management',
     components: {
-      beforeListTable: ['@/components/admin/MhaFixturesSync#MhaFixturesSync'],
+      beforeListTable: [
+        '@/components/admin/MhaFixturesSync#MhaFixturesSync',
+        '@/components/admin/MatchSummariesAction#MatchSummariesAction',
+      ],
     },
   },
   access: {
