@@ -1,6 +1,7 @@
 .tableContainer {
   display: flex;
   flex-direction: column;
+  width: 100%;
   max-width: 1280px;
   margin: auto;
 }
@@ -59,9 +60,7 @@
   color: black;
 }
 
-.tableCell:nth-child(3),
-.tableCell:nth-child(4),
-.tableCell:nth-child(10),
+.tableCell:nth-child(n + 3),
 .tableBodyCell {
   flex: 0 0 6%;
   padding: 15px 10px;
@@ -70,16 +69,11 @@
   font-size: 12px;
 }
 
+/* Columns: Pos, Team, GP, W, D, L, GD, Pts. Phones keep GP, GD and Pts. */
+.tableCell:nth-child(4),
 .tableCell:nth-child(5),
-.tableCell:nth-child(6),
-.tableCell:nth-child(7),
-  .tableCell:nth-child(8),
-  .tableCell:nth-child(9) {
-    display: none;
-  }
-
-.tableCell:nth-child(10){
-  width: 45px;
+.tableCell:nth-child(6) {
+  display: none;
 }
 
 
@@ -128,22 +122,10 @@
 }
 
 @media (min-width: 800px) {
-  .tableCell:nth-child(3),
-  .tableCell:nth-child(4),
-  .tableCell:nth-child(5),
-  .tableCell:nth-child(6),
-  .tableCell:nth-child(9) ,
-  .tableCell:nth-child(10) 
-  {
+  .tableCell:nth-child(n + 3) {
     display: flex;
     width: 43.5px;
     max-width: 43.5px;
-  }
-
-  .tableCell:nth-child(7),
-  .tableCell:nth-child(8)
-  {
-    display: none;
   }
 
   .team {

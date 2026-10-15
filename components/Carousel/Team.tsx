@@ -7,14 +7,18 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"
 import Image from 'next/image'
 import Link from 'next/link'
 
-const CAROUSEL_IMAGES = [
-    { src: '/la-salle-hero.jpg', alt: 'Men First Team' },
-    { src: 'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/arxdxfehrefwzdvaxvu7', alt: 'Women First Team' },
-    { src: 'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/kqd1a1rljelowgtoztuo', alt: 'U21 Men Team' },
-    { src: 'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/lynuchzl53oqdgq5blpv', alt: 'U21 Women Team' },
-]
+export type CarouselItem = {
+    src: string
+    alt?: string
+    title: string
+    description?: string | null
+    ctaLabel?: string | null
+    ctaLink: string
+}
 
-const TeamCarousel = () => {
+const TeamCarousel = ({ items }: { items: CarouselItem[] }) => {
+    if (!items.length) return null
+
 
     const arrowStyles: CSSProperties = {
         position: 'absolute',
@@ -88,42 +92,19 @@ const TeamCarousel = () => {
                     );
                 }}
             >
-                <div className="carousel-image-container">
-                    <div className="image-wrapper">
-                        <Image src={CAROUSEL_IMAGES[0].src} alt={CAROUSEL_IMAGES[0].alt} fill className="object-cover" />
+                {items.map((item, i) => (
+                    <div key={i} className="carousel-image-container">
+                        {/* `fill` images take their size from the wrapper, so it needs a height */}
+                        <div className="image-wrapper" style={{ height: 'clamp(260px, 45vw, 520px)' }}>
+                            <Image src={item.src} alt={item.alt ?? item.title} fill className="object-cover" />
+                        </div>
+                        <div className="carousel-content-element">
+                            <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>{item.title}</h2>
+                            {item.description ? <p style={{ color: 'rgba(255, 255, 255, 0.85)', maxWidth: '32rem', padding: '0 16px' }}>{item.description}</p> : null}
+                            <Link href={item.ctaLink} className="button-link">{item.ctaLabel || 'View'}</Link>
+                        </div>
                     </div>
-                    <div className="carousel-content-element">
-                        <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Men First Team</h2>
-                        <Link href={'/teams/men-first-team/all'} className="button-link">View Team</Link>
-                    </div>
-                </div>
-                <div className="carousel-image-container">
-                    <div className="image-wrapper">
-                        <Image src={CAROUSEL_IMAGES[1].src} alt={CAROUSEL_IMAGES[1].alt} fill className="object-cover" />
-                    </div>
-                    <div className="carousel-content-element">
-                        <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>Women First Team</h2>
-                        <Link href={'/teams/women-first-team/all'} className="button-link">View Team</Link>
-                    </div>
-                </div>
-                <div className="carousel-image-container">
-                    <div className="image-wrapper">
-                        <Image src={CAROUSEL_IMAGES[2].src} alt={CAROUSEL_IMAGES[2].alt} fill className="object-cover" />
-                    </div>
-                    <div className="carousel-content-element">
-                        <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Men Team</h2>
-                        <Link href={'/teams/u21-mens-team/all'} className="button-link">View Team</Link>
-                    </div>
-                </div>
-                <div className="carousel-image-container">
-                    <div className="image-wrapper">
-                        <Image src={CAROUSEL_IMAGES[3].src} alt={CAROUSEL_IMAGES[3].alt} fill className="object-cover" />
-                    </div>
-                    <div className="carousel-content-element">
-                        <h2 className='title' style={{ color: "#fff", marginBottom: '0px', fontSize: '20px' }}>U21 Women Team</h2>
-                        <Link href={'/teams/u21-womens-team/all'} className="button-link">View Team</Link>
-                    </div>
-                </div>
+                ))}
             </Carousel>
         </section>
     )

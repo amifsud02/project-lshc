@@ -1,7 +1,5 @@
 import type { ComponentType } from 'react'
 import { RichText } from '@payloadcms/richtext-lexical/react'
-import { getPayload } from 'payload'
-import config from '@payload-config'
 
 import Hero from '@/components/Hero/Hero'
 import PageHeader from '@/components/PageHeader/PageHeader'
@@ -10,6 +8,7 @@ import TeamCarousel from '@/components/Carousel/Team'
 import AdSense, { type AdFormat } from '@/components/AdSense/AdSense'
 import CountdownTimer from '@/components/Countdown/CountdownTimerDynamic'
 import SponsorCard from '@/components/Sponsor/sponsorCard'
+import sponsorStyles from '@/components/Sponsor/sponsors.module.css'
 import PlayerCard from '@/components/PlayerCard/PlayerCard'
 import playerCardStyles from '@/components/PlayerCard/PlayerCard.module.css'
 import NewsCard from '@/components/News/NewsCard/NewsCard'
@@ -20,18 +19,20 @@ import UpcomingMatches from '@/components/Fixture/UpcomingMatches/UpcomingMatche
 import Standings from '@/components/Standings/Standings'
 import { fixtureFromPayload, standingFromPayload } from '@/lib/utils/normalize/sports'
 import { Partners } from '../Partners/Partners'
+import BlockTabs from './BlockTabs'
 import { cachedFind } from '@/lib/utils/payload/cached'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 
 type Media = { url?: string; alt?: string; filename?: string } | string | null | undefined
 type Ref = { id: string | number } | string | number | null | undefined
 
 type BlockNode = { blockType: string; id?: string } & Record<string, any>
 
-const mediaUrl = (m: Media): string => {
-  if (!m) return ''
-  if (typeof m === 'string') return m
-  return m.url ?? ''
-}
+// An unpopulated upload is just its ID, which is not a usable URL.
+const mediaUrl = (m: Media): string => (m && typeof m === 'object' ? (m.url ?? '') : '')
+
+const mediaAlt = (m: Media): string | undefined =>
+  m && typeof m === 'object' ? m.alt || undefined : undefined
 
 const refId = (r: Ref): string | number | undefined => {
   if (r == null) return undefined
@@ -49,7 +50,7 @@ const HeroAdapter = ({
   const heroSlides = slides
     ?.map((s) => ({
       src: mediaUrl(s.image),
-      alt: s.caption ?? (typeof s.image === 'object' ? s.image?.alt : undefined),
+      alt: s.caption || mediaAlt(s.image),
     }))
     .filter((s) => s.src)
   return <Hero title={title ?? undefined} slides={heroSlides} />
@@ -65,7 +66,7 @@ const PageHeaderAdapter = (props: {
 }) => {
   if (props.variant === 'landing') {
     const slides = props.slides
-      ?.map((s) => ({ src: mediaUrl(s.image), alt: s.alt }))
+      ?.map((s) => ({ src: mediaUrl(s.image), alt: s.alt || mediaAlt(s.image) }))
       .filter((s) => s.src)
     return (
       <PageHeader
@@ -80,24 +81,69 @@ const PageHeaderAdapter = (props: {
   return <PageHeader pageName={props.pageName ?? ''} />
 }
 
-const JoinUsAdapter = (props: { heading?: string; body?: string; ctaLabel?: string; ctaLink?: string }) => (
-  <JoinUs heading={props.heading} body={props.body} ctaLabel={props.ctaLabel} ctaLink={props.ctaLink} />
+const JoinUsAdapter = (props: {
+  heading?: string
+  body?: string
+  ctaLabel?: string
+  ctaLink?: string
+  backgroundImage?: Media
+}) => (
+  <JoinUs
+    heading={props.heading}
+    body={props.body}
+    ctaLabel={props.ctaLabel}
+    ctaLink={props.ctaLink}
+    backgroundImage={mediaUrl(props.backgroundImage) || null}
+  />
 )
-const PartnersAdapter = () => <Partners />
-const CarouselAdapter = () => <TeamCarousel />
+
+const PartnersAdapter = ({
+  heading,
+  partners,
+}: {
+  heading?: string
+  partners?: Array<{ name: string; image: Media; link?: string }>
+}) => (
+  <Partners
+    heading={heading}
+    partners={(partners ?? [])
+      .map((p) => ({ name: p.name, src: mediaUrl(p.image), link: p.link }))
+      .filter((p) => p.src)}
+  />
+)
+
+const CarouselAdapter = ({
+  items,
+}: {
+  items?: Array<{ image: Media; title: string; description?: string; ctaLabel?: string; ctaLink: string }>
+}) => (
+  <TeamCarousel
+    items={(items ?? [])
+      .map((item) => ({
+        src: mediaUrl(item.image),
+        alt: mediaAlt(item.image),
+        title: item.title,
+        description: item.description,
+        ctaLabel: item.ctaLabel,
+        ctaLink: item.ctaLink,
+      }))
+      .filter((item) => item.src)}
+  />
+)
 
 const NewsSectionAdapter = async ({
   heading,
+  layout,
   limit,
   tags,
   showViewAll,
 }: {
   heading?: string
+  layout?: 'grid' | 'list' | 'featured'
   limit?: number
   tags?: Array<{ tag: string }>
   showViewAll?: boolean
 }) => {
-  const payload = await getPayload({ config })
   const where: Record<string, any> = {}
   const tagValues = tags?.map((t) => t.tag).filter(Boolean) ?? []
   if (tagValues.length) where.tags = { in: tagValues }
@@ -109,6 +155,8 @@ const NewsSectionAdapter = async ({
     limit: limit ?? 6,
     sort: '-publishedAt',
   })
+  if (!docs.length) return null
+  const [featured, ...rest] = docs
 
   return (
     <section className="parent" style={{ paddingTop: 50, paddingBottom: 50 }}>
@@ -122,7 +170,7 @@ const NewsSectionAdapter = async ({
         }}
       >
         <h2 style={{ fontSize: 24, fontWeight: 800, textTransform: 'uppercase' }}>
-          {heading ?? 'Latest posts'}
+          {heading || 'Latest News'}
         </h2>
         {showViewAll ? (
           <Link
@@ -133,11 +181,28 @@ const NewsSectionAdapter = async ({
           </Link>
         ) : null}
       </div>
-      <OtherArticles>
-        {docs.map((post: any) => (
-          <NewsCard key={post.id} data={post} />
-        ))}
-      </OtherArticles>
+      {layout === 'list' ? (
+        <div style={{ maxWidth: 720 }}>
+          {docs.map((post) => (
+            <NewsCard key={post.id} data={post} />
+          ))}
+        </div>
+      ) : layout === 'featured' && featured ? (
+        <>
+          <NewsCard data={featured} />
+          <OtherArticles>
+            {rest.map((post) => (
+              <NewsCard key={post.id} data={post} />
+            ))}
+          </OtherArticles>
+        </>
+      ) : (
+        <OtherArticles>
+          {docs.map((post) => (
+            <NewsCard key={post.id} data={post} />
+          ))}
+        </OtherArticles>
+      )}
     </section>
   )
 }
@@ -146,10 +211,13 @@ const AdSlotAdapter = ({ adSlot, format }: { adSlot: string; format?: AdFormat |
   <AdSense adSlot={adSlot} format={format} />
 )
 
+// The counter is styled for a dark background (white tiles and labels).
 const CountdownAdapter = ({ heading, targetDate }: { heading?: string; targetDate: string }) => (
-  <section className="parent">
-    {heading ? <h2 className="title">{heading}</h2> : null}
-    <CountdownTimer targetDate={new Date(targetDate)} />
+  <section style={{ background: 'var(--gradient-brand)', padding: '40px 0' }}>
+    <div className="parent" style={{ margin: '0 auto', textAlign: 'center', color: '#fff' }}>
+      {heading ? <h2 className="title">{heading}</h2> : null}
+      <CountdownTimer targetDate={new Date(targetDate)} />
+    </div>
   </section>
 )
 
@@ -170,8 +238,8 @@ const SponsorGridAdapter = ({
 }) => (
   <section className="parent">
     {heading ? <h2 className="title">{heading}</h2> : null}
-    <div className="sponsor-grid">
-      {sponsors?.map((s, i) => (
+    <div className={sponsorStyles.sponsorWrapper}>
+      {sponsors?.filter((s) => mediaUrl(s.image)).map((s, i) => (
         <SponsorCard
           key={i}
           sponsorName={s.name}
@@ -182,9 +250,6 @@ const SponsorGridAdapter = ({
     </div>
   </section>
 )
-
-const PLAYER_PLACEHOLDER =
-  'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/v1/media/player-placeholder'
 
 const PlayerGridAdapter = async ({
   heading,
@@ -198,7 +263,6 @@ const PlayerGridAdapter = async ({
   const teamId = refId(team)
   if (!teamId) return null
 
-  const payload = await getPayload({ config })
   const where: Record<string, any> = { team: { equals: teamId } }
   if (position && position !== 'all') where.position = { equals: position }
 
@@ -209,6 +273,8 @@ const PlayerGridAdapter = async ({
     limit: 100,
     sort: 'number',
   })
+  // Players without a photo use the Fallback Image in Site Settings.
+  const { fallbackImageUrl } = await getGeneralGlobal()
 
   return (
     <section className="parent" style={{ padding: '2rem 0' }}>
@@ -223,7 +289,7 @@ const PlayerGridAdapter = async ({
               lastName: p.lastName,
               position: p.position,
             }}
-            profilePicture={mediaUrl(p.profilePicture) || PLAYER_PLACEHOLDER}
+            profilePicture={mediaUrl(p.profilePicture) || fallbackImageUrl}
           />
         ))}
       </ul>
@@ -322,7 +388,6 @@ const StandingsAdapter = async ({
   const competitionId = refId(competition)
   if (!competitionId) return null
 
-  const payload = await getPayload({ config })
   const { docs } = await cachedFind({
     collection: 'standings',
     where: { competition: { equals: competitionId } },
@@ -350,14 +415,12 @@ const TabAdapter = ({
 }) => {
   if (!tabs?.length) return null
   return (
-    <section className="parent">
-      {tabs.map((t, i) => (
-        <div key={i} data-tab-label={t.label}>
-          <h3>{t.label}</h3>
-          <BlockRenderer blocks={t.content} />
-        </div>
+    <BlockTabs
+      labels={tabs.map((t) => t.label)}
+      panels={tabs.map((t, i) => (
+        <BlockRenderer key={i} blocks={t.content} />
       ))}
-    </section>
+    />
   )
 }
 

@@ -2,7 +2,7 @@ import Image from "next/image"
 import styles from './PlayerCard.module.css'
 import { IPlayerCard } from "@/lib/types/player.type";
 
-const PlayerCard: React.FC<{playerInfo: IPlayerCard, profilePicture: string}> = ({playerInfo, profilePicture}) => {
+const PlayerCard: React.FC<{playerInfo: IPlayerCard, profilePicture?: string}> = ({playerInfo, profilePicture}) => {
     return (
         <li className={styles.playerContainer}>
             <a className={styles.playerContainerLink}>
@@ -13,7 +13,9 @@ const PlayerCard: React.FC<{playerInfo: IPlayerCard, profilePicture: string}> = 
                     <h3 className={`${styles.playerNoMargin} ${styles.playerLastName}`}>{playerInfo.lastName}</h3>
                 </div>
                 <div className={styles.playerPhoto}>
-                    <Image src={profilePicture} alt="placeholder-image" fill={true}/>
+                    {profilePicture ? (
+                        <Image src={profilePicture} alt={`${playerInfo.firstName} ${playerInfo.lastName}`} fill={true}/>
+                    ) : null}
                     <div className={styles.playerOverlay}></div>
                 </div>
             </a>
