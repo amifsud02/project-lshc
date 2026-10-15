@@ -5,7 +5,7 @@ import '@/components/TV/tv.css'
 import VideoCard from '@/components/TV/VideoCard'
 import { relativeDate } from '@/components/TV/relativeDate'
 import { getVideoBySlug, getVideos } from '@/lib/data/videos'
-import { uploadedVideoUrl, videoThumbnail } from '@/lib/data/videoThumbnail'
+import { uploadedVideoUrl, videoImage, videoThumbnail } from '@/lib/data/videoThumbnail'
 import { videoCategoryLabel } from '@/lib/data/videoCategories'
 
 export const revalidate = 60
@@ -22,11 +22,12 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const video = await getVideoBySlug(slug)
   if (!video) return {}
   const description = video.description ?? `${videoCategoryLabel(video.category)} on La Salle TV.`
+  const image = await videoImage(video)
   return {
     title: `${video.title} | La Salle TV`,
     description,
     alternates: { canonical: `${process.env.NEXT_PUBLIC_API_URL}/tv/${video.slug}` },
-    openGraph: { title: video.title, description, images: [videoThumbnail(video)], type: 'video.other' },
+    openGraph: { title: video.title, description, images: image ? [image] : [], type: 'video.other' },
   }
 }
 
@@ -45,7 +46,7 @@ export default async function VideoPage({ params }: { params: Promise<Params> })
         <div className="tv-wrap">
           <div className="tv-player__frame">
             {fileUrl ? (
-              <video src={fileUrl} poster={videoThumbnail(video)} controls playsInline preload="metadata" />
+              <video src={fileUrl} poster={videoThumbnail(video) ?? undefined} controls playsInline preload="metadata" />
             ) : (
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?rel=0`}

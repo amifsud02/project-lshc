@@ -186,7 +186,7 @@ const U21MenTeam = () => {
                                                 <h2 className='position-titles'>{selectedPositionName?.replace(/-/g, ' ')}</h2>
                                                 <ul className='playercard-showcase'>
                                                     {filteredPlayers.map((player, index) => (
-                                                        <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} />
+                                                        <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/cztzougqwpmysn1rlmnv'} key={index} />
                                                     ))}
                                                 </ul>
                                             </div>
@@ -203,7 +203,7 @@ const U21MenTeam = () => {
                                                         <h2 className='position-titles'>{pos.name}</h2>
                                                         <ul className='playercard-showcase'>
                                                             {playerData.filter(pos.filter).map((player, index) => (
-                                                                <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/f_auto,q_auto/cztzougqwpmysn1rlmnv'} key={index} />
+                                                                <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/cztzougqwpmysn1rlmnv'} key={index} />
                                                             ))}
                                                         </ul>
                                                     </div>

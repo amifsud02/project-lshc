@@ -11,10 +11,3 @@ export function isVideoMime(mimeType: unknown): boolean {
 export function toCloudinaryVideoUrl(url: string): string {
   return url.replace('/image/upload/', '/video/upload/')
 }
-
-/** A JPEG frame taken `atSeconds` into the video, for use as a poster or thumbnail. */
-export function cloudinaryVideoPoster(videoUrl: string, atSeconds = 2): string {
-  return toCloudinaryVideoUrl(videoUrl)
-    .replace('/video/upload/', `/video/upload/so_${atSeconds},w_1280,c_limit/`)
-    .replace(/\.[a-z0-9]+(\?.*)?$/i, '.jpg')
-}

@@ -1,5 +1,5 @@
 import type { Media, Video } from '@/payload-types'
-import { cloudinaryVideoPoster } from '@/lib/media/cloudinaryVideo'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 
 /** The uploaded file's URL when the video is hosted in Media, otherwise null. */
 export function uploadedVideoUrl(video: Video): string | null {
@@ -8,10 +8,18 @@ export function uploadedVideoUrl(video: Video): string | null {
   return file && typeof file === 'object' && file.url ? file.url : null
 }
 
-export function videoThumbnail(video: Video): string {
+/**
+ * The chosen thumbnail, else YouTube's own. Uploaded videos without a thumbnail
+ * get null rather than a Cloudinary-generated frame, which would cost a transformation.
+ */
+export function videoThumbnail(video: Video): string | null {
   const thumb = video.thumbnail as Media | string | null | undefined
   if (thumb && typeof thumb === 'object' && thumb.url) return thumb.url
-  const uploaded = uploadedVideoUrl(video)
-  if (uploaded) return cloudinaryVideoPoster(uploaded)
+  if (uploadedVideoUrl(video)) return null
   return `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`
+}
+
+/** `videoThumbnail`, falling back to the Fallback Image in Site Settings. */
+export async function videoImage(video: Video): Promise<string> {
+  return videoThumbnail(video) || (await getGeneralGlobal()).fallbackImageUrl || ''
 }

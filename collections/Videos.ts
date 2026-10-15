@@ -150,7 +150,7 @@ export const Videos: CollectionConfig = {
       name: 'thumbnail',
       type: 'upload',
       relationTo: 'media',
-      admin: { description: 'Optional. Falls back to the YouTube thumbnail or a frame from the uploaded video.' },
+      admin: { description: 'Recommended for uploaded videos. Falls back to the YouTube thumbnail, or for uploads to the Fallback Image in Site Settings.' },
     },
   ],
 }

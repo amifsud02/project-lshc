@@ -941,7 +941,7 @@ export interface Video {
   duration?: string | null;
   description?: string | null;
   /**
-   * Optional. Falls back to the YouTube thumbnail or a frame from the uploaded video.
+   * Recommended for uploaded videos. Falls back to the YouTube thumbnail, or for uploads to the Fallback Image in Site Settings.
    */
   thumbnail?: (string | null) | Media;
   updatedAt: string;

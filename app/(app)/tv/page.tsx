@@ -10,7 +10,7 @@ import {
   getVideoSeasons,
   getVideos,
 } from '@/lib/data/videos'
-import { videoThumbnail } from '@/lib/data/videoThumbnail'
+import { videoImage } from '@/lib/data/videoThumbnail'
 import { VIDEO_CATEGORIES, isVideoCategory, videoCategoryLabel } from '@/lib/data/videoCategories'
 
 const title = 'La Salle TV - Highlights, interviews and full matches'
@@ -43,12 +43,15 @@ export default async function TVPage({ searchParams }: { searchParams?: Promise<
 
   const gridVideos = filtered ? latest : latest.filter((v) => v.id !== featured?.id).slice(0, 9)
   const [lead, ...rest] = gridVideos
+  const featuredImage = featured ? await videoImage(featured) : ''
 
   return (
     <div className="tv">
       {featured ? (
         <section className="tv-hero">
-          <Image src={videoThumbnail(featured)} alt="" fill priority sizes="100vw" className="tv-hero__image" />
+          {featuredImage ? (
+            <Image src={featuredImage} alt="" fill priority sizes="100vw" className="tv-hero__image" />
+          ) : null}
           <div className="tv-hero__shade" />
           <div className="tv-wrap tv-hero__content">
             <p className="tv-meta tv-meta--light">
