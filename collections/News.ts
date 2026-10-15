@@ -74,6 +74,18 @@ export const News: CollectionConfig = {
       index: true,
     },
     {
+      name: 'mhaMatchId',
+      label: 'MHA match',
+      type: 'text',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => Boolean(data?.mhaMatchId),
+        description: 'Written automatically from this MHA match report. Each match gets one post.',
+      },
+    },
+    {
       name: 'content',
       type: 'richText',
       required: true,

@@ -123,6 +123,43 @@ export type MhaMatchReport = {
   awayScore: number
   homePlayers: MhaReportPlayer[]
   awayPlayers: MhaReportPlayer[]
+  // Extra report detail used by the match summaries (lib/news/matchSummaries.ts).
+  // Treated as optional: older reports may not carry all of it.
+  competitionName?: string
+  category?: string
+  /** Malta-local calendar date, "YYYY-MM-DD". */
+  date?: string
+  venue?: string
+  /** Display names, e.g. "HMS" or "La Salle Leapmotor". */
+  homeTeam?: string
+  awayTeam?: string
+  halfTimeHome?: number | null
+  halfTimeAway?: number | null
+  homeSummary?: MhaReportTeamSummary
+  awaySummary?: MhaReportTeamSummary
+  mvpAwards?: Record<string, { name: string; team: string; side: string } | null>
+  events?: MhaReportEvent[]
+}
+
+export type MhaReportTeamSummary = {
+  /** Match clock of each team timeout, "MM:SS". */
+  timeouts?: string[]
+  penaltyGiven?: number
+  penaltyScored?: number
+}
+
+/** One line of the match log, with the running score after it. */
+export type MhaReportEvent = {
+  /** e.g. "First Half - 02:25". */
+  time: string
+  displayTime: string
+  /** "home", "away" or "" for match-control events. */
+  side: string
+  player: string
+  /** e.g. "Goal", "Penalty Scored", "2 Min Penalty", "Team Timeout", "End of First Half". */
+  eventType: string
+  homeScore: number
+  awayScore: number
 }
 
 /**

@@ -34,6 +34,8 @@ import { NurseryCategories } from "./collections/NurseryCategories";
 import { NurseryRegistrations } from "./collections/NurseryRegistrations";
 import { MagicLinkTokens } from "./collections/MagicLinkTokens";
 import { revalidateContentPlugin } from "./collections/hooks/revalidateContent";
+import { isStaff } from "./lib/auth/roles";
+import { MATCH_SUMMARIES_QUEUE, matchSummariesTask } from "./lib/news/matchSummariesTask";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -82,6 +84,21 @@ export default buildConfig({
     url: process.env.DATABASE_URL || "",
   }),
   sharp,
+  jobs: {
+    tasks: [matchSummariesTask],
+    // Runs scheduled tasks on the long-running Railway server. Crons start when Payload
+    // boots with `cron: true` (instrumentation.ts). Off outside production unless
+    // PAYLOAD_JOBS_AUTORUN=true, so local dev never writes posts on its own.
+    autoRun: [{ cron: '*/5 * * * *', queue: MATCH_SUMMARIES_QUEUE }],
+    shouldAutoRun: () =>
+      process.env.PAYLOAD_JOBS_AUTORUN === 'true' ||
+      (process.env.NODE_ENV === 'production' && process.env.PAYLOAD_JOBS_AUTORUN !== 'false'),
+    access: {
+      queue: ({ req }) => isStaff(req.user),
+      run: ({ req }) => isStaff(req.user),
+      cancel: ({ req }) => isStaff(req.user),
+    },
+  },
   plugins: [
     revalidateContentPlugin,
     cloudStoragePlugin({
