@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache'
-import { getPayload, type CollectionSlug, type Payload, type TypedCollection } from 'payload'
+import { getPayload, type CollectionSlug, type Payload, type TypedCollection, type Where } from 'payload'
 import type { PaginatedDocs } from 'payload'
 import config from '@payload-config'
 import { contentDependencies } from './dependencies'
@@ -35,11 +35,24 @@ async function runnerFor(collection: string): Promise<Runner> {
 /**
  * `payload.find` for public, read-only content. Results are cached for 60 seconds and cleared
  * straight away when content is saved in the admin. The arguments are part of the cache key,
- * so they must be plain serialisable values. Do not use for drafts, per-user or write paths.
+ * so they must be plain serialisable values. Only published documents are returned from
+ * collections with drafts. Do not use for drafts, per-user or write paths.
  */
 export async function cachedFind<T extends CollectionSlug>(
   args: FindArgs & { collection: T },
 ): Promise<PaginatedDocs<TypedCollection[T]>> {
   const run = await runnerFor(args.collection)
-  return (await run(args)) as unknown as PaginatedDocs<TypedCollection[T]>
+  return (await run(await publishedOnly(args))) as unknown as PaginatedDocs<TypedCollection[T]>
+}
+
+const PUBLISHED: Where = { _status: { equals: 'published' } }
+
+/**
+ * The Local API skips access control, so on collections with drafts it would return posts that
+ * were never published or have been unpublished. Only published documents belong on the site.
+ */
+async function publishedOnly(args: FindArgs): Promise<FindArgs> {
+  const collection = (await config).collections.find((c) => c.slug === args.collection)
+  if (!collection?.versions?.drafts) return args
+  return { ...args, where: args.where ? { and: [args.where, PUBLISHED] } : PUBLISHED }
 }
