@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowRight, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/lib/shop/cart'
 import { formatPrice, isValidPhone } from '@/lib/shop/types'
 import { createCheckoutSession } from './actions'
+import { CURRENCY, cartItemsToGa, gaValue, trackEvent } from '@/lib/analytics/gtag'
 
 type Props = {
   defaults: { email: string; name: string; phone: string }
@@ -33,6 +34,14 @@ export default function CheckoutView({ defaults }: Props) {
     () => true,
     () => false
   )
+
+  const started = useRef(false)
+  useEffect(() => {
+    if (!mounted || started.current || items.length === 0) return
+    started.current = true
+    const gaItems = cartItemsToGa(items)
+    trackEvent('begin_checkout', { currency: CURRENCY, value: gaValue(gaItems), items: gaItems })
+  }, [mounted, items])
 
   if (mounted && items.length === 0) {
     return (
@@ -68,6 +77,8 @@ export default function CheckoutView({ defaults }: Props) {
       return
     }
     setBusy(true)
+    const gaItems = cartItemsToGa(items)
+    trackEvent('add_payment_info', { currency: CURRENCY, value: gaValue(gaItems), payment_type: 'card', items: gaItems })
     try {
       const res = await createCheckoutSession({
         items,

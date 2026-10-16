@@ -7,6 +7,11 @@ import { relativeDate } from '@/components/TV/relativeDate'
 import { getVideoBySlug, getVideos } from '@/lib/data/videos'
 import { uploadedVideoUrl, videoImage, videoThumbnail } from '@/lib/data/videoThumbnail'
 import { videoCategoryLabel } from '@/lib/data/videoCategories'
+import TrackedVideo from '@/components/Analytics/TrackedVideo'
+import JsonLd from '@/components/Seo/JsonLd'
+import { seoDescription, seoImage, seoTitle, seoTitleText } from '@/lib/seo/meta'
+import { paths } from '@/lib/seo/site'
+import { breadcrumbJsonLd, isoDuration, videoJsonLd } from '@/lib/seo/structuredData'
 
 export const revalidate = 60
 
@@ -21,13 +26,20 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params
   const video = await getVideoBySlug(slug)
   if (!video) return {}
-  const description = video.description ?? `${videoCategoryLabel(video.category)} on La Salle TV.`
-  const image = await videoImage(video)
+  const description = seoDescription(video.meta, video.description) ?? `${videoCategoryLabel(video.category)} on La Salle TV.`
+  const image = seoImage(video.meta) ?? (await videoImage(video))
+  const fallbackTitle = `${video.title} | La Salle TV`
   return {
-    title: `${video.title} | La Salle TV`,
+    title: seoTitle(video.meta, fallbackTitle),
     description,
-    alternates: { canonical: `${process.env.NEXT_PUBLIC_API_URL}/tv/${video.slug}` },
-    openGraph: { title: video.title, description, images: image ? [image] : [], type: 'video.other' },
+    alternates: { canonical: paths.video(video.slug) },
+    openGraph: {
+      title: seoTitleText(video.meta, video.title),
+      description,
+      url: paths.video(video.slug),
+      images: image ? [image] : [],
+      type: 'video.other',
+    },
   }
 }
 
@@ -40,16 +52,37 @@ export default async function VideoPage({ params }: { params: Promise<Params> })
   const team = typeof video.team === 'object' ? video.team : null
   const fileUrl = uploadedVideoUrl(video)
 
+  const thumbnail = await videoImage(video)
+
   return (
     <div className="tv">
+      <JsonLd
+        data={[
+          videoJsonLd({
+            path: paths.video(video.slug),
+            name: video.title,
+            description: video.description || `${videoCategoryLabel(video.category)} on La Salle TV.`,
+            thumbnailUrl: thumbnail || undefined,
+            uploadDate: video.publishedAt,
+            duration: isoDuration(video.duration),
+            contentUrl: fileUrl ?? undefined,
+            embedUrl: fileUrl ? undefined : `https://www.youtube.com/embed/${video.youtubeId}`,
+          }),
+          breadcrumbJsonLd([
+            ['La Salle TV', '/tv'],
+            [video.title, paths.video(video.slug)],
+          ]),
+        ]}
+      />
       <section className="tv-player">
         <div className="tv-wrap">
           <div className="tv-player__frame">
             {fileUrl ? (
-              <video src={fileUrl} poster={videoThumbnail(video) ?? undefined} controls playsInline preload="metadata" />
+              <TrackedVideo title={video.title} src={fileUrl} poster={videoThumbnail(video) ?? undefined} controls playsInline preload="metadata" />
             ) : (
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?rel=0`}
+                // enablejsapi lets GA4's enhanced measurement report plays, progress and completions.
+                src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?rel=0&enablejsapi=1`}
                 title={video.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

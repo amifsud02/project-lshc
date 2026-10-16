@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import './contact.css'
+import { trackEvent } from '@/lib/analytics/gtag'
 
 const EMPTY = { firstName: '', lastName: '', email: '', phone: '', message: '' }
 
@@ -25,7 +26,10 @@ export default function ContactForm() {
       })
       const data = await response.json()
       const ok = data.status === 200
-      if (ok) setValues(EMPTY)
+      if (ok) {
+        setValues(EMPTY)
+        trackEvent('generate_lead', { form_name: 'contact', enquiry_type: contact.toLowerCase() })
+      }
       setResult({ ok, message: data.message })
     } catch {
       setResult({ ok: false, message: 'Something went wrong. Please try again.' })

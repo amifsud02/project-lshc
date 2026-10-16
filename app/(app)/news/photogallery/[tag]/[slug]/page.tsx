@@ -5,6 +5,9 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getGalleryBySlug, getGalleryImages } from "@/lib/data/galleries";
 import type { Gallery, Media } from "@/payload-types";
+import { siteOpenGraph } from "@/lib/utils/metadata";
+import { seoDescription, seoImage, seoTitle, seoTitleText } from "@/lib/seo/meta";
+import { paths } from "@/lib/seo/site";
 
 export const revalidate = 60
 
@@ -36,16 +39,21 @@ export async function generateMetadata(
     if (!data || getTagSlug(data.tag) !== tag) return {};
 
     const previousImages = (await parent).openGraph?.images || [];
-    const coverUrl = getMediaUrl(data.coverImage);
+    const coverUrl = seoImage(data.meta, data.coverImage);
+    const ogTitle = seoTitleText(data.meta, data.title);
+    const description = seoDescription(data.meta, data.description);
+    const path = paths.gallery(data)!;
 
     return {
-        title: data.title,
-        description: data.description ?? undefined,
-        openGraph: {
-            title: data.title,
-            description: data.description ?? undefined,
+        title: seoTitle(data.meta, data.title),
+        description,
+        alternates: { canonical: path },
+        openGraph: await siteOpenGraph(parent, {
+            title: ogTitle,
+            description,
+            url: path,
             images: coverUrl ? [coverUrl, ...previousImages] : previousImages,
-        },
+        }),
     };
 }
 

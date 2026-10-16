@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowRight, Lock, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -13,6 +13,7 @@ import { useCart } from '@/lib/shop/cart'
 import { formatPrice, isValidPhone } from '@/lib/shop/types'
 import type { CartItem } from '@/lib/shop/types'
 import { UnitForm } from '@/components/Shop/UnitFields'
+import { CURRENCY, cartItemsToGa, gaValue, trackEvent } from '@/lib/analytics/gtag'
 
 const emptySubscribe = () => () => {}
 
@@ -30,6 +31,21 @@ export default function CartView() {
     () => true,
     () => false
   )
+
+  // view_cart once per visit to the page, after the saved cart has loaded.
+  const viewed = useRef(false)
+  useEffect(() => {
+    if (!mounted || viewed.current || items.length === 0) return
+    viewed.current = true
+    const gaItems = cartItemsToGa(items)
+    trackEvent('view_cart', { currency: CURRENCY, value: gaValue(gaItems), items: gaItems })
+  }, [mounted, items])
+
+  const onRemove = (item: CartItem) => {
+    const gaItems = cartItemsToGa([item])
+    trackEvent('remove_from_cart', { currency: CURRENCY, value: gaValue(gaItems), items: gaItems })
+    removeItem(item.lineId)
+  }
 
   if (mounted && items.length === 0) {
     return (
@@ -95,7 +111,7 @@ export default function CartView() {
             key={item.lineId}
             item={item}
             index={i}
-            onRemove={() => removeItem(item.lineId)}
+            onRemove={() => onRemove(item)}
             onQty={(q) => updateQuantity(item.lineId, q)}
             onField={(unitIdx, field, value) => setFieldValue(item.lineId, unitIdx, field, value)}
           />

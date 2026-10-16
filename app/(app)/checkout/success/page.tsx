@@ -8,6 +8,8 @@ import OrderReceipt, { type ReceiptLine } from '@/components/Shop/OrderReceipt'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import TrackEvent from '@/components/Analytics/TrackEvent'
+import { toGaItem } from '@/lib/analytics/gtag'
 
 export const metadata = { title: 'Order confirmed' }
 export const dynamic = 'force-dynamic'
@@ -39,11 +41,35 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
     isChild: Boolean(it.bundleParentLineId),
   }))
 
+  // Bundle contents are listed under their bundle, whose price already covers them.
+  const gaItems = (order?.items ?? [])
+    .filter((it: any) => !it.bundleParentLineId)
+    .map((it: any) =>
+      toGaItem({
+        id: String(typeof it.product === 'object' ? it.product?.id : (it.product ?? it.productTitle)),
+        title: it.productTitle,
+        price: it.unitPrice ?? 0,
+        quantity: it.quantity ?? 1,
+      }),
+    )
+
   return (
     <>
       <PageHeader pageName="Order confirmed" />
       <section className="parent">
         <ClearCartOnMount />
+        {confirmed ? (
+          <TrackEvent
+            name="purchase"
+            onceKey={`purchase:${order.orderNumber}`}
+            params={{
+              transaction_id: String(order.orderNumber),
+              currency: String(order.currency ?? 'eur').toUpperCase(),
+              value: (order.total ?? 0) / 100,
+              items: gaItems,
+            }}
+          />
+        ) : null}
         {!confirmed && <RefreshWhilePending />}
         <div className="mx-auto flex max-w-2xl flex-col gap-6">
           <p className="text-base text-muted-foreground">

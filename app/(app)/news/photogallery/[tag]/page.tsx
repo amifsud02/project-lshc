@@ -31,7 +31,7 @@ export async function generateMetadata(
     if (!cat) return {};
     return {
         title: `${cat.title} galleries`,
-        alternates: { canonical: `${baseSiteUrl}/news/photogallery/${cat.slug}` },
+        alternates: { canonical: `${baseSiteUrl}/news/gallery/${cat.slug}` },
     };
 }
 

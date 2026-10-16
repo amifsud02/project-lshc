@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { GoogleMark } from './GoogleMark'
+import { trackEvent } from '@/lib/analytics/gtag'
 
 type Mode = 'login' | 'register'
 type Method = 'link' | 'password'
@@ -74,6 +75,8 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
         setError(body?.error ?? 'We could not send your link. Please try again.')
         return
       }
+      // Counted when the link is sent; the account itself is created when the link is opened.
+      if (mode === 'register') trackEvent('sign_up', { method: 'magic_link' })
       setSentTo(address)
       setCooldown(RESEND_COOLDOWN)
     } catch {
@@ -97,6 +100,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
         setBusy(false)
         return
       }
+      trackEvent('login', { method: 'password' })
       window.location.assign(redirectTo)
     } catch {
       setError('We could not reach the server. Check your connection and try again.')
@@ -160,7 +164,11 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
       {googleEnabled ? (
         <>
           {/* A route handler, not a page — it must be a full navigation so the 302 to Google is followed. */}
-          <a href={googleHref} className="auth-google">
+          <a
+            href={googleHref}
+            className="auth-google"
+            onClick={() => trackEvent(mode === 'register' ? 'sign_up' : 'login', { method: 'google' })}
+          >
             <GoogleMark />
             Continue with Google
           </a>

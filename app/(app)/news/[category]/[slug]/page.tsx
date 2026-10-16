@@ -8,6 +8,11 @@ import SectionSeparator from "@/components/News/section-separator";
 import NewsCard from "@/components/News/NewsCard/NewsCard";
 import { getNewsBySlug, getAdjacentNewsPosts } from "@/lib/data/news";
 import type { Media, News } from "@/payload-types";
+import JsonLd from "@/components/Seo/JsonLd";
+import { siteOpenGraph } from "@/lib/utils/metadata";
+import { seoDescription, seoImage, seoTitle, seoTitleText } from "@/lib/seo/meta";
+import { paths } from "@/lib/seo/site";
+import { breadcrumbJsonLd, newsArticleJsonLd } from "@/lib/seo/structuredData";
 
 export const revalidate = 60
 
@@ -39,16 +44,27 @@ export async function generateMetadata(
     if (!data || getCategorySlug(data.category) !== category) return {};
 
     const previousImages = (await parent).openGraph?.images || [];
-    const imageUrl = getMediaUrl(data.featuredImage);
+    const imageUrl = seoImage(data.meta, data.featuredImage);
+    const ogTitle = seoTitleText(data.meta, data.title);
+    const description = seoDescription(data.meta, data.description);
+    const path = paths.news(data)!;
+    const section = typeof data.category === 'object' ? data.category?.title : undefined;
 
     return {
-        title: data.title,
-        description: data.description,
-        openGraph: {
-            title: data.title,
-            description: data.description,
+        title: seoTitle(data.meta, data.title),
+        description,
+        alternates: { canonical: path },
+        openGraph: await siteOpenGraph(parent, {
+            type: 'article',
+            title: ogTitle,
+            description,
+            url: path,
             images: imageUrl ? [imageUrl, ...previousImages] : previousImages,
-        },
+            publishedTime: data.publishedAt,
+            modifiedTime: data.updatedAt,
+            section: section ?? undefined,
+            tags: data.tags ?? undefined,
+        }),
     };
 }
 
@@ -64,8 +80,30 @@ export default async function SingleNewsPage({
     const { previous, next } = await getAdjacentNewsPosts(data);
     const featuredUrl = getMediaUrl(data.featuredImage);
 
+    const categoryTitle = typeof data.category === 'object' ? data.category?.title ?? category : category;
+    const path = paths.news(data)!;
+
     return (
         <>
+            <JsonLd
+                data={[
+                    newsArticleJsonLd({
+                        path,
+                        headline: data.title,
+                        description: seoDescription(data.meta, data.description),
+                        image: seoImage(data.meta, data.featuredImage),
+                        datePublished: data.publishedAt,
+                        dateModified: data.updatedAt,
+                        section: categoryTitle,
+                        keywords: data.tags ?? undefined,
+                    }),
+                    breadcrumbJsonLd([
+                        ['News', '/news'],
+                        [categoryTitle, paths.newsCategory(category)],
+                        [data.title, path],
+                    ]),
+                ]}
+            />
             <PageHeader pageName={data.title} backgroundImage={featuredUrl} />
 
             <article className='parent'>

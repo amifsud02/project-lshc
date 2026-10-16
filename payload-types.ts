@@ -305,7 +305,13 @@ export interface Page {
     | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  /**
+   * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+   */
   seoImage?: (string | null) | Media;
+  /**
+   * Hide this page from search engines and the sitemap.
+   */
   noIndex?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -821,6 +827,14 @@ export interface News {
     };
     [k: string]: unknown;
   };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -869,6 +883,14 @@ export interface Gallery {
    * Optional. Used as the gallery hero and on cards. Falls back to the first image in the selected folder.
    */
   coverImage?: (string | null) | Media;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -944,6 +966,14 @@ export interface Video {
    * Recommended for uploaded videos. Falls back to the YouTube thumbnail, or for uploads to the Fallback Image in Site Settings.
    */
   thumbnail?: (string | null) | Media;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1031,6 +1061,14 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -2364,6 +2402,13 @@ export interface NewsSelect<T extends boolean = true> {
   tags?: T;
   mhaMatchId?: T;
   content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2392,6 +2437,13 @@ export interface GalleriesSelect<T extends boolean = true> {
   description?: T;
   folder?: T;
   coverImage?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2426,6 +2478,13 @@ export interface VideosSelect<T extends boolean = true> {
   duration?: T;
   description?: T;
   thumbnail?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2472,6 +2531,13 @@ export interface ProductsSelect<T extends boolean = true> {
         product?: T;
         quantity?: T;
         id?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
       };
   updatedAt?: T;
   createdAt?: T;

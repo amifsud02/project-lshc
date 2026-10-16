@@ -11,7 +11,7 @@ import {
 import '@/components/Shop/shop.css'
 import '@/components/Auth/auth.css'
 
-export const metadata = { title: 'Create an account' }
+export const metadata = { title: 'Create an account', robots: { index: false, follow: true } }
 
 type SearchParams = Promise<{ redirect?: string; google?: string }>
 

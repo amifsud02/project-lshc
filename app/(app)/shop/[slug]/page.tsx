@@ -21,6 +21,14 @@ import { checkMembrsCompatibility } from '@/lib/membrs/compatibility'
 import { getProductBySlug } from '@/lib/shop/products'
 import { requireShopCatalogueAccess } from '@/lib/shop/access'
 import { formatPrice, type CustomFieldDef } from '@/lib/shop/types'
+import type { Metadata, ResolvingMetadata } from 'next'
+import TrackEvent from '@/components/Analytics/TrackEvent'
+import JsonLd from '@/components/Seo/JsonLd'
+import { CURRENCY, toGaItem } from '@/lib/analytics/gtag'
+import { seoDescription, seoImage, seoTitle, seoTitleText } from '@/lib/seo/meta'
+import { paths } from '@/lib/seo/site'
+import { breadcrumbJsonLd, productJsonLd } from '@/lib/seo/structuredData'
+import { siteOpenGraph } from '@/lib/utils/metadata'
 
 export const revalidate = 60
 
@@ -31,12 +39,24 @@ export function generateStaticParams() {
 
 type Params = Promise<{ slug: string }>
 
-export async function generateMetadata({ params }: { params: Params }) {
+export async function generateMetadata({ params }: { params: Params }, parent: ResolvingMetadata): Promise<Metadata> {
   await requireShopCatalogueAccess()
   const { slug } = await params
   const product = await getProductBySlug(slug)
   if (!product) return { title: 'Product not found' }
-  return { title: `${product.title} — Shop` }
+  const description = seoDescription(product.meta)
+  const image = seoImage(product.meta, product.imageUrl)
+  return {
+    title: seoTitle(product.meta, `${product.title} — Shop`),
+    description,
+    alternates: { canonical: paths.product(product.slug) },
+    openGraph: await siteOpenGraph(parent, {
+      title: seoTitleText(product.meta, product.title),
+      description,
+      url: paths.product(product.slug),
+      ...(image ? { images: [image] } : {}),
+    }),
+  }
 }
 
 export default async function ProductPage({ params }: { params: Params }) {
@@ -62,8 +82,28 @@ export default async function ProductPage({ params }: { params: Params }) {
     }
   }
 
+  const gaItem = toGaItem({ id: product.id, title: product.title, type: product.type, price: product.price })
+
   return (
     <>
+      <JsonLd
+        data={[
+          productJsonLd({
+            path: paths.product(product.slug),
+            name: product.title,
+            description: seoDescription(product.meta),
+            image: product.imageUrl,
+            price: product.price,
+            currency: CURRENCY,
+            inStock: product.active,
+          }),
+          breadcrumbJsonLd([
+            ['Shop', '/shop'],
+            [product.title, paths.product(product.slug)],
+          ]),
+        ]}
+      />
+      <TrackEvent name="view_item" params={{ currency: CURRENCY, value: gaItem.price, items: [gaItem] }} />
       <PageHeader pageName={product.title} />
       <section className="parent">
         <div className="flex flex-col gap-6 lg:gap-8">

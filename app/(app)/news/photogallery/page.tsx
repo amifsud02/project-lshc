@@ -12,7 +12,8 @@ export const revalidate = 60
 
 const title = 'Galleries';
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
-const canonical = `${baseSiteUrl}/news/photogallery`;
+// Same galleries as /news/gallery, which is the address search engines should list.
+const canonical = `${baseSiteUrl}/news/gallery`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
   return {

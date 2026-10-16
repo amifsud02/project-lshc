@@ -34,6 +34,7 @@ import { NurseryCategories } from "./collections/NurseryCategories";
 import { NurseryRegistrations } from "./collections/NurseryRegistrations";
 import { MagicLinkTokens } from "./collections/MagicLinkTokens";
 import { revalidateContentPlugin } from "./collections/hooks/revalidateContent";
+import { seo } from "./lib/seo/plugin";
 import { isStaff } from "./lib/auth/roles";
 import { MATCH_SUMMARIES_QUEUE, matchSummariesTask } from "./lib/news/matchSummariesTask";
 
@@ -100,6 +101,7 @@ export default buildConfig({
     },
   },
   plugins: [
+    seo,
     revalidateContentPlugin,
     cloudStoragePlugin({
       collections: {

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { magicLinkErrorMessages, type MagicLinkError } from '@/lib/auth/magicLinkMessages'
+import { trackEvent } from '@/lib/analytics/gtag'
 
 type State = { kind: 'working' } | { kind: 'done' } | { kind: 'error'; message: string }
 
@@ -36,6 +37,7 @@ export default function VerifyMagicLink({ token }: { token: string | null }) {
           return
         }
         setState({ kind: 'done' })
+        trackEvent('login', { method: 'magic_link' })
         window.location.replace(typeof body?.redirectTo === 'string' ? body.redirectTo : '/account')
       } catch {
         setState({ kind: 'error', message: genericError })

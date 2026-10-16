@@ -2,14 +2,14 @@ import React from 'react'
 
 import { notFound } from 'next/navigation'
 
-import { Metadata } from 'next'
-import { draftMode } from 'next/headers'
+import type { Metadata, ResolvingMetadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { fetchPage } from '@/app/_data/fetchPage'
 import { fetchPages } from '@/app/_data/fetchPages'
-import { Media } from '@/payload-types'
 import BlockRenderer from '@/components/BlockRenderer/BlockRenderer'
-import SiteFooter from '@/components/Site/SiteFooter'
+import { siteOpenGraph } from '@/lib/utils/metadata'
+import { mediaUrl } from '@/lib/seo/meta'
+import { paths } from '@/lib/seo/site'
 
 export const revalidate = 60
 
@@ -50,41 +50,40 @@ export async function generateStaticParams() {
   // }))
 }
 
-export async function generateMetadata({
-  params: paramsPromise,
-}: {
-  params: Promise<{ slug: string[]; domain: string }>
-}): Promise<Metadata> {
+export async function generateMetadata(
+  {
+    params: paramsPromise,
+  }: {
+    params: Promise<{ slug: string[]; domain: string }>
+  },
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const params = await paramsPromise
-  const { slug } = params
-
-  const { isEnabled: draft } = await draftMode()
   const page = await fetchPage(params)
+  if (!page) return {}
 
-  let ogImage: Media | null = null
-
-  // if (page && page.meta?.image && typeof page.meta.image !== 'string') {
-  //   ogImage = page.meta.image
-  // }
-
-  // // check if noIndex is true
-  const noIndexMeta = page?.noIndex ? { robots: 'noindex' } : {}
+  const path = paths.page(page.slug)
+  const isHome = path === '/'
+  const description = page.seoDescription || undefined
+  const image = mediaUrl(page.seoImage)
+  // The home page keeps the layout's "Site | Official Website" title unless an SEO title is set.
+  const title: Metadata['title'] = page.seoTitle
+    ? { absolute: page.seoTitle }
+    : isHome
+      ? undefined
+      : page.title
+  const ogTitle = page.seoTitle || (isHome ? undefined : page.title)
 
   return {
-    description: page?.seoDescription,
-    // openGraph: mergeOpenGraph({
-    //   description: page?.meta?.description ?? undefined,
-    //   images: ogImage
-    //     ? [
-    //         {
-    //           url: ogImage.url as string,
-    //         },
-    //       ]
-    //     : undefined,
-    //   title: page?.meta?.title || 'BASC',
-    //   url: Array.isArray(slug) ? slug.join('/') : '/',
-    // }),
-    title: page?.seoTitle,
-    ...noIndexMeta
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: await siteOpenGraph(parent, {
+      ...(ogTitle ? { title: ogTitle } : {}),
+      ...(description ? { description } : {}),
+      ...(image ? { images: [image] } : {}),
+      url: path,
+    }),
+    ...(page.noIndex ? { robots: { index: false, follow: true } } : {}),
   }
 }

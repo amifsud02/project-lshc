@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { UnitForm } from '@/components/Shop/UnitFields'
 import type { ShopProduct } from '@/lib/shop/products'
 import { formatPrice, type CustomFieldDef } from '@/lib/shop/types'
+import { CURRENCY, toGaItem, trackEvent } from '@/lib/analytics/gtag'
 
 type Props = {
   product: ShopProduct
@@ -56,6 +57,9 @@ export default function BuyMembershipForm({ product, memberFields = [], serviceF
       units: product.unitTemplates.map((t, i) => ({ productId: t.productId, values: values[i] })),
     })
     if (result.ok) {
+      // Payment happens on MEMBRS, so the purchase itself can't be seen from here.
+      const item = toGaItem({ id: product.id, title: product.title, type: product.type, price: product.price + serviceFee })
+      trackEvent('begin_checkout', { currency: CURRENCY, value: item.price, items: [item], checkout_provider: 'membrs' })
       window.location.assign(result.url)
       return
     }

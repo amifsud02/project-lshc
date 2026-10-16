@@ -6,6 +6,7 @@ import { ArrowRight, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/lib/shop/cart'
 import type { ShopProduct } from '@/lib/shop/products'
+import { CURRENCY, toGaItem, trackEvent } from '@/lib/analytics/gtag'
 
 type Props = { product: ShopProduct }
 
@@ -25,6 +26,8 @@ export default function AddToCartButton({ product }: Props) {
       quantity: 1,
       unitTemplates: product.unitTemplates,
     })
+    const item = toGaItem({ id: product.id, title: product.title, type: product.type, price: product.price })
+    trackEvent('add_to_cart', { currency: CURRENCY, value: item.price, items: [item] })
     router.push('/cart')
   }
 

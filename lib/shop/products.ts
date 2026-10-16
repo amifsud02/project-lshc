@@ -4,6 +4,7 @@ import type { CustomFieldDef, ProductType } from './types'
 import { buildUnitTemplates, normalizeCustomFields, type UnitTemplate } from './units'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import { getGeneralGlobal } from '@/lib/utils/payload/globals'
+import type { SeoMeta } from '@/lib/seo/meta'
 
 export type ShopProduct = {
   id: string
@@ -18,6 +19,8 @@ export type ShopProduct = {
   description?: unknown
   customFields: CustomFieldDef[]
   unitTemplates: UnitTemplate[]
+  /** SEO overrides from the product's SEO fields. */
+  meta?: SeoMeta
 }
 
 const mediaUrl = (image: any): string | undefined => {
@@ -76,6 +79,7 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
     description: doc.description,
     customFields: ownFields,
     unitTemplates,
+    meta: doc.meta ?? undefined,
     membership:
       type === 'membership'
         ? {

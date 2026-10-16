@@ -1,5 +1,12 @@
 import { PageLayoutBlocks } from '@/blocks'
 import { slugField, type CollectionConfig } from 'payload'
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+  PreviewField,
+} from '@payloadcms/plugin-seo/fields'
 import { canEditCollection, collectionWriteAccess, publishedOrStaff } from '@/lib/auth/roles'
 import { seedPages } from '@/lib/seed/pages'
 
@@ -80,11 +87,35 @@ export const Pages: CollectionConfig = {
         },
         {
           label: 'SEO',
+          // The SEO plugin's fields, kept under the names pages already store their SEO in.
           fields: [
-            { name: 'seoTitle', type: 'text' },
-            { name: 'seoDescription', type: 'textarea' },
-            { name: 'seoImage', type: 'upload', relationTo: 'media' },
-            { name: 'noIndex', type: 'checkbox', defaultValue: false },
+            OverviewField({
+              titlePath: 'seoTitle',
+              descriptionPath: 'seoDescription',
+              imagePath: 'seoImage',
+            }),
+            MetaTitleField({
+              hasGenerateFn: true,
+              overrides: { name: 'seoTitle', label: 'Meta title', localized: false },
+            }),
+            MetaDescriptionField({
+              overrides: { name: 'seoDescription', label: 'Meta description', localized: false },
+            }),
+            MetaImageField({
+              relationTo: 'media',
+              overrides: { name: 'seoImage', label: 'Share image', localized: false },
+            }),
+            PreviewField({
+              hasGenerateFn: true,
+              titlePath: 'seoTitle',
+              descriptionPath: 'seoDescription',
+            }),
+            {
+              name: 'noIndex',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: { description: 'Hide this page from search engines and the sitemap.' },
+            },
           ],
         },
       ],

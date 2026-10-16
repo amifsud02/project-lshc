@@ -27,6 +27,9 @@ import {
   type NormalizedFixture,
 } from '@/lib/utils/normalize/sports'
 import { cachedFind } from '@/lib/utils/payload/cached'
+import JsonLd from '@/components/Seo/JsonLd'
+import { absoluteUrl, paths } from '@/lib/seo/site'
+import { sportsEventJsonLd } from '@/lib/seo/structuredData'
 
 export const revalidate = 60
 
@@ -79,23 +82,27 @@ const getFixture = async (slug: string) => {
 
 type Props = { params: Promise<{ slug: string }> }
 
+const describeFixture = (fixture: NormalizedFixture) => {
+  const teams = `${fixture.homeTeam.name} vs ${fixture.awayTeam.name}`
+  const competition = fixture.competition?.name ?? 'Handball'
+  const { date } = formatDateTime(fixture.startDate)
+
+  return {
+    title: `${teams}: ${competition}`,
+    description: fixture.isFinished
+      ? `Full time: ${fixture.homeTeam.name} ${fixture.homeScore} - ${fixture.awayScore} ${fixture.awayTeam.name}. ${competition}, ${date}.`
+      : `${teams} in the ${competition} on ${date}. Team news, kick-off time and live updates from La Salle Handball Club.`,
+  }
+}
+
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const { slug } = await params
   const doc = await getFixture(slug)
   if (!doc) return { title: 'Fixture not found' }
 
   const fixture = fixtureFromPayload(doc)
-  const teams = `${fixture.homeTeam.name} vs ${fixture.awayTeam.name}`
-  const competition = fixture.competition?.name ?? 'Handball'
-  const { date } = formatDateTime(fixture.startDate)
-
-  const title = `${teams}: ${competition}`
-  const description = fixture.isFinished
-    ? `Full time: ${fixture.homeTeam.name} ${fixture.homeScore} - ${fixture.awayScore} ${fixture.awayTeam.name}. ${competition}, ${date}.`
-    : `${teams} in the ${competition} on ${date}. Team news, kick-off time and live updates from La Salle Handball Club.`
-
-  const baseSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_API_URL
-  const canonical = `${baseSiteUrl ?? ''}/fixtures/${fixture.slug}`
+  const { title, description } = describeFixture(fixture)
+  const canonical = absoluteUrl(paths.fixture(fixture.slug))
 
   return {
     title,
@@ -165,9 +172,22 @@ export default async function FixturePage({ params }: Props) {
   if (!doc) notFound()
 
   const fixture = fixtureFromPayload(doc)
+  const { title, description } = describeFixture(fixture)
 
   return (
     <>
+      <JsonLd
+        data={sportsEventJsonLd({
+          path: paths.fixture(fixture.slug),
+          name: title,
+          description,
+          startDate: fixture.startDate,
+          venue: venueName(fixture.venue),
+          homeTeam: fixture.homeTeam.name,
+          awayTeam: fixture.awayTeam.name,
+          competition: fixture.competition?.name,
+        })}
+      />
       <section>
         <FixturePageHeader fixture={fixture} />
       </section>

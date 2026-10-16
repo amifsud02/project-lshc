@@ -3,6 +3,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { dayLabel, formatTimeRange } from '@/lib/nursery/schedule'
 import type { ExtraAnswerInput, FormConfig, FormSectionKey } from '@/lib/nursery/form'
+import { trackEvent } from '@/lib/analytics/gtag'
 
 export type FormSession = {
   day: string
@@ -182,6 +183,11 @@ export default function RegistrationForm({
         setBusy(false)
         return
       }
+      trackEvent('generate_lead', {
+        form_name: 'nursery_registration',
+        age_group: selected.name,
+        payment_method: paymentMethod,
+      })
       window.location.assign(result.redirectTo)
     } catch (err) {
       console.error(err)

@@ -7,7 +7,11 @@ import SiteNavbar from "@/components/Site/SiteNavbar";
 import SiteFooter from "@/components/Site/SiteFooter";
 import StyledComponentsRegistry from "@/lib/registry";
 import { AD_CLIENT } from "@/components/AdSense/AdSense";
-import { getGeneralGlobal } from "@/lib/utils/payload/globals";
+import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
+import JsonLd from "@/components/Seo/JsonLd";
+import { getFooterGlobal, getGeneralGlobal } from "@/lib/utils/payload/globals";
+import { DEFAULT_SITE_NAME, SITE_URL } from "@/lib/seo/site";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structuredData";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -16,9 +20,7 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
-const DEFAULT_SITE_NAME = 'La Salle Handball'
 const DEFAULT_DESCRIPTION = "Visit the La Salle Handball Club official website: all the latest news on the team and club, and fixtures."
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
 
 // Site name, description, favicon and share image come from Site Settings in the admin.
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,42 +30,67 @@ export async function generateMetadata(): Promise<Metadata> {
   const shareImage = general.fallbackImageUrl ? [general.fallbackImageUrl] : undefined
 
   return {
-    metadataBase: baseSiteUrl ? new URL(baseSiteUrl) : undefined,
+    metadataBase: new URL(SITE_URL),
     applicationName: siteName,
     // Pages set their own title ("Contact us"); the site name is added after it.
     title: { default: `${siteName} | Official Website`, template: `%s | ${siteName}` },
     description,
     icons: { icon: general.faviconUrl || '/favicon.ico' },
+    // No canonical here: it would be inherited by every page that doesn't set its own.
+    alternates: {
+      types: { 'application/rss+xml': [{ url: '/news/feed.xml', title: `${siteName} news` }] },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      // Lets Google show large image previews and full snippets in Search and Discover.
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+    },
     openGraph: {
+      type: 'website',
+      locale: 'en_MT',
       siteName,
       title: siteName,
       description,
-      url: baseSiteUrl,
+      url: SITE_URL,
       images: shareImage,
+    },
+    twitter: { card: 'summary_large_image' },
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+      other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+        ? { 'msvalidate.01': process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
+        : undefined,
     },
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [general, footer] = await Promise.all([getGeneralGlobal(), getFooterGlobal()])
+  const siteName = general.siteName || DEFAULT_SITE_NAME
+  const description = general.siteDescription || DEFAULT_DESCRIPTION
+
   return (
     <html lang="en" className={manrope.variable}>
       <body>
-        <Script
-          strategy="lazyOnload"
-          src="https://www.googletagmanager.com/gtag/js?id=G-R7TBRHBEYQ"
+        <JsonLd
+          data={[
+            organizationJsonLd({
+              name: siteName,
+              description,
+              logoUrl: general.logoUrl,
+              email: footer.contact.email,
+              phone: footer.contact.phone,
+              sameAs: [footer.social.facebook, footer.social.instagram, footer.social.tiktok],
+            }),
+            websiteJsonLd({ name: siteName, description }),
+          ]}
         />
-        <Script id="google-analytics" strategy="lazyOnload">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-R7TBRHBEYQ');
-          `}
-        </Script>
+        <GoogleAnalytics />
         <Script
           id="cookieyes"
           strategy="afterInteractive"
