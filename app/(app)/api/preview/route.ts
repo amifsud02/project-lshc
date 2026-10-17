@@ -28,5 +28,7 @@ export async function GET(request: NextRequest) {
   // Only same-site paths, so this can't be used as an open redirect.
   const path = request.nextUrl.searchParams.get('path') ?? '/'
   const safePath = path.startsWith('/') && !path.startsWith('//') ? path : '/'
-  return NextResponse.redirect(new URL(safePath, request.nextUrl.origin))
+  // A relative Location keeps the browser on the host it asked for. `request.nextUrl.origin` is
+  // the container's own address behind Railway's proxy (http://localhost:8080), not the public domain.
+  return new NextResponse(null, { status: 307, headers: { Location: safePath } })
 }
