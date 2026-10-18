@@ -1,0 +1,240 @@
+/* Layout follows psg.fr's photo galleries: a 12-column grid with 32px gutters on
+   desktop, and a plain two-up grid of square crops on phones. */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.block {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.squaresCol {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.featureCol {
+  grid-column: span 8;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.halfCol {
+  grid-column: span 6;
+}
+
+.tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  border-radius: 4px;
+  background: var(--gallery-tile, #1b2742);
+  cursor: pointer;
+}
+
+.tile:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.square {
+  aspect-ratio: 1 / 1;
+}
+
+.small,
+.half {
+  aspect-ratio: 3 / 2;
+}
+
+/* Fills whatever height the squares column leaves it. */
+.big {
+  flex: 1;
+  min-height: 0;
+}
+
+.img {
+  object-fit: cover;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  opacity: 0;
+  transition: opacity 300ms ease-in, transform 600ms ease;
+}
+
+.loaded {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .tile:hover .img {
+    transform: scale(1.03);
+  }
+}
+
+.sentinel {
+  height: 1px;
+}
+
+@media (max-width: 639px) {
+  .gallery,
+  .block,
+  .squaresCol,
+  .featureCol,
+  .pair {
+    display: contents;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .halfCol {
+    display: contents;
+  }
+
+  .tile {
+    aspect-ratio: 1 / 1;
+    flex: none;
+  }
+}
+
+/* ---- Lightbox ---- */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 8, 22, 0.96);
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 200ms ease;
+}
+
+.lightboxBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  color: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.counter {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.lightboxStage {
+  position: relative;
+  flex: 1;
+  margin: 0 16px 16px;
+}
+
+@media (min-width: 768px) {
+  .lightboxStage {
+    margin: 0 88px 32px;
+  }
+}
+
+.lightboxImg {
+  object-fit: contain;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.downloadButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 16px;
+  background: #1b2742;
+  color: #c7cddb;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.downloadButton:hover {
+  background: #26345a;
+  color: #fff;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  background: #1b2742;
+  color: #c7cddb;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.iconButton:hover {
+  background: #26345a;
+  color: #fff;
+}
+
+.navPrev,
+.navNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.navPrev {
+  left: 16px;
+}
+
+.navNext {
+  right: 16px;
+}
+
+.preload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}

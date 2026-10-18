@@ -1,0 +1,109 @@
+.page {
+  background: #0e1b36;
+  color: #fff;
+  /* Clears the fixed site header. */
+  padding: 140px 0 96px;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  max-width: 1100px;
+}
+
+.meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-top: 16px;
+  max-width: 720px;
+}
+
+.count {
+  display: flex;
+  flex: none;
+  height: 32px;
+}
+
+.countIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  background: #004170;
+  color: #fff;
+}
+
+.countValue {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #232841;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #fff;
+}
+
+.overline {
+  margin-top: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #8f98ad;
+}
+
+.dot {
+  margin: 0 8px;
+}
+
+.empty {
+  color: #8f98ad;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-top: 180px;
+  }
+
+  .header {
+    margin-bottom: 64px;
+  }
+
+  .title {
+    font-size: 56px;
+  }
+
+  .meta {
+    margin-top: 32px;
+  }
+
+  .description {
+    font-size: 16px;
+  }
+}
