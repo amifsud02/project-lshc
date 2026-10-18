@@ -39,8 +39,14 @@ export type MhaFixture = {
   awayTeam: string
   awayClub: string
   status: MhaFixtureStatus
+  /**
+   * Usually goals. In competitions decided on period points (the U15 Cup) these are
+   * the match points instead; the goals are only in the match report. See `isScoredOnPoints`.
+   */
   homeScore: number | null
   awayScore: number | null
+  /** e.g. "La Salle 3 - 3 Kavallieri | U15 Cup points: 3 - 3". */
+  resultSummary?: string
   isFinished: boolean
   isLive: boolean
 }
@@ -119,8 +125,14 @@ export type MhaMatchReport = {
   awayTeamId: string
   homeClub: string
   awayClub: string
+  /** Goals, or match points in competitions decided on period points. Use `reportGoals` for goals. */
   homeScore: number
   awayScore: number
+  /** Goals scored, present on newer reports. */
+  homeGoalTotal?: number | null
+  awayGoalTotal?: number | null
+  /** Per-period breakdown of U15 Cup matches, which are played in three periods. */
+  u15Cup?: { periods?: { period: number; homeGoals: number; awayGoals: number }[] }
   homePlayers: MhaReportPlayer[]
   awayPlayers: MhaReportPlayer[]
   // Extra report detail used by the match summaries (lib/news/matchSummaries.ts).
@@ -181,6 +193,18 @@ export const fetchMhaMatchReport = async (matchId: string): Promise<MhaMatchRepo
     awayPlayers: Array.isArray(report.awayPlayers) ? report.awayPlayers : [],
   }
 }
+
+/**
+ * True when the feed's score is match points rather than goals, as in the U15 Cup
+ * where each period won earns points. MHA flags these in the result summary.
+ */
+export const isScoredOnPoints = (mha: Pick<MhaFixture, 'resultSummary'>) => /\bpoints\b/i.test(mha.resultSummary ?? '')
+
+/** Goals scored by each side, whatever the competition's scoring. */
+export const reportGoals = (report: MhaMatchReport) => ({
+  home: typeof report.homeGoalTotal === 'number' ? report.homeGoalTotal : report.homeScore,
+  away: typeof report.awayGoalTotal === 'number' ? report.awayGoalTotal : report.awayScore,
+})
 
 export type MhaPlayerTotals = {
   appearances: number

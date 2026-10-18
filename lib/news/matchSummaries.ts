@@ -2,7 +2,7 @@ import { FinishReason, GoogleGenAI } from '@google/genai'
 import type { Payload } from 'payload'
 import { z } from 'zod'
 
-import { fetchMhaFixtures, fetchMhaMatchReport, type MhaFixture, type MhaMatchReport } from '@/lib/mha/client'
+import { fetchMhaFixtures, fetchMhaMatchReport, reportGoals, type MhaFixture, type MhaMatchReport } from '@/lib/mha/client'
 import { cleanTeamName, competitionNameFor, MHA_CATEGORY_LABELS } from '@/lib/mha/mapFixture'
 import { MHA_CLUB_NAME } from '@/lib/mha/syncFixtures'
 import { p, richText } from '@/lib/seed/lexical'
@@ -144,6 +144,7 @@ export const matchFacts = (fixture: MhaFixture, report: MhaMatchReport) => {
     ...(isOurs(fixture.homeClub) ? (['home'] as const) : []),
     ...(isOurs(fixture.awayClub) ? (['away'] as const) : []),
   ]
+  const goals = reportGoals(report)
   const mvps = Object.values(report.mvpAwards ?? {})
     .filter((m): m is NonNullable<typeof m> => Boolean(m?.name))
     .map((m) => `${m.name} (${m.team})`)
@@ -158,9 +159,10 @@ export const matchFacts = (fixture: MhaFixture, report: MhaMatchReport) => {
     away: { team: awayTeam, club: fixture.awayClub },
     /** Which side(s) are La Salle teams. Both for a derby such as Team Haier v HMS. */
     laSalleSides: ourSides,
-    finalScore: `${report.homeScore}-${report.awayScore}`,
+    finalScore: `${goals.home}-${goals.away}`,
+    // Three-period matches (the U15 Cup) have no half-time; MHA fills it with the first period.
     halfTime:
-      report.halfTimeHome != null && report.halfTimeAway != null
+      report.halfTimeHome != null && report.halfTimeAway != null && !report.u15Cup?.periods?.length
         ? `${report.halfTimeHome}-${report.halfTimeAway}`
         : null,
     flow: scoreFlow(report),

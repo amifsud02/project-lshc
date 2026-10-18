@@ -7,6 +7,8 @@ import {
   fetchMhaFixtures,
   fetchMhaMatchReport,
   fetchMhaPlayerStats,
+  isScoredOnPoints,
+  reportGoals,
   type MhaFixture,
   type MhaMatchReport,
 } from './client'
@@ -316,20 +318,20 @@ const syncFixtures = async ({ payload, dryRun, offset, outOfTime, result }: Stag
       const homeTeam = await resolveTeam(fixture.home)
       const awayTeam = await resolveTeam(fixture.away)
       const competition = await resolveCompetition(fixture.competition)
+      const existing = existingByCode.get(fixture.fixtureCode)
+      const score = await finalScore(mha, fixture, existing, result.warnings)
 
       const data = {
         fixtureCode: fixture.fixtureCode,
         homeTeam,
         awayTeam,
-        homeScore: fixture.homeScore,
-        awayScore: fixture.awayScore,
+        homeScore: score.home,
+        awayScore: score.away,
         startDate: fixture.startDate,
         venue: fixture.venue,
         status: fixture.status,
         competition,
       }
-
-      const existing = existingByCode.get(fixture.fixtureCode)
 
       if (!existing) {
         if (!dryRun) await payload.create({ collection: 'fixtures', data })
@@ -359,6 +361,33 @@ const syncFixtures = async ({ payload, dryRun, offset, outOfTime, result }: Stag
       push('error', errorMessage(err))
     }
   }
+}
+
+/**
+ * The score to store. The feed's score is right for most matches, but in competitions
+ * decided on period points (the U15 Cup) it is the match points, so a 24-26 defeat
+ * reads 3-3. For those the goals come from the match report. If the report cannot be
+ * read, a score already stored is kept rather than overwritten with the points.
+ */
+const finalScore = async (
+  mha: MhaFixture,
+  fixture: MappedFixture,
+  existing: { homeScore?: number | null; awayScore?: number | null } | undefined,
+  warnings: string[],
+): Promise<{ home: number; away: number }> => {
+  const feed = { home: fixture.homeScore, away: fixture.awayScore }
+  if (fixture.status !== 'Finished' || !isScoredOnPoints(mha)) return feed
+
+  try {
+    const report = await fetchMhaMatchReport(mha.matchId)
+    if (report) return reportGoals(report)
+  } catch (err) {
+    warnings.push(`${mha.homeTeam} v ${mha.awayTeam} (${mha.date}): goals not read from the match report — ${errorMessage(err)}`)
+  }
+  if (existing?.homeScore != null && existing.awayScore != null) {
+    return { home: existing.homeScore, away: existing.awayScore }
+  }
+  return feed
 }
 
 type LineupRow = MappedLineupRow & { player: string | null }
