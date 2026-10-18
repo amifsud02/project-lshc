@@ -1,4 +1,4 @@
-import type { Access, CollectionConfig } from 'payload'
+import { APIError, type Access, type CollectionConfig } from 'payload'
 
 import { adminOnly, adminOnlyField, hasRole, isAdmin, isStaff, roleOptions } from '@/lib/auth/roles'
 
@@ -25,9 +25,11 @@ export const Users: CollectionConfig = {
   slug: 'users',
   access: {
     admin: ({ req: { user } }) => isStaff(user),
-    // Public so the storefront register form can create customer accounts. The
-    // `roles` field below is admin-only, so nobody can sign themselves up as staff.
-    create: () => true,
+    // Customers only ever get an account through a magic link or Google, both of
+    // which prove they own the email (see `findOrCreateCustomer`). Orders and
+    // nursery registrations are shared with whoever holds the matching email, so
+    // an account must never be created for an address its holder hasn't proven.
+    create: adminOnly,
     delete: adminOnly,
     read: readUsers,
     unlock: adminOnly,
@@ -38,6 +40,18 @@ export const Users: CollectionConfig = {
     defaultColumns: ['email', 'firstName', 'lastName', 'roles'],
   },
   auth: true,
+  hooks: {
+    beforeChange: [
+      // Same reason as `create`: changing your email would hand you someone else's orders.
+      ({ data, operation, originalDoc, req }) => {
+        if (operation !== 'update' || typeof data?.email !== 'string' || isAdmin(req.user)) return data
+        if (data.email.toLowerCase().trim() !== String(originalDoc?.email ?? '').toLowerCase()) {
+          throw new APIError('Only an admin can change an account email.', 403)
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     { name: 'firstName', type: 'text' },
     { name: 'lastName', type: 'text' },

@@ -7,7 +7,11 @@ import { getStripe } from '@/lib/stripe/server'
 import { getProductById } from '@/lib/shop/products'
 import { hasBundleItems, isValidPhone, type CartItem } from '@/lib/shop/types'
 import { canViewShop } from '@/lib/shop/access'
-import { validateUnit } from '@/lib/shop/validation'
+import { cleanUnitValues, validateUnit } from '@/lib/shop/validation'
+
+/** Generous for a club shop, and keeps a tampered cart from creating huge orders. */
+const MAX_LINES = 50
+const MAX_QUANTITY = 50
 
 type Buyer = { email: string; name: string; phone: string }
 
@@ -30,8 +34,11 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
   if (!buyer.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email)) {
     return { ok: false, error: 'A valid email is required.' }
   }
-  if (!items.length) {
+  if (!Array.isArray(items) || !items.length) {
     return { ok: false, error: 'Your cart is empty.' }
+  }
+  if (items.length > MAX_LINES) {
+    return { ok: false, error: 'Your cart has too many items. Please split it into smaller orders.' }
   }
 
   const stripe = getStripe()
@@ -62,6 +69,15 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
     const product = await getProductById(item.productId)
     if (!product || !product.active) {
       return { ok: false, error: `"${item.productTitle}" is no longer available.` }
+    }
+
+    // Quantity and units come from the browser: Stripe charges per quantity, while the order
+    // records one line per unit, so the two must agree or a buyer could pay for one and get many.
+    if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > MAX_QUANTITY) {
+      return { ok: false, error: `"${product.title}" has an invalid quantity.` }
+    }
+    if (!Array.isArray(item.units)) {
+      return { ok: false, error: `"${product.title}" has changed since it was added. Please remove it and add it again.` }
     }
 
     if (product.type === 'membership') {
@@ -97,7 +113,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
             bundleParentLineId: carriesPrice ? undefined : item.lineId,
             quantity: 1,
             unitPrice: carriesPrice ? product.price : 0,
-            customFieldValues: unit.values ?? {},
+            customFieldValues: cleanUnitValues(template.customFields, unit.values),
           })
         }
       }
@@ -112,6 +128,9 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
         quantity: item.quantity,
       })
     } else {
+      if (item.units.length !== item.quantity || item.units.some((u) => u?.productId !== product.id)) {
+        return { ok: false, error: `"${product.title}" has changed since it was added. Please remove it and add it again.` }
+      }
       for (const unit of item.units) {
         const validationError = validateUnit({ customFields: product.customFields, values: unit.values })
         if (validationError) return { ok: false, error: `${product.title}: ${validationError}` }
@@ -120,7 +139,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
           product: product.id,
           quantity: 1,
           unitPrice: product.price,
-          customFieldValues: unit.values ?? {},
+          customFieldValues: cleanUnitValues(product.customFields, unit.values),
         })
       }
       const totalForLine = product.price * item.quantity
@@ -168,25 +187,29 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    payment_method_types: ['card'],
-    line_items: stripeLineItems,
-    customer_email: buyer.email,
-    metadata: { orderId: String(order.id), orderNumber: String(order.orderNumber ?? '') },
-    success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${appUrl}/checkout/cancel`,
-  })
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
+      line_items: stripeLineItems,
+      customer_email: buyer.email,
+      metadata: { orderId: String(order.id), orderNumber: String(order.orderNumber ?? '') },
+      success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/checkout/cancel`,
+    })
+    if (!session.url) throw new Error('Stripe did not return a checkout URL')
 
-  await payload.update({
-    collection: 'orders',
-    id: order.id,
-    data: { stripeCheckoutSessionId: session.id } as any,
-  })
+    await payload.update({
+      collection: 'orders',
+      id: order.id,
+      data: { stripeCheckoutSessionId: session.id } as any,
+    })
 
-  if (!session.url) {
-    return { ok: false, error: 'Stripe did not return a checkout URL.' }
+    return { ok: true, url: session.url }
+  } catch (err) {
+    // Don't leave a pending order behind that can never be paid.
+    await payload.update({ collection: 'orders', id: order.id, data: { status: 'cancelled' } as any })
+    console.error('[checkout] could not create the Stripe session', err)
+    return { ok: false, error: 'We could not start the payment. Please try again.' }
   }
-
-  return { ok: true, url: session.url }
 }
