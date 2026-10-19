@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation'
 import { ChevronDown } from 'lucide-react';
 import CartIcon from '@/components/Shop/CartIcon';
 import AccountIcon from '@/components/Shop/AccountIcon';
+import { ACCOUNTS_ENABLED } from '@/lib/features';
 import { isShopHref } from '@/lib/shop/visibility';
 
 export type NavLink = {
@@ -72,7 +73,7 @@ export function DesktopNavbar({
         <header className={styles.mainNavBG}>
             <div className={`${styles.mainNav}`}>
                 <div>
-                    <Link href={'/'}><Image src={logoSrc} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" loading='eager'/></Link>
+                    <Link href={'/'}><Image src={logoSrc} width={75} height={75} alt="LSHC Logo" className="w-[75px] h-[75px]" loading='eager' unoptimized/></Link>
                 </div>
 
                 <div className={styles.rightCluster}>
@@ -104,7 +105,7 @@ export function DesktopNavbar({
 
                     {/* The account is used for nursery registrations too, so it stays visible when the shop is off. */}
                     <div className={styles.shopActions}>
-                        <AccountIcon isAuthed={isAuthed} />
+                        {ACCOUNTS_ENABLED ? <AccountIcon isAuthed={isAuthed} /> : null}
                         {shopEnabled ? <CartIcon /> : null}
                     </div>
                 </div>

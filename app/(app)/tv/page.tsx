@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import '@/components/TV/tv.css'
+import { ACCOUNTS_ENABLED } from '@/lib/features'
 import VideoCard from '@/components/TV/VideoCard'
 import ChannelTabs from '@/components/TV/ChannelTabs'
 import { relativeDate } from '@/components/TV/relativeDate'
@@ -116,7 +117,7 @@ export default async function TVPage({ searchParams }: { searchParams?: Promise<
         )}
       </section>
 
-      {!filtered ? (
+      {!filtered && ACCOUNTS_ENABLED ? (
         <section className="tv-wrap">
           <div className="tv-cta">
             <div>

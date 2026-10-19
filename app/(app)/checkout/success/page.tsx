@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ACCOUNTS_ENABLED } from '@/lib/features'
 import PageHeader from '@/components/PageHeader/PageHeader'
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -93,9 +94,11 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
               actions={
                 <>
                   <Button render={<Link href="/shop" />}>Continue shopping</Button>
-                  <Button variant="outline" render={<Link href="/account" />}>
-                    View orders
-                  </Button>
+                  {ACCOUNTS_ENABLED ? (
+                    <Button variant="outline" render={<Link href="/account" />}>
+                      View orders
+                    </Button>
+                  ) : null}
                 </>
               }
             />

@@ -20,6 +20,9 @@ const CYCLE = 14;
 // Photos added each time the reader nears the bottom.
 const BATCH = CYCLE;
 
+// Every <Image> here is `unoptimized`: photos load straight from Cloudinary, never through
+// Next's image optimizer or Cloudinary transformations, so a resize failing can't break the gallery.
+
 type Block =
     | { kind: "feature"; mirrored: boolean; start: number; photos: GalleryPhoto[] }
     | { kind: "halves"; start: number; photos: GalleryPhoto[] };
@@ -74,6 +77,7 @@ function Tile({ photo, index, variant, priority, onOpen }: TileProps) {
                 src={photo.src}
                 alt={photo.alt}
                 fill
+                unoptimized
                 sizes={SIZES[variant]}
                 priority={priority}
                 loading={priority ? undefined : "lazy"}
@@ -253,6 +257,7 @@ function Lightbox({ photos, index, onChange, onClose }: LightboxProps) {
                     src={photo.src}
                     alt={photo.alt}
                     fill
+                    unoptimized
                     sizes="100vw"
                     priority
                     className={styles.lightboxImg}
@@ -293,7 +298,7 @@ function Lightbox({ photos, index, onChange, onClose }: LightboxProps) {
 
             <div className={styles.preload} aria-hidden>
                 {neighbours.map((p) => (
-                    <Image key={p.id} src={p.src} alt="" fill sizes="100vw" />
+                    <Image key={p.id} src={p.src} alt="" fill unoptimized sizes="100vw" />
                 ))}
             </div>
         </div>

@@ -47,6 +47,7 @@ const GalleryCard = async ({ data }: Props) => {
                             src={imageSrc}
                             alt={data.title}
                             fill
+                            unoptimized
                             style={{ objectFit: 'cover', objectPosition: 'center' }}
                         />
                     ) : null}

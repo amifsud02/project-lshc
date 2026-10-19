@@ -8,6 +8,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import type { NavItem } from './Header';
 import CartIcon from '@/components/Shop/CartIcon';
 import AccountIcon from '@/components/Shop/AccountIcon';
+import { ACCOUNTS_ENABLED } from '@/lib/features';
 import { isShopHref } from '@/lib/shop/visibility';
 
 import { Accordion, AccordionItem as Item } from '@szhsin/react-accordion';
@@ -83,10 +84,10 @@ export const MobileNavbar = ({
 
                     <div className={styles.nav__top}>
                         <div className={styles.nav__brand}>
-                            <Link href={'/'} onClick={() => setIsOpen(false)}><Image src={logoSrc} alt="LSHC Logo" width={75} height={75} /></Link>
+                            <Link href={'/'} onClick={() => setIsOpen(false)}><Image src={logoSrc} alt="LSHC Logo" width={75} height={75} unoptimized /></Link>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#fff' }}>
-                            <AccountIcon isAuthed={isAuthed} />
+                            {ACCOUNTS_ENABLED ? <AccountIcon isAuthed={isAuthed} /> : null}
                             {shopEnabled ? <CartIcon /> : null}
                             <button
                                 type="button"
@@ -145,13 +146,15 @@ export const MobileNavbar = ({
                                             </Link>
                                         )
                                     })}
-                                    <Link
-                                        className={`${styles.navItemLink} w-full`}
-                                        href={isAuthed ? '/account' : '/login'}
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        <p>{isAuthed ? 'My account' : 'Sign in'}</p>
-                                    </Link>
+                                    {ACCOUNTS_ENABLED ? (
+                                        <Link
+                                            className={`${styles.navItemLink} w-full`}
+                                            href={isAuthed ? '/account' : '/login'}
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <p>{isAuthed ? 'My account' : 'Sign in'}</p>
+                                        </Link>
+                                    ) : null}
                                 </Accordion>
                             )
                         }
