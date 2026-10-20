@@ -2,7 +2,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import Script from "next/script";
-import { Analytics } from '@vercel/analytics/react';
 import SiteNavbar from "@/components/Site/SiteNavbar";
 import SiteFooter from "@/components/Site/SiteFooter";
 import StyledComponentsRegistry from "@/lib/registry";
@@ -111,7 +110,6 @@ export default async function RootLayout({
             <SiteFooter/>
           </main>
         </StyledComponentsRegistry>
-        <Analytics/>
       </body>
     </html>
   );
