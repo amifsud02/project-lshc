@@ -85,6 +85,7 @@ export interface Config {
     orders: Order;
     memberships: Membership;
     advertisements: Advertisement;
+    promotions: Promotion;
     venues: Venue;
     'nursery-seasons': NurserySeason;
     'nursery-categories': NurseryCategory;
@@ -121,6 +122,7 @@ export interface Config {
     orders: OrdersSelect<false> | OrdersSelect<true>;
     memberships: MembershipsSelect<false> | MembershipsSelect<true>;
     advertisements: AdvertisementsSelect<false> | AdvertisementsSelect<true>;
+    promotions: PromotionsSelect<false> | PromotionsSelect<true>;
     venues: VenuesSelect<false> | VenuesSelect<true>;
     'nursery-seasons': NurserySeasonsSelect<false> | NurserySeasonsSelect<true>;
     'nursery-categories': NurseryCategoriesSelect<false> | NurseryCategoriesSelect<true>;
@@ -1228,6 +1230,88 @@ export interface Membership {
   createdAt: string;
 }
 /**
+ * Popups shown to visitors. The running promotion with the highest priority is shown; it never opens on the cart, checkout or account pages, or on the page its button links to.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions".
+ */
+export interface Promotion {
+  id: string;
+  /**
+   * For the admin and analytics, e.g. "Memberships 2026/27".
+   */
+  name: string;
+  active?: boolean | null;
+  /**
+   * Leave empty to start straight away.
+   */
+  startDate?: string | null;
+  /**
+   * Leave empty to run until switched off.
+   */
+  endDate?: string | null;
+  /**
+   * When several promotions are running, the highest number is shown.
+   */
+  priority?: number | null;
+  /**
+   * Small label above the heading, e.g. "Memberships now open". Optional.
+   */
+  badge?: string | null;
+  heading: string;
+  body?: string | null;
+  points?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * An optional box above the button, e.g. "4 memberships to choose from" and "from €25".
+   */
+  highlight?: {
+    label?: string | null;
+    /**
+     * Shown large, e.g. "€25".
+     */
+    value?: string | null;
+    /**
+     * e.g. "from".
+     */
+    valueCaption?: string | null;
+  };
+  /**
+   * Shown beside the text on larger screens (a portrait photo works best). Leave empty for a text-only popup.
+   */
+  image?: (string | null) | Media;
+  ctaLabel: string;
+  /**
+   * A page on the site (/membership) or a full web address.
+   */
+  ctaLink: string;
+  /**
+   * Small print under the button. Optional.
+   */
+  footnote?: string | null;
+  showOn?: ('all' | 'only' | 'except') | null;
+  /**
+   * Addresses on this site, e.g. / for the home page, /news, or /news/* for every news post.
+   */
+  paths?:
+    | {
+        path: string;
+        id?: string | null;
+      }[]
+    | null;
+  delaySeconds?: number | null;
+  /**
+   * How long it stays hidden for a visitor who closes it or clicks the button.
+   */
+  snoozeDays?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "venues".
  */
@@ -1951,6 +2035,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'advertisements';
         value: string | Advertisement;
+      } | null)
+    | ({
+        relationTo: 'promotions';
+        value: string | Promotion;
       } | null)
     | ({
         relationTo: 'venues';
@@ -2694,6 +2782,48 @@ export interface AdvertisementsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions_select".
+ */
+export interface PromotionsSelect<T extends boolean = true> {
+  name?: T;
+  active?: T;
+  startDate?: T;
+  endDate?: T;
+  priority?: T;
+  badge?: T;
+  heading?: T;
+  body?: T;
+  points?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  highlight?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        valueCaption?: T;
+      };
+  image?: T;
+  ctaLabel?: T;
+  ctaLink?: T;
+  footnote?: T;
+  showOn?: T;
+  paths?:
+    | T
+    | {
+        path?: T;
+        id?: T;
+      };
+  delaySeconds?: T;
+  snoozeDays?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "venues_select".
  */
 export interface VenuesSelect<T extends boolean = true> {
@@ -3204,36 +3334,6 @@ export interface General {
      */
     visibility: 'admins' | 'public';
   };
-  membershipPopup: {
-    enabled?: boolean | null;
-    /**
-     * Small label above the heading. Leave empty to hide it.
-     */
-    badge?: string | null;
-    heading: string;
-    body?: string | null;
-    benefits?:
-      | {
-          text: string;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * A team photo shown beside the text on larger screens. Leave empty to use the hero photo.
-     */
-    image?: (string | null) | Media;
-    ctaLabel: string;
-    /**
-     * Where the button goes: the Membership page, or /shop once the shop is public.
-     */
-    ctaLink: string;
-    partnerNote?: string | null;
-    delaySeconds?: number | null;
-    /**
-     * How long the popup stays hidden for a visitor who closes it.
-     */
-    snoozeDays?: number | null;
-  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3354,26 +3454,6 @@ export interface GeneralSelect<T extends boolean = true> {
     | T
     | {
         visibility?: T;
-      };
-  membershipPopup?:
-    | T
-    | {
-        enabled?: T;
-        badge?: T;
-        heading?: T;
-        body?: T;
-        benefits?:
-          | T
-          | {
-              text?: T;
-              id?: T;
-            };
-        image?: T;
-        ctaLabel?: T;
-        ctaLink?: T;
-        partnerNote?: T;
-        delaySeconds?: T;
-        snoozeDays?: T;
       };
   updatedAt?: T;
   createdAt?: T;

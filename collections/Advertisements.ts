@@ -27,7 +27,7 @@ export const Advertisements: CollectionConfig = {
   slug: 'advertisements',
   labels: { singular: 'Advertisement', plural: 'Advertisements' },
   admin: {
-    group: 'Advertising',
+    group: 'Marketing',
     useAsTitle: 'name',
     defaultColumns: ['name', 'advertiser', 'format', 'active', 'startDate', 'endDate', 'clicks'],
     description:

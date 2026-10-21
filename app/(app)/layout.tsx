@@ -4,7 +4,7 @@ import { Manrope } from "next/font/google";
 import Script from "next/script";
 import SiteNavbar from "@/components/Site/SiteNavbar";
 import SiteFooter from "@/components/Site/SiteFooter";
-import MembershipPopup from "@/components/MembershipPopup/MembershipPopup";
+import PromoPopup from "@/components/PromoPopup/PromoPopup";
 import StyledComponentsRegistry from "@/lib/registry";
 import { AD_CLIENT } from "@/components/AdSense/AdSense";
 import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
@@ -110,7 +110,7 @@ export default async function RootLayout({
             {children}
             <SiteFooter/>
           </main>
-          <MembershipPopup />
+          <PromoPopup />
         </StyledComponentsRegistry>
       </body>
     </html>

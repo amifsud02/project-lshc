@@ -23,13 +23,14 @@ const CONTENT_COLLECTIONS = [
   'nursery-seasons',
   'nursery-categories',
   'advertisements',
+  'promotions',
 ]
 
 /**
  * Collections only shown through `cachedFind`. Clearing their tag already refreshes every page
  * that shows them, so saving one doesn't throw away the rest of the site's cached pages.
  */
-const TAG_ONLY_COLLECTIONS = ['products', 'advertisements']
+const TAG_ONLY_COLLECTIONS = ['products', 'advertisements', 'promotions']
 
 /**
  * Clears the cached queries that can contain `collection`'s documents and, unless it is in

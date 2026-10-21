@@ -53,6 +53,7 @@ const collectionEditors: Partial<Record<CollectionSlug, Role[]>> = {
   orders: ['shop-manager'],
   pages: ['content-creator'],
   players: ['coach'],
+  promotions: ['content-creator'],
   products: ['shop-manager'],
   standings: ['coach', 'competitions-manager'],
   teams: ['coach', 'competitions-manager'],
