@@ -21,6 +21,21 @@ export type NormalizedGeneral = {
   /** News posts per page on the news listings. */
   postsPerPage: number
   shopVisibility: 'admins' | 'public'
+  membershipPopup: MembershipPopupSettings
+}
+
+export type MembershipPopupSettings = {
+  enabled: boolean
+  badge?: string
+  heading: string
+  body?: string
+  benefits: string[]
+  imageUrl?: string
+  ctaLabel: string
+  ctaLink: string
+  partnerNote?: string
+  delaySeconds: number
+  snoozeDays: number
 }
 
 export type NormalizedFooter = {
@@ -90,8 +105,28 @@ export const generalFromPayload = (doc: any): NormalizedGeneral => {
     postsPerPage: Math.max(1, Math.floor(Number(doc?.reading?.postsPerPage) || 10)),
     // Anything other than an explicit 'public' keeps the shop hidden.
     shopVisibility: doc?.shop?.visibility === 'public' ? 'public' : 'admins',
+    membershipPopup: membershipPopupFromPayload(doc?.membershipPopup),
   }
 }
+
+const clampNumber = (value: unknown, fallback: number, min: number, max: number) => {
+  const n = Number(value)
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback
+}
+
+const membershipPopupFromPayload = (p: any): MembershipPopupSettings => ({
+  enabled: p?.enabled === true,
+  badge: p?.badge || undefined,
+  heading: p?.heading || 'Become a La Salle Handball member',
+  body: p?.body || undefined,
+  benefits: (p?.benefits ?? []).map((b: any) => b?.text).filter(Boolean),
+  imageUrl: mediaUrl(p?.image),
+  ctaLabel: p?.ctaLabel || 'View memberships',
+  ctaLink: p?.ctaLink || '/membership',
+  partnerNote: p?.partnerNote || undefined,
+  delaySeconds: clampNumber(p?.delaySeconds, 6, 0, 120),
+  snoozeDays: clampNumber(p?.snoozeDays, 14, 1, 365),
+})
 
 export const headerFromPayload = (doc: any): NormalizedHeader => ({
   navItems: (doc?.menuLinks ?? [])

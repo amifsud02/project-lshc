@@ -84,6 +84,7 @@ export interface Config {
     products: Product;
     orders: Order;
     memberships: Membership;
+    advertisements: Advertisement;
     venues: Venue;
     'nursery-seasons': NurserySeason;
     'nursery-categories': NurseryCategory;
@@ -119,6 +120,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     memberships: MembershipsSelect<false> | MembershipsSelect<true>;
+    advertisements: AdvertisementsSelect<false> | AdvertisementsSelect<true>;
     venues: VenuesSelect<false> | VenuesSelect<true>;
     'nursery-seasons': NurserySeasonsSelect<false> | NurserySeasonsSelect<true>;
     'nursery-categories': NurseryCategoriesSelect<false> | NurseryCategoriesSelect<true>;
@@ -300,6 +302,7 @@ export interface Page {
         | JoinUsBlock
         | CountdownBlock
         | TabBlock
+        | AdvertisementBlock
         | AdSlotBlock
       )[]
     | null;
@@ -655,6 +658,67 @@ export interface AdSlotBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'adSlot';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AdvertisementBlock".
+ */
+export interface AdvertisementBlock {
+  /**
+   * Each visit shows one of the matching ads at random. Ads outside their dates or switched off are skipped, and the block disappears when none are left.
+   */
+  source?: ('rotate' | 'chosen') | null;
+  format?: ('banner' | 'rectangle') | null;
+  ads?: (string | Advertisement)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'advertisement';
+}
+/**
+ * Ads sold directly to advertisers. Place them on pages with the Advertisement block. Recommended image sizes are in the format names; upload at twice the size for sharp screens.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advertisements".
+ */
+export interface Advertisement {
+  id: string;
+  /**
+   * For the admin only, e.g. "Joe’s Bakery — spring 2027".
+   */
+  name: string;
+  /**
+   * The business that bought the space.
+   */
+  advertiser?: string | null;
+  format: 'banner' | 'rectangle';
+  active?: boolean | null;
+  /**
+   * Leave empty to start straight away.
+   */
+  startDate?: string | null;
+  /**
+   * Leave empty to run until switched off.
+   */
+  endDate?: string | null;
+  image: string | Media;
+  /**
+   * Optional. A taller version (600 × 300) for phones, where a wide banner is too small to read.
+   */
+  mobileImage?: (string | null) | Media;
+  /**
+   * What the ad says, for screen readers, e.g. "Joe’s Bakery — 20% off for members".
+   */
+  alt: string;
+  /**
+   * The advertiser’s page. Opens in a new tab.
+   */
+  link: string;
+  /**
+   * Counted automatically.
+   */
+  clicks?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1885,6 +1949,10 @@ export interface PayloadLockedDocument {
         value: string | Membership;
       } | null)
     | ({
+        relationTo: 'advertisements';
+        value: string | Advertisement;
+      } | null)
+    | ({
         relationTo: 'venues';
         value: string | Venue;
       } | null)
@@ -2020,6 +2088,7 @@ export interface PagesSelect<T extends boolean = true> {
         joinUs?: T | JoinUsBlockSelect<T>;
         countdown?: T | CountdownBlockSelect<T>;
         tab?: T | TabBlockSelect<T>;
+        advertisement?: T | AdvertisementBlockSelect<T>;
         adSlot?: T | AdSlotBlockSelect<T>;
       };
   seoTitle?: T;
@@ -2245,6 +2314,17 @@ export interface TabBlockSelect<T extends boolean = true> {
 export interface AdSlotBlockSelect<T extends boolean = true> {
   adSlot?: T;
   format?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AdvertisementBlock_select".
+ */
+export interface AdvertisementBlockSelect<T extends boolean = true> {
+  source?: T;
+  format?: T;
+  ads?: T;
   id?: T;
   blockName?: T;
 }
@@ -2590,6 +2670,25 @@ export interface MembershipsSelect<T extends boolean = true> {
   product?: T;
   order?: T;
   details?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advertisements_select".
+ */
+export interface AdvertisementsSelect<T extends boolean = true> {
+  name?: T;
+  advertiser?: T;
+  format?: T;
+  active?: T;
+  startDate?: T;
+  endDate?: T;
+  image?: T;
+  mobileImage?: T;
+  alt?: T;
+  link?: T;
+  clicks?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3105,6 +3204,36 @@ export interface General {
      */
     visibility: 'admins' | 'public';
   };
+  membershipPopup: {
+    enabled?: boolean | null;
+    /**
+     * Small label above the heading. Leave empty to hide it.
+     */
+    badge?: string | null;
+    heading: string;
+    body?: string | null;
+    benefits?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * A team photo shown beside the text on larger screens. Leave empty to use the hero photo.
+     */
+    image?: (string | null) | Media;
+    ctaLabel: string;
+    /**
+     * Where the button goes: the Membership page, or /shop once the shop is public.
+     */
+    ctaLink: string;
+    partnerNote?: string | null;
+    delaySeconds?: number | null;
+    /**
+     * How long the popup stays hidden for a visitor who closes it.
+     */
+    snoozeDays?: number | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3225,6 +3354,26 @@ export interface GeneralSelect<T extends boolean = true> {
     | T
     | {
         visibility?: T;
+      };
+  membershipPopup?:
+    | T
+    | {
+        enabled?: T;
+        badge?: T;
+        heading?: T;
+        body?: T;
+        benefits?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        image?: T;
+        ctaLabel?: T;
+        ctaLink?: T;
+        partnerNote?: T;
+        delaySeconds?: T;
+        snoozeDays?: T;
       };
   updatedAt?: T;
   createdAt?: T;

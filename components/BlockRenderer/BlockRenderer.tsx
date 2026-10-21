@@ -6,6 +6,7 @@ import PageHeader from '@/components/PageHeader/PageHeader'
 import JoinUs from '@/components/JoinUs/JoinUs'
 import TeamCarousel from '@/components/Carousel/Team'
 import AdSense, { type AdFormat } from '@/components/AdSense/AdSense'
+import Advertisement, { type AdCandidate } from '@/components/Advertisement/Advertisement'
 import CountdownTimer from '@/components/Countdown/CountdownTimerDynamic'
 import SponsorCard from '@/components/Sponsor/sponsorCard'
 import sponsorStyles from '@/components/Sponsor/sponsors.module.css'
@@ -210,6 +211,42 @@ const NewsSectionAdapter = async ({
 const AdSlotAdapter = ({ adSlot, format }: { adSlot: string; format?: AdFormat | null }) => (
   <AdSense adSlot={adSlot} format={format} />
 )
+
+const AdvertisementAdapter = async ({
+  source,
+  format,
+  ads,
+}: {
+  source?: 'rotate' | 'chosen' | null
+  format?: AdCandidate['format'] | null
+  ads?: Ref[] | null
+}) => {
+  const where: Record<string, any> = { active: { equals: true } }
+  if (source === 'chosen') {
+    const ids = (ads ?? []).map(refId).filter((id) => id != null)
+    if (!ids.length) return null
+    where.id = { in: ids }
+  } else {
+    where.format = { equals: format ?? 'banner' }
+  }
+
+  const { docs } = await cachedFind({ collection: 'advertisements', where, depth: 1, limit: 50 })
+  const candidates: AdCandidate[] = docs
+    .map((ad: any) => ({
+      id: String(ad.id),
+      format: ad.format,
+      imageUrl: mediaUrl(ad.image),
+      mobileImageUrl: mediaUrl(ad.mobileImage) || undefined,
+      alt: ad.alt ?? '',
+      startDate: ad.startDate ?? undefined,
+      endDate: ad.endDate ?? undefined,
+    }))
+    .filter((ad) => ad.imageUrl)
+  if (!candidates.length) return null
+
+  // Chosen ads can mix formats; the slot takes the first one's shape.
+  return <Advertisement format={source === 'chosen' ? candidates[0].format : (format ?? 'banner')} ads={candidates} />
+}
 
 // The counter is styled for a dark background (white tiles and labels).
 const CountdownAdapter = ({ heading, targetDate }: { heading?: string; targetDate: string }) => (
@@ -439,6 +476,7 @@ const REGISTRY: Record<string, ComponentType<any>> = {
   countdown: CountdownAdapter,
   tab: TabAdapter,
   adSlot: AdSlotAdapter,
+  advertisement: AdvertisementAdapter,
 }
 
 export function BlockRenderer({ blocks }: { blocks?: BlockNode[] | null }) {
