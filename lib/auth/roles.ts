@@ -37,6 +37,7 @@ export const roleOptions: { label: string; value: Role }[] = [
  * from `ROLES`/`roleOptions` and drop it from the lists below.
  */
 const collectionEditors: Partial<Record<CollectionSlug, Role[]>> = {
+  advertisements: ['content-creator'],
   competitions: ['competitions-manager'],
   competitionTypes: ['competitions-manager'],
   fixtures: ['coach', 'competitions-manager'],
@@ -52,6 +53,7 @@ const collectionEditors: Partial<Record<CollectionSlug, Role[]>> = {
   orders: ['shop-manager'],
   pages: ['content-creator'],
   players: ['coach'],
+  promotions: ['content-creator'],
   products: ['shop-manager'],
   standings: ['coach', 'competitions-manager'],
   teams: ['coach', 'competitions-manager'],

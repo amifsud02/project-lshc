@@ -28,6 +28,8 @@ import { NewsCategories } from "./collections/NewsCategories";
 import { Products } from "./collections/Products";
 import { Orders } from "./collections/Orders";
 import { Memberships } from "./collections/Memberships";
+import { Advertisements } from "./collections/Advertisements";
+import { Promotions } from "./collections/Promotions";
 import { Venues } from "./collections/Venues";
 import { NurserySeasons } from "./collections/NurserySeasons";
 import { NurseryCategories } from "./collections/NurseryCategories";
@@ -69,6 +71,8 @@ export default buildConfig({
     Products,
     Orders,
     Memberships,
+    Advertisements,
+    Promotions,
     Venues,
     NurserySeasons,
     NurseryCategories,

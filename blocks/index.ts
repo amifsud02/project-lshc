@@ -11,6 +11,7 @@ import { PartnersBlock } from './Partners'
 import { CarouselBlock } from './Carousel'
 import { JoinUsBlock } from './JoinUs'
 import { AdSlotBlock } from './AdSlot'
+import { AdvertisementBlock } from './Advertisement'
 import { CountdownBlock } from './Countdown'
 import { RichTextBlock } from './RichText'
 import { TabBlock } from './Tab'
@@ -29,6 +30,7 @@ export const PageLayoutBlocks: Block[] = [
   JoinUsBlock,
   CountdownBlock,
   TabBlock,
+  AdvertisementBlock,
   AdSlotBlock,
 ]
 
@@ -44,6 +46,7 @@ export {
   CarouselBlock,
   JoinUsBlock,
   AdSlotBlock,
+  AdvertisementBlock,
   CountdownBlock,
   RichTextBlock,
   TabBlock,
