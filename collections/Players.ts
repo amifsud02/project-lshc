@@ -1,6 +1,17 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
 import { buildPlayerSlug } from '@/lib/players/profile'
+
+const statFields: Field[] = [
+  { name: 'appearances', type: 'number' },
+  { name: 'goals', type: 'number' },
+  { name: 'penaltyGoals', label: '7m goals', type: 'number' },
+  { name: 'yellowCards', type: 'number' },
+  { name: 'suspensions', label: '2-minute suspensions', type: 'number' },
+  { name: 'redCards', type: 'number' },
+  { name: 'blueCards', type: 'number' },
+  { name: 'mvp', label: 'MVP awards', type: 'number' },
+]
 
 export const Players: CollectionConfig = {
   slug: 'players',
@@ -9,7 +20,7 @@ export const Players: CollectionConfig = {
     plural: 'Players',
   },
   admin: {
-    defaultColumns: ['fullName', 'number', 'position', 'team', 'profilePage', 'updatedAt'],
+    defaultColumns: ['fullName', 'number', 'position', 'team', 'otherTeams', 'profilePage', 'updatedAt'],
     listSearchableFields: ['firstName', 'lastName', 'mhaPlayerId'],
     group: 'Handball Management',
   },
@@ -95,6 +106,19 @@ export const Players: CollectionConfig = {
       relationTo: 'teams',
       required: true,
       index: true,
+      admin: { description: 'The squad the player is listed under first.' },
+    },
+    {
+      name: 'otherTeams',
+      label: 'Also plays for',
+      type: 'relationship',
+      relationTo: 'teams',
+      hasMany: true,
+      index: true,
+      admin: {
+        description:
+          'Other club squads this player turns out for, e.g. HMS as well as La Salle. The fixtures sync adds a squad here when the player appears in its line-up.',
+      },
     },
     {
       name: 'profilePicture',
@@ -141,20 +165,34 @@ export const Players: CollectionConfig = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Season totals across every MHA competition, refreshed by the fixtures sync.',
+        description: 'Current season totals across every MHA competition and squad, refreshed by the fixtures sync.',
       },
       fields: [
         { name: 'season', type: 'text' },
-        { name: 'appearances', type: 'number' },
-        { name: 'goals', type: 'number' },
-        { name: 'penaltyGoals', label: '7m goals', type: 'number' },
-        { name: 'yellowCards', type: 'number' },
-        { name: 'suspensions', label: '2-minute suspensions', type: 'number' },
-        { name: 'redCards', type: 'number' },
-        { name: 'blueCards', type: 'number' },
-        { name: 'mvp', label: 'MVP awards', type: 'number' },
+        { name: 'seasonId', type: 'text', admin: { hidden: true } },
+        ...statFields,
         { name: 'syncedAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
       ],
+    },
+    {
+      name: 'pastSeasons',
+      type: 'array',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Final totals of earlier MHA seasons, kept by the fixtures sync once a season ends.',
+      },
+      fields: [{ name: 'season', type: 'text' }, { name: 'seasonId', type: 'text', admin: { hidden: true } }, ...statFields],
+    },
+    {
+      name: 'careerStats',
+      type: 'group',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Totals across every MHA season, refreshed by the fixtures sync.',
+      },
+      fields: statFields,
     },
   ],
 }

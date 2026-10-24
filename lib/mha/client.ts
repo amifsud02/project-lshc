@@ -202,14 +202,15 @@ export type MhaPlayerStats = {
   careerTotals: MhaPlayerTotals
 }
 
-/** The season MHA currently marks active, e.g. `{ seasonId: "S001", seasonName: "2026 - 2027" }`. */
-export const fetchMhaActiveSeason = async (): Promise<{ seasonId: string; seasonName: string } | null> => {
+export type MhaSeason = { seasonId: string; seasonName: string; active?: boolean }
+
+/** Every MHA season, the current one marked `active`, e.g. `{ seasonId: "S001", seasonName: "2026 - 2027", active: true }`. */
+export const fetchMhaSeasons = async (): Promise<MhaSeason[]> => {
   const { status, body } = await getJson(`${MHA_API}/leagues`)
   if (status !== 200 || body?.success !== true) {
     throw new Error(body?.message ?? `MHA leagues returned HTTP ${status}`)
   }
-  const seasons: { seasonId: string; seasonName: string; active?: boolean }[] = body.data?.seasons ?? []
-  return seasons.find((s) => s.active) ?? null
+  return body.data?.seasons ?? []
 }
 
 export const fetchMhaPlayerStats = async (playerId: string, seasonId: string): Promise<MhaPlayerStats> => {

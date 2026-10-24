@@ -303,7 +303,8 @@ const PlayerGridAdapter = async ({
   const teamId = refId(team)
   if (!teamId) return null
 
-  const where: Record<string, any> = { team: { equals: teamId } }
+  // A player who also turns out for this squad is listed alongside its own players.
+  const where: Record<string, any> = { or: [{ team: { equals: teamId } }, { otherTeams: { in: [teamId] } }] }
   if (position && position !== 'all') where.position = { equals: position }
 
   const { docs } = await cachedFind({

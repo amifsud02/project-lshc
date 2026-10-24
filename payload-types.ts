@@ -835,7 +835,14 @@ export interface Player {
    * Not on the MHA feed, so players added by the fixtures sync start without one.
    */
   position?: ('Goalkeeper' | 'LinePlayer' | 'Winger' | 'PlayMaker' | 'Lateral' | 'Coach') | null;
+  /**
+   * The squad the player is listed under first.
+   */
   team: string | Team;
+  /**
+   * Other club squads this player turns out for, e.g. HMS as well as La Salle. The fixtures sync adds a squad here when the player appears in its line-up.
+   */
+  otherTeams?: (string | Team)[] | null;
   profilePicture?: (string | null) | Media;
   /**
    * Shows this player at /players/<slug>, with their season stats and recent matches, and links their name from match line-ups. Only for adult players who agree to it; never for anyone under 18.
@@ -850,10 +857,11 @@ export interface Player {
    */
   mhaPlayerId?: string | null;
   /**
-   * Season totals across every MHA competition, refreshed by the fixtures sync.
+   * Current season totals across every MHA competition and squad, refreshed by the fixtures sync.
    */
   seasonStats?: {
     season?: string | null;
+    seasonId?: string | null;
     appearances?: number | null;
     goals?: number | null;
     penaltyGoals?: number | null;
@@ -863,6 +871,37 @@ export interface Player {
     blueCards?: number | null;
     mvp?: number | null;
     syncedAt?: string | null;
+  };
+  /**
+   * Final totals of earlier MHA seasons, kept by the fixtures sync once a season ends.
+   */
+  pastSeasons?:
+    | {
+        season?: string | null;
+        seasonId?: string | null;
+        appearances?: number | null;
+        goals?: number | null;
+        penaltyGoals?: number | null;
+        yellowCards?: number | null;
+        suspensions?: number | null;
+        redCards?: number | null;
+        blueCards?: number | null;
+        mvp?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Totals across every MHA season, refreshed by the fixtures sync.
+   */
+  careerStats?: {
+    appearances?: number | null;
+    goals?: number | null;
+    penaltyGoals?: number | null;
+    yellowCards?: number | null;
+    suspensions?: number | null;
+    redCards?: number | null;
+    blueCards?: number | null;
+    mvp?: number | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -2608,6 +2647,7 @@ export interface PlayersSelect<T extends boolean = true> {
   number?: T;
   position?: T;
   team?: T;
+  otherTeams?: T;
   profilePicture?: T;
   profilePage?: T;
   slug?: T;
@@ -2616,6 +2656,7 @@ export interface PlayersSelect<T extends boolean = true> {
     | T
     | {
         season?: T;
+        seasonId?: T;
         appearances?: T;
         goals?: T;
         penaltyGoals?: T;
@@ -2625,6 +2666,33 @@ export interface PlayersSelect<T extends boolean = true> {
         blueCards?: T;
         mvp?: T;
         syncedAt?: T;
+      };
+  pastSeasons?:
+    | T
+    | {
+        season?: T;
+        seasonId?: T;
+        appearances?: T;
+        goals?: T;
+        penaltyGoals?: T;
+        yellowCards?: T;
+        suspensions?: T;
+        redCards?: T;
+        blueCards?: T;
+        mvp?: T;
+        id?: T;
+      };
+  careerStats?:
+    | T
+    | {
+        appearances?: T;
+        goals?: T;
+        penaltyGoals?: T;
+        yellowCards?: T;
+        suspensions?: T;
+        redCards?: T;
+        blueCards?: T;
+        mvp?: T;
       };
   updatedAt?: T;
   createdAt?: T;

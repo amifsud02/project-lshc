@@ -19,6 +19,16 @@ export const positionLabel = (position?: Player['position']): string | undefined
 export const playerName = (p: Pick<Player, 'firstName' | 'lastName'>): string =>
   `${p.firstName ?? ''} ${p.lastName ?? ''}`.trim()
 
+const listFormat = new Intl.ListFormat('en-GB', { type: 'conjunction' })
+
+/** The names of every squad the player is on, their main one first. */
+export const playerTeams = (player: Pick<Player, 'team' | 'otherTeams'>): string[] => {
+  const names = [player.team, ...(player.otherTeams ?? [])]
+    .map((t) => (t && typeof t === 'object' ? t.teamName : undefined))
+    .filter((n): n is string => !!n)
+  return [...new Set(names)]
+}
+
 /** "2026 - 2027" (as the MHA writes it) → "2026/27". */
 export const seasonLabel = (season?: string | null): string | undefined => {
   const m = season?.match(/(\d{4})\D+\d{2}(\d{2})/)
@@ -33,11 +43,13 @@ export const seasonLabel = (season?: string | null): string | undefined => {
 export const describePlayer = (player: Player): { lead: string; description: string } => {
   const name = playerName(player)
   const label = positionLabel(player.position)
-  const team = typeof player.team === 'object' ? player.team?.teamName : undefined
   const isCoach = player.position === 'Coach'
 
   const role = label ? `is a ${label.toLowerCase()}` : 'plays'
-  const squad = team && !/^la salle( handball club)?$/i.test(team) ? `, in the ${team} squad` : ''
+  const named = playerTeams(player).filter((t) => !/^la salle( handball club)?$/i.test(t))
+  const squad = named.length
+    ? `, in the ${listFormat.format(named)} squad${named.length > 1 ? 's' : ''}`
+    : ''
   const number = typeof player.number === 'number' && !isCoach ? `, wearing number ${player.number}` : ''
   const lead = `${name} ${role} at La Salle Handball Club in Malta${squad}${number}.`
 

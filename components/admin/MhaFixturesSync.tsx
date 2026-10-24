@@ -150,6 +150,7 @@ export const MhaFixturesSync = () => {
             ['New competitions', result.competitionsCreated],
             ['New players', result.playersCreated],
             ['Players linked', result.playersLinked],
+            ['Also plays for', result.squadsAdded],
             ['Warnings', result.warnings],
           ].map(([title, list]) =>
             (list as string[]).length ? (

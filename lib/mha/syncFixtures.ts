@@ -3,12 +3,13 @@ import type { Payload } from 'payload'
 import { slugify } from '@/lib/utils/fixtureSlug'
 
 import {
-  fetchMhaActiveSeason,
   fetchMhaFixtures,
   fetchMhaMatchReport,
   fetchMhaPlayerStats,
+  fetchMhaSeasons,
   type MhaFixture,
   type MhaMatchReport,
+  type MhaSeason,
 } from './client'
 import { mapMhaFixture, type MappedFixture, type MhaTeamRef } from './mapFixture'
 import { mapLineup, nameKey, splitName, type MappedLineupRow } from './mapLineup'
@@ -82,8 +83,10 @@ const MHA_CONCURRENCY = 4
  *   player's goals, 7m, cards and suspensions, from the MHA match report. Reports
  *   are only read for fixtures without a line-up yet (all of them with
  *   `refreshLineups`). La Salle players are linked through `mhaPlayerId` —
- *   matched by name the first time, created when nothing matches.
- * - **stats** — refreshes the season totals of every player linked to MHA.
+ *   matched by name the first time, created when nothing matches. A player seen in
+ *   the line-up of another of our squads gets it added to `otherTeams`.
+ * - **stats** — refreshes the current season, past seasons and career totals of
+ *   every player linked to MHA.
  *
  * With `dryRun` nothing is written; the result reports what would happen.
  */
@@ -404,11 +407,14 @@ const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime,
     collection: 'players',
     pagination: false,
     depth: 0,
-    select: { firstName: true, lastName: true, mhaPlayerId: true },
+    select: { firstName: true, lastName: true, mhaPlayerId: true, team: true, otherTeams: true },
   })
   const byMhaId = new Map<string, string>()
   const unlinkedByName = new Map<string, string[]>()
+  // Every squad each player is on, so a line-up for a further squad adds it to `otherTeams`.
+  const squads = new Map<string, { team: string | null; others: string[] }>()
   for (const p of players) {
+    squads.set(String(p.id), { team: idOf(p.team), others: (p.otherTeams ?? []).map(idOf).filter((id): id is string => !!id) })
     if (p.mhaPlayerId) {
       byMhaId.set(p.mhaPlayerId, String(p.id))
     } else {
@@ -417,10 +423,21 @@ const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime,
     }
   }
 
-  const resolvePlayer = async (row: MappedLineupRow, teamId: string): Promise<string | null> => {
+  const addSquad = async (id: string, teamId: string, label: string) => {
+    const squad = squads.get(id)
+    if (!squad || teamId.startsWith('new-') || squad.team === teamId || squad.others.includes(teamId)) return
+    squad.others.push(teamId)
+    if (!dryRun) await payload.update({ collection: 'players', id, data: { otherTeams: squad.others } })
+    result.squadsAdded.push(label)
+  }
+
+  const resolvePlayer = async (row: MappedLineupRow, teamId: string, teamName: string): Promise<string | null> => {
     if (!row.mhaPlayerId) return null
     const known = byMhaId.get(row.mhaPlayerId)
-    if (known) return known
+    if (known) {
+      await addSquad(known, teamId, `${row.name} → ${teamName}`)
+      return known
+    }
 
     const sameName = unlinkedByName.get(nameKey(row.name)) ?? []
     if (sameName.length > 1) {
@@ -434,6 +451,7 @@ const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime,
       if (!dryRun) await payload.update({ collection: 'players', id, data: { mhaPlayerId: row.mhaPlayerId } })
       unlinkedByName.delete(nameKey(row.name))
       result.playersLinked.push(`${row.mhaPlayerId} → ${row.name}`)
+      await addSquad(id, teamId, `${row.name} → ${teamName}`)
     } else {
       result.playersCreated.push(`${row.name} (${row.mhaPlayerId})`)
       id = dryRun
@@ -453,6 +471,7 @@ const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime,
           )
     }
     byMhaId.set(row.mhaPlayerId, id)
+    if (!squads.has(id)) squads.set(id, { team: teamId, others: [] })
     return id
   }
 
@@ -461,10 +480,11 @@ const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime,
     sheet: MhaMatchReport['homePlayers'],
     isOurs: boolean,
     teamId: string,
+    teamName: string,
   ): Promise<LineupRow[]> => {
     const rows: LineupRow[] = []
     for (const row of mapLineup(sheet)) {
-      rows.push({ ...row, player: isOurs ? await resolvePlayer(row, teamId) : null })
+      rows.push({ ...row, player: isOurs ? await resolvePlayer(row, teamId, teamName) : null })
     }
     return rows
   }
@@ -517,11 +537,13 @@ const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime,
           report.homePlayers,
           mha.homeClub === MHA_CLUB_NAME,
           teamFor(mha.homeTeamId, doc?.homeTeam),
+          mha.homeTeam,
         )
         const awayLineup = await buildRows(
           report.awayPlayers,
           mha.awayClub === MHA_CLUB_NAME,
           teamFor(mha.awayTeamId, doc?.awayTeam),
+          mha.awayTeam,
         )
 
         if (
@@ -558,22 +580,32 @@ const STAT_FIELDS = [
   'mvp',
 ] as const
 
+type StatTotals = Record<(typeof STAT_FIELDS)[number], number>
+
+const totalsOf = (totals: Partial<Record<string, unknown>> | null | undefined): StatTotals =>
+  Object.fromEntries(STAT_FIELDS.map((f) => [f, Number(totals?.[f] ?? 0) || 0])) as StatTotals
+
 /**
- * Refreshes `seasonStats` on every player linked to MHA with their totals for the
- * active MHA season. These cover all competitions, including any we don't sync.
+ * Refreshes every player linked to MHA: `seasonStats` with their totals for the active
+ * MHA season, `careerStats` with their totals across all seasons, and `pastSeasons`
+ * with the final totals of each earlier season. A past season is read once, the first
+ * sync after it stops being active, and kept from then on. All of these cover every
+ * competition and squad, including any we don't sync.
  */
 const syncPlayerStats = async ({ payload, dryRun, offset, outOfTime, result }: StageContext) => {
-  let season: Awaited<ReturnType<typeof fetchMhaActiveSeason>>
+  let seasons: MhaSeason[]
   try {
-    season = await fetchMhaActiveSeason()
+    seasons = await fetchMhaSeasons()
   } catch (err) {
     result.warnings.push(`Player stats skipped: ${errorMessage(err)}`)
     return
   }
+  const season = seasons.find((s) => s.active)
   if (!season) {
     result.warnings.push('Player stats skipped: MHA has no active season')
     return
   }
+  const pastSeasons = seasons.filter((s) => s.seasonId !== season.seasonId)
   result.playerStats.season = season.seasonName
 
   const { docs: players } = await payload.find({
@@ -582,9 +614,42 @@ const syncPlayerStats = async ({ payload, dryRun, offset, outOfTime, result }: S
     pagination: false,
     depth: 0,
     sort: 'mhaPlayerId',
-    select: { firstName: true, lastName: true, mhaPlayerId: true, seasonStats: true },
+    select: { firstName: true, lastName: true, mhaPlayerId: true, seasonStats: true, pastSeasons: true, careerStats: true },
   })
   result.total = players.length
+
+  type Row = { season: string; seasonId: string } & StatTotals
+
+  const refresh = async (player: (typeof players)[number]) => {
+    const mhaId = player.mhaPlayerId!
+    const current = await fetchMhaPlayerStats(mhaId, season.seasonId)
+
+    const kept: Row[] = (player.pastSeasons ?? [])
+      .filter((r) => r.seasonId && r.seasonId !== season.seasonId)
+      .map((r) => ({ season: r.season ?? '', seasonId: r.seasonId!, ...totalsOf(r) }))
+    const missing = pastSeasons.filter((s) => !kept.some((r) => r.seasonId === s.seasonId))
+    for (const past of missing) {
+      try {
+        const stats = await fetchMhaPlayerStats(mhaId, past.seasonId)
+        kept.push({ season: past.seasonName, seasonId: past.seasonId, ...totalsOf(stats.totals) })
+      } catch (err) {
+        // The last totals we synced for that season beat none at all; otherwise try again next sync.
+        const last = player.seasonStats
+        if (last?.seasonId === past.seasonId || (!last?.seasonId && last?.season === past.seasonName)) {
+          kept.push({ season: past.seasonName, seasonId: past.seasonId, ...totalsOf(last) })
+        } else {
+          throw err
+        }
+      }
+    }
+    kept.sort((a, b) => b.season.localeCompare(a.season))
+
+    return {
+      seasonStats: { season: season.seasonName, seasonId: season.seasonId, ...totalsOf(current.totals) },
+      pastSeasons: kept,
+      careerStats: totalsOf(current.careerTotals),
+    }
+  }
 
   for (let i = offset; i < players.length; i += MHA_CONCURRENCY) {
     if (outOfTime(i)) {
@@ -595,26 +660,29 @@ const syncPlayerStats = async ({ payload, dryRun, offset, outOfTime, result }: S
     const fetched = await Promise.all(
       players.slice(i, i + MHA_CONCURRENCY).map(async (player) => {
         try {
-          return { player, stats: await fetchMhaPlayerStats(player.mhaPlayerId!, season.seasonId) }
+          return { player, next: await refresh(player) }
         } catch (err) {
           return { player, error: errorMessage(err) }
         }
       }),
     )
 
-    for (const { player, stats, error } of fetched) {
+    for (const { player, next, error } of fetched) {
       const name = `${player.firstName} ${player.lastName}`
-      if (error || !stats) {
+      if (error || !next) {
         result.playerStats.failed++
         result.warnings.push(`${name}: season stats failed — ${error}`)
         continue
       }
 
-      const current = player.seasonStats ?? {}
-      const next = Object.fromEntries(STAT_FIELDS.map((f) => [f, Number(stats.totals[f] ?? 0) || 0]))
-      const changed =
-        current.season !== season.seasonName || STAT_FIELDS.some((f) => (current[f] ?? null) !== next[f])
-      if (!changed) {
+      const { syncedAt: _syncedAt, ...currentSeason } = player.seasonStats ?? {}
+      const stored = {
+        seasonStats: { season: currentSeason.season, seasonId: currentSeason.seasonId, ...totalsOf(currentSeason) },
+        pastSeasons: (player.pastSeasons ?? []).map((r) => ({ season: r.season ?? '', seasonId: r.seasonId ?? '', ...totalsOf(r) })),
+        careerStats: totalsOf(player.careerStats),
+      }
+      const hadCareer = player.careerStats?.appearances != null
+      if (hadCareer && JSON.stringify(stored) === JSON.stringify(next)) {
         result.playerStats.unchanged++
         continue
       }
@@ -624,7 +692,7 @@ const syncPlayerStats = async ({ payload, dryRun, offset, outOfTime, result }: S
           await payload.update({
             collection: 'players',
             id: player.id,
-            data: { seasonStats: { season: season.seasonName, ...next, syncedAt: new Date().toISOString() } },
+            data: { ...next, seasonStats: { ...next.seasonStats, syncedAt: new Date().toISOString() } },
           })
         }
         result.playerStats.updated++

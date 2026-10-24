@@ -47,6 +47,8 @@ export type SyncResult = {
   }
   playersCreated: string[]
   playersLinked: string[]
+  /** Players added to a further squad they appeared in, e.g. "Andre Galea → HMS". */
+  squadsAdded: string[]
   playerStats: {
     season: string | null
     updated: number
@@ -73,6 +75,7 @@ export const emptySyncResult = (dryRun: boolean, stage: SyncStage = 'fixtures', 
   lineups: { saved: 0, unchanged: 0, pending: 0, failed: 0 },
   playersCreated: [],
   playersLinked: [],
+  squadsAdded: [],
   playerStats: { season: null, updated: 0, unchanged: 0, failed: 0 },
   warnings: [],
 })
@@ -97,6 +100,7 @@ export const mergeSyncResults = (a: SyncResult, b: SyncResult): SyncResult => ({
   lineups: sum(a.lineups, b.lineups),
   playersCreated: union(a.playersCreated, b.playersCreated),
   playersLinked: union(a.playersLinked, b.playersLinked),
+  squadsAdded: union(a.squadsAdded, b.squadsAdded),
   playerStats: {
     ...sum(
       { updated: a.playerStats.updated, unchanged: a.playerStats.unchanged, failed: a.playerStats.failed },

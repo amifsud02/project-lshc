@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import type { Player } from '@/payload-types'
 import type { PlayerMatch } from '@/lib/players/data'
-import { describePlayer, playerName, positionLabel, seasonLabel } from '@/lib/players/profile'
+import { describePlayer, playerName, playerTeams, positionLabel, seasonLabel } from '@/lib/players/profile'
 import { mediaUrl } from '@/lib/seo/meta'
 import { paths } from '@/lib/seo/site'
 import { teamInitials } from '@/lib/utils/normalize/sports'
@@ -25,15 +25,42 @@ const STAT_LABELS: [keyof NonNullable<Player['seasonStats']>, string][] = [
   ['blueCards', 'Blue cards'],
 ]
 
+// Short headings so the season table fits a phone without much sideways scrolling.
+const HISTORY_COLUMNS: [keyof NonNullable<Player['careerStats']>, string][] = [
+  ['appearances', 'Apps'],
+  ['goals', 'Goals'],
+  ['penaltyGoals', '7m'],
+  ['mvp', 'MVP'],
+  ['yellowCards', 'Yellow'],
+  ['suspensions', '2 min'],
+  ['redCards', 'Red'],
+  ['blueCards', 'Blue'],
+]
+
 export default function PlayerProfile({ player, matches }: { player: Player; matches: PlayerMatch[] }) {
   const name = playerName(player)
   const role = positionLabel(player.position)
-  const team = typeof player.team === 'object' ? player.team?.teamName : undefined
+  const teams = playerTeams(player)
   const photo = mediaUrl(player.profilePicture)
   const stats = player.seasonStats
   const season = seasonLabel(stats?.season)
   // Blue cards are rare, so the tile only appears for a player who has one.
   const statTiles = STAT_LABELS.filter(([key]) => typeof stats?.[key] === 'number' && (key !== 'blueCards' || Number(stats[key]) > 0))
+
+  // Season by season, newest first, then the career total. Only worth a table once
+  // there is more to it than the current season the tiles already show.
+  const seasonRows = [
+    ...(stats?.appearances ? [{ ...stats, id: 'current', season: season ?? 'This season' }] : []),
+    ...(player.pastSeasons ?? [])
+      .filter((r) => r.appearances)
+      .map((r) => ({ ...r, id: r.id ?? r.seasonId ?? r.season, season: seasonLabel(r.season) ?? '' })),
+  ]
+  const career = player.careerStats
+  const showHistory =
+    !!career?.appearances && (seasonRows.length > 1 || career.appearances > (stats?.appearances ?? 0))
+  const historyColumns = HISTORY_COLUMNS.filter(
+    ([key]) => key !== 'blueCards' || Number(career?.blueCards) > 0,
+  )
 
   return (
     <div className={`parent ${styles.profile}`}>
@@ -63,10 +90,10 @@ export default function PlayerProfile({ player, matches }: { player: Player; mat
                 <dd className="numbers">{player.number}</dd>
               </div>
             ) : null}
-            {team ? (
+            {teams.length ? (
               <div className={styles.fact}>
-                <dt>Squad</dt>
-                <dd>{team}</dd>
+                <dt>{teams.length > 1 ? 'Squads' : 'Squad'}</dt>
+                <dd>{teams.join(' · ')}</dd>
               </div>
             ) : null}
             <div className={styles.fact}>
@@ -90,7 +117,53 @@ export default function PlayerProfile({ player, matches }: { player: Player; mat
               </div>
             ))}
           </dl>
-          <p className={styles.note}>Totals across every Malta Handball Association competition this season.</p>
+          <p className={styles.note}>
+            Totals across every Malta Handball Association competition this season
+            {teams.length > 1 ? ', for all of their squads' : ''}.
+          </p>
+        </section>
+      ) : null}
+
+      {showHistory && career ? (
+        <section aria-labelledby="career-stats">
+          <h2 id="career-stats" className={styles.sectionTitle}>
+            Season by season
+          </h2>
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Season</th>
+                  {historyColumns.map(([key, label]) => (
+                    <th key={key} className={styles.num}>
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {seasonRows.map((row) => (
+                  <tr key={row.id}>
+                    <td className="numbers">{row.season}</td>
+                    {historyColumns.map(([key]) => (
+                      <td key={key} className={`${styles.num} numbers`}>
+                        {row[key] ?? 0}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+                <tr className={styles.totalRow}>
+                  <td>Career</td>
+                  {historyColumns.map(([key]) => (
+                    <td key={key} className={`${styles.num} numbers`}>
+                      {career[key] ?? 0}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className={styles.note}>Career totals cover every season on record with the Malta Handball Association.</p>
         </section>
       ) : null}
 
