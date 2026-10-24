@@ -33,6 +33,12 @@ import { SeedPages as SeedPages_cd3154deb36673600052bac05f1ed156 } from '@/compo
 import { LineupRowLabel as LineupRowLabel_56d562825069ba798bf2defdb9848a17 } from '@/components/admin/LineupRowLabel'
 import { MhaFixturesSync as MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d } from '@/components/admin/MhaFixturesSync'
 import { MatchSummariesAction as MatchSummariesAction_af7fb5cb323b2bd56f9c15aa5d4eb1aa } from '@/components/admin/MatchSummariesAction'
+import { StatusCell as StatusCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
+import { OrderSummary as OrderSummary_69683ddc191d04d12c6cfe0164b7f013 } from '@/components/admin/orders/OrderSummary'
+import { CustomerCell as CustomerCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
+import { ItemsCell as ItemsCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
+import { OrderItemRowLabel as OrderItemRowLabel_bbea6f8da28c2ece34410ffd0c1cee8a } from '@/components/admin/orders/OrderItemRowLabel'
+import { MoneyCell as MoneyCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { GoogleSignInButton as GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6 } from '@/components/admin/GoogleSignInButton'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -74,6 +80,12 @@ export const importMap = {
   "@/components/admin/LineupRowLabel#LineupRowLabel": LineupRowLabel_56d562825069ba798bf2defdb9848a17,
   "@/components/admin/MhaFixturesSync#MhaFixturesSync": MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d,
   "@/components/admin/MatchSummariesAction#MatchSummariesAction": MatchSummariesAction_af7fb5cb323b2bd56f9c15aa5d4eb1aa,
+  "@/components/admin/orders/cells#StatusCell": StatusCell_1b028d7023921476b5ac5828f19c13bd,
+  "@/components/admin/orders/OrderSummary#OrderSummary": OrderSummary_69683ddc191d04d12c6cfe0164b7f013,
+  "@/components/admin/orders/cells#CustomerCell": CustomerCell_1b028d7023921476b5ac5828f19c13bd,
+  "@/components/admin/orders/cells#ItemsCell": ItemsCell_1b028d7023921476b5ac5828f19c13bd,
+  "@/components/admin/orders/OrderItemRowLabel#OrderItemRowLabel": OrderItemRowLabel_bbea6f8da28c2ece34410ffd0c1cee8a,
+  "@/components/admin/orders/cells#MoneyCell": MoneyCell_1b028d7023921476b5ac5828f19c13bd,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/components/admin/GoogleSignInButton#GoogleSignInButton": GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1

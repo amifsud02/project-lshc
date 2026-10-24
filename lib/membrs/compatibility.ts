@@ -1,5 +1,5 @@
 import type { CustomFieldDef } from '@/lib/shop/types'
-import type { UnitTemplate } from '@/lib/shop/units'
+import { orList, type UnitTemplate } from '@/lib/shop/units'
 import { includedProducts, type MembrsPlan } from './client'
 
 type MembrsProduct = MembrsPlan['products'][number]
@@ -63,16 +63,33 @@ export function checkMembrsCompatibility(product: MembershipSetup, plan: MembrsP
       `There ${extraUnits.length === 1 ? 'is 1 included product unit' : `are ${extraUnits.length} included product units`} for ${membersCovered} members; each member needs the same set.`,
     )
   }
-  const selectFields = extraUnits.flatMap((u) =>
-    u.customFields.filter((f): f is CustomFieldDef & { options: NonNullable<CustomFieldDef['options']> } =>
+  const selectFieldsOf = (fields: CustomFieldDef[]) =>
+    fields.filter((f): f is CustomFieldDef & { options: NonNullable<CustomFieldDef['options']> } =>
       Boolean(f.kind === 'select' && f.options?.length),
-    ),
-  )
+    )
+  const selectFields = selectFieldsOf(extraUnits.filter((u) => !u.choices).flatMap((u) => u.customFields))
   const usedFields = new Set<string>()
+
+  // MEMBRS has no choices: every member gets every included product. So a pick between our
+  // products (e.g. a T-shirt or a hoodie) stays on our side and the club fulfils it from the order.
+  const choiceUnits = extraUnits.filter((u) => u.choices)
+  for (const unit of choiceUnits) {
+    warnings.push(
+      `Members choose ${orList(unit.choices!.map((c) => c.productTitle))}. MEMBRS doesn't record the pick; the club fulfils it from the order.`,
+    )
+  }
+  const choiceFields = choiceUnits.flatMap((unit) =>
+    unit.choices!.flatMap((option) => selectFieldsOf(option.customFields).map((field) => ({ unit, option, field }))),
+  )
 
   for (const membrsProduct of includedProducts(plan)) {
     const covering = selectFields.filter((f) => f.options.some((o) => matchesVariant(o.value, membrsProduct)))
-    if (covering.length === 0) {
+    const inChoice = choiceFields.find(({ field }) => field.options.some((o) => matchesVariant(o.value, membrsProduct)))
+    if (covering.length === 0 && inChoice) {
+      errors.push(
+        `"${membrsProduct.name}" comes with every membership on MEMBRS, but here members only get it if they pick ${inChoice.option.productTitle} in "${inChoice.unit.productTitle}". Take it off the MEMBRS plan; the club then fulfils the choice from the order.`,
+      )
+    } else if (covering.length === 0) {
       pickers.push(membrsProduct)
     }
     for (const field of covering) {

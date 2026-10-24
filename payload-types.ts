@@ -1206,11 +1206,23 @@ export interface Product {
       }[]
     | null;
   /**
-   * Products that make up this bundle, or that come with this membership.
+   * Products that make up this bundle, or that come with this membership. On a membership a row can instead be a choice, e.g. a T-shirt or a hoodie: each member picks one when buying.
    */
   bundleItems?:
     | {
-        product: string | Product;
+        kind?: ('product' | 'choice') | null;
+        product?: (string | null) | Product;
+        /**
+         * Each member picks one of these, then answers its own questions (e.g. a size).
+         */
+        choices?: (string | Product)[] | null;
+        /**
+         * Shown above the choice on the membership form. Leave empty to list the products.
+         */
+        label?: string | null;
+        /**
+         * On a membership, one per member covered (e.g. 2 on a couple membership).
+         */
         quantity: number;
         id?: string | null;
       }[]
@@ -1234,10 +1246,15 @@ export interface Order {
   id: string;
   orderNumber?: string | null;
   status: 'pending' | 'paid' | 'fulfilled' | 'cancelled' | 'refunded';
-  user?: (string | null) | User;
-  customerEmail: string;
+  /**
+   * Memberships are paid through MEMBRS; everything else through the club shop.
+   */
+  paymentProvider?: ('club' | 'membrs') | null;
+  paidAt?: string | null;
   customerName?: string | null;
+  customerEmail: string;
   customerPhone?: string | null;
+  user?: (string | null) | User;
   items: {
     productTitle: string;
     product?: (string | null) | Product;
@@ -1268,19 +1285,20 @@ export interface Order {
       | null;
     id?: string | null;
   }[];
+  /**
+   * Cents
+   */
   subtotal: number;
+  /**
+   * Cents
+   */
   total: number;
   currency: string;
-  /**
-   * Memberships are paid through MEMBRS; everything else through the club shop.
-   */
-  paymentProvider?: ('club' | 'membrs') | null;
   /**
    * For MEMBRS orders this is the MEMBRS checkout id.
    */
   stripeCheckoutSessionId?: string | null;
   stripePaymentIntentId?: string | null;
-  paidAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2844,7 +2862,10 @@ export interface ProductsSelect<T extends boolean = true> {
   bundleItems?:
     | T
     | {
+        kind?: T;
         product?: T;
+        choices?: T;
+        label?: T;
         quantity?: T;
         id?: T;
       };
@@ -2865,10 +2886,12 @@ export interface ProductsSelect<T extends boolean = true> {
 export interface OrdersSelect<T extends boolean = true> {
   orderNumber?: T;
   status?: T;
-  user?: T;
-  customerEmail?: T;
+  paymentProvider?: T;
+  paidAt?: T;
   customerName?: T;
+  customerEmail?: T;
   customerPhone?: T;
+  user?: T;
   items?:
     | T
     | {
@@ -2884,10 +2907,8 @@ export interface OrdersSelect<T extends boolean = true> {
   subtotal?: T;
   total?: T;
   currency?: T;
-  paymentProvider?: T;
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;
-  paidAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

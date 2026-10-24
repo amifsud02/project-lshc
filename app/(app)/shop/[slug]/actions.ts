@@ -15,6 +15,7 @@ import { checkMembrsCompatibility, sameText } from '@/lib/membrs/compatibility'
 import { canViewShop } from '@/lib/shop/access'
 import { getProductById } from '@/lib/shop/products'
 import type { CartUnit } from '@/lib/shop/types'
+import { orList, resolveUnit } from '@/lib/shop/units'
 import { validateUnit } from '@/lib/shop/validation'
 
 type Input = {
@@ -39,14 +40,26 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
   const planId = product.membership?.membrsPlanId
   if (!planId) return { ok: false, error: 'This membership is not available online yet.' }
 
-  // Units come from the browser, so check them against the product as it is now.
+  // Units come from the browser, so check them against the product as it is now. A choice is
+  // answered with the product the member picked, which then asks its own questions (e.g. a size).
   const templates = product.unitTemplates
-  if (units.length !== templates.length || units.some((u, i) => u.productId !== templates[i].productId)) {
+  const memberCount = product.membership?.membersCovered ?? 1
+  if (units.length !== templates.length) {
     return { ok: false, error: 'This membership has changed. Please reload the page and try again.' }
   }
+  const filled = []
   for (const [i, template] of templates.entries()) {
-    const error = validateUnit({ customFields: template.customFields, values: units[i].values })
-    if (error) return { ok: false, error: `${template.productTitle}: ${error}` }
+    if (template.choices && !units[i].productId) {
+      // Included products follow the members in order, so this one belongs to member m.
+      const m = (i - memberCount) % memberCount
+      const member = units[m].values?.firstName || `member ${m + 1}`
+      return { ok: false, error: `Pick ${orList(template.choices.map((c) => c.productTitle))} for ${member}.` }
+    }
+    const unit = resolveUnit(template, units[i].productId)
+    if (!unit) return { ok: false, error: 'This membership has changed. Please reload the page and try again.' }
+    const error = validateUnit({ customFields: unit.customFields, values: units[i].values })
+    if (error) return { ok: false, error: `${unit.productTitle}: ${error}` }
+    filled.push(unit)
   }
 
   let plan
@@ -62,8 +75,8 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
     return { ok: false, error: 'This membership is not available online yet.' }
   }
 
-  // Member units come first, then included products (e.g. one T-shirt per member).
-  const memberCount = plan.members_covered
+  // Member units come first, then included products (e.g. one T-shirt per member). The plan
+  // covers as many members as the product (checked above).
   const memberUnits = units.slice(0, memberCount)
   const extraUnits = units.slice(memberCount)
   const includedProducts = getIncludedProducts(plan)
@@ -71,7 +84,10 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
   const members = []
   for (const [i, unit] of memberUnits.entries()) {
     const { firstName = '', lastName = '', email = '' } = unit.values
-    const answers = extraUnits.filter((_, j) => j % memberCount === i).flatMap((u) => Object.values(u.values))
+    // Answers given for a choice never pick a MEMBRS variant: MEMBRS doesn't know about choices.
+    const answers = extraUnits
+      .filter((_, j) => j % memberCount === i && !templates[memberCount + j].choices)
+      .flatMap((u) => Object.values(u.values))
 
     const products = []
     for (const membrsProduct of includedProducts) {
@@ -111,11 +127,11 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
       customerName: `${buyer.firstName ?? ''} ${buyer.lastName ?? ''}`.trim() || undefined,
       customerPhone: buyer.mobile || undefined,
       user: currentUserId,
-      items: templates.map((template, i) => {
+      items: filled.map((unit, i) => {
         const isMember = i < memberCount
         return {
-          productTitle: template.productTitle,
-          product: template.productId,
+          productTitle: unit.productTitle,
+          product: unit.productId,
           bundleParentLineId: i === 0 ? undefined : 'membership',
           membershipSeason: isMember ? product.membership?.season : undefined,
           quantity: 1,

@@ -1,6 +1,6 @@
 import { getPayload, type Payload, type Where } from 'payload'
 import config from '@payload-config'
-import type { NurseryRegistration, Order } from '@/payload-types'
+import type { Membership, NurseryRegistration, Order } from '@/payload-types'
 import type { CurrentUser } from '@/lib/auth/server'
 
 export const orderStatusLabels: Record<Order['status'], string> = {
@@ -75,6 +75,30 @@ export async function getUserNurseryRegistrations(
     where: ownedRegistrations(user),
   })
   return docs
+}
+
+/** The season under way: from July it's the one starting that year, e.g. 2026 for "2026/2027". */
+const currentSeasonStart = (now = new Date()) => (now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1)
+
+/**
+ * The user's active memberships for this season or a later one. Each member gives their own
+ * email at checkout (a couple membership covers two), so they're matched on email.
+ */
+export async function getUserCurrentMemberships(user: CurrentUser): Promise<Membership[]> {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'memberships',
+    depth: 1,
+    limit: 20,
+    overrideAccess: true,
+    sort: '-season',
+    // `like` ignores case; the exact match is checked below.
+    where: { and: [{ status: { equals: 'active' } }, { email: { like: user.email } }] },
+  })
+  const email = user.email.toLowerCase()
+  return docs.filter(
+    (m) => m.email?.toLowerCase() === email && Number(m.season.slice(0, 4)) >= currentSeasonStart(),
+  )
 }
 
 export async function countUserRecords(user: CurrentUser): Promise<{ nursery: number; orders: number }> {

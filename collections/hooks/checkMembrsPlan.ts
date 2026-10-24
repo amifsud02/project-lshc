@@ -13,13 +13,15 @@ export const checkMembrsPlan: CollectionBeforeChangeHook = async ({ data, origin
   if (doc.type !== 'membership' || !doc.active) return data
 
   // Included products arrive as IDs; their questions decide how variants are picked.
+  const populate = async (product: unknown) =>
+    product && typeof product !== 'object'
+      ? await req.payload.findByID({ collection: 'products', id: product as string, depth: 0, req }).catch(() => null)
+      : product
   const bundleItems = await Promise.all(
     (Array.isArray(doc.bundleItems) ? doc.bundleItems : []).map(async (item: any) => ({
       ...item,
-      product:
-        item?.product && typeof item.product !== 'object'
-          ? await req.payload.findByID({ collection: 'products', id: item.product, depth: 0, req }).catch(() => null)
-          : item?.product,
+      product: await populate(item?.product),
+      choices: Array.isArray(item?.choices) ? await Promise.all(item.choices.map(populate)) : item?.choices,
     })),
   )
 

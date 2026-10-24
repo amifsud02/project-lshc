@@ -1,5 +1,6 @@
 import { slugField, type CollectionConfig } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
+import { isChoice } from '@/lib/shop/units'
 import { checkMembrsPlan } from './hooks/checkMembrsPlan'
 
 export const Products: CollectionConfig = {
@@ -134,19 +135,68 @@ export const Products: CollectionConfig = {
       name: 'bundleItems',
       type: 'array',
       label: 'Included products',
+      labels: { singular: 'Included product', plural: 'Included products' },
       admin: {
-        description: 'Products that make up this bundle, or that come with this membership.',
+        description:
+          'Products that make up this bundle, or that come with this membership. On a membership a row can instead be a choice, e.g. a T-shirt or a hoodie: each member picks one when buying.',
         condition: (_, siblingData) => siblingData?.type === 'bundle' || siblingData?.type === 'membership',
       },
       fields: [
+        {
+          name: 'kind',
+          label: 'Includes',
+          type: 'radio',
+          defaultValue: 'product',
+          options: [
+            { label: 'A product', value: 'product' },
+            { label: 'A choice of products', value: 'choice' },
+          ],
+          admin: {
+            layout: 'horizontal',
+            // Choices are picked on the membership form; bundles go through the cart, which has no picker.
+            condition: (data) => data?.type === 'membership',
+          },
+        },
         {
           name: 'product',
           type: 'relationship',
           relationTo: 'products',
           required: true,
           filterOptions: () => ({ type: { equals: 'single' } }),
+          admin: { condition: (data, siblingData) => !isChoice(data?.type, siblingData) },
         },
-        { name: 'quantity', type: 'number', required: true, defaultValue: 1, min: 1 },
+        {
+          name: 'choices',
+          label: 'Products to choose from',
+          type: 'relationship',
+          relationTo: 'products',
+          hasMany: true,
+          required: true,
+          minRows: 2,
+          filterOptions: () => ({ type: { equals: 'single' } }),
+          admin: {
+            condition: (data, siblingData) => isChoice(data?.type, siblingData),
+            description: 'Each member picks one of these, then answers its own questions (e.g. a size).',
+          },
+        },
+        {
+          name: 'label',
+          label: 'Heading',
+          type: 'text',
+          admin: {
+            condition: (data, siblingData) => isChoice(data?.type, siblingData),
+            placeholder: 'e.g. Choose your merchandise',
+            description: 'Shown above the choice on the membership form. Leave empty to list the products.',
+          },
+        },
+        {
+          name: 'quantity',
+          type: 'number',
+          required: true,
+          defaultValue: 1,
+          min: 1,
+          admin: { description: 'On a membership, one per member covered (e.g. 2 on a couple membership).' },
+        },
       ],
     },
   ],

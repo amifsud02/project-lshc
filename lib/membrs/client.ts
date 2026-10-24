@@ -36,6 +36,30 @@ export type MembrsCheckout = {
   checkout_url?: string
 }
 
+export type MembrsDiscount = {
+  id: number
+  /** The offer as members see it, e.g. "15% off food". */
+  name: string
+  kind: 'percent' | 'fixed'
+  /** percent: basis points (1500 = 15%); fixed: cents off. */
+  value: number
+  /** Where it can be used: an outlet, a brand, or "All outlets". */
+  scope: string
+  /** For members only, e.g. "LASALLE10" to use online. Never show it publicly. */
+  code: string | null
+  /** Set by `withoutCodes`: there is a code, but it was taken out. */
+  hasCode?: boolean
+}
+export type MembrsPartner = {
+  id: number
+  name: string
+  description: string | null
+  logo_url: string | null
+  phone: string | null
+  discounts: MembrsDiscount[]
+  outlets: Array<{ id: number; name: string; brand: string }>
+}
+
 export class MembrsError extends Error {
   constructor(
     message: string,
@@ -72,6 +96,21 @@ export const getMembrsPlans = (revalidate?: number) =>
 
 export const getMembrsPlan = async (planId: number, revalidate?: number): Promise<MembrsPlan | undefined> =>
   (await getMembrsPlans(revalidate)).find((plan) => plan.id === planId)
+
+/** The club's partner merchants and the discounts its members get there, codes included. */
+export const getMembrsPartners = async (revalidate?: number) => {
+  const partners = await membrs<MembrsPartner[]>('/partners', revalidate ? { next: { revalidate } } : {})
+  // MEMBRS without cloud storage serves logos from its own host ("/api/files/…").
+  const base = process.env.MEMBRS_API_URL?.replace(/\/$/, '') ?? ''
+  return partners.map((p) => ({ ...p, logo_url: p.logo_url?.startsWith('/') ? `${base}${p.logo_url}` : p.logo_url }))
+}
+
+/** The same partners for anyone to see: discount codes are for members only. */
+export const withoutCodes = (partners: MembrsPartner[]): MembrsPartner[] =>
+  partners.map((p) => ({
+    ...p,
+    discounts: p.discounts.map((d) => ({ ...d, code: null, hasCode: Boolean(d.code) })),
+  }))
 
 /** The platform fee the buyer pays on top, in cents; 0 when the club pays it from its sales. */
 export const serviceFeeCents = (plan: MembrsPlan) => Math.round(Number(plan.service_fee ?? 0) * 100)

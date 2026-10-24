@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, LogOut, Package, School, UserRound } from 'lucide-react'
+import { BadgePercent, LayoutDashboard, LogOut, Package, School, UserRound } from 'lucide-react'
 
 const items = [
   { href: '/account', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/account/orders', label: 'Orders', icon: Package },
+  { href: '/account/membership/benefits', label: 'Member benefits', icon: BadgePercent },
   { href: '/account/nursery', label: 'Nursery', icon: School },
   { href: '/account/details', label: 'Account details', icon: UserRound },
 ]

@@ -36,7 +36,7 @@ const STATIC_ROUTES: ContentEntry[] = [
 
 const priorityFor = (path: string): number => {
   if (path === '/') return 1
-  if (['/news', '/tv', '/fixtures', '/academy', '/contact', '/shop'].includes(path)) return 0.9
+  if (['/news', '/tv', '/fixtures', '/academy', '/contact', '/shop', '/memberships'].includes(path)) return 0.9
   if (path.startsWith('/news/') || path.startsWith('/tv/')) return 0.7
   if (path.startsWith('/fixtures/') || path.startsWith('/players/')) return 0.6
   return 0.5
@@ -61,7 +61,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const byPath = new Map<string, ContentEntry>()
   for (const entry of [
     ...STATIC_ROUTES,
-    ...(shopIsPublic ? [{ path: '/shop' }] : []),
+    ...(shopIsPublic ? [{ path: '/shop' }, { path: '/memberships' }] : []),
+    { path: '/membership/benefits' },
     ...groups.flat(),
   ]) {
     byPath.set(entry.path, { ...byPath.get(entry.path), ...entry })

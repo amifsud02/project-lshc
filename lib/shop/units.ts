@@ -1,10 +1,36 @@
 import { hasBundleItems, MEMBER_FIELDS, type CustomFieldDef, type ProductType } from './types'
 
-export type UnitTemplate = {
+export type UnitOption = {
   productId: string
   productTitle: string
   customFields: CustomFieldDef[]
 }
+
+export type UnitTemplate = UnitOption & {
+  /**
+   * Memberships only: the buyer picks one of these products (e.g. a T-shirt or a hoodie) and
+   * answers its questions. `productId` is empty and `productTitle` is the heading to show.
+   */
+  choices?: UnitOption[]
+}
+
+/** On a membership, an included products row can be a choice of products; bundles only have fixed products. */
+export const isChoice = (type: unknown, item: any) => type === 'membership' && item?.kind === 'choice'
+
+/** "A", "A or B", "A, B or C". */
+export const orList = (items: string[]) =>
+  items.length > 1 ? `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}` : (items[0] ?? '')
+
+/**
+ * The product a unit was filled in for: the template itself, or the option picked from its
+ * choices. Undefined when `productId` isn't one the template allows (or nothing was picked).
+ */
+export const resolveUnit = (template: UnitTemplate, productId: string): UnitOption | undefined =>
+  template.choices
+    ? template.choices.find((c) => c.productId === productId)
+    : template.productId === productId
+      ? template
+      : undefined
 
 export const normalizeCustomFields = (input: any): CustomFieldDef[] => {
   if (!Array.isArray(input)) return []
@@ -22,6 +48,12 @@ export const normalizeCustomFields = (input: any): CustomFieldDef[] => {
         : undefined,
     }))
 }
+
+const toOption = (product: any): UnitOption => ({
+  productId: String(product.id),
+  productTitle: String(product.title ?? ''),
+  customFields: normalizeCustomFields(product.customFields),
+})
 
 /**
  * The units a buyer fills in for one purchase of `doc`. Included products must be populated
@@ -53,17 +85,25 @@ export function buildUnitTemplates(doc: any): UnitTemplate[] {
       })
     }
     for (const item of doc.bundleItems) {
-      const child = typeof item?.product === 'object' ? item.product : null
-      if (!child) continue
       const qty = Math.max(1, Number(item?.quantity) || 1)
-      const childFields = normalizeCustomFields(child.customFields)
-      for (let i = 0; i < qty; i++) {
-        unitTemplates.push({
-          productId: String(child.id),
-          productTitle: String(child.title ?? ''),
-          customFields: childFields,
-        })
+      let template: UnitTemplate
+      if (isChoice(type, item)) {
+        const choices = (Array.isArray(item.choices) ? item.choices : [])
+          .filter((c: any) => c && typeof c === 'object')
+          .map(toOption)
+        if (choices.length === 0) continue
+        template = {
+          productId: '',
+          productTitle: String(item.label || orList(choices.map((c: UnitOption) => c.productTitle))),
+          customFields: [],
+          choices,
+        }
+      } else {
+        const child = typeof item?.product === 'object' ? item.product : null
+        if (!child) continue
+        template = toOption(child)
       }
+      for (let i = 0; i < qty; i++) unitTemplates.push(template)
     }
   } else if (type !== 'membership') {
     unitTemplates.push({
@@ -75,4 +115,3 @@ export function buildUnitTemplates(doc: any): UnitTemplate[] {
 
   return unitTemplates
 }
-

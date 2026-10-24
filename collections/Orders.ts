@@ -8,7 +8,8 @@ export const Orders: CollectionConfig = {
   labels: { singular: 'Order', plural: 'Orders' },
   admin: {
     useAsTitle: 'orderNumber',
-    defaultColumns: ['orderNumber', 'customerEmail', 'total', 'status', 'createdAt'],
+    defaultColumns: ['orderNumber', 'customerName', 'items', 'total', 'status', 'createdAt'],
+    listSearchableFields: ['orderNumber', 'customerName', 'customerEmail', 'customerPhone'],
   },
   access: {
     create: collectionWriteAccess('orders'),
@@ -75,45 +76,8 @@ export const Orders: CollectionConfig = {
         { label: 'Cancelled', value: 'cancelled' },
         { label: 'Refunded', value: 'refunded' },
       ],
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', components: { Cell: '@/components/admin/orders/cells#StatusCell' } },
     },
-    { name: 'user', type: 'relationship', relationTo: 'users' },
-    { name: 'customerEmail', type: 'email', required: true },
-    { name: 'customerName', type: 'text' },
-    { name: 'customerPhone', type: 'text' },
-    {
-      name: 'items',
-      type: 'array',
-      required: true,
-      minRows: 1,
-      fields: [
-        { name: 'productTitle', type: 'text', required: true },
-        { name: 'product', type: 'relationship', relationTo: 'products' },
-        {
-          name: 'bundleParentLineId',
-          type: 'text',
-          admin: { description: 'Set when this line was expanded from a bundle cart line.' },
-        },
-        {
-          name: 'membershipSeason',
-          type: 'text',
-          admin: {
-            readOnly: true,
-            description: 'Set on each member of a membership; a membership record is created for it once paid.',
-          },
-        },
-        { name: 'quantity', type: 'number', required: true, defaultValue: 1 },
-        { name: 'unitPrice', type: 'number', required: true, admin: { description: 'Cents' } },
-        {
-          name: 'customFieldValues',
-          type: 'json',
-          admin: { description: 'Snapshot of per-unit custom fields { firstName, size, ... }' },
-        },
-      ],
-    },
-    { name: 'subtotal', type: 'number', required: true },
-    { name: 'total', type: 'number', required: true },
-    { name: 'currency', type: 'text', required: true, defaultValue: 'eur' },
     {
       name: 'paymentProvider',
       type: 'select',
@@ -128,13 +92,97 @@ export const Orders: CollectionConfig = {
         description: 'Memberships are paid through MEMBRS; everything else through the club shop.',
       },
     },
+    { name: 'paidAt', type: 'date', admin: { position: 'sidebar', readOnly: true } },
     {
-      name: 'stripeCheckoutSessionId',
-      type: 'text',
-      index: true,
-      admin: { readOnly: true, description: 'For MEMBRS orders this is the MEMBRS checkout id.' },
+      name: 'summary',
+      type: 'ui',
+      admin: { components: { Field: '@/components/admin/orders/OrderSummary#OrderSummary' } },
     },
-    { name: 'stripePaymentIntentId', type: 'text', admin: { readOnly: true } },
-    { name: 'paidAt', type: 'date', admin: { readOnly: true } },
+    {
+      // Everything the summary above is built from, tucked away: it's rarely changed by hand.
+      type: 'collapsible',
+      label: 'Order record',
+      admin: {
+        initCollapsed: true,
+        description: 'The order as saved at checkout. Only change it to correct a mistake.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'customerName',
+              type: 'text',
+              admin: { width: '33%', components: { Cell: '@/components/admin/orders/cells#CustomerCell' } },
+            },
+            { name: 'customerEmail', type: 'email', required: true, admin: { width: '33%' } },
+            { name: 'customerPhone', type: 'text', admin: { width: '33%' } },
+          ],
+        },
+        { name: 'user', type: 'relationship', relationTo: 'users' },
+        {
+          name: 'items',
+          type: 'array',
+          required: true,
+          minRows: 1,
+          labels: { singular: 'Item', plural: 'Items' },
+          admin: {
+            initCollapsed: true,
+            components: {
+              RowLabel: '@/components/admin/orders/OrderItemRowLabel#OrderItemRowLabel',
+              Cell: '@/components/admin/orders/cells#ItemsCell',
+            },
+          },
+          fields: [
+            { name: 'productTitle', type: 'text', required: true },
+            { name: 'product', type: 'relationship', relationTo: 'products' },
+            {
+              name: 'bundleParentLineId',
+              type: 'text',
+              admin: { description: 'Set when this line was expanded from a bundle cart line.' },
+            },
+            {
+              name: 'membershipSeason',
+              type: 'text',
+              admin: {
+                readOnly: true,
+                description: 'Set on each member of a membership; a membership record is created for it once paid.',
+              },
+            },
+            { name: 'quantity', type: 'number', required: true, defaultValue: 1 },
+            { name: 'unitPrice', type: 'number', required: true, admin: { description: 'Cents' } },
+            {
+              name: 'customFieldValues',
+              type: 'json',
+              admin: { description: 'Snapshot of per-unit custom fields { firstName, size, ... }' },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'subtotal', type: 'number', required: true, admin: { width: '33%', description: 'Cents' } },
+            {
+              name: 'total',
+              type: 'number',
+              required: true,
+              admin: {
+                width: '33%',
+                description: 'Cents',
+                components: { Cell: '@/components/admin/orders/cells#MoneyCell' },
+              },
+            },
+            { name: 'currency', type: 'text', required: true, defaultValue: 'eur', admin: { width: '33%' } },
+          ],
+        },
+        {
+          name: 'stripeCheckoutSessionId',
+          type: 'text',
+          index: true,
+          admin: { readOnly: true, description: 'For MEMBRS orders this is the MEMBRS checkout id.' },
+        },
+        { name: 'stripePaymentIntentId', type: 'text', admin: { readOnly: true } },
+      ],
+    },
   ],
 }

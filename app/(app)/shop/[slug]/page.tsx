@@ -21,6 +21,7 @@ import { checkMembrsCompatibility } from '@/lib/membrs/compatibility'
 import { getProductBySlug } from '@/lib/shop/products'
 import { requireShopCatalogueAccess } from '@/lib/shop/access'
 import { formatPrice, type CustomFieldDef } from '@/lib/shop/types'
+import { orList } from '@/lib/shop/units'
 import type { Metadata, ResolvingMetadata } from 'next'
 import TrackEvent from '@/components/Analytics/TrackEvent'
 import JsonLd from '@/components/Seo/JsonLd'
@@ -184,7 +185,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                       {included.map((t, i) => (
                         <li key={i} className="flex items-center gap-2 text-sm text-foreground">
                           <Check className="size-4 shrink-0 text-primary" />
-                          {t.productTitle}
+                          {t.choices ? `Your choice of ${orList(t.choices.map((c) => c.productTitle))}` : t.productTitle}
                         </li>
                       ))}
                     </ul>
