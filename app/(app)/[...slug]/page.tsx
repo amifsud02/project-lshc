@@ -31,7 +31,7 @@ export default async function Page({
     <>
       <article>
         {/* @ts-ignore */}
-        <BlockRenderer blocks={layout}/>
+        <BlockRenderer blocks={layout} pagePath={paths.page(page.slug)}/>
       </article>
     </>
   )

@@ -39,6 +39,54 @@ export function organizationJsonLd(site: {
   })
 }
 
+/** The club's youth academy as its own organisation, so searches for "handball academy" can find it. */
+export function academyJsonLd(academy: {
+  /** The page showing the academy, when known. */
+  path?: string
+  name: string
+  description: string
+  venues: { name: string; address?: string | null; locality?: string | null; mapUrl?: string | null }[]
+}): Thing {
+  return compact({
+    '@context': 'https://schema.org',
+    '@type': 'SportsOrganization',
+    '@id': `${SITE_URL}/#academy`,
+    name: academy.name,
+    url: academy.path ? absoluteUrl(academy.path) : undefined,
+    description: academy.description,
+    sport: 'Handball',
+    parentOrganization: { '@id': ORGANIZATION_ID },
+    areaServed: { '@type': 'Country', name: 'Malta' },
+    location: academy.venues.map((venue) =>
+      compact({
+        '@type': 'SportsActivityLocation',
+        name: venue.name,
+        hasMap: venue.mapUrl,
+        address: compact({
+          '@type': 'PostalAddress',
+          streetAddress: venue.address,
+          addressLocality: venue.locality,
+          addressCountry: 'MT',
+        }),
+      }),
+    ),
+  })
+}
+
+/** Questions and answers shown on the page; the answers must match the visible text. */
+export function faqJsonLd(items: { question: string; answer: string }[], path?: string): Thing {
+  return compact({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': path ? `${absoluteUrl(path)}#faq` : undefined,
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  })
+}
+
 export function websiteJsonLd(site: { name: string; description?: string }): Thing {
   return compact({
     '@context': 'https://schema.org',

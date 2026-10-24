@@ -13,11 +13,11 @@ import { buildFormConfig } from '@/lib/nursery/form'
 import RegistrationForm, { type FormSeason } from './RegistrationForm'
 import { submitNurseryRegistration } from './actions'
 import '@/components/Shop/shop.css'
-import '../nursery.css'
+import '@/components/Nursery/nursery.css'
 
 export const metadata = {
-  title: 'Nursery registration',
-  description: 'Register your child for the La Salle Handball Club nursery.',
+  title: 'Academy registration',
+  description: 'Register your child for the La Salle Handball Academy.',
   robots: { index: false },
 }
 
@@ -31,14 +31,14 @@ export default async function NurseryRegisterPage() {
   if (!season || !config || !isRegistrationOpen(season)) {
     return (
       <>
-        <PageHeader pageName="Nursery registration" />
+        <PageHeader pageName="Academy registration" />
         <section className="parent shop">
           <div className="reg reg--closed">
             <p className="reg__closed">
               {config?.closedMessage ?? 'Online registration is closed at the moment.'}
             </p>
             <p className="reg__closed-links">
-              <Link href="/nursery" className="btn btn--ghost">
+              <Link href="/academy" className="btn btn--ghost">
                 See this season&apos;s programme
               </Link>
             </p>
@@ -91,7 +91,7 @@ export default async function NurseryRegisterPage() {
 
   return (
     <>
-      <PageHeader pageName="Nursery registration" />
+      <PageHeader pageName="Academy registration" />
       <section className="parent shop">
         <RegistrationForm
           season={formSeason}

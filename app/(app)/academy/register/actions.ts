@@ -244,7 +244,7 @@ export async function submitNurseryRegistration(
     } catch (err) {
       console.error('[nursery] failed to send transfer instructions', err)
     }
-    return { ok: true, redirectTo: `/nursery/register/submitted?ref=${encodeURIComponent(reference)}` }
+    return { ok: true, redirectTo: `/academy/register/submitted?ref=${encodeURIComponent(reference)}` }
   }
 
   const stripe = getStripe()
@@ -269,8 +269,8 @@ export async function submitNurseryRegistration(
       nurseryRegistrationId: String(registration.id),
       registrationNumber: reference,
     },
-    success_url: `${appUrl}/nursery/register/submitted?ref=${encodeURIComponent(reference)}`,
-    cancel_url: `${appUrl}/nursery/register?cancelled=1`,
+    success_url: `${appUrl}/academy/register/submitted?ref=${encodeURIComponent(reference)}`,
+    cancel_url: `${appUrl}/academy/register?cancelled=1`,
   })
 
   await payload.update({

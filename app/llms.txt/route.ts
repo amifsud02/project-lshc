@@ -62,7 +62,11 @@ export async function GET() {
     link("Under-21 men's team", '/teams/u21-mens-team/all'),
     link("Under-21 women's team", '/teams/u21-womens-team/all'),
     link('Youth teams', '/teams/youth-teams'),
-    link('Nursery', '/nursery', 'Handball sessions for children, with online registration'),
+    link(
+      'Handball Academy',
+      '/academy',
+      "The club's academy (nursery) for boys and girls aged 5 to 16: schedule, venues, fees and online registration",
+    ),
     '',
     '## News and media',
     link('News', '/news', 'Match reports and club announcements'),

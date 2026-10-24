@@ -305,6 +305,8 @@ export interface Page {
         | CountdownBlock
         | TabBlock
         | AdvertisementBlock
+        | NurseryProgrammeBlock
+        | FaqBlock
         | AdSlotBlock
       )[]
     | null;
@@ -721,6 +723,37 @@ export interface Advertisement {
   clicks?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NurseryProgrammeBlock".
+ */
+export interface NurseryProgrammeBlock {
+  /**
+   * Used in search results and AI answers. The registration button, schedule, venues and fees come from the active Nursery Season.
+   */
+  academyName?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'nurseryProgramme';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock".
+ */
+export interface FaqBlock {
+  heading?: string | null;
+  /**
+   * Write each question the way a parent would type it into Google. Answers are plain text so search engines can quote them exactly.
+   */
+  items: {
+    question: string;
+    answer: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1347,7 +1380,7 @@ export interface NurserySeason {
   generateSlug?: boolean | null;
   slug: string;
   /**
-   * The season shown on /nursery and open on the registration form.
+   * The season shown by the Academy Programme block on /academy and open on the registration form.
    */
   isActive?: boolean | null;
   /**
@@ -2177,6 +2210,8 @@ export interface PagesSelect<T extends boolean = true> {
         countdown?: T | CountdownBlockSelect<T>;
         tab?: T | TabBlockSelect<T>;
         advertisement?: T | AdvertisementBlockSelect<T>;
+        nurseryProgramme?: T | NurseryProgrammeBlockSelect<T>;
+        faq?: T | FaqBlockSelect<T>;
         adSlot?: T | AdSlotBlockSelect<T>;
       };
   seoTitle?: T;
@@ -2413,6 +2448,31 @@ export interface AdvertisementBlockSelect<T extends boolean = true> {
   source?: T;
   format?: T;
   ads?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NurseryProgrammeBlock_select".
+ */
+export interface NurseryProgrammeBlockSelect<T extends boolean = true> {
+  academyName?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock_select".
+ */
+export interface FaqBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

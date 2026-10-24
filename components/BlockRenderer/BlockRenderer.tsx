@@ -20,6 +20,8 @@ import UpcomingMatches from '@/components/Fixture/UpcomingMatches/UpcomingMatche
 import Standings from '@/components/Standings/Standings'
 import { fixtureFromPayload, standingFromPayload } from '@/lib/utils/normalize/sports'
 import { Partners } from '../Partners/Partners'
+import NurseryProgramme from '@/components/Nursery/NurseryProgramme'
+import Faq from '@/components/Faq/Faq'
 import BlockTabs from './BlockTabs'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import { getGeneralGlobal } from '@/lib/utils/payload/globals'
@@ -79,7 +81,8 @@ const PageHeaderAdapter = (props: {
       />
     )
   }
-  return <PageHeader pageName={props.pageName ?? ''} />
+  // A CMS page's inner header is its title, so it is the page's <h1>.
+  return <PageHeader pageName={props.pageName ?? ''} asHeading />
 }
 
 const JoinUsAdapter = (props: {
@@ -475,18 +478,21 @@ const REGISTRY: Record<string, ComponentType<any>> = {
   joinUs: JoinUsAdapter,
   countdown: CountdownAdapter,
   tab: TabAdapter,
+  nurseryProgramme: NurseryProgramme,
+  faq: Faq,
   adSlot: AdSlotAdapter,
   advertisement: AdvertisementAdapter,
 }
 
-export function BlockRenderer({ blocks }: { blocks?: BlockNode[] | null }) {
+/** `pagePath` is passed to every block so structured data can point at the page. */
+export function BlockRenderer({ blocks, pagePath }: { blocks?: BlockNode[] | null; pagePath?: string }) {
   if (!blocks?.length) return null
   return (
     <>
       {blocks.map((block, i) => {
         const Component = REGISTRY[block.blockType]
         if (!Component) return null
-        return <Component key={block.id ?? `${block.blockType}-${i}`} {...block} />
+        return <Component key={block.id ?? `${block.blockType}-${i}`} {...block} pagePath={pagePath} />
       })}
     </>
   )

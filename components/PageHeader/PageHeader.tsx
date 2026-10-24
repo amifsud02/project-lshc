@@ -4,6 +4,8 @@ import Hero, { type HeroProps } from '@/components/Hero/Hero'
 type InnerVariantProps = {
     variant?: 'inner';
     pageName: string;
+    /** Renders the title as the page's <h1>, for pages with no other main heading. */
+    asHeading?: boolean;
 }
 
 type LandingVariantProps = {
@@ -18,12 +20,14 @@ const PageHeader = (props: PageHeaderProps) => {
         return <Hero {...heroProps} />;
     }
 
+    const Title = props.asHeading ? 'h1' : 'div';
+
     return (
         <div className={styles.pageHeader}>
             <div className='parent'>
                 <div className={styles.pageHeaderInfo}>
                     {/* <div className={styles.pageMap}>Home • {props.pageName}</div> */}
-                    <div className={styles.pageTitle}>{props.pageName}</div>
+                    <Title className={styles.pageTitle}>{props.pageName}</Title>
                 </div>
             </div>
         </div>

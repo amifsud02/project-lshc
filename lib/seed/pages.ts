@@ -158,22 +158,88 @@ export const SEED_PAGES: SeedPage[] = [
       },
     ],
   },
+  {
+    title: 'Handball Academy',
+    slug: 'academy',
+    seoTitle: 'Handball Academy in Malta for Kids 5–16 | La Salle Handball',
+    seoDescription:
+      'Malta’s first handball nursery, now the La Salle Handball Academy. Training for boys and girls aged 5–16: schedule, venues, fees and online registration.',
+    layout: [
+      { blockType: 'pageHeader', variant: 'inner', pageName: 'Handball Academy' },
+      {
+        blockType: 'richText',
+        width: 'prose',
+        content: richText(
+          p(
+            'The La Salle Handball Academy teaches handball to boys and girls aged 5 to 16 in Malta. It began in 1998 as Malta’s first handball nursery, and it is still where our players learn the game: the basics first, in a disciplined and enjoyable way, then the step up to our youth and senior teams and, for some, Malta’s national teams.',
+          ),
+          p(
+            'Training groups are organised by school year. This season’s schedule, venues and fees are below, and you can register your child online while registration is open.',
+          ),
+        ),
+      },
+      { blockType: 'nurseryProgramme', academyName: 'La Salle Handball Academy' },
+      {
+        blockType: 'faq',
+        heading: 'Questions parents ask',
+        items: [
+          {
+            question: 'What age can my child start handball?',
+            answer:
+              'Children can join the academy from age 5 up to 16. Groups are organised by school year, so your child trains with others their own age. The training schedule above lists every group.',
+          },
+          {
+            question: 'Does my child need any handball experience?',
+            answer: 'No experience is needed. The academy is where children learn the game, starting from the basics.',
+          },
+          {
+            question: 'Is handball for girls too?',
+            answer:
+              'Yes. The academy is open to boys and girls, and girls can carry on playing with the club’s Under-21 women’s team and women’s first team.',
+          },
+          {
+            question: 'How much does the academy cost?',
+            answer:
+              'Fees cover the whole season and depend on how many sessions a week your child attends. This season’s fees are listed above.',
+          },
+          {
+            question: 'Where is training held?',
+            answer: 'Each group’s venue is in the training schedule above, and the addresses are under “Where we train”.',
+          },
+          {
+            question: 'What comes after the academy?',
+            answer:
+              'Players move up to the club’s youth teams and from there to the Under-21 and first teams. Over the years, academy players have gone on to represent Malta at national team level.',
+          },
+          {
+            question: 'How do I register my child?',
+            answer:
+              'Use the “Register your child” button above while registration is open. When it is closed, get in touch through our contact page to ask about a place.',
+          },
+        ],
+      },
+    ],
+  },
 ]
 
 export type SeedPageResult = {
   slug: string
   title: string
-  action: 'created' | 'drafted' | 'error'
+  action: 'created' | 'drafted' | 'skipped' | 'error'
   detail?: string
 }
 
 /**
  * Writes every seed page as a draft. A page that doesn't exist yet is created
  * unpublished; one that does gets a new draft version on top, leaving what is
- * live untouched. Either way nothing reaches the site until someone publishes
- * it from the admin. Only the pages collection is written to.
+ * live untouched, unless `missingOnly` is set, which leaves existing pages alone.
+ * Either way nothing reaches the site until someone publishes it from the admin.
+ * Only the pages collection is written to.
  */
-export const seedPages = async (payload: Payload): Promise<SeedPageResult[]> => {
+export const seedPages = async (
+  payload: Payload,
+  { missingOnly = false }: { missingOnly?: boolean } = {},
+): Promise<SeedPageResult[]> => {
   const results: SeedPageResult[] = []
 
   for (const page of SEED_PAGES) {
@@ -186,7 +252,9 @@ export const seedPages = async (payload: Payload): Promise<SeedPageResult[]> => 
         depth: 0,
       })
 
-      if (docs[0]) {
+      if (docs[0] && missingOnly) {
+        results.push({ slug: page.slug, title: page.title, action: 'skipped' })
+      } else if (docs[0]) {
         await payload.update({
           collection: 'pages',
           id: docs[0].id,

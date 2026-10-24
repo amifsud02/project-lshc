@@ -41,7 +41,8 @@ export const Pages: CollectionConfig = {
       /**
        * POST /api/pages/seed — writes the starter page content as drafts for
        * review. Only the pages collection is touched; nothing goes live until
-       * each page is published from the admin.
+       * each page is published from the admin. `?missingOnly=1` only creates
+       * pages that don't exist yet.
        */
       path: '/seed',
       method: 'post',
@@ -49,7 +50,8 @@ export const Pages: CollectionConfig = {
         if (!canEditCollection('pages', req.user)) {
           return Response.json({ error: 'Forbidden' }, { status: 403 })
         }
-        const results = await seedPages(req.payload)
+        const missingOnly = req.searchParams.get('missingOnly') === '1'
+        const results = await seedPages(req.payload, { missingOnly })
         return Response.json({ results })
       },
     },

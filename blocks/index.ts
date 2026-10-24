@@ -15,6 +15,8 @@ import { AdvertisementBlock } from './Advertisement'
 import { CountdownBlock } from './Countdown'
 import { RichTextBlock } from './RichText'
 import { TabBlock } from './Tab'
+import { NurseryProgrammeBlock } from './NurseryProgramme'
+import { FaqBlock } from './Faq'
 
 export const PageLayoutBlocks: Block[] = [
   HeroBlock,
@@ -31,6 +33,8 @@ export const PageLayoutBlocks: Block[] = [
   CountdownBlock,
   TabBlock,
   AdvertisementBlock,
+  NurseryProgrammeBlock,
+  FaqBlock,
   AdSlotBlock,
 ]
 
@@ -50,4 +54,6 @@ export {
   CountdownBlock,
   RichTextBlock,
   TabBlock,
+  NurseryProgrammeBlock,
+  FaqBlock,
 }

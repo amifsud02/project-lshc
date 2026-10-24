@@ -30,7 +30,7 @@ const sectionCopy = (name: string, defaultTitle: string): Field => ({
  * Everything the twice-yearly parents' letter says that is not a training slot:
  * the copy, the fees, the rebate paragraph, the kit rules and the contact.
  *
- * The public `/nursery` page and the registration form both read the season
+ * The Academy Programme block (on /academy) and the registration form both read the season
  * marked active, so publishing next season is editing this record rather than
  * rewriting a document and a web page that then drift apart.
  */
@@ -91,7 +91,7 @@ export const NurserySeasons: CollectionConfig = {
       defaultValue: false,
       admin: {
         position: 'sidebar',
-        description: 'The season shown on /nursery and open on the registration form.',
+        description: 'The season shown by the Academy Programme block on /academy and open on the registration form.',
       },
     },
     {

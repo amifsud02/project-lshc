@@ -5,7 +5,7 @@ import PageHeader from '@/components/PageHeader/PageHeader'
 import { formatFee } from '@/lib/nursery/data'
 import type { NurserySeason } from '@/payload-types'
 import '@/components/Shop/shop.css'
-import '../../nursery.css'
+import '@/components/Nursery/nursery.css'
 
 export const metadata = {
   title: 'Registration received',
@@ -47,7 +47,7 @@ export default async function SubmittedPage({
             <p className="nursery__lede">
               We couldn&apos;t find that registration. If you completed the form, check your email
               for the confirmation — otherwise please{' '}
-              <Link href="/nursery/register">try again</Link>.
+              <Link href="/academy/register">try again</Link>.
             </p>
           </div>
         </section>
@@ -131,8 +131,8 @@ export default async function SubmittedPage({
           </p>
 
           <p>
-            <Link href="/nursery" className="btn btn--ghost">
-              Back to the nursery programme
+            <Link href="/academy" className="btn btn--ghost">
+              Back to the academy programme
             </Link>
           </p>
         </div>

@@ -22,6 +22,14 @@ const nextConfig = {
     turbopack: {
         root: import.meta.dirname,
     },
+    async redirects() {
+        return [
+            // The nursery became the Handball Academy. Old links, emails and Stripe
+            // return URLs keep working, query string included.
+            { source: '/nursery', destination: '/academy', permanent: true },
+            { source: '/nursery/:path*', destination: '/academy/:path*', permanent: true },
+        ]
+    },
 }
 
 export default withPayload(nextConfig)

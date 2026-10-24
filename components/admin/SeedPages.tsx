@@ -21,11 +21,17 @@ export const SeedPages = () => {
   const [busy, setBusy] = useState(false)
   const [results, setResults] = useState<SeedPageResult[] | null>(null)
 
-  const run = async () => {
-    if (!window.confirm('Write the starter content for each page as a draft? Live pages are not changed.')) return
+  const run = async (missingOnly: boolean) => {
+    const question = missingOnly
+      ? 'Create a draft for each starter page that does not exist yet? Existing pages are not touched.'
+      : 'Write the starter content for each page as a draft? Live pages are not changed.'
+    if (!window.confirm(question)) return
     setBusy(true)
     try {
-      const res = await fetch(`${serverURL}${api}/pages/seed`, { method: 'POST', credentials: 'include' })
+      const res = await fetch(`${serverURL}${api}/pages/seed${missingOnly ? '?missingOnly=1' : ''}`, {
+        method: 'POST',
+        credentials: 'include',
+      })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error ?? `HTTP ${res.status}`)
       setResults(data.results)
@@ -53,11 +59,14 @@ export const SeedPages = () => {
         <div style={{ flex: '1 1 16rem' }}>
           <strong>Starter content</strong>
           <p style={{ color: 'var(--theme-elevation-600)', margin: 0 }}>
-            Saves the default content for the site’s pages as drafts. Published pages stay as they are until you publish
-            the draft.
+            Add missing pages drafts only the starter pages that don’t exist yet. Seed pages saves the default content
+            for every page as a draft; published pages stay as they are until you publish the draft.
           </p>
         </div>
-        <Button disabled={busy} margin={false} onClick={run}>
+        <Button disabled={busy} margin={false} buttonStyle="secondary" onClick={() => run(true)}>
+          Add missing pages
+        </Button>
+        <Button disabled={busy} margin={false} onClick={() => run(false)}>
           {busy ? 'Seeding…' : 'Seed pages'}
         </Button>
       </div>
@@ -73,7 +82,13 @@ export const SeedPages = () => {
                   minWidth: '5.5rem',
                 }}
               >
-                {r.action === 'created' ? 'new draft' : r.action === 'drafted' ? 'draft saved' : 'failed'}
+                {r.action === 'created'
+                  ? 'new draft'
+                  : r.action === 'drafted'
+                    ? 'draft saved'
+                    : r.action === 'skipped'
+                      ? 'unchanged'
+                      : 'failed'}
               </span>
               <a href={`${admin}/collections/pages?where[slug][equals]=${encodeURIComponent(r.slug)}`}>{r.title}</a>
               <span style={{ color: 'var(--theme-elevation-500)' }}> /{r.slug === 'home' ? '' : r.slug}</span>
