@@ -5,17 +5,20 @@ import { canEditCollection } from '@/lib/auth/roles'
 import { createMatchSummaryPosts } from '@/lib/news/matchSummaries'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 120
+export const maxDuration = 300
+
+/** Weeks started after this long are left for another run, well inside `maxDuration`. */
+const TIME_BUDGET_MS = 200_000
 
 /**
- * POST /api/match-summaries — writes the match summary post for one fixture, for
- * the "Write match summaries" bar on the Fixtures list.
+ * POST /api/match-summaries — writes a round-up of the selected fixtures, one per
+ * week, for the "Match round-ups" bar on the Fixtures list.
  *
- * Body: `{ fixtureId, dryRun? }`, the Payload id of a fixture. The bar sends the
- * selected fixtures one at a time, so each request writes at most one post.
- * `dryRun` returns the text without saving.
+ * Body: `{ fixtureIds, dryRun? }`, the Payload ids of the fixtures. `dryRun` returns
+ * the text without saving.
  */
 export async function POST(request: Request) {
+  const started = Date.now()
   const payload = await getPayload({ config })
 
   const { user } = await payload.auth({ headers: request.headers })
@@ -24,26 +27,37 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}))
-  const fixtureId = typeof body?.fixtureId === 'string' || typeof body?.fixtureId === 'number' ? body.fixtureId : null
-  if (fixtureId == null) {
-    return Response.json({ error: 'fixtureId is required' }, { status: 400 })
+  const fixtureIds: (string | number)[] = Array.isArray(body?.fixtureIds)
+    ? body.fixtureIds.filter((id: unknown) => typeof id === 'string' || typeof id === 'number')
+    : []
+  if (!fixtureIds.length) {
+    return Response.json({ error: 'fixtureIds is required' }, { status: 400 })
   }
 
   try {
-    const fixture = await payload.findByID({ collection: 'fixtures', id: fixtureId, depth: 0, overrideAccess: true })
-    if (!fixture.fixtureCode) {
-      return Response.json({ error: 'This fixture has no MHA match id' }, { status: 422 })
+    const { docs } = await payload.find({
+      collection: 'fixtures',
+      where: { id: { in: fixtureIds } },
+      depth: 0,
+      limit: fixtureIds.length,
+      overrideAccess: true,
+      select: { fixtureCode: true },
+    })
+    const matchIds = docs.flatMap((f) => (f.fixtureCode ? [f.fixtureCode] : []))
+    if (!matchIds.length) {
+      return Response.json({ error: 'None of these fixtures has an MHA match id' }, { status: 422 })
     }
 
     const result = await createMatchSummaryPosts(payload, {
       dryRun: body?.dryRun === true,
-      matchIds: [fixture.fixtureCode],
+      matchIds,
+      deadline: started + TIME_BUDGET_MS,
     })
     return Response.json(result, { headers: { 'Cache-Control': 'no-store' } })
   } catch (err) {
-    payload.logger.error({ msg: `Match summary for fixture ${fixtureId} failed`, err })
+    payload.logger.error({ msg: 'Match round-up from the Fixtures list failed', err })
     return Response.json(
-      { error: err instanceof Error ? err.message : 'Match summary failed' },
+      { error: err instanceof Error ? err.message : 'Match round-up failed' },
       { status: 502 },
     )
   }

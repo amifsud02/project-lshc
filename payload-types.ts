@@ -959,9 +959,13 @@ export interface News {
    */
   fixture?: (string | null) | Fixture;
   /**
-   * Written automatically from this MHA match report. Each match gets one post.
+   * An older one-match report, written automatically from this MHA match report.
    */
   mhaMatchId?: string | null;
+  /**
+   * The matches this weekly round-up covers, written automatically from their MHA match reports. Each match is covered once, and the post shows on each match page.
+   */
+  mhaMatchIds?: string[] | null;
   content: {
     root: {
       type: string;
@@ -2712,6 +2716,7 @@ export interface NewsSelect<T extends boolean = true> {
   tags?: T;
   fixture?: T;
   mhaMatchId?: T;
+  mhaMatchIds?: T;
   content?: T;
   meta?:
     | T
@@ -3630,7 +3635,7 @@ export interface TaskMatchSummaries {
   input?: unknown;
   output: {
     created?: number | null;
-    skipped?: number | null;
+    waiting?: number | null;
     errors?: number | null;
     remaining?: number | null;
   };

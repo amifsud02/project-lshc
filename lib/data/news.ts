@@ -145,11 +145,13 @@ export async function getAllNewsTags(): Promise<string[]> {
 
 /**
  * Published previews and reports for a match, oldest first: posts linked to it in the
- * Match field, and the report written from its MHA match report.
+ * Match field, and the round-up (or older one-match report) written from its MHA report.
  */
 export async function getMatchCoverage(fixture: Pick<Fixture, 'id' | 'fixtureCode'>): Promise<News[]> {
   const or: Where[] = [{ fixture: { equals: fixture.id } }]
-  if (fixture.fixtureCode) or.push({ mhaMatchId: { equals: fixture.fixtureCode } })
+  if (fixture.fixtureCode) {
+    or.push({ mhaMatchId: { equals: fixture.fixtureCode } }, { mhaMatchIds: { in: [fixture.fixtureCode] } })
+  }
 
   const { docs } = await cachedFind({
     collection: 'news',
@@ -161,16 +163,16 @@ export async function getMatchCoverage(fixture: Pick<Fixture, 'id' | 'fixtureCod
   return docs as News[]
 }
 
-/** The match a preview or report is about, for the link back to its match page. */
-export async function getNewsFixture(post: News): Promise<Fixture | null> {
+/** The matches a preview, report or round-up is about, in date order, for the links back to their match pages. */
+export async function getNewsFixtures(post: News): Promise<Fixture[]> {
   const fixtureId = post.fixture && typeof post.fixture === 'object' ? post.fixture.id : post.fixture
-  const where: Where | null = fixtureId
-    ? { id: { equals: fixtureId } }
-    : post.mhaMatchId
-      ? { fixtureCode: { equals: post.mhaMatchId } }
-      : null
-  if (!where) return null
+  const codes = [post.mhaMatchId, ...(post.mhaMatchIds ?? [])].filter((code): code is string => Boolean(code))
+  const or: Where[] = [
+    ...(fixtureId ? [{ id: { equals: fixtureId } }] : []),
+    ...(codes.length ? [{ fixtureCode: { in: codes } }] : []),
+  ]
+  if (!or.length) return []
 
-  const { docs } = await cachedFind({ collection: 'fixtures', where, depth: 1, limit: 1 })
-  return (docs[0] as Fixture) ?? null
+  const { docs } = await cachedFind({ collection: 'fixtures', where: { or }, depth: 1, limit: 50, sort: 'startDate' })
+  return docs as Fixture[]
 }

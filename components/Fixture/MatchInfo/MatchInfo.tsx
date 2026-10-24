@@ -64,9 +64,13 @@ export function MatchDetails({ fixture, status }: { fixture: NormalizedFixture; 
 
 const categorySlug = (post: News) => (typeof post.category === 'object' ? post.category?.slug : undefined)
 
-export const isMatchReport = (post: News) => Boolean(post.mhaMatchId) || categorySlug(post) === 'match-reports'
+const isRoundUp = (post: News) => Boolean(post.mhaMatchIds?.length)
+
+export const isMatchReport = (post: News) =>
+  Boolean(post.mhaMatchId) || isRoundUp(post) || categorySlug(post) === 'match-reports'
 
 const coverageLabel = (post: News): string => {
+  if (isRoundUp(post)) return 'Weekly round-up'
   if (isMatchReport(post)) return 'Match report'
   if (categorySlug(post) === 'previews') return 'Preview'
   return (typeof post.category === 'object' ? post.category?.title : undefined) ?? 'News'
@@ -93,12 +97,11 @@ export function MatchCoverage({ posts }: { posts: News[] }) {
   )
 }
 
-/** On a preview or report: which match it is about, with a link to the match page. */
-export function MatchLink({ fixture }: { fixture: NormalizedFixture }) {
+const MatchLinkContent = ({ fixture }: { fixture: NormalizedFixture }) => {
   const hasLineups = fixture.homeLineup.length > 0 || fixture.awayLineup.length > 0
 
   return (
-    <p className={styles.matchLink}>
+    <>
       <Link href={paths.fixture(fixture.slug)}>
         {fixture.homeTeam.name} vs {fixture.awayTeam.name}
         {hasLineups ? ': line-ups and scorers' : ': match page'}
@@ -106,6 +109,34 @@ export function MatchLink({ fixture }: { fixture: NormalizedFixture }) {
       <span className={styles.matchLinkMeta}>
         {[fixture.competition?.name, matchDate(fixture.startDate)].filter(Boolean).join(' · ')}
       </span>
-    </p>
+    </>
+  )
+}
+
+/** On a preview, report or round-up: the matches it is about, each linked to its match page. */
+export function MatchLinks({ fixtures }: { fixtures: NormalizedFixture[] }) {
+  if (!fixtures.length) return null
+
+  if (fixtures.length === 1) {
+    return (
+      <p className={styles.matchLink}>
+        <MatchLinkContent fixture={fixtures[0]} />
+      </p>
+    )
+  }
+
+  return (
+    <nav aria-labelledby="round-up-matches" className={styles.matchLinksNav}>
+      <h2 id="round-up-matches" className={styles.matchLinksTitle}>
+        Every match in this round-up
+      </h2>
+      <ul className={styles.matchLinks}>
+        {fixtures.map((fixture) => (
+          <li key={fixture.id} className={styles.matchLink}>
+            <MatchLinkContent fixture={fixture} />
+          </li>
+        ))}
+      </ul>
+    </nav>
   )
 }

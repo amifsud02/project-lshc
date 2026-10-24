@@ -88,6 +88,32 @@
   color: var(--color-text);
 }
 
+.matchLinksNav {
+  width: min(808px, 83.3333%);
+  margin: 40px auto 0;
+}
+
+.matchLinksTitle {
+  margin: 0 0 12px;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.matchLinks {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.matchLinks .matchLink {
+  width: auto;
+  margin: 0;
+}
+
 .matchLink a {
   font-weight: 700;
   color: var(--color-club);

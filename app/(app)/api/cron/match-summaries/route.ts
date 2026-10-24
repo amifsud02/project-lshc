@@ -12,14 +12,14 @@ export const maxDuration = 300
 const TIME_BUDGET_MS = 200_000
 
 /**
- * GET /api/cron/match-summaries — writes a news post for every La Salle match that
- * finished in the last week and has none yet (see lib/news/matchSummaries.ts).
+ * GET /api/cron/match-summaries — writes a weekly round-up for each recent week of
+ * La Salle matches that is complete and not yet covered (see lib/news/matchSummaries.ts).
  *
  * The nightly run is a Payload job (lib/news/matchSummariesTask.ts); this endpoint
  * is for running it by hand. Staff who can edit news may call it while signed in:
- * `?dryRun=1` writes nothing and returns the text; `?matchId=MHA-FIX-…` targets one
- * match; `?days=14` widens the window. An external scheduler can call it with
- * `Authorization: Bearer $CRON_SECRET`.
+ * `?dryRun=1` writes nothing and returns the text; `?matchId=MHA-FIX-…,MHA-FIX-…`
+ * writes a round-up of those matches straight away; `?days=14` widens the window.
+ * An external scheduler can call it with `Authorization: Bearer $CRON_SECRET`.
  */
 export async function GET(request: NextRequest) {
   const started = Date.now()

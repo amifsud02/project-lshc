@@ -2,6 +2,7 @@ import { FinishReason, GoogleGenAI } from '@google/genai'
 import type { Payload } from 'payload'
 import { z } from 'zod'
 
+import { categoryForMhaCode, FIXTURE_CATEGORIES } from '@/lib/fixtures/categories'
 import { fetchMhaFixtures, fetchMhaMatchReport, type MhaFixture, type MhaMatchReport } from '@/lib/mha/client'
 import { cleanTeamName, competitionNameFor, MHA_CATEGORY_LABELS } from '@/lib/mha/mapFixture'
 import { MHA_CLUB_NAME } from '@/lib/mha/syncFixtures'
@@ -9,17 +10,20 @@ import { p, richText } from '@/lib/seed/lexical'
 import { slugify } from '@/lib/utils/fixtureSlug'
 
 /**
- * Match summaries: after each La Salle match (HMS, Team Haier and every youth side
- * included — MHA files them all under the "La Salle" club), write a short news post
- * from the MHA match report.
+ * Match round-ups: one news post a week covering every La Salle match played that
+ * week (HMS, Team Haier and every youth side included — MHA files them all under the
+ * "La Salle" club), written from the MHA match reports and told from La Salle's side.
  *
- * Run by the daily cron at /api/cron/match-summaries. Each match gets at most one
- * post, keyed on `news.mhaMatchId`, so re-running only picks up matches whose report
- * has appeared since. Posts are saved as drafts for an editor to check, add a photo
- * and publish — unless MATCH_SUMMARY_AUTOPUBLISH=true.
+ * A week is written once every La Salle match in it has been played and its MHA report
+ * is out, or GRACE_DAYS after the week ends with whatever is in by then: a match still
+ * without a report is given with its score only. Each post lists the matches it covers
+ * in `news.mhaMatchIds`, so no match is covered twice and re-running is harmless. Posts
+ * are drafts for an editor to check, add a photo and publish, unless
+ * MATCH_SUMMARY_AUTOPUBLISH=true.
  *
- * The text is written by Google Gemini when GEMINI_API_KEY is set, and from a plain
- * template otherwise (or if the model call fails).
+ * Run nightly by matchSummariesTask.ts, and by hand from /api/cron/match-summaries or
+ * the bar on the Fixtures list. The text is written by Google Gemini when
+ * GEMINI_API_KEY is set, and from a plain template otherwise (or if the model fails).
  */
 
 export const NEWS_CATEGORY_SLUG = 'match-reports'
@@ -28,18 +32,31 @@ const NEWS_CATEGORY_TITLE = 'Match Reports'
 /** How far back to look for finished matches without a post. */
 const DEFAULT_LOOKBACK_DAYS = 7
 
+/** Days after a week ends (Sunday) before it is written with reports still missing. */
+const GRACE_DAYS = 2
+
 /** Override with GEMINI_MODEL, e.g. "gemini-4-argon" for the flagship model. */
 const MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash'
 
-export type MatchSummaryItem = {
+export type SkippedMatch = {
   matchId: string
   game: string
   date: string
-  action: 'created' | 'skipped' | 'error'
+  reason: string
+  /** The post the match is already in. */
+  newsId?: string | number
+}
+
+export type RoundUpItem = {
+  /** Monday of the week, "YYYY-MM-DD". */
+  week: string
+  /** The match dates covered, e.g. "10–11 October 2026". */
+  label: string
+  action: 'created' | 'waiting' | 'error'
   reason?: string
+  matches: { matchId: string; game: string; date: string; reportAvailable: boolean }[]
   title?: string
   writer?: 'gemini' | 'template'
-  /** The post written, or the one the match already had when skipped. */
   newsId?: string | number
   /** Dry runs only: the text that would be posted. */
   description?: string
@@ -48,20 +65,22 @@ export type MatchSummaryItem = {
 
 export type MatchSummaryResult = {
   dryRun: boolean
-  /** Finished matches in the window that still need a post but were left for the next run. */
+  /** Weeks left for the next run because the time budget ran out. */
   remaining: number
-  items: MatchSummaryItem[]
+  roundUps: RoundUpItem[]
+  skipped: SkippedMatch[]
 }
 
 type Options = {
   dryRun?: boolean
   lookbackDays?: number
   /**
-   * Only these matches, e.g. ["MHA-FIX-2026-00457"], whatever their date. Each is
-   * reported back, including those skipped as unfinished or already posted.
+   * Only these matches, e.g. ["MHA-FIX-2026-00457"], whatever their date. They are
+   * written straight away, a round-up per week, without waiting for the rest of the
+   * week. Each one left out is reported back with the reason.
    */
   matchIds?: string[]
-  /** Epoch ms after which no new match is started. */
+  /** Epoch ms after which no new week is started. */
   deadline?: number
   now?: Date
 }
@@ -71,31 +90,55 @@ const isOurs = (club: string) => club === MHA_CLUB_NAME
 const isFinished = (f: MhaFixture) =>
   f.isFinished || ['FINISHED', 'ENDED'].includes(String(f.status ?? '').toUpperCase())
 
+/** Scheduled or under way. A postponed or cancelled match doesn't hold its week back. */
+const isStillToPlay = (f: MhaFixture) =>
+  !isFinished(f) && (f.isLive || ['UPCOMING', 'LIVE'].includes(String(f.status ?? '').toUpperCase()))
+
 const maltaDate = (date: Date) => date.toLocaleDateString('en-CA', { timeZone: 'Europe/Malta' })
 
 const errorMessage = (err: unknown) => (err instanceof Error ? err.message : String(err))
 
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
+
 /* ------------------------------------------------------------------ */
-/* Facts: the report boiled down to what a writer needs                */
+/* Weeks                                                               */
+/* ------------------------------------------------------------------ */
+
+const addDays = (date: string, days: number) =>
+  new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10)
+
+/** Monday of the week a "YYYY-MM-DD" date falls in. */
+const weekOf = (date: string) => addDays(date, -((new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7))
+
+const dayMonth = (date: string, options: Intl.DateTimeFormatOptions) =>
+  new Date(`${date}T12:00:00Z`).toLocaleDateString('en-GB', { timeZone: 'UTC', ...options })
+
+/** "10 October 2026", "10–11 October 2026" or "30 September – 4 October 2026". */
+export const dateRangeLabel = (first: string, last: string) => {
+  if (first === last) return dayMonth(first, { day: 'numeric', month: 'long', year: 'numeric' })
+  const sameMonth = first.slice(0, 7) === last.slice(0, 7)
+  const sameYear = first.slice(0, 4) === last.slice(0, 4)
+  const start = dayMonth(first, sameMonth ? { day: 'numeric' } : sameYear ? { day: 'numeric', month: 'long' } : { day: 'numeric', month: 'long', year: 'numeric' })
+  return `${start}${sameMonth ? '–' : ' – '}${dayMonth(last, { day: 'numeric', month: 'long', year: 'numeric' })}`
+}
+
+/* ------------------------------------------------------------------ */
+/* Facts: each match told from La Salle's side                         */
 /* ------------------------------------------------------------------ */
 
 type Side = 'home' | 'away'
 
-export type MatchFacts = ReturnType<typeof matchFacts>
-
-const minuteOf = (event: { time: string; displayTime: string }) => {
-  const [mm] = String(event.displayTime ?? '').split(':')
-  const minute = Number(mm)
+const minuteOf = (event: { displayTime: string }) => {
+  const minute = Number(String(event.displayTime ?? '').split(':')[0])
   return Number.isFinite(minute) ? minute : null
 }
 
-/** Running score at fixed points, biggest leads and lead changes, from the match log. */
+/** Running score at fixed points and the biggest leads, home side first, from the match log. */
 const scoreFlow = (report: MhaMatchReport) => {
   const goals = (report.events ?? []).filter((e) => /^(Goal|Penalty Scored|Manual Score Added)$/i.test(e.eventType))
-  const checkpoints = [10, 20, 30, 40, 50]
-  const scoreAt = checkpoints.flatMap((minute) => {
+  const scoreAt = [10, 20, 30, 40, 50].flatMap((minute) => {
     const last = goals.filter((e) => (minuteOf(e) ?? Infinity) <= minute).at(-1)
-    return last ? [`${minute}': ${last.homeScore}-${last.awayScore}`] : []
+    return last ? [{ minute, home: last.homeScore, away: last.awayScore }] : []
   })
 
   let biggestHomeLead = 0
@@ -114,59 +157,83 @@ const scoreFlow = (report: MhaMatchReport) => {
   return { scoreAt, biggestHomeLead, biggestAwayLead, leadChanges }
 }
 
-const teamSheet = (report: MhaMatchReport, side: Side) => {
-  const players = side === 'home' ? report.homePlayers : report.awayPlayers
-  const summary = side === 'home' ? report.homeSummary : report.awaySummary
-  const suspensions = players.reduce(
-    (n, pl) => n + [pl.twoMin1, pl.twoMin2, pl.twoMin3].filter(Boolean).length,
-    0,
-  )
-  return {
-    scorers: players
-      .filter((pl) => pl.goals > 0)
-      .sort((a, b) => b.goals - a.goals)
-      .map((pl) => ({
-        name: pl.name,
-        goals: pl.goals,
-        ...(pl.penaltyGiven ? { sevenMetres: `${pl.penaltyScored}/${pl.penaltyGiven}` } : {}),
-      })),
-    sevenMetres: summary?.penaltyGiven ? `${summary.penaltyScored ?? 0}/${summary.penaltyGiven}` : null,
-    twoMinuteSuspensions: suspensions,
-    redCards: players.filter((pl) => pl.redTime).length,
-    timeouts: summary?.timeouts?.length ?? 0,
-  }
+/** The order matches appear in: first teams, then other senior sides, U19 and youth. */
+const matchRank = (f: MhaFixture, side: Side) => {
+  const group = categoryForMhaCode(f.category)
+  const groupRank = group ? FIXTURE_CATEGORIES.indexOf(group) : FIXTURE_CATEGORIES.length
+  // "TEAM-LASALLE-SM-001" is the first team, "-002" (HMS) the second, and so on.
+  const teamNumber = Number((side === 'home' ? f.homeTeamId : f.awayTeamId).match(/(\d+)$/)?.[1] ?? 99)
+  return [groupRank, teamNumber, f.date, f.throwOff ?? ''] as const
 }
 
-export const matchFacts = (fixture: MhaFixture, report: MhaMatchReport) => {
-  const homeTeam = cleanTeamName(report.homeTeam || fixture.homeTeam)
-  const awayTeam = cleanTeamName(report.awayTeam || fixture.awayTeam)
-  const ourSides: Side[] = [
-    ...(isOurs(fixture.homeClub) ? (['home'] as const) : []),
-    ...(isOurs(fixture.awayClub) ? (['away'] as const) : []),
-  ]
-  const mvps = Object.values(report.mvpAwards ?? {})
-    .filter((m): m is NonNullable<typeof m> => Boolean(m?.name))
-    .map((m) => `${m.name} (${m.team})`)
+const compareRank = (a: readonly (string | number)[], b: readonly (string | number)[]) => {
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] < b[i]) return -1
+    if (a[i] > b[i]) return 1
+  }
+  return 0
+}
+
+export type RoundUpMatchFacts = ReturnType<typeof laSalleMatchFacts>
+
+/**
+ * One match as the round-up tells it: La Salle's team and score first, its scorers and
+ * MVPs only, the opponent only as the team played. Players in under-19 and youth sides
+ * are children, so their names are left out altogether.
+ */
+export const laSalleMatchFacts = (fixture: MhaFixture, report: MhaMatchReport | null) => {
+  const team = (side: Side) => cleanTeamName((side === 'home' ? report?.homeTeam : report?.awayTeam) || (side === 'home' ? fixture.homeTeam : fixture.awayTeam))
+  const ourSides: Side[] = (['home', 'away'] as const).filter((s) => isOurs(s === 'home' ? fixture.homeClub : fixture.awayClub))
+  const derby = ourSides.length === 2
+  const us: Side = ourSides[0] ?? 'home'
+  const them: Side = us === 'home' ? 'away' : 'home'
+
+  const homeScore = report?.homeScore ?? fixture.homeScore ?? 0
+  const awayScore = report?.awayScore ?? fixture.awayScore ?? 0
+  const ours = us === 'home' ? homeScore : awayScore
+  const theirs = us === 'home' ? awayScore : homeScore
+  const orient = (home: number, away: number) => (us === 'home' ? `${home}-${away}` : `${away}-${home}`)
+
+  const group = categoryForMhaCode(fixture.category)
+  const children = group === 'u19' || group === 'youth'
+
+  const flow = report ? scoreFlow(report) : null
+  const players = (side: Side) => (side === 'home' ? report?.homePlayers : report?.awayPlayers) ?? []
 
   return {
+    matchId: fixture.matchId,
+    date: fixture.date,
+    day: dayMonth(fixture.date, { weekday: 'long' }),
     // The report's name is sometimes only the category code ("U17B"); the feed's is the full one.
     competition: competitionNameFor(fixture),
     category: MHA_CATEGORY_LABELS[fixture.category] ?? fixture.category,
-    date: fixture.date,
-    venue: report.venue || fixture.venue,
-    home: { team: homeTeam, club: fixture.homeClub },
-    away: { team: awayTeam, club: fixture.awayClub },
-    /** Which side(s) are La Salle teams. Both for a derby such as Team Haier v HMS. */
-    laSalleSides: ourSides,
-    finalScore: `${report.homeScore}-${report.awayScore}`,
+    /** The La Salle team, or both in an in-club derby such as Team Haier v HMS. */
+    laSalleTeams: ourSides.map(team),
+    opponent: derby ? null : team(them),
+    derby,
+    outcome: derby ? 'derby' : ours > theirs ? 'won' : ours < theirs ? 'lost' : 'drew',
+    /** La Salle's score first; home first in a derby. */
+    score: orient(homeScore, awayScore),
     halfTime:
-      report.halfTimeHome != null && report.halfTimeAway != null
-        ? `${report.halfTimeHome}-${report.halfTimeAway}`
-        : null,
-    flow: scoreFlow(report),
-    homeSheet: teamSheet(report, 'home'),
-    awaySheet: teamSheet(report, 'away'),
-    mvp: mvps,
+      report?.halfTimeHome != null && report?.halfTimeAway != null ? orient(report.halfTimeHome, report.halfTimeAway) : null,
+    scoreAt: flow?.scoreAt.map((s) => `${s.minute}': ${orient(s.home, s.away)}`) ?? [],
+    biggestLaSalleLead: flow ? (us === 'home' ? flow.biggestHomeLead : flow.biggestAwayLead) : null,
+    biggestOpponentLead: flow && !derby ? (us === 'home' ? flow.biggestAwayLead : flow.biggestHomeLead) : null,
+    leadChanges: flow?.leadChanges ?? null,
+    laSalleScorers: children
+      ? []
+      : ourSides.flatMap((side) =>
+          players(side)
+            .filter((pl) => pl.goals > 0)
+            .sort((a, b) => b.goals - a.goals)
+            .slice(0, 4)
+            .map((pl) => ({ name: pl.name, goals: pl.goals, ...(derby ? { team: team(side) } : {}) })),
+        ),
+    laSalleMvp: children ? [] : ourSides.flatMap((side) => players(side).filter((pl) => pl.isMvp).map((pl) => pl.name)),
+    playerNamesWithheld: children,
+    /** False when the MHA score sheet isn't out yet: give the result only. */
+    reportAvailable: Boolean(report),
+    rank: matchRank(fixture, us),
   }
 }
 
@@ -175,32 +242,36 @@ export const matchFacts = (fixture: MhaFixture, report: MhaMatchReport) => {
 /* ------------------------------------------------------------------ */
 
 const Summary = z.object({
-  title: z.string().describe('Headline, at most 80 characters, e.g. "HMS edge Valletta in a tight derby"'),
-  description: z.string().describe('One or two sentence excerpt for news cards, at most 200 characters.'),
-  paragraphs: z.array(z.string()).describe('The article body: 3 to 5 short paragraphs of plain text.'),
+  title: z
+    .string()
+    .describe('Headline, at most 90 characters, naming the week\'s standout La Salle result or team, e.g. "HMS and Leapmotor lead a winning weekend for La Salle"'),
+  description: z.string().describe('One or two sentence excerpt for news cards, at most 200 characters, about La Salle.'),
+  paragraphs: z.array(z.string()).describe('The article body: an opening paragraph, then the matches. Plain text paragraphs.'),
 })
 
 export type WrittenSummary = z.infer<typeof Summary> & { writer: 'gemini' | 'template' }
 
-const SYSTEM_PROMPT = `You write match reports for the news page of La Salle Handball Club in Malta.
+const SYSTEM_PROMPT = `You write the weekly match round-up for the news page of La Salle Handball Club in Malta.
 
-Each request gives you the facts of one finished handball match as JSON, taken from the Malta Handball Association's official score sheet. "laSalleSides" says which side is a La Salle team; La Salle fields several teams under sponsor names (for example "HMS", "Team Haier", "La Salle Leapmotor"), and when both sides are La Salle teams it is an in-club derby, so stay even-handed.
+Each request gives you, as JSON, every La Salle match played in one week, from the Malta Handball Association's official score sheets. La Salle fields several teams, many under sponsor names such as "HMS", "Team Haier" and "La Salle Leapmotor", plus youth sides. All of them are La Salle teams, and they are the story.
 
-Write a short, upbeat but honest report for club members and parents:
-- Use only the facts given. Never invent quotes, tactics, injuries, crowd details, weather or anything else not in the data. If something is not in the data, leave it out. You know nothing about other matches, so say nothing about form, streaks, league position, points or upcoming fixtures.
-- Lead with the result and what it means in one line, then the story of the match from the half-time score and score flow, then the standout performers (top scorers, MVP), then a brief close.
-- Use British English and handball terms (throw-off, 7-metre, two-minute suspension). Write scores as 28–24 with an en dash.
-- Refer to La Salle teams by the team name given. Be gracious about the opponents.
-- Name players only as top scorers or MVP, never to criticise anyone. Youth teams are children: keep the focus on the team.
-- Keep it to 3–5 short paragraphs, roughly 150–250 words in all. No headings, lists, markdown or emoji.`
+Write one round-up that shines a light on the La Salle teams:
+- Every paragraph is about La Salle. Name the La Salle team first and tell each match from its side. Call each La Salle team exactly by the name given ("HMS", not "La Salle HMS"). The opponent appears only as the team La Salle played: never praise, profile or name opposition players.
+- Open with a short paragraph on the week's best La Salle moments: wins, standout scorers, MVPs, a fightback. Then cover the matches in the order given, giving the first teams the most room, and put the youth results together in one paragraph near the end.
+- In a defeat, stay positive and honest: lead with what La Salle did well (a top scorer, a strong spell, a close finish) and never dwell on mistakes. Never claim a win, a lead or a comeback that the data does not show.
+- When "derby" is true both sides are La Salle teams: celebrate both and take no side.
+- Use only the facts given. Never invent quotes, tactics, injuries, crowd details, weather, league positions, form, streaks or upcoming fixtures. If "reportAvailable" is false, give that match's result only.
+- Name players only from "laSalleScorers" and "laSalleMvp". When "playerNamesWithheld" is true the players are children: praise the team and name no one.
+- Scores are given with La Salle's score first: keep that order and use an en dash, e.g. 28–24. Use British English and handball terms (throw-off, 7-metre, two-minute suspension).
+- Roughly 50–90 words per senior match and one or two sentences per youth match. No headings, lists, markdown or emoji.`
 
 const geminiClient = () =>
   process.env.GEMINI_API_KEY ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null
 
-const writeWithGemini = async (client: GoogleGenAI, facts: MatchFacts) => {
+const writeWithGemini = async (client: GoogleGenAI, label: string, matches: RoundUpMatchFacts[]) => {
   const response = await client.models.generateContent({
     model: MODEL,
-    contents: JSON.stringify(facts, null, 2),
+    contents: JSON.stringify({ week: label, matches: matches.map(({ rank: _rank, ...m }) => m) }, null, 2),
     config: {
       systemInstruction: SYSTEM_PROMPT,
       responseMimeType: 'application/json',
@@ -211,65 +282,76 @@ const writeWithGemini = async (client: GoogleGenAI, facts: MatchFacts) => {
 
   const finish = response.candidates?.[0]?.finishReason
   if (finish && finish !== FinishReason.STOP) throw new Error(`Gemini stopped early (${finish})`)
-  if (!response.text) throw new Error('Gemini returned no report')
+  if (!response.text) throw new Error('Gemini returned no round-up')
   const parsed = Summary.parse(JSON.parse(response.text))
-  if (!parsed.paragraphs.length) throw new Error('Gemini returned an empty report')
+  if (!parsed.paragraphs.length) throw new Error('Gemini returned an empty round-up')
   return parsed
 }
 
 const dash = (score: string) => score.replace('-', '–')
 
-/** Plain fallback when there is no API key or the model call fails. */
-export const writeFromTemplate = (facts: MatchFacts): z.infer<typeof Summary> => {
-  const [homeGoals, awayGoals] = facts.finalScore.split('-').map(Number)
-  const scoreline = `${Math.max(homeGoals, awayGoals)}–${Math.min(homeGoals, awayGoals)}`
-  const winner: Side = homeGoals >= awayGoals ? 'home' : 'away'
-  const loser: Side = winner === 'home' ? 'away' : 'home'
+const listOf = (items: string[]) =>
+  items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`
+
+const resultLine = (m: RoundUpMatchFacts) => {
+  const [team, other] = m.laSalleTeams
+  const score = dash(m.score)
   const result =
-    homeGoals === awayGoals
-      ? `${facts.home.team} and ${facts.away.team} drew ${scoreline}`
-      : `${facts[winner].team} beat ${facts[loser].team} ${scoreline}`
+    m.outcome === 'derby'
+      ? `${team} and ${other} met in a La Salle derby, finishing ${score}`
+      : m.outcome === 'won'
+        ? `${team} beat ${m.opponent} ${score}`
+        : m.outcome === 'drew'
+          ? `${team} drew ${score} with ${m.opponent}`
+          : `${team} went down ${score} to ${m.opponent}`
+  return `${result} in the ${m.competition} on ${m.day}.`
+}
 
-  // Lead with the La Salle side when it lost, unless it is an in-club derby.
-  const lostOnlySide = facts.laSalleSides.length === 1 && facts.laSalleSides[0] === loser && homeGoals !== awayGoals
-  const title = lostOnlySide ? `${facts[loser].team} fall to ${facts[winner].team} ${scoreline}` : result
+/** Plain fallback when there is no API key or the model call fails. */
+export const writeFromTemplate = (label: string, matches: RoundUpMatchFacts[]): z.infer<typeof Summary> => {
+  const senior = matches.filter((m) => !m.playerNamesWithheld)
+  const youth = matches.filter((m) => m.playerNamesWithheld)
+  const wins = matches.filter((m) => m.outcome === 'won').flatMap((m) => m.laSalleTeams)
 
-  const sheet = (side: Side) => (side === 'home' ? facts.homeSheet : facts.awaySheet)
-  const scorers = (side: Side) =>
-    sheet(side)
-      .scorers.slice(0, 3)
-      .map((s) => `${s.name} (${s.goals})`)
-      .join(', ')
-
-  const paragraphs = [
-    `${result} in the ${facts.competition} on ${new Date(`${facts.date}T12:00:00Z`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}.`,
-    ...(facts.halfTime ? [`The score at half-time was ${dash(facts.halfTime)}.`] : []),
+  const seniorParagraph = (m: RoundUpMatchFacts) =>
     [
-      scorers('home') && `Top scorers for ${facts.home.team}: ${scorers('home')}.`,
-      scorers('away') && `For ${facts.away.team}: ${scorers('away')}.`,
+      resultLine(m),
+      m.halfTime ? `It was ${dash(m.halfTime)} at half-time.` : '',
+      m.laSalleScorers.length
+        ? `Leading the way for La Salle: ${listOf(m.laSalleScorers.slice(0, 3).map((s) => `${s.name} (${s.goals})`))}.`
+        : '',
+      m.laSalleMvp.length ? `Player of the match: ${listOf(m.laSalleMvp)}.` : '',
     ]
       .filter(Boolean)
-      .join(' '),
-    ...(facts.mvp.length ? [`Player of the match: ${facts.mvp.join(', ')}.`] : []),
-  ].filter(Boolean)
+      .join(' ')
 
   return {
-    title,
-    description: `${facts.competition}: ${facts.home.team} ${dash(facts.finalScore)} ${facts.away.team}.`,
-    paragraphs,
+    title: wins.length ? `Wins for ${listOf([...new Set(wins)].slice(0, 2))}: La Salle round-up` : `La Salle round-up: ${label}`,
+    description: `Results from ${plural(matches.length, 'La Salle match')} on ${label}${wins.length ? `, with ${plural(wins.length, 'win')}` : ''}.`,
+    paragraphs: [
+      matches.length === 1
+        ? `How La Salle got on, ${label}.`
+        : `Here are the results from La Salle's ${matches.length} matches on ${label}.`,
+      ...senior.map(seniorParagraph),
+      ...(youth.length ? [youth.map(resultLine).join(' ')] : []),
+    ],
   }
 }
 
-export const writeSummary = async (facts: MatchFacts, payload?: Payload): Promise<WrittenSummary> => {
+export const writeRoundUp = async (
+  label: string,
+  matches: RoundUpMatchFacts[],
+  payload?: Payload,
+): Promise<WrittenSummary> => {
   const client = geminiClient()
   if (client) {
     try {
-      return { ...(await writeWithGemini(client, facts)), writer: 'gemini' }
+      return { ...(await writeWithGemini(client, label, matches)), writer: 'gemini' }
     } catch (err) {
-      payload?.logger.warn({ msg: 'Match summary: Gemini failed, using template', err })
+      payload?.logger.warn({ msg: 'Match round-up: Gemini failed, using template', err })
     }
   }
-  return { ...writeFromTemplate(facts), writer: 'template' }
+  return { ...writeFromTemplate(label, matches), writer: 'template' }
 }
 
 /* ------------------------------------------------------------------ */
@@ -300,125 +382,146 @@ const fallbackImageId = async (payload: Payload) => {
   return image && typeof image === 'object' ? image.id : (image ?? null)
 }
 
-/** Match id -> id of the post it already has. */
+/** Match id -> id of the post that already covers it: a round-up, or an older one-match report. */
 const postedMatchIds = async (payload: Payload, matchIds: string[]) => {
   if (!matchIds.length) return new Map<string, string | number>()
   const existing = await payload.find({
     collection: 'news',
-    where: { mhaMatchId: { in: matchIds } },
+    where: { or: [{ mhaMatchId: { in: matchIds } }, { mhaMatchIds: { in: matchIds } }] },
     draft: true,
-    limit: matchIds.length,
     pagination: false,
     depth: 0,
     overrideAccess: true,
-    select: { mhaMatchId: true },
+    select: { mhaMatchId: true, mhaMatchIds: true },
   })
-  return new Map(existing.docs.flatMap((d) => (d.mhaMatchId ? [[d.mhaMatchId, d.id] as const] : [])))
+  return new Map(
+    existing.docs.flatMap((d) =>
+      [d.mhaMatchId, ...(d.mhaMatchIds ?? [])].filter((id): id is string => Boolean(id)).map((id) => [id, d.id] as const),
+    ),
+  )
 }
 
-const describe = (f: MhaFixture) => ({ matchId: f.matchId, game: `${cleanTeamName(f.homeTeam)} v ${cleanTeamName(f.awayTeam)}`, date: f.date })
+const game = (f: MhaFixture) => `${cleanTeamName(f.homeTeam)} v ${cleanTeamName(f.awayTeam)}`
+const describe = (f: MhaFixture) => ({ matchId: f.matchId, game: game(f), date: f.date })
 
 /**
- * Finds La Salle matches that finished in the last `lookbackDays` (or the given
- * `matchIds`) and have no post yet, and writes one for each whose MHA report is out.
+ * Writes a round-up for each week with finished La Salle matches not yet covered: the
+ * weeks in the last `lookbackDays`, once each is complete, or the given `matchIds`
+ * straight away.
  */
 export const createMatchSummaryPosts = async (
   payload: Payload,
   { dryRun = false, lookbackDays = DEFAULT_LOOKBACK_DAYS, matchIds, deadline, now = new Date() }: Options = {},
 ): Promise<MatchSummaryResult> => {
   const { fixtures } = await fetchMhaFixtures()
-  const since = maltaDate(new Date(now.getTime() - lookbackDays * 86_400_000))
   const today = maltaDate(now)
-
   const ours = fixtures.filter((f) => isOurs(f.homeClub) || isOurs(f.awayClub))
-  const result: MatchSummaryResult = { dryRun, remaining: 0, items: [] }
+  const result: MatchSummaryResult = { dryRun, remaining: 0, roundUps: [], skipped: [] }
 
-  let candidates: MhaFixture[]
+  let pool: MhaFixture[]
   if (matchIds) {
     // Picked by hand: say why each one that cannot be written is left out.
-    candidates = []
+    pool = []
     for (const id of matchIds) {
       const fixture = ours.find((f) => f.matchId === id)
-      if (!fixture) {
-        result.items.push({ matchId: id, game: id, date: '', action: 'skipped', reason: 'Not a La Salle match in the MHA feed' })
-      } else if (!isFinished(fixture)) {
-        result.items.push({ ...describe(fixture), action: 'skipped', reason: 'Match not finished yet' })
-      } else {
-        candidates.push(fixture)
-      }
+      if (!fixture) result.skipped.push({ matchId: id, game: id, date: '', reason: 'Not a La Salle match in the MHA feed' })
+      else if (!isFinished(fixture)) result.skipped.push({ ...describe(fixture), reason: 'Match not finished yet' })
+      else pool.push(fixture)
     }
   } else {
-    candidates = ours.filter((f) => isFinished(f) && f.date >= since && f.date <= today)
+    // Whole weeks, so a week that started before the window is still complete.
+    const since = weekOf(maltaDate(new Date(now.getTime() - lookbackDays * 86_400_000)))
+    pool = ours.filter((f) => f.date >= since && f.date <= today)
   }
 
-  const posted = await postedMatchIds(payload, candidates.map((f) => f.matchId))
+  const posted = await postedMatchIds(payload, pool.map((f) => f.matchId))
   if (matchIds) {
-    for (const f of candidates.filter((c) => posted.has(c.matchId))) {
-      result.items.push({ ...describe(f), action: 'skipped', reason: 'Already has a post', newsId: posted.get(f.matchId) })
+    for (const f of pool.filter((c) => posted.has(c.matchId))) {
+      result.skipped.push({ ...describe(f), reason: 'Already in a post', newsId: posted.get(f.matchId) })
     }
   }
-  const todo = candidates.filter((f) => !posted.has(f.matchId)).sort((a, b) => a.date.localeCompare(b.date))
+
+  const weeks = new Map<string, MhaFixture[]>()
+  for (const f of pool) weeks.set(weekOf(f.date), [...(weeks.get(weekOf(f.date)) ?? []), f])
+  const todo = [...weeks.entries()]
+    .map(([week, matches]) => ({ week, matches, toCover: matches.filter((f) => isFinished(f) && !posted.has(f.matchId)) }))
+    .filter((w) => w.toCover.length)
+    .sort((a, b) => a.week.localeCompare(b.week))
   if (!todo.length) return result
 
   const categoryId = await matchReportsCategoryId(payload, dryRun)
   const imageId = await fallbackImageId(payload)
   const publish = process.env.MATCH_SUMMARY_AUTOPUBLISH === 'true'
 
-  for (const [index, fixture] of todo.entries()) {
+  for (const [index, { week, matches, toCover }] of todo.entries()) {
     if (index > 0 && deadline && Date.now() > deadline) {
       result.remaining = todo.length - index
       break
     }
 
-    const base = describe(fixture)
+    const dates = toCover.map((f) => f.date).sort()
+    const item: RoundUpItem = {
+      week,
+      label: dateRangeLabel(dates[0], dates.at(-1)!),
+      action: 'waiting',
+      matches: toCover.map((f) => ({ ...describe(f), reportAvailable: false })),
+    }
+    result.roundUps.push(item)
+    const graceOver = today >= addDays(week, 6 + GRACE_DAYS)
+
     try {
-      const report = await fetchMhaMatchReport(fixture.matchId)
-      if (!report) {
-        result.items.push({ ...base, action: 'skipped', reason: 'MHA match report not published yet' })
+      const stillToPlay = matches.filter(isStillToPlay)
+      if (!matchIds && !graceOver && stillToPlay.length) {
+        item.reason = `${plural(stillToPlay.length, 'La Salle match')} still to play this week`
         continue
       }
 
-      const facts = matchFacts(fixture, report)
-      const summary = await writeSummary(facts, payload)
+      // null when MHA hasn't published the report yet; any other failure stops the week.
+      const reports = await Promise.all(toCover.map((f) => fetchMhaMatchReport(f.matchId)))
+      item.matches = toCover.map((f, i) => ({ ...describe(f), reportAvailable: Boolean(reports[i]) }))
+      const missing = reports.filter((r) => !r).length
+      if (!matchIds && !graceOver && missing) {
+        item.reason = `Waiting for ${plural(missing, 'MHA match report')}`
+        continue
+      }
+
+      const facts = toCover
+        .map((f, i) => laSalleMatchFacts(f, reports[i]))
+        .sort((a, b) => compareRank(a.rank, b.rank))
+      const summary = await writeRoundUp(item.label, facts, payload)
+      Object.assign(item, { action: 'created', title: summary.title, writer: summary.writer, reason: undefined })
 
       if (dryRun) {
-        result.items.push({
-          ...base,
-          action: 'created',
-          title: summary.title,
-          writer: summary.writer,
-          description: summary.description,
-          paragraphs: summary.paragraphs,
-        })
+        Object.assign(item, { description: summary.description, paragraphs: summary.paragraphs })
         continue
       }
       if (!categoryId) throw new Error('No Match Reports news category')
 
       // A draft may be saved without its required fields; a published post needs the image.
       const status = publish && imageId ? 'published' : 'draft'
+      const lastDate = dates.at(-1)!
       const doc = await payload.create({
         collection: 'news',
         draft: status === 'draft',
         overrideAccess: true,
         data: {
           title: summary.title,
-          slug: `${slugify(summary.title)}-${fixture.date}`,
+          slug: `${slugify(summary.title)}-${lastDate}`,
           category: categoryId,
-          publishedAt: new Date(`${fixture.date}T12:00:00Z`).toISOString(),
+          publishedAt: new Date(`${lastDate}T12:00:00Z`).toISOString(),
           description: summary.description,
           // Drafts skip required-field validation, so a missing fallback image is fine there.
           featuredImage: imageId as string,
-          tags: ['Match Report', facts.category],
+          tags: ['Match Report', 'Round-up', ...new Set(facts.map((m) => m.category))],
           content: richText(...summary.paragraphs.map(p)),
-          mhaMatchId: fixture.matchId,
+          mhaMatchIds: toCover.map((f) => f.matchId),
           _status: status,
         },
       })
-
-      result.items.push({ ...base, action: 'created', title: summary.title, writer: summary.writer, newsId: doc.id })
+      item.newsId = doc.id
     } catch (err) {
-      payload.logger.error({ msg: `Match summary for ${fixture.matchId} failed`, err })
-      result.items.push({ ...base, action: 'error', reason: errorMessage(err) })
+      payload.logger.error({ msg: `Match round-up for the week of ${week} failed`, err })
+      Object.assign(item, { action: 'error', reason: errorMessage(err) })
     }
   }
 

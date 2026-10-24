@@ -94,7 +94,21 @@ export const News: CollectionConfig = {
         position: 'sidebar',
         readOnly: true,
         condition: (data) => Boolean(data?.mhaMatchId),
-        description: 'Written automatically from this MHA match report. Each match gets one post.',
+        description: 'An older one-match report, written automatically from this MHA match report.',
+      },
+    },
+    {
+      name: 'mhaMatchIds',
+      label: 'MHA matches',
+      type: 'text',
+      hasMany: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => Boolean(data?.mhaMatchIds?.length),
+        description:
+          'The matches this weekly round-up covers, written automatically from their MHA match reports. Each match is covered once, and the post shows on each match page.',
       },
     },
     {
