@@ -39,5 +39,7 @@ export const paths = {
   galleryCategory: (slug: string) => `/news/gallery/${slug}`,
   video: (slug: string) => `/tv/${slug}`,
   fixture: (slug: string) => `/fixtures/${slug}`,
+  fixtures: '/fixtures',
+  player: (slug: string) => `/players/${slug}`,
   product: (slug: string) => `/shop/${slug}`,
 }

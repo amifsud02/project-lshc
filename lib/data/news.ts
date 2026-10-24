@@ -1,6 +1,6 @@
 import { getPayload, type Where } from 'payload'
 import config from '@payload-config'
-import type { News, NewsCategory } from '@/payload-types'
+import type { Fixture, News, NewsCategory } from '@/payload-types'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 
@@ -141,4 +141,36 @@ export async function getAllNewsTags(): Promise<string[]> {
     for (const t of d.tags ?? []) if (t) set.add(t)
   }
   return Array.from(set).sort((a, b) => a.localeCompare(b))
+}
+
+/**
+ * Published previews and reports for a match, oldest first: posts linked to it in the
+ * Match field, and the report written from its MHA match report.
+ */
+export async function getMatchCoverage(fixture: Pick<Fixture, 'id' | 'fixtureCode'>): Promise<News[]> {
+  const or: Where[] = [{ fixture: { equals: fixture.id } }]
+  if (fixture.fixtureCode) or.push({ mhaMatchId: { equals: fixture.fixtureCode } })
+
+  const { docs } = await cachedFind({
+    collection: 'news',
+    where: { or },
+    depth: 1,
+    limit: 10,
+    sort: 'publishedAt',
+  })
+  return docs as News[]
+}
+
+/** The match a preview or report is about, for the link back to its match page. */
+export async function getNewsFixture(post: News): Promise<Fixture | null> {
+  const fixtureId = post.fixture && typeof post.fixture === 'object' ? post.fixture.id : post.fixture
+  const where: Where | null = fixtureId
+    ? { id: { equals: fixtureId } }
+    : post.mhaMatchId
+      ? { fixtureCode: { equals: post.mhaMatchId } }
+      : null
+  if (!where) return null
+
+  const { docs } = await cachedFind({ collection: 'fixtures', where, depth: 1, limit: 1 })
+  return (docs[0] as Fixture) ?? null
 }

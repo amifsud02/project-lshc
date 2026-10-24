@@ -73,6 +73,36 @@ export function academyJsonLd(academy: {
   })
 }
 
+/** A player or coach on their profile page, tied to the club so searches for their name find it. */
+export function personJsonLd(person: {
+  path: string
+  name: string
+  description?: string
+  image?: string
+  jobTitle?: string
+  /** The squad they play in, e.g. "La Salle Red". */
+  team?: string
+}): Thing {
+  const url = absoluteUrl(person.path)
+  return compact({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${url}#person`,
+    url,
+    name: person.name,
+    description: person.description,
+    image: person.image ? absoluteUrl(person.image) : undefined,
+    jobTitle: person.jobTitle,
+    memberOf: compact({
+      '@type': 'SportsTeam',
+      name: person.team || CLUB_LEGAL_NAME,
+      sport: 'Handball',
+      parentOrganization: person.team && person.team !== CLUB_LEGAL_NAME ? { '@id': ORGANIZATION_ID } : undefined,
+    }),
+    affiliation: { '@id': ORGANIZATION_ID },
+  })
+}
+
 /** Questions and answers shown on the page; the answers must match the visible text. */
 export function faqJsonLd(items: { question: string; answer: string }[], path?: string): Thing {
   return compact({

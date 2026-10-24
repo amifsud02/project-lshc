@@ -119,6 +119,17 @@
   color: var(--color-ink);
 }
 
+.name a {
+  color: var(--color-club);
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule);
+  text-underline-offset: 3px;
+}
+
+.name a:hover {
+  text-decoration-color: currentColor;
+}
+
 .stat {
   width: 1%;
   text-align: center !important;

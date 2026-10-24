@@ -1,4 +1,5 @@
 import { categoryFromCompetitionName, isFixtureCategory, type FixtureCategory } from '@/lib/fixtures/categories'
+import { playerProfilePath } from '@/lib/players/profile'
 
 
 export type NormalizedTeam = {
@@ -17,6 +18,8 @@ export type NormalizedLineupRow = {
   yellowCard: string | null
   suspensions: string[]
   redCard: string | null
+  /** The player's profile page, when they have one. */
+  playerPath: string | null
 }
 
 export type NormalizedFixture = {
@@ -75,6 +78,7 @@ const lineupFromPayload = (rows: any[] | null | undefined): NormalizedLineupRow[
     yellowCard: row.yellowCard ?? null,
     suspensions: Array.isArray(row.suspensions) ? row.suspensions : [],
     redCard: row.redCard ?? null,
+    playerPath: playerProfilePath(row.player),
   }))
 
 export const fixtureFromPayload = (f: any): NormalizedFixture => {

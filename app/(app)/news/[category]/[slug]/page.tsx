@@ -6,7 +6,9 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 import { ArticleContent, OtherArticles } from "@/components/StyledComponents";
 import SectionSeparator from "@/components/News/section-separator";
 import NewsCard from "@/components/News/NewsCard/NewsCard";
-import { getNewsBySlug, getAdjacentNewsPosts } from "@/lib/data/news";
+import { getNewsBySlug, getAdjacentNewsPosts, getNewsFixture } from "@/lib/data/news";
+import { MatchLink } from "@/components/Fixture/MatchInfo/MatchInfo";
+import { fixtureFromPayload } from "@/lib/utils/normalize/sports";
 import type { Media, News } from "@/payload-types";
 import JsonLd from "@/components/Seo/JsonLd";
 import { siteOpenGraph } from "@/lib/utils/metadata";
@@ -77,7 +79,7 @@ export default async function SingleNewsPage({
     const data = await getNewsBySlug(slug);
     if (!data || getCategorySlug(data.category) !== category) notFound();
 
-    const { previous, next } = await getAdjacentNewsPosts(data);
+    const [{ previous, next }, match] = await Promise.all([getAdjacentNewsPosts(data), getNewsFixture(data)]);
     const featuredUrl = getMediaUrl(data.featuredImage);
 
     const categoryTitle = typeof data.category === 'object' ? data.category?.title ?? category : category;
@@ -107,6 +109,7 @@ export default async function SingleNewsPage({
             <PageHeader pageName={data.title} backgroundImage={featuredUrl} />
 
             <article className='parent'>
+                {match ? <MatchLink fixture={fixtureFromPayload(match)} /> : null}
                 <ArticleContent>
                     <RichText data={data.content} />
                 </ArticleContent>

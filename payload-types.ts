@@ -838,6 +838,14 @@ export interface Player {
   team: string | Team;
   profilePicture?: (string | null) | Media;
   /**
+   * Shows this player at /players/<slug>, with their season stats and recent matches, and links their name from match line-ups. Only for adult players who agree to it; never for anyone under 18.
+   */
+  profilePage?: boolean | null;
+  /**
+   * Profile page URL. Generated from the name.
+   */
+  slug?: string | null;
+  /**
    * Malta Handball Association registration id (e.g. "MHA-LASP-008"). Filled in by the fixtures sync, which links match-report line-ups and season stats on it.
    */
   mhaPlayerId?: string | null;
@@ -907,6 +915,10 @@ export interface News {
   description: string;
   featuredImage: string | Media;
   tags?: string[] | null;
+  /**
+   * For a match preview or report: the post is shown on the match page, and links back to it. Reports written from the MHA match report are linked automatically.
+   */
+  fixture?: (string | null) | Fixture;
   /**
    * Written automatically from this MHA match report. Each match gets one post.
    */
@@ -2597,6 +2609,8 @@ export interface PlayersSelect<T extends boolean = true> {
   position?: T;
   team?: T;
   profilePicture?: T;
+  profilePage?: T;
+  slug?: T;
   mhaPlayerId?: T;
   seasonStats?:
     | T
@@ -2628,6 +2642,7 @@ export interface NewsSelect<T extends boolean = true> {
   description?: T;
   featuredImage?: T;
   tags?: T;
+  fixture?: T;
   mhaMatchId?: T;
   content?: T;
   meta?:

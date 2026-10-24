@@ -74,6 +74,18 @@ export const News: CollectionConfig = {
       index: true,
     },
     {
+      name: 'fixture',
+      label: 'Match',
+      type: 'relationship',
+      relationTo: 'fixtures',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'For a match preview or report: the post is shown on the match page, and links back to it. Reports written from the MHA match report are linked automatically.',
+      },
+    },
+    {
       name: 'mhaMatchId',
       label: 'MHA match',
       type: 'text',

@@ -88,7 +88,16 @@ export async function listFixtures(): Promise<ContentEntry[]> {
   return docs.filter((d) => d.slug).map((d) => ({ path: paths.fixture(d.slug), lastModified: d.updatedAt }))
 }
 
-export type UpcomingFixture = { path: string; title: string; startDate: string; venue?: string }
+/** Only players whose profile page is switched on have a public page. */
+export async function listPlayers(): Promise<ContentEntry[]> {
+  const docs = await list('players', {
+    where: { profilePage: { equals: true } },
+    select: { slug: true, updatedAt: true },
+  })
+  return docs.filter((d) => d.slug).map((d) => ({ path: paths.player(d.slug), lastModified: d.updatedAt }))
+}
+
+export type UpcomingFixture ={ path: string; title: string; startDate: string; venue?: string }
 
 export async function listUpcomingFixtures(limit = 10): Promise<UpcomingFixture[]> {
   const docs = await list('fixtures', {

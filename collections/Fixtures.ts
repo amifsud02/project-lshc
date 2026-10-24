@@ -9,7 +9,10 @@ export const Fixtures: CollectionConfig = {
     plural: 'Fixtures',
   },
   admin: {
-    useAsTitle: 'fixtureCode',
+    // The slug reads as "home-vs-away-date", so a match can be found by team name when
+    // linking a news post to it.
+    useAsTitle: 'slug',
+    listSearchableFields: ['slug', 'fixtureCode'],
     defaultColumns: [
       'fixtureCode',
       'homeTeam',

@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 
 import {
   teamInitials,
@@ -53,7 +54,7 @@ const TeamSheet = ({ team, rows }: { team: NormalizedTeam; rows: NormalizedLineu
             <tr key={row.id}>
               <td className={`${styles.num} numbers`}>{row.number ?? '–'}</td>
               <td className={styles.name}>
-                {row.name}
+                {row.playerPath ? <Link href={row.playerPath}>{row.name}</Link> : row.name}
                 {row.mvp ? <span className={styles.mvp}>MVP</span> : null}
               </td>
               <td className={`${styles.stat} numbers`}>

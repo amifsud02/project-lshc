@@ -5,6 +5,7 @@ import {
   listNewsCategories,
   listNewsEntries,
   listPages,
+  listPlayers,
   listProducts,
   listVideos,
   type ContentEntry,
@@ -21,6 +22,7 @@ const STATIC_ROUTES: ContentEntry[] = [
   '/news',
   '/news/gallery',
   '/tv',
+  '/fixtures',
   '/contact',
   '/club/history',
   '/club/management',
@@ -34,9 +36,9 @@ const STATIC_ROUTES: ContentEntry[] = [
 
 const priorityFor = (path: string): number => {
   if (path === '/') return 1
-  if (['/news', '/tv', '/academy', '/contact', '/shop'].includes(path)) return 0.9
+  if (['/news', '/tv', '/fixtures', '/academy', '/contact', '/shop'].includes(path)) return 0.9
   if (path.startsWith('/news/') || path.startsWith('/tv/')) return 0.7
-  if (path.startsWith('/fixtures/')) return 0.6
+  if (path.startsWith('/fixtures/') || path.startsWith('/players/')) return 0.6
   return 0.5
 }
 
@@ -51,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listGalleries(),
     listVideos(),
     listFixtures(),
+    listPlayers(),
     shopIsPublic ? listProducts() : Promise.resolve([]),
   ])
 

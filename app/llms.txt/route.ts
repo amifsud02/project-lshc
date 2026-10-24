@@ -62,6 +62,7 @@ export async function GET() {
     link("Under-21 men's team", '/teams/u21-mens-team/all'),
     link("Under-21 women's team", '/teams/u21-womens-team/all'),
     link('Youth teams', '/teams/youth-teams'),
+    link('Fixtures and results', '/fixtures', "Upcoming matches and this season's results for every La Salle team"),
     link(
       'Handball Academy',
       '/academy',

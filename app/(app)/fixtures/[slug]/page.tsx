@@ -28,6 +28,9 @@ import {
 } from '@/lib/utils/normalize/sports'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import JsonLd from '@/components/Seo/JsonLd'
+import { MatchCoverage, MatchDetails, isMatchReport } from '@/components/Fixture/MatchInfo/MatchInfo'
+import { getMatchCoverage } from '@/lib/data/news'
+import type { News } from '@/payload-types'
 import { absoluteUrl, paths } from '@/lib/seo/site'
 import { sportsEventJsonLd } from '@/lib/seo/structuredData'
 
@@ -82,16 +85,28 @@ const getFixture = async (slug: string) => {
 
 type Props = { params: Promise<{ slug: string }> }
 
-const describeFixture = (fixture: NormalizedFixture) => {
+/** The description only promises what the page has: a preview, a report or line-ups. */
+const describeFixture = (fixture: NormalizedFixture, coverage: News[]) => {
   const teams = `${fixture.homeTeam.name} vs ${fixture.awayTeam.name}`
   const competition = fixture.competition?.name ?? 'Handball'
-  const { date } = formatDateTime(fixture.startDate)
+  const { date, time } = formatDateTime(fixture.startDate)
+  const venue = fixture.venue && fixture.venue !== 'TBC' ? `, ${venueName(fixture.venue)}` : ''
+  const hasReport = coverage.some(isMatchReport)
+  const hasPreview = coverage.some((post) => !isMatchReport(post))
+  const hasLineups = fixture.homeLineup.length > 0 || fixture.awayLineup.length > 0
+
+  const result = `Full time: ${fixture.homeTeam.name} ${fixture.homeScore} - ${fixture.awayScore} ${fixture.awayTeam.name}. ${competition}, ${date}.`
+  const extra = hasReport ? ' Match report and line-ups.' : hasLineups ? ' Line-ups and scorers.' : ''
+  // The MHA sync stores a missing throw-off time as midnight.
+  const upcoming = `${teams} in the ${competition}, ${date}${time === '00:00' ? '' : ` at ${time}`}${venue}.`
+  // A report can be out before the sync marks the match finished.
+  const coverageLine = hasReport ? 'Match report' : hasPreview ? 'Match preview' : 'Match details'
 
   return {
     title: `${teams}: ${competition}`,
     description: fixture.isFinished
-      ? `Full time: ${fixture.homeTeam.name} ${fixture.homeScore} - ${fixture.awayScore} ${fixture.awayTeam.name}. ${competition}, ${date}.`
-      : `${teams} in the ${competition} on ${date}. Team news, kick-off time and live updates from La Salle Handball Club.`,
+      ? `${result}${extra}`
+      : `${upcoming} ${coverageLine} from La Salle Handball Club.`,
   }
 }
 
@@ -101,7 +116,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
   if (!doc) return { title: 'Fixture not found' }
 
   const fixture = fixtureFromPayload(doc)
-  const { title, description } = describeFixture(fixture)
+  const { title, description } = describeFixture(fixture, await getMatchCoverage(doc))
   const canonical = absoluteUrl(paths.fixture(fixture.slug))
 
   return {
@@ -172,7 +187,8 @@ export default async function FixturePage({ params }: Props) {
   if (!doc) notFound()
 
   const fixture = fixtureFromPayload(doc)
-  const { title, description } = describeFixture(fixture)
+  const coverage = await getMatchCoverage(doc)
+  const { title, description } = describeFixture(fixture, coverage)
 
   return (
     <>
@@ -193,6 +209,8 @@ export default async function FixturePage({ params }: Props) {
       </section>
 
       <article className="parent">
+        <MatchDetails fixture={fixture} status={doc.status} />
+        <MatchCoverage posts={coverage} />
         <Lineup
           homeTeam={fixture.homeTeam}
           awayTeam={fixture.awayTeam}

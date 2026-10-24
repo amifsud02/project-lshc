@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
+import { buildPlayerSlug } from '@/lib/players/profile'
 
 export const Players: CollectionConfig = {
   slug: 'players',
@@ -8,7 +9,7 @@ export const Players: CollectionConfig = {
     plural: 'Players',
   },
   admin: {
-    defaultColumns: ['fullName', 'number', 'position', 'team', 'updatedAt'],
+    defaultColumns: ['fullName', 'number', 'position', 'team', 'profilePage', 'updatedAt'],
     listSearchableFields: ['firstName', 'lastName', 'mhaPlayerId'],
     group: 'Handball Management',
   },
@@ -17,6 +18,25 @@ export const Players: CollectionConfig = {
     delete: collectionWriteAccess('players'),
     read: () => true,
     update: collectionWriteAccess('players'),
+  },
+  hooks: {
+    /**
+     * The profile URL follows the name, so a corrected spelling fixes the URL too.
+     * Players saved before slugs existed get one the next time they are saved, which
+     * includes switching their profile page on and every fixtures sync.
+     */
+    beforeChange: [
+      async ({ data, originalDoc, req }) => {
+        const firstName = data.firstName ?? originalDoc?.firstName
+        const lastName = data.lastName ?? originalDoc?.lastName
+        const renamed = firstName !== originalDoc?.firstName || lastName !== originalDoc?.lastName
+        if (!renamed && originalDoc?.slug) return data
+
+        const slug = await buildPlayerSlug({ firstName, lastName, currentId: originalDoc?.id, req })
+        if (slug) data.slug = slug
+        return data
+      },
+    ],
   },
   fields: [
     {
@@ -80,6 +100,29 @@ export const Players: CollectionConfig = {
       name: 'profilePicture',
       type: 'upload',
       relationTo: 'media',
+    },
+    {
+      name: 'profilePage',
+      label: 'Public profile page',
+      type: 'checkbox',
+      defaultValue: false,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Shows this player at /players/<slug>, with their season stats and recent matches, and links their name from match line-ups. Only for adult players who agree to it; never for anyone under 18.',
+      },
+    },
+    {
+      name: 'slug',
+      type: 'text',
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Profile page URL. Generated from the name.',
+      },
     },
     {
       name: 'mhaPlayerId',
