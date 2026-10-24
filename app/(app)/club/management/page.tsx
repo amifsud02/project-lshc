@@ -9,7 +9,7 @@ export const revalidate = 60
 const title = 'Management'
 const description = 'Meet the La Salle Handball leadership: President, Vice-President, and Sports Director of your team.'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
-const canonical = `${baseSiteUrl}/club/sponsors`;
+const canonical = `${baseSiteUrl}/club/management`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
   return {

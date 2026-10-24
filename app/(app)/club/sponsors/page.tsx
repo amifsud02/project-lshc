@@ -10,7 +10,7 @@ export const revalidate = 60
 const title = 'Sponsors'
 const description = 'Explore the valued partners and official sponsors of La Salle Handball Club, standing by our players in every match.'
 const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
-const canonical = `${baseSiteUrl}/club/management`;
+const canonical = `${baseSiteUrl}/club/sponsors`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
   return {
