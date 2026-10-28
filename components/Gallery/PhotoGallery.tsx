@@ -20,8 +20,8 @@ const CYCLE = 14;
 // Photos added each time the reader nears the bottom.
 const BATCH = CYCLE;
 
-// Every <Image> here is `unoptimized`: photos load straight from Cloudinary, never through
-// Next's image optimizer or Cloudinary transformations, so a resize failing can't break the gallery.
+// Every <Image> here is `unoptimized`: photos load as stored (via /api/media/file), never through
+// Next's image optimizer, so a resize failing can't break the gallery.
 
 type Block =
     | { kind: "feature"; mirrored: boolean; start: number; photos: GalleryPhoto[] }

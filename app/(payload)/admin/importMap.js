@@ -41,6 +41,7 @@ import { OrderItemRowLabel as OrderItemRowLabel_bbea6f8da28c2ece34410ffd0c1cee8a
 import { MoneyCell as MoneyCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { GoogleSignInButton as GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6 } from '@/components/admin/GoogleSignInButton'
+import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -88,5 +89,6 @@ export const importMap = {
   "@/components/admin/orders/cells#MoneyCell": MoneyCell_1b028d7023921476b5ac5828f19c13bd,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/components/admin/GoogleSignInButton#GoogleSignInButton": GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

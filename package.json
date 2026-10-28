@@ -14,9 +14,12 @@
     "seed-nursery": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-nursery.ts",
     "import-fixtures": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/import-fixtures.ts",
     "seed-memberships": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-memberships.ts",
-    "check-membrs": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/check-membrs.ts"
+    "check-membrs": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/check-membrs.ts",
+    "migrate-media-to-bucket": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/migrate-media-to-bucket.ts",
+    "convert-media-to-webp": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/convert-media-to-webp.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1157.0",
     "@base-ui/react": "^1.8.0",
     "@google/genai": "^2.30.0",
     "@payloadcms/db-mongodb": "^3.88.0",
@@ -24,6 +27,7 @@
     "@payloadcms/plugin-cloud-storage": "^3.88.0",
     "@payloadcms/plugin-seo": "3.88.0",
     "@payloadcms/richtext-lexical": "^3.88.0",
+    "@payloadcms/storage-s3": "3.88.0",
     "@payloadcms/ui": "3.88.0",
     "@phntms/react-share": "^1.0.2-rc1",
     "@prisma/client": "^4.14.1",
@@ -35,7 +39,6 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "class-variance-authority": "^0.7.1",
-    "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
     "cn": "^0.4.0",
     "cross-env": "^10.1.0",
@@ -48,7 +51,6 @@
     "motion": "^14.0.0",
     "nanoid": "^5.1.9",
     "next": "15.5.24",
-    "next-cloudinary": "^6.17.5",
     "npm": "^11.12.1",
     "payload": "^3.88.0",
     "postcss": "^8.5.10",

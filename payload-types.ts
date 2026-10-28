@@ -238,6 +238,7 @@ export interface User {
 export interface Media {
   id: string;
   alt?: string | null;
+  prefix?: string | null;
   folder?: (string | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -2245,6 +2246,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;

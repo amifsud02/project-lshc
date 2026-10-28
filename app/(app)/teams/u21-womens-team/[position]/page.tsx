@@ -198,9 +198,9 @@ const U21WomenTeam = () => {
                                               <ul className='playercard-showcase'>
                                                   {filteredPlayers.map((player, index) => (
                                                       player.position == "Coach" ? 
-                                                      <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/cztzougqwpmysn1rlmnv'} key={index} /> 
+                                                      <PlayerCard playerInfo={player} profilePicture={'/player-placeholder.png'} key={index} /> 
                                                       :                                                       
-                                                      <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/tvmlhaydchymp7sqynf7'} key={index} />                                                     
+                                                      <PlayerCard playerInfo={player} profilePicture={'/player-placeholder-women.png'} key={index} />                                                     
                                                   ))}
                                               </ul>
                                           </div>
@@ -218,9 +218,9 @@ const U21WomenTeam = () => {
                                                       <ul className='playercard-showcase'>
                                                           {playerData.filter(pos.filter).map((player, index) => (
                                                               player.position == "Coach" ? 
-                                                              <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/cztzougqwpmysn1rlmnv'} key={index} /> 
+                                                              <PlayerCard playerInfo={player} profilePicture={'/player-placeholder.png'} key={index} /> 
                                                               :                                                       
-                                                              <PlayerCard playerInfo={player} profilePicture={'https://res.cloudinary.com/dg6n3ybac/image/upload/tvmlhaydchymp7sqynf7'} key={index} />
+                                                              <PlayerCard playerInfo={player} profilePicture={'/player-placeholder-women.png'} key={index} />
                                                           ))}
                                                       </ul>
                                                   </div>

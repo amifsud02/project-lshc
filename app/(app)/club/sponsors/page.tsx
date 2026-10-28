@@ -39,22 +39,22 @@ const Sponsors = () => {
           </h2>
           <div className={`sponsor-container ${styles.sponsorWrapper}`}>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/kzzpipjhwyrniptlteb5"
+              sponsorImage="/sponsors/il-karrettun.png"
               sponsorName="Il-Karrettun Pub & Grill"
               sponsorLink="https://www.facebook.com/karettun/"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/lgccnyr3nrwut6x2a9nr"
+              sponsorImage="/sponsors/universal-air.png"
               sponsorName="Universal Air"
               sponsorLink="https://universalair.aero/"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/yg1blvhybe0caon8v0i9"
+              sponsorImage="/sponsors/mbi.png"
               sponsorName="MBI"
               sponsorLink="https://www.facebook.com/MBImizzibrothersinstallations/"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/euqm6jieje2kbxf9vljk"
+              sponsorImage="/sponsors/metalco.png"
               sponsorName="Metalco Ltd."
               sponsorLink="http://metalcoltd.com/"
             ></SponsorCard>
@@ -63,27 +63,27 @@ const Sponsors = () => {
           <h2 style={{ fontSize: "1.5rem", fontWeight: "700" }}>Partners</h2>
           <div className={styles.sponsorWrapper}>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/y6rmutspug6yoh466ztz"
+              sponsorImage="/sponsors/1padel.png"
               sponsorName="1Padel"
               sponsorLink="https://www.1padelmalta.com/"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/xtmfedyb6qj5hnyhhy3h"
+              sponsorImage="/sponsors/web-monkeyz.png"
               sponsorName="Web Monkeyz"
               sponsorLink="https://www.webmonkeyz.com/"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/clfsfvothsmrvk39zkmo"
+              sponsorImage="/sponsors/jti.png"
               sponsorName="JTI"
               sponsorLink="#"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/hmqwgglas9jwaedppubz"
+              sponsorImage="/sponsors/maypole.png"
               sponsorName="Maypole"
               sponsorLink="https://www.maypole.com.mt/"
             ></SponsorCard>
             <SponsorCard
-              sponsorImage="https://res.cloudinary.com/dg6n3ybac/image/upload/sv7ozfeqzon6yjo2jdpc"
+              sponsorImage="/sponsors/teamsport.png"
               sponsorName="Teamsport"
               sponsorLink="https://darmaningroup.com/teamsport/"
             ></SponsorCard>

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { watermarkPhoto } from '@/lib/media/watermark'
+import { readMediaFile } from '@/lib/media/storage'
 
 /**
  * Serves a gallery photo as a download with the club logo stamped on it.
@@ -14,15 +15,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const media = await payload
     .findByID({ collection: 'media', id, depth: 0, overrideAccess: false })
     .catch(() => null)
-  // Only ever fetch from our own Cloudinary account.
-  if (!media?.url || !media.mimeType?.startsWith('image/') || !media.url.startsWith('https://res.cloudinary.com/')) {
+  if (!media?.filename || !media.mimeType?.startsWith('image/')) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  const res = await fetch(media.url)
-  if (!res.ok) return NextResponse.json({ error: 'Image unavailable' }, { status: 502 })
+  const original = await readMediaFile(media.filename, media.prefix).catch((err) => {
+    console.error(`Gallery download: reading ${id} from the bucket failed`, err)
+    return null
+  })
+  if (!original) return NextResponse.json({ error: 'Image unavailable' }, { status: 502 })
 
-  const original = Buffer.from(await res.arrayBuffer())
   const base = (media.filename ?? `photo-${id}`).replace(/\.[^.]+$/, '').replace(/[^\w.-]+/g, '-')
 
   try {

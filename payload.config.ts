@@ -4,7 +4,7 @@ import path from "path";
 import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
-import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
@@ -21,8 +21,6 @@ import { Videos } from "./collections/Videos";
 import { Header } from "./globals/Header";
 import { Footer } from "./globals/Footer";
 import { General } from "./globals/General";
-import { cloudinaryAdapter } from "./packages/cloudinary/adapter";
-import { cloudinary } from "./packages/cloudinary/config";
 import { GalleryCategories } from "./collections/GalleryCategories";
 import { NewsCategories } from "./collections/NewsCategories";
 import { Products } from "./collections/Products";
@@ -38,6 +36,7 @@ import { MagicLinkTokens } from "./collections/MagicLinkTokens";
 import { revalidateContentPlugin } from "./collections/hooks/revalidateContent";
 import { seo } from "./lib/seo/plugin";
 import { isStaff } from "./lib/auth/roles";
+import { MEDIA_PREFIX, mediaBucket, mediaS3Config } from "./lib/media/storage";
 import { MATCH_SUMMARIES_QUEUE, matchSummariesTask } from "./lib/news/matchSummariesTask";
 
 const filename = fileURLToPath(import.meta.url);
@@ -107,18 +106,13 @@ export default buildConfig({
   plugins: [
     seo,
     revalidateContentPlugin,
-    cloudStoragePlugin({
+    s3Storage({
       collections: {
-        media: {
-          adapter: cloudinaryAdapter,
-
-          disableLocalStorage: true, // Prevent Payload from saving files to disk
-
-          generateFileURL: ({ filename }) => {
-            return cloudinary.url(`media/${filename}`, { secure: true })
-          },
-        },
+        // Served through /api/media/file — Railway buckets can't be made public.
+        media: { prefix: MEDIA_PREFIX },
       },
+      bucket: mediaBucket,
+      config: mediaS3Config,
     }),
   ],
 });

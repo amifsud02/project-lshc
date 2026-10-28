@@ -10,7 +10,7 @@ export function uploadedVideoUrl(video: Video): string | null {
 
 /**
  * The chosen thumbnail, else YouTube's own. Uploaded videos without a thumbnail
- * get null rather than a Cloudinary-generated frame, which would cost a transformation.
+ * get null: there is no service to generate a frame from the video.
  */
 export function videoThumbnail(video: Video): string | null {
   const thumb = video.thumbnail as Media | string | null | undefined
