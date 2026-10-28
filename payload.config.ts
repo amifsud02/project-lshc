@@ -38,6 +38,7 @@ import { seo } from "./lib/seo/plugin";
 import { isStaff } from "./lib/auth/roles";
 import { MEDIA_PREFIX, mediaBucket, mediaS3Config } from "./lib/media/storage";
 import { MATCH_SUMMARIES_QUEUE, matchSummariesTask } from "./lib/news/matchSummariesTask";
+import { RESULT_CHECKS_QUEUE, resultChecksTask } from "./lib/mha/resultCheckTask";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -89,11 +90,14 @@ export default buildConfig({
   }),
   sharp,
   jobs: {
-    tasks: [matchSummariesTask],
+    tasks: [matchSummariesTask, resultChecksTask],
     // Runs scheduled tasks on the long-running Railway server. Crons start when Payload
     // boots with `cron: true` (instrumentation.ts). Off outside production unless
     // PAYLOAD_JOBS_AUTORUN=true, so local dev never writes posts on its own.
-    autoRun: [{ cron: '*/5 * * * *', queue: MATCH_SUMMARIES_QUEUE }],
+    autoRun: [
+      { cron: '*/5 * * * *', queue: MATCH_SUMMARIES_QUEUE },
+      { cron: '* * * * *', queue: RESULT_CHECKS_QUEUE },
+    ],
     shouldAutoRun: () =>
       process.env.PAYLOAD_JOBS_AUTORUN === 'true' ||
       (process.env.NODE_ENV === 'production' && process.env.PAYLOAD_JOBS_AUTORUN !== 'false'),

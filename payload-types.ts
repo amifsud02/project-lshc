@@ -159,6 +159,7 @@ export interface Config {
   jobs: {
     tasks: {
       matchSummaries: TaskMatchSummaries;
+      scheduleResultChecks: TaskScheduleResultChecks;
       inline: {
         input: unknown;
         output: unknown;
@@ -819,6 +820,18 @@ export interface Fixture {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The cron-job.org job that fetches the result from MHA an hour after throw-off, retrying every 15 minutes up to 5 times. See lib/mha/resultCheck.ts.
+   */
+  resultCheck?: {
+    state?: ('scheduled' | 'retrying' | 'done' | 'stopped' | 'gave-up') | null;
+    jobId?: number | null;
+    scheduledFor?: string | null;
+    nextRunAt?: string | null;
+    retryCount?: number | null;
+    lastCheckedAt?: string | null;
+    lastError?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -2015,7 +2028,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'matchSummaries';
+        taskSlug: 'inline' | 'matchSummaries' | 'scheduleResultChecks';
         taskID: string;
         input?:
           | {
@@ -2048,7 +2061,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'matchSummaries') | null;
+  taskSlug?: ('inline' | 'matchSummaries' | 'scheduleResultChecks') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -2632,6 +2645,17 @@ export interface FixturesSelect<T extends boolean = true> {
         redCard?: T;
         mhaPlayerId?: T;
         id?: T;
+      };
+  resultCheck?:
+    | T
+    | {
+        state?: T;
+        jobId?: T;
+        scheduledFor?: T;
+        nextRunAt?: T;
+        retryCount?: T;
+        lastCheckedAt?: T;
+        lastError?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -3661,6 +3685,18 @@ export interface TaskMatchSummaries {
     waiting?: number | null;
     errors?: number | null;
     remaining?: number | null;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskScheduleResultChecks".
+ */
+export interface TaskScheduleResultChecks {
+  input?: unknown;
+  output: {
+    scheduled?: number | null;
+    deferred?: number | null;
+    errors?: number | null;
   };
 }
 /**

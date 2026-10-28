@@ -173,6 +173,41 @@ export const Fixtures: CollectionConfig = {
       },
       fields: [lineupField('homeLineup', 'Home line-up'), lineupField('awayLineup', 'Away line-up')],
     },
+    {
+      name: 'resultCheck',
+      type: 'group',
+      label: 'Result check',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description:
+          'The cron-job.org job that fetches the result from MHA an hour after throw-off, retrying every 15 minutes up to 5 times. See lib/mha/resultCheck.ts.',
+      },
+      fields: [
+        {
+          name: 'state',
+          type: 'select',
+          options: [
+            { label: 'Scheduled', value: 'scheduled' },
+            { label: 'Retrying', value: 'retrying' },
+            { label: 'Done', value: 'done' },
+            { label: 'Stopped (cancelled or postponed)', value: 'stopped' },
+            { label: 'Gave up', value: 'gave-up' },
+          ],
+        },
+        { name: 'jobId', label: 'cron-job.org job ID', type: 'number' },
+        {
+          name: 'scheduledFor',
+          label: 'Scheduled for throw-off',
+          type: 'date',
+          admin: { date: { pickerAppearance: 'dayAndTime' } },
+        },
+        { name: 'nextRunAt', label: 'Next check', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
+        { name: 'retryCount', type: 'number', min: 0 },
+        { name: 'lastCheckedAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
+        { name: 'lastError', type: 'text' },
+      ],
+    },
   ],
 }
 

@@ -42,12 +42,16 @@ export type SyncOptions = {
    * where to carry on. Keeps each request inside a serverless time limit.
    */
   deadline?: number
+  /** Only sync these MHA match ids, e.g. the one match a result check is waiting on. */
+  fixtureCodes?: string[]
 }
 
 type StageContext = {
   payload: Payload
   dryRun: boolean
   refreshLineups: boolean
+  /** La Salle's fixtures on the feed, narrowed to `fixtureCodes` when given. */
+  selectFixtures: (fixtures: MhaFixture[]) => MhaFixture[]
   offset: number
   /** True once the deadline has passed. Always false for the first item, so every request makes progress. */
   outOfTime: (index: number) => boolean
@@ -92,12 +96,14 @@ const MHA_CONCURRENCY = 4
  */
 export const runMhaSyncStage = async (
   payload: Payload,
-  { dryRun = false, refreshLineups = false, stage = 'fixtures', offset = 0, deadline }: SyncOptions = {},
+  { dryRun = false, refreshLineups = false, stage = 'fixtures', offset = 0, deadline, fixtureCodes }: SyncOptions = {},
 ): Promise<SyncResult> => {
+  const only = fixtureCodes ? new Set(fixtureCodes) : null
   const ctx: StageContext = {
     payload,
     dryRun,
     refreshLineups,
+    selectFixtures: (fixtures) => ourFixtures(fixtures).filter((f) => !only || only.has(f.matchId)),
     offset,
     outOfTime: (index) => index > offset && deadline != null && Date.now() > deadline,
     result: emptySyncResult(dryRun, stage, offset),
@@ -147,9 +153,9 @@ const loadLinkedTeams = async (payload: Payload): Promise<Map<string, string>> =
   return map
 }
 
-const syncFixtures = async ({ payload, dryRun, offset, outOfTime, result }: StageContext) => {
+const syncFixtures = async ({ payload, dryRun, selectFixtures, offset, outOfTime, result }: StageContext) => {
   const feed = await fetchMhaFixtures()
-  const ours = ourFixtures(feed.fixtures)
+  const ours = selectFixtures(feed.fixtures)
 
   result.fetched = feed.fixtures.length
   result.considered = ours.length
@@ -384,9 +390,9 @@ const comparableRows = (rows: unknown): string =>
     })),
   )
 
-const syncLineups = async ({ payload, dryRun, refreshLineups, offset, outOfTime, result }: StageContext) => {
+const syncLineups = async ({ payload, dryRun, refreshLineups, selectFixtures, offset, outOfTime, result }: StageContext) => {
   const feed = await fetchMhaFixtures()
-  const finished = ourFixtures(feed.fixtures).filter((f) => {
+  const finished = selectFixtures(feed.fixtures).filter((f) => {
     const mapped = mapMhaFixture(f)
     return mapped.ok && mapped.fixture.status === 'Finished'
   })
