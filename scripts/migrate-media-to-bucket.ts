@@ -2,7 +2,7 @@ import { HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getPayload } from 'payload'
 
 import config from '../payload.config'
-import { mediaBucket as bucket, mediaFileKey, mediaS3Client } from '../lib/media/storage'
+import { MEDIA_PREFIX, mediaBucket as bucket, mediaFileKey, mediaS3Client } from '../lib/media/storage'
 
 /**
  * Copies every Media file from Cloudinary into the Railway bucket, at the same key the
@@ -111,6 +111,24 @@ for (let i = 0; i < docs.length; i += CONCURRENCY) {
 }
 
 payload.logger.info(`${DRY_RUN ? 'Would copy' : 'Copied'} ${copied}, already in bucket ${skipped}, failed ${failed.length}`)
+
+// Documents from before the S3 adapter have no `prefix` in the database. Reads fill in
+// the field's default, so their URLs get ?prefix=media, but Payload checks the prefix
+// against the database before serving a file and refuses it when nothing matches.
+const unprefixedWhere = { prefix: { exists: false } } as const
+const { totalDocs: unprefixed } = await payload.count({
+  collection: 'media',
+  where: unprefixedWhere,
+  overrideAccess: true,
+})
+if (unprefixed && !DRY_RUN) {
+  await payload.db.updateMany({
+    collection: 'media',
+    where: unprefixedWhere,
+    data: { prefix: MEDIA_PREFIX },
+  })
+}
+payload.logger.info(`${DRY_RUN ? 'Would set' : 'Set'} prefix "${MEDIA_PREFIX}" on ${unprefixed} documents`)
 for (const line of failed) payload.logger.warn(line)
 
 process.exit(failed.length ? 1 : 0)
