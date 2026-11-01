@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react'
 import type { UIFieldServerComponent } from 'payload'
-import { idOf, summarizeOrder, type Answer, type OrderLine } from '@/lib/shop/orderSummary'
+import type { Answer, OrderLine } from '@/lib/shop/orderSummary'
+import { summarizeOrderFor } from '@/lib/shop/orderQuestions'
 import { formatPrice } from '@/lib/shop/types'
-import { normalizeCustomFields } from '@/lib/shop/units'
 
 const card: CSSProperties = {
   border: '1px solid var(--theme-elevation-150)',
@@ -40,23 +40,21 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
   if (items.length === 0) return null
 
   // Each product's questions label the answers, e.g. "size" → "T-shirt size".
-  const ids = [...new Set(items.map((line) => idOf(line.product)).filter((id): id is string => Boolean(id)))]
-  const { docs } = ids.length
-    ? await payload.find({
-        collection: 'products',
-        where: { id: { in: ids } },
-        depth: 0,
-        limit: ids.length,
-        select: { title: true, customFields: true },
-      })
-    : { docs: [] }
-  const { membership, lines } = summarizeOrder(
-    items,
-    Object.fromEntries(docs.map((doc) => [String(doc.id), { title: doc.title, customFields: normalizeCustomFields(doc.customFields) }])),
-  )
+  const { membership, lines } = await summarizeOrderFor(payload, items)
 
   const subtotal = Number(data.subtotal) || 0
   const total = Number(data.total) || 0
+  const deliveryFee = Number(data.deliveryFee) || 0
+  const discount = Number(data.discountTotal) || 0
+  const vat = Number(data.vatIncluded) || 0
+  // Whatever the lines, delivery and discount don't explain, e.g. the MEMBRS platform fee.
+  const other = total - subtotal - deliveryFee + discount
+  const fulfilment = data.fulfilment ?? {}
+  const delivering = fulfilment.method === 'deliver'
+  const address = [fulfilment.addressLine1, fulfilment.addressLine2, [fulfilment.locality, fulfilment.postcode].filter(Boolean).join(' ')]
+    .filter(Boolean)
+    .join(', ')
+  const termsAt = dateTime(data.consent?.termsAcceptedAt)
   const placed = dateTime(data.createdAt)
   const paid = dateTime(data.paidAt)
 
@@ -81,6 +79,26 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
           )}
         </div>
       </div>
+
+      {(data.fulfilment?.method || fulfilment.note || termsAt) && (
+        <div style={{ ...card, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+          <div>
+            <div style={muted}>{delivering ? 'Deliver to' : 'Handover'}</div>
+            <div style={{ fontWeight: 600 }}>{delivering ? address || 'No address given' : 'Collect at the club'}</div>
+          </div>
+          {fulfilment.note && (
+            <div>
+              <div style={muted}>Buyer note</div>
+              <div>{fulfilment.note}</div>
+            </div>
+          )}
+          <div>
+            <div style={muted}>Consent</div>
+            <div>{termsAt ? `Accepted terms ${termsAt}` : 'No terms acceptance recorded'}</div>
+            <div style={muted}>{data.consent?.marketingOptIn ? 'Wants club news and offers' : 'No marketing emails'}</div>
+          </div>
+        </div>
+      )}
 
       <div style={card}>
         {membership && (
@@ -180,14 +198,32 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
         >
           <span style={muted}>Subtotal</span>
           <span style={{ textAlign: 'right' }}>{formatPrice(subtotal)}</span>
-          {total !== subtotal && (
+          {deliveryFee > 0 && (
+            <>
+              <span style={muted}>Delivery</span>
+              <span style={{ textAlign: 'right' }}>{formatPrice(deliveryFee)}</span>
+            </>
+          )}
+          {discount > 0 && (
+            <>
+              <span style={muted}>Promo code</span>
+              <span style={{ textAlign: 'right' }}>−{formatPrice(discount)}</span>
+            </>
+          )}
+          {other !== 0 && (
             <>
               <span style={muted}>{data.paymentProvider === 'membrs' ? 'MEMBRS platform fee' : 'Other charges'}</span>
-              <span style={{ textAlign: 'right' }}>{formatPrice(total - subtotal)}</span>
+              <span style={{ textAlign: 'right' }}>{formatPrice(other)}</span>
             </>
           )}
           <strong>Total</strong>
           <strong style={{ textAlign: 'right' }}>{formatPrice(total)}</strong>
+          {vat > 0 && (
+            <>
+              <span style={muted}>Includes VAT</span>
+              <span style={{ ...muted, textAlign: 'right' }}>{formatPrice(vat)}</span>
+            </>
+          )}
         </div>
       </div>
     </div>

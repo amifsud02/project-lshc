@@ -44,8 +44,15 @@ export const normalizeCustomFields = (input: any): CustomFieldDef[] => {
       options: Array.isArray(f.options)
         ? f.options
             .filter((o: any) => o?.value && o?.label)
-            .map((o: any) => ({ value: String(o.value), label: String(o.label) }))
+            .map((o: any) => ({
+              value: String(o.value),
+              label: String(o.label),
+              ...(typeof o.stock === 'number' ? { stock: Math.max(0, o.stock) } : {}),
+            }))
         : undefined,
+      ...(Number(f.maxLength) > 0 ? { maxLength: Number(f.maxLength) } : {}),
+      ...(Number(f.surcharge) > 0 ? { surcharge: Math.round(Number(f.surcharge)) } : {}),
+      ...(f.personalised ? { personalised: true } : {}),
     }))
 }
 

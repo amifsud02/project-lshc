@@ -8,6 +8,8 @@ export const hasBundleItems = (type: ProductType) => type === 'bundle' || type =
 export type CustomFieldOption = {
   value: string
   label: string
+  /** Left in stock; undefined when not tracked. */
+  stock?: number
 }
 
 export type CustomFieldDef = {
@@ -16,6 +18,12 @@ export type CustomFieldDef = {
   kind: CustomFieldKind
   required: boolean
   options?: CustomFieldOption[]
+  /** Text answers only. */
+  maxLength?: number
+  /** Cents added to the unit's price when the answer is filled in, e.g. printing a name. */
+  surcharge?: number
+  /** Printed on the item, so it can't be returned. */
+  personalised?: boolean
 }
 
 export type CartUnit = {
@@ -31,6 +39,8 @@ export type CartItem = {
   productSlug: string
   productTitle: string
   productType: ProductType
+  /** Product photo for the cart line; filled in when prices are re-read if missing. */
+  imageUrl?: string
   unitPrice: number
   quantity: number
   units: CartUnit[]
@@ -64,3 +74,15 @@ export function formatPrice(cents: number, currency: string = CURRENCY): string 
     currency,
   }).format(cents / 100)
 }
+
+/** What a unit's answers add to its price, e.g. a printed name. */
+export const unitExtras = (unit: { customFields: CustomFieldDef[]; values: Record<string, string> }): number =>
+  unit.customFields.reduce((sum, f) => sum + (f.surcharge && String(unit.values?.[f.name] ?? '').trim() ? f.surcharge : 0), 0)
+
+/** A cart line's price: its units plus anything their answers add. */
+export const itemTotal = (item: Pick<CartItem, 'unitPrice' | 'quantity' | 'units'>): number =>
+  item.unitPrice * item.quantity + item.units.reduce((sum, unit) => sum + unitExtras(unit), 0)
+
+/** True when any unit has a filled-in answer that gets printed on the item. */
+export const isPersonalised = (item: Pick<CartItem, 'units'>): boolean =>
+  item.units.some((u) => u.customFields.some((f) => f.personalised && String(u.values?.[f.name] ?? '').trim()))

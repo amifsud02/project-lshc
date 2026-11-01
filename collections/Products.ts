@@ -46,6 +46,35 @@ export const Products: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
+      name: 'stock',
+      type: 'number',
+      min: 0,
+      admin: {
+        position: 'sidebar',
+        condition: (_, siblingData) => siblingData?.type !== 'membership',
+        description: "How many are left. Leave empty if you don't track stock, or track it per size in the questions below.",
+      },
+    },
+    {
+      name: 'preorder',
+      type: 'group',
+      admin: { position: 'sidebar', condition: (_, siblingData) => siblingData?.type !== 'membership' },
+      fields: [
+        {
+          name: 'enabled',
+          label: 'Take pre-orders',
+          type: 'checkbox',
+          admin: { description: 'Lets people order while out of stock.' },
+        },
+        {
+          name: 'dispatchDate',
+          label: 'Expected by',
+          type: 'date',
+          admin: { condition: (_, siblingData) => Boolean(siblingData?.enabled), date: { pickerAppearance: 'dayOnly' } },
+        },
+      ],
+    },
+    {
       name: 'price',
       type: 'number',
       required: true,
@@ -96,6 +125,13 @@ export const Products: CollectionConfig = {
       ],
     },
     { name: 'image', type: 'upload', relationTo: 'media' },
+    {
+      name: 'gallery',
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
+      admin: { description: 'More photos (back, on-body, details), shown as thumbnails under the main image.' },
+    },
     { name: 'description', type: 'richText' },
     {
       name: 'customFields',
@@ -121,12 +157,49 @@ export const Products: CollectionConfig = {
         },
         { name: 'required', type: 'checkbox', defaultValue: true },
         {
+          type: 'row',
+          admin: { condition: (_, siblingData) => siblingData?.kind === 'text' },
+          fields: [
+            {
+              name: 'maxLength',
+              label: 'Most characters',
+              type: 'number',
+              min: 1,
+              admin: { width: '33%', description: 'e.g. 12 for a name on a shirt.' },
+            },
+            {
+              name: 'surcharge',
+              label: 'Extra charge (cents)',
+              type: 'number',
+              min: 0,
+              admin: { width: '33%', description: 'Added when filled in, e.g. 500 = €5.00 for printing.' },
+            },
+            {
+              name: 'personalised',
+              label: 'Printed on the item',
+              type: 'checkbox',
+              admin: { width: '33%', description: "Asked on the product page; the item can't be returned." },
+            },
+          ],
+        },
+        {
           name: 'options',
           type: 'array',
           admin: { condition: (_, siblingData) => siblingData?.kind === 'select' },
           fields: [
-            { name: 'value', type: 'text', required: true },
-            { name: 'label', type: 'text', required: true },
+            {
+              type: 'row',
+              fields: [
+                { name: 'value', type: 'text', required: true, admin: { width: '33%' } },
+                { name: 'label', type: 'text', required: true, admin: { width: '33%' } },
+                {
+                  name: 'stock',
+                  type: 'number',
+                  min: 0,
+                  admin: { width: '33%', description: "Left in stock. Empty if you don't track it." },
+                },
+              ],
+            },
           ],
         },
       ],

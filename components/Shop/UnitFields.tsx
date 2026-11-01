@@ -125,6 +125,7 @@ export function FieldInput({
       ) : (
         <Input
           type={field.kind === 'email' ? 'email' : field.kind === 'phone' ? 'tel' : 'text'}
+          maxLength={field.maxLength}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />

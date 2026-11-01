@@ -16,6 +16,12 @@ export type ShopProduct = {
   membership?: { season: string; membersCovered: number; membrsPlanId?: number }
   active: boolean
   imageUrl?: string
+  /** More photos after the main image. */
+  gallery: string[]
+  /** Left in stock for the whole product; undefined when not tracked. */
+  stock?: number
+  /** Set while the product takes pre-orders. */
+  preorder?: { dispatchDate?: string }
   description?: unknown
   customFields: CustomFieldDef[]
   unitTemplates: UnitTemplate[]
@@ -76,6 +82,9 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
     active: Boolean(doc.active),
     // Falls back to the Fallback Image in Site Settings.
     imageUrl: mediaUrl(doc.image) ?? (await getGeneralGlobal()).fallbackImageUrl,
+    gallery: (Array.isArray(doc.gallery) ? doc.gallery : []).map(mediaUrl).filter((url: string | undefined): url is string => Boolean(url)),
+    ...(typeof doc.stock === 'number' ? { stock: Math.max(0, doc.stock) } : {}),
+    ...(doc.preorder?.enabled ? { preorder: { dispatchDate: doc.preorder.dispatchDate ?? undefined } } : {}),
     description: doc.description,
     customFields: ownFields,
     unitTemplates,

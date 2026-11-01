@@ -21,7 +21,11 @@ type Props = {
   dateLabel?: string
   lines: ReceiptLine[]
   subtotal?: number
+  /** Charged on top of the items, e.g. a platform fee, as [label, cents]. */
+  adjustments?: [string, number][]
   total: number
+  /** VAT inside the total, in cents. */
+  vatIncluded?: number
   currency?: string
   actions?: ReactNode
   details?: [string, string][]
@@ -35,7 +39,9 @@ export default function OrderReceipt({
   dateLabel,
   lines,
   subtotal,
+  adjustments = [],
   total,
+  vatIncluded,
   currency,
   actions,
   details,
@@ -87,9 +93,9 @@ export default function OrderReceipt({
                 </span>
                 {line.fields && line.fields.length > 0 && (
                   <ul className="text-xs text-muted-foreground">
-                    {line.fields.map(([key, value]) => (
-                      <li key={key}>
-                        {key}: {value}
+                    {line.fields.map(([label, value]) => (
+                      <li key={label}>
+                        {label}: {value}
                       </li>
                     ))}
                   </ul>
@@ -105,22 +111,34 @@ export default function OrderReceipt({
         <Separator />
 
         <dl className="flex flex-col gap-2 text-sm">
-          {subtotal !== undefined && subtotal !== total && (
+          {subtotal !== undefined && (subtotal !== total || adjustments.length > 0) && (
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Subtotal</dt>
               <dd className="font-medium tabular-nums">{formatPrice(subtotal, currency)}</dd>
             </div>
           )}
+          {adjustments.map(([label, cents]) => (
+            <div key={label} className="flex justify-between">
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="font-medium tabular-nums">{cents < 0 ? `−${formatPrice(-cents, currency)}` : formatPrice(cents, currency)}</dd>
+            </div>
+          ))}
           <div className="flex justify-between text-base font-semibold">
             <dt>Total</dt>
             <dd className="tabular-nums">{formatPrice(total, currency)}</dd>
           </div>
+          {vatIncluded ? (
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Includes VAT</dt>
+              <dd className="text-muted-foreground tabular-nums">{formatPrice(vatIncluded, currency)}</dd>
+            </div>
+          ) : null}
         </dl>
 
         {details && details.length > 0 && (
           <>
             <Separator />
-            <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+            <dl className={`grid grid-cols-1 gap-3 text-sm ${details.length > 1 ? 'sm:grid-cols-3' : ''}`}>
               {details.map(([label, value]) => (
                 <div key={label} className="flex flex-col gap-0.5">
                   <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">

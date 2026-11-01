@@ -1,3 +1,4 @@
+import { shopSettingsFromPayload, type ShopSettings } from '@/lib/shop/settings'
 export type NavLink = {
   label: string
   href: string
@@ -21,6 +22,7 @@ export type NormalizedGeneral = {
   /** News posts per page on the news listings. */
   postsPerPage: number
   shopVisibility: 'admins' | 'public'
+  shop: ShopSettings
 }
 
 export type NormalizedFooter = {
@@ -90,6 +92,7 @@ export const generalFromPayload = (doc: any): NormalizedGeneral => {
     postsPerPage: Math.max(1, Math.floor(Number(doc?.reading?.postsPerPage) || 10)),
     // Anything other than an explicit 'public' keeps the shop hidden.
     shopVisibility: doc?.shop?.visibility === 'public' ? 'public' : 'admins',
+    shop: shopSettingsFromPayload(doc?.shop),
   }
 }
 

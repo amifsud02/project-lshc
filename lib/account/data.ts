@@ -5,6 +5,8 @@ import type { CurrentUser } from '@/lib/auth/server'
 
 export const orderStatusLabels: Record<Order['status'], string> = {
   cancelled: 'Cancelled',
+  ready: 'Ready to collect',
+  shipped: 'Shipped',
   fulfilled: 'Completed',
   paid: 'Paid',
   pending: 'Pending payment',
@@ -21,7 +23,7 @@ export const nurseryStatusLabels: Record<NurseryRegistration['status'], string> 
 
 /** Badge tone per status, shared by orders and nursery registrations. */
 export const statusTone = (status: string): 'ok' | 'warn' | 'bad' | 'muted' => {
-  if (status === 'paid' || status === 'fulfilled') return 'ok'
+  if (status === 'paid' || status === 'ready' || status === 'shipped' || status === 'fulfilled') return 'ok'
   if (status === 'pending' || status === 'awaiting-transfer') return 'warn'
   if (status === 'cancelled' || status === 'refunded') return 'bad'
   return 'muted'

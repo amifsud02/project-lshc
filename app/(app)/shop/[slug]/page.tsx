@@ -1,10 +1,10 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { RichText } from '@payloadcms/richtext-lexical/react'
-import { Check, Home, ChevronRight, Lock, ShieldCheck } from 'lucide-react'
+import { Check, Home, ChevronRight, Lock, ShieldCheck, Store, Truck } from 'lucide-react'
 import PageHeader from '@/components/PageHeader/PageHeader'
 import AddToCartButton from '@/components/Shop/AddToCartButton'
+import ProductGallery from '@/components/Shop/ProductGallery'
 import BuyMembershipForm from '@/components/Shop/BuyMembershipForm'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -30,6 +30,7 @@ import { seoDescription, seoImage, seoTitle, seoTitleText } from '@/lib/seo/meta
 import { paths } from '@/lib/seo/site'
 import { breadcrumbJsonLd, productJsonLd } from '@/lib/seo/structuredData'
 import { siteOpenGraph } from '@/lib/utils/metadata'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 
 export const revalidate = 60
 
@@ -67,6 +68,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   if (!product || !product.active) notFound()
 
   const included = product.unitTemplates.filter((t) => t.productId !== product.id)
+  const { shop } = await getGeneralGlobal()
 
   // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member,
   // unless one of our included products already asks for it (e.g. a T-shirt size).
@@ -133,22 +135,10 @@ export default async function ProductPage({ params }: { params: Params }) {
 
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-10">
             <div className="lg:col-span-7">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted">
-                {product.imageUrl ? (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.title}
-                    fill
-                    priority
-                    sizes="(min-width: 1024px) 58vw, 100vw"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary to-foreground text-6xl font-extrabold tracking-wide text-primary-foreground/80">
-                    LS
-                  </div>
-                )}
-              </div>
+              <ProductGallery
+                images={[product.imageUrl, ...product.gallery].filter((url): url is string => Boolean(url))}
+                title={product.title}
+              />
             </div>
 
             <div className="lg:col-span-5">
@@ -200,10 +190,33 @@ export default async function ProductPage({ params }: { params: Params }) {
                   <AddToCartButton product={product} />
                 )}
 
+                {product.type !== 'membership' && (
+                  <ul className="flex flex-col gap-2 rounded-xl bg-muted/60 p-4 text-sm">
+                    <li className="flex items-start gap-3">
+                      <Store className="mt-0.5 size-4 shrink-0 text-primary" />
+                      <span>
+                        <strong className="font-semibold">Free collection</strong> · {shop.collection.details}
+                        {shop.collection.readyIn ? ` Usually ready in ${shop.collection.readyIn}.` : ''}
+                      </span>
+                    </li>
+                    {shop.delivery.enabled && (
+                      <li className="flex items-start gap-3">
+                        <Truck className="mt-0.5 size-4 shrink-0 text-primary" />
+                        <span>
+                          <strong className="font-semibold">Delivery {formatPrice(shop.delivery.fee)}</strong>
+                          {shop.delivery.details ? ` · ${shop.delivery.details}` : ''}
+                        </span>
+                      </li>
+                    )}
+                  </ul>
+                )}
+
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <Lock className="size-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Secure payment by Stripe</span>
+                    <span className="text-sm font-medium">
+                      {product.type === 'membership' ? 'Secure payment through MEMBRS' : 'Secure payment by Stripe'}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="size-4 text-muted-foreground" />

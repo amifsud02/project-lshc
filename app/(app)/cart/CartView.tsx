@@ -3,21 +3,24 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { ArrowRight, Lock, Trash2 } from 'lucide-react'
+import { ArrowRight, Lock, Tag, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useCart } from '@/lib/shop/cart'
-import { formatPrice, isValidPhone } from '@/lib/shop/types'
+import { MAX_QUANTITY, useCart } from '@/lib/shop/cart'
+import { vatIncluded, type ShopSettings } from '@/lib/shop/settings'
+import { Input } from '@/components/ui/input'
+import { OptionChips, QuantityStepper } from '@/components/Shop/OptionControls'
+import { formatPrice, isPersonalised, isValidPhone, itemTotal, unitExtras } from '@/lib/shop/types'
 import type { CartItem } from '@/lib/shop/types'
 import { UnitForm } from '@/components/Shop/UnitFields'
+import PriceChanges from '@/components/Shop/PriceChanges'
+import { usePriceSync } from '@/lib/shop/usePriceSync'
 import { CURRENCY, cartItemsToGa, gaValue, trackEvent } from '@/lib/analytics/gtag'
 
 const emptySubscribe = () => () => {}
 
-export default function CartView() {
+export default function CartView({ shop }: { shop: ShopSettings }) {
   const items = useCart((s) => s.items)
   const subtotal = useCart((s) => s.subtotal())
   const removeItem = useCart((s) => s.removeItem)
@@ -31,6 +34,7 @@ export default function CartView() {
     () => true,
     () => false
   )
+  const priceChanges = usePriceSync(mounted)
 
   // view_cart once per visit to the page, after the saved cart has loaded.
   const viewed = useRef(false)
@@ -49,6 +53,8 @@ export default function CartView() {
 
   if (mounted && items.length === 0) {
     return (
+      <div className="flex flex-col gap-4">
+      <PriceChanges changes={priceChanges} />
       <Card>
         <CardContent className="flex flex-col items-center gap-2 py-12 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -56,13 +62,14 @@ export default function CartView() {
           </p>
           <h2 className="text-xl font-semibold">Nothing here yet</h2>
           <p className="text-muted-foreground">
-            Browse the shop and add a membership or bundle to get started.
+            Browse the shop to add club kit and merchandise. Memberships are bought from their own page.
           </p>
           <Button render={<Link href="/shop" />} className="mt-3">
             Continue shopping
           </Button>
         </CardContent>
       </Card>
+      </div>
     )
   }
 
@@ -106,6 +113,7 @@ export default function CartView() {
             {items.length} line{items.length === 1 ? '' : 's'}
           </span>
         </div>
+        <PriceChanges changes={priceChanges} />
         {items.map((item, i) => (
           <CartLine
             key={item.lineId}
@@ -129,12 +137,30 @@ export default function CartView() {
                     {item.productTitle} × {item.quantity}
                   </span>
                   <span className="font-medium tabular-nums">
-                    {formatPrice(item.unitPrice * item.quantity)}
+                    {formatPrice(itemTotal(item))}
                   </span>
                 </li>
               ))}
             </ul>
             <Separator />
+            <dl className="flex flex-col gap-2 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Collection at the club</dt>
+                <dd className="font-medium">Free</dd>
+              </div>
+              {shop.delivery.enabled && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">or delivery</dt>
+                  <dd className="text-muted-foreground tabular-nums">{formatPrice(shop.delivery.fee)}</dd>
+                </div>
+              )}
+              {shop.vatRate > 0 && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Includes VAT ({shop.vatRate}%)</dt>
+                  <dd className="text-muted-foreground tabular-nums">{formatPrice(vatIncluded(subtotal, shop.vatRate))}</dd>
+                </div>
+              )}
+            </dl>
             <div className="flex justify-between text-base font-semibold">
               <span>Total</span>
               <span className="tabular-nums">{formatPrice(subtotal)}</span>
@@ -156,9 +182,13 @@ export default function CartView() {
               Proceed to checkout
               <ArrowRight />
             </Button>
-            <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Lock className="size-3" />
-              Secure payment by Stripe · EUR
+            <p className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Tag className="size-3 shrink-0" />
+              Have a promo code? Add it on the payment page.
+            </p>
+            <p className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Lock className="size-3 shrink-0" />
+              Secure payment by Stripe · card, Apple Pay or Google Pay
             </p>
           </CardContent>
         </Card>
@@ -169,7 +199,6 @@ export default function CartView() {
 
 function CartLine({
   item,
-  index,
   onRemove,
   onQty,
   onField,
@@ -180,39 +209,93 @@ function CartLine({
   onQty: (q: number) => void
   onField: (unitIdx: number, field: string, value: string) => void
 }) {
+  const href = `/shop/${item.productSlug}`
+  const kind = item.productType === 'bundle' ? 'Bundle' : 'Item'
   return (
     <Card>
-      <CardContent className="flex flex-col gap-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Line {String(index + 1).padStart(2, '0')} ·{' '}
-              {item.productType === 'membership' ? 'Membership' : item.productType === 'bundle' ? 'Bundle' : 'Item'}
+      <CardContent className="flex gap-4">
+        <Link
+          href={href}
+          className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted"
+          aria-label={item.productTitle}
+        >
+          {item.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={item.imageUrl} alt="" className="size-full object-cover" />
+          ) : (
+            <span className="flex size-full items-center justify-center bg-gradient-to-br from-primary to-foreground text-xl font-extrabold text-primary-foreground/80">
+              LS
             </span>
-            <h3 className="text-lg font-semibold">{item.productTitle}</h3>
-            <p className="text-sm text-muted-foreground tabular-nums">
-              {formatPrice(item.unitPrice)} × {item.quantity} ={' '}
-              <strong className="text-foreground">
-                {formatPrice(item.unitPrice * item.quantity)}
-              </strong>
-            </p>
+          )}
+        </Link>
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <Link href={href} className="text-base font-semibold hover:underline">
+                {item.productTitle}
+              </Link>
+              <p className="text-sm text-muted-foreground tabular-nums">
+                {formatPrice(item.unitPrice)} each · {kind}
+                {item.units.some((u) => unitExtras(u) > 0)
+                  ? ` · +${formatPrice(item.units.reduce((sum, u) => sum + unitExtras(u), 0))} personalisation`
+                  : ''}
+              </p>
+              {isPersonalised(item) && (
+                <p className="text-xs font-medium text-amber-700">Personalised, so it can&apos;t be returned.</p>
+              )}
+            </div>
+            <span className="font-semibold tabular-nums">{formatPrice(itemTotal(item))}</span>
           </div>
+
+          {item.productType === 'single'
+            ? item.units.map((unit, unitIdx) =>
+                unit.customFields.length === 0 ? null : (
+                  <div key={unitIdx} className="flex flex-col gap-2">
+                    {unit.customFields.map((field) => (
+                      <div key={field.name} className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                        <span className="min-w-24 text-sm text-muted-foreground">
+                          {field.label}
+                          {item.units.length > 1 ? ` #${unitIdx + 1}` : ''}
+                        </span>
+                        {field.kind === 'select' ? (
+                          <OptionChips
+                            size="sm"
+                            field={field}
+                            value={unit.values[field.name] ?? ''}
+                            onChange={(v) => onField(unitIdx, field.name, v)}
+                          />
+                        ) : (
+                          <Input
+                            aria-label={field.label}
+                            type={field.kind === 'email' ? 'email' : field.kind === 'phone' ? 'tel' : 'text'}
+                            maxLength={field.maxLength}
+                            value={unit.values[field.name] ?? ''}
+                            onChange={(e) => onField(unitIdx, field.name, field.personalised ? e.target.value.toUpperCase() : e.target.value)}
+                            className="w-full sm:w-64"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ),
+              )
+            : item.units.map((unit, unitIdx) => (
+                <UnitForm
+                  key={unitIdx}
+                  index={unitIdx}
+                  total={item.units.length}
+                  unit={unit}
+                  onField={(field, value) => onField(unitIdx, field, value)}
+                />
+              ))}
+
           <div className="flex items-center gap-3">
-            <Label className="flex items-center gap-2 text-sm">
-              Qty
-              <Input
-                type="number"
-                min={1}
-                value={item.quantity}
-                onChange={(e) => onQty(Number(e.target.value))}
-                className="w-20"
-              />
-            </Label>
+            <QuantityStepper value={item.quantity} onChange={onQty} max={MAX_QUANTITY} />
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="cursor-pointer text-destructive hover:text-destructive"
+              className="cursor-pointer text-muted-foreground hover:text-destructive"
               onClick={onRemove}
             >
               <Trash2 />
@@ -220,16 +303,6 @@ function CartLine({
             </Button>
           </div>
         </div>
-
-        {item.units.map((unit, unitIdx) => (
-          <UnitForm
-            key={unitIdx}
-            index={unitIdx}
-            total={item.units.length}
-            unit={unit}
-            onField={(field, value) => onField(unitIdx, field, value)}
-          />
-        ))}
       </CardContent>
     </Card>
   )

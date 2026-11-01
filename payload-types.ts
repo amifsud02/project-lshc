@@ -1161,6 +1161,17 @@ export interface Product {
   type: 'single' | 'bundle' | 'membership';
   active?: boolean | null;
   /**
+   * How many are left. Leave empty if you don't track stock, or track it per size in the questions below.
+   */
+  stock?: number | null;
+  preorder?: {
+    /**
+     * Lets people order while out of stock.
+     */
+    enabled?: boolean | null;
+    dispatchDate?: string | null;
+  };
+  /**
    * Price in cents (e.g. 2500 = €25.00). For bundles and memberships this is the price the customer pays for everything included.
    */
   price: number;
@@ -1182,6 +1193,10 @@ export interface Product {
     membrsPlanId?: number | null;
   };
   image?: (string | null) | Media;
+  /**
+   * More photos (back, on-body, details), shown as thumbnails under the main image.
+   */
+  gallery?: (string | Media)[] | null;
   description?: {
     root: {
       type: string;
@@ -1209,10 +1224,26 @@ export interface Product {
         label: string;
         kind: 'text' | 'email' | 'phone' | 'select';
         required?: boolean | null;
+        /**
+         * e.g. 12 for a name on a shirt.
+         */
+        maxLength?: number | null;
+        /**
+         * Added when filled in, e.g. 500 = €5.00 for printing.
+         */
+        surcharge?: number | null;
+        /**
+         * Asked on the product page; the item can't be returned.
+         */
+        personalised?: boolean | null;
         options?:
           | {
               value: string;
               label: string;
+              /**
+               * Left in stock. Empty if you don't track it.
+               */
+              stock?: number | null;
               id?: string | null;
             }[]
           | null;
@@ -1259,16 +1290,38 @@ export interface Product {
 export interface Order {
   id: string;
   orderNumber?: string | null;
-  status: 'pending' | 'paid' | 'fulfilled' | 'cancelled' | 'refunded';
+  /**
+   * Ready to collect and Shipped email the buyer. Refunded emails them too.
+   */
+  status: 'pending' | 'paid' | 'ready' | 'shipped' | 'fulfilled' | 'cancelled' | 'refunded';
   /**
    * Memberships are paid through MEMBRS; everything else through the club shop.
    */
   paymentProvider?: ('club' | 'membrs') | null;
   paidAt?: string | null;
+  /**
+   * Cents, as confirmed by Stripe
+   */
+  refundedTotal?: number | null;
   customerName?: string | null;
   customerEmail: string;
   customerPhone?: string | null;
   user?: (string | null) | User;
+  /**
+   * How the buyer gets the order, chosen at checkout.
+   */
+  fulfilment?: {
+    method?: ('collect' | 'deliver') | null;
+    addressLine1?: string | null;
+    addressLine2?: string | null;
+    locality?: string | null;
+    postcode?: string | null;
+    note?: string | null;
+  };
+  consent?: {
+    termsAcceptedAt?: string | null;
+    marketingOptIn?: boolean | null;
+  };
   items: {
     productTitle: string;
     product?: (string | null) | Product;
@@ -1308,6 +1361,18 @@ export interface Order {
    */
   total: number;
   currency: string;
+  /**
+   * Cents
+   */
+  deliveryFee?: number | null;
+  /**
+   * Cents, from a Stripe promotion code
+   */
+  discountTotal?: number | null;
+  /**
+   * Cents, inside the total
+   */
+  vatIncluded?: number | null;
   /**
    * For MEMBRS orders this is the MEMBRS checkout id.
    */
@@ -2859,6 +2924,13 @@ export interface ProductsSelect<T extends boolean = true> {
   slug?: T;
   type?: T;
   active?: T;
+  stock?: T;
+  preorder?:
+    | T
+    | {
+        enabled?: T;
+        dispatchDate?: T;
+      };
   price?: T;
   membership?:
     | T
@@ -2868,6 +2940,7 @@ export interface ProductsSelect<T extends boolean = true> {
         membrsPlanId?: T;
       };
   image?: T;
+  gallery?: T;
   description?: T;
   customFields?:
     | T
@@ -2876,11 +2949,15 @@ export interface ProductsSelect<T extends boolean = true> {
         label?: T;
         kind?: T;
         required?: T;
+        maxLength?: T;
+        surcharge?: T;
+        personalised?: T;
         options?:
           | T
           | {
               value?: T;
               label?: T;
+              stock?: T;
               id?: T;
             };
         id?: T;
@@ -2914,10 +2991,27 @@ export interface OrdersSelect<T extends boolean = true> {
   status?: T;
   paymentProvider?: T;
   paidAt?: T;
+  refundedTotal?: T;
   customerName?: T;
   customerEmail?: T;
   customerPhone?: T;
   user?: T;
+  fulfilment?:
+    | T
+    | {
+        method?: T;
+        addressLine1?: T;
+        addressLine2?: T;
+        locality?: T;
+        postcode?: T;
+        note?: T;
+      };
+  consent?:
+    | T
+    | {
+        termsAcceptedAt?: T;
+        marketingOptIn?: T;
+      };
   items?:
     | T
     | {
@@ -2933,6 +3027,9 @@ export interface OrdersSelect<T extends boolean = true> {
   subtotal?: T;
   total?: T;
   currency?: T;
+  deliveryFee?: T;
+  discountTotal?: T;
+  vatIncluded?: T;
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;
   updatedAt?: T;
@@ -3528,6 +3625,40 @@ export interface General {
      * Controls who can see the e-commerce shop. Takes effect within a minute of saving.
      */
     visibility: 'admins' | 'public';
+    collectionLabel?: string | null;
+    /**
+     * Shown to buyers, e.g. "3–5 days". Leave empty to hide.
+     */
+    readyIn?: string | null;
+    /**
+     * Where and how buyers pick up their order.
+     */
+    collectionDetails?: string | null;
+    /**
+     * Lets buyers choose delivery to an address at checkout, for the fee below.
+     */
+    deliveryEnabled?: boolean | null;
+    /**
+     * e.g. 450 = €4.50
+     */
+    deliveryFee?: number | null;
+    deliveryDetails?: string | null;
+    /**
+     * Email addresses of the people who handle orders, separated by commas. Leave empty for no alerts.
+     */
+    staffEmails?: string | null;
+    /**
+     * Shows the VAT inside each total, e.g. 18. Leave at 0 if the club is not VAT-registered.
+     */
+    vatRate?: number | null;
+    /**
+     * e.g. /terms-of-sale. Linked from checkout and receipts.
+     */
+    termsUrl?: string | null;
+    /**
+     * e.g. /privacy
+     */
+    privacyUrl?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3649,6 +3780,16 @@ export interface GeneralSelect<T extends boolean = true> {
     | T
     | {
         visibility?: T;
+        collectionLabel?: T;
+        readyIn?: T;
+        collectionDetails?: T;
+        deliveryEnabled?: T;
+        deliveryFee?: T;
+        deliveryDetails?: T;
+        staffEmails?: T;
+        vatRate?: T;
+        termsUrl?: T;
+        privacyUrl?: T;
       };
   updatedAt?: T;
   createdAt?: T;

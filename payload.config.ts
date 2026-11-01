@@ -36,6 +36,7 @@ import { MagicLinkTokens } from "./collections/MagicLinkTokens";
 import { revalidateContentPlugin } from "./collections/hooks/revalidateContent";
 import { seo } from "./lib/seo/plugin";
 import { isStaff } from "./lib/auth/roles";
+import { sendgridAdapter } from "./lib/email/adapter";
 import { MEDIA_PREFIX, mediaBucket, mediaS3Config } from "./lib/media/storage";
 import { MATCH_SUMMARIES_QUEUE, matchSummariesTask } from "./lib/news/matchSummariesTask";
 import { RESULT_CHECKS_QUEUE, resultChecksTask } from "./lib/mha/resultCheckTask";
@@ -48,6 +49,10 @@ export default buildConfig({
     user: Users.slug,
     components: {
       beforeLogin: ['@/components/admin/GoogleSignInButton#GoogleSignInButton'],
+      afterNavLinks: ['@/components/admin/emails/EmailsNavLink#EmailsNavLink'],
+      views: {
+        emails: { Component: '@/components/admin/emails/EmailsView#EmailsView', path: '/emails' },
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -81,6 +86,7 @@ export default buildConfig({
   ],
   globals: [Header, Footer, General],
   editor: lexicalEditor(),
+  email: sendgridAdapter(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),

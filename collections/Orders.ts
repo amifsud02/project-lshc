@@ -1,6 +1,7 @@
 import type { CollectionConfig, Where } from 'payload'
-import { sendOrderConfirmation } from '@/lib/email/orderConfirmation'
+import { sendShopEmail, type ShopEmailKind } from '@/lib/email/shopEmails'
 import { cancelMembershipsForOrder, createMembershipsForOrder } from '@/lib/shop/memberships'
+import { decrementStockForOrder } from '@/lib/shop/stock'
 import { collectionWriteAccess, hasRole } from '@/lib/auth/roles'
 
 export const Orders: CollectionConfig = {
@@ -40,16 +41,26 @@ export const Orders: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, previousDoc, operation, req }) => {
-        const becamePaid =
-          doc?.status === 'paid' && (operation === 'create' || previousDoc?.status !== 'paid')
-        if (becamePaid) {
-          await createMembershipsForOrder(doc, req)
+        const became = (status: string) =>
+          doc?.status === status && (operation === 'create' || previousDoc?.status !== status)
+        // Emails never block the status change; a failed send is logged.
+        const send = async (kind: ShopEmailKind) => {
           try {
-            await sendOrderConfirmation(doc)
+            await sendShopEmail(req.payload, kind, doc)
           } catch (err) {
-            console.error('[orders] failed to send confirmation email', err)
+            req.payload.logger.error({ err, msg: `[orders] failed to send ${kind} email for ${doc?.orderNumber}` })
           }
         }
+
+        if (became('paid')) {
+          await createMembershipsForOrder(doc, req)
+          await decrementStockForOrder(req.payload, doc, req)
+          await send('confirmation')
+          await send('staff')
+        }
+        if (became('ready')) await send('ready')
+        if (became('shipped')) await send('shipped')
+        if (became('refunded')) await send('refund')
 
         const becameVoid =
           (doc?.status === 'refunded' || doc?.status === 'cancelled') && previousDoc?.status !== doc?.status
@@ -72,11 +83,18 @@ export const Orders: CollectionConfig = {
       options: [
         { label: 'Pending', value: 'pending' },
         { label: 'Paid', value: 'paid' },
+        // Setting either of these emails the buyer (see the afterChange hook).
+        { label: 'Ready to collect', value: 'ready' },
+        { label: 'Shipped', value: 'shipped' },
         { label: 'Fulfilled', value: 'fulfilled' },
         { label: 'Cancelled', value: 'cancelled' },
         { label: 'Refunded', value: 'refunded' },
       ],
-      admin: { position: 'sidebar', components: { Cell: '@/components/admin/orders/cells#StatusCell' } },
+      admin: {
+        position: 'sidebar',
+        description: 'Ready to collect and Shipped email the buyer. Refunded emails them too.',
+        components: { Cell: '@/components/admin/orders/cells#StatusCell' },
+      },
     },
     {
       name: 'paymentProvider',
@@ -93,6 +111,18 @@ export const Orders: CollectionConfig = {
       },
     },
     { name: 'paidAt', type: 'date', admin: { position: 'sidebar', readOnly: true } },
+    {
+      name: 'refundedTotal',
+      label: 'Refunded',
+      type: 'number',
+      defaultValue: 0,
+      admin: { position: 'sidebar', readOnly: true, description: 'Cents, as confirmed by Stripe', condition: (data) => Number(data?.refundedTotal) > 0 },
+    },
+    {
+      name: 'refund',
+      type: 'ui',
+      admin: { position: 'sidebar', components: { Field: '@/components/admin/orders/RefundPanel#RefundPanel' } },
+    },
     {
       name: 'summary',
       type: 'ui',
@@ -120,6 +150,46 @@ export const Orders: CollectionConfig = {
           ],
         },
         { name: 'user', type: 'relationship', relationTo: 'users' },
+        {
+          name: 'fulfilment',
+          type: 'group',
+          admin: { description: 'How the buyer gets the order, chosen at checkout.' },
+          fields: [
+            {
+              name: 'method',
+              type: 'select',
+              defaultValue: 'collect',
+              options: [
+                { label: 'Collect at the club', value: 'collect' },
+                { label: 'Delivery', value: 'deliver' },
+              ],
+            },
+            {
+              type: 'row',
+              admin: { condition: (_, sibling) => sibling?.method === 'deliver' },
+              fields: [
+                { name: 'addressLine1', label: 'Address', type: 'text', admin: { width: '50%' } },
+                { name: 'addressLine2', label: 'Address line 2', type: 'text', admin: { width: '50%' } },
+                { name: 'locality', type: 'text', admin: { width: '50%' } },
+                { name: 'postcode', type: 'text', admin: { width: '50%' } },
+              ],
+            },
+            { name: 'note', label: 'Buyer note', type: 'textarea' },
+          ],
+        },
+        {
+          name: 'consent',
+          type: 'group',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'termsAcceptedAt', label: 'Terms accepted', type: 'date', admin: { readOnly: true, width: '50%', date: { pickerAppearance: 'dayAndTime' } } },
+                { name: 'marketingOptIn', label: 'Wants club news and offers', type: 'checkbox', admin: { readOnly: true, width: '50%' } },
+              ],
+            },
+          ],
+        },
         {
           name: 'items',
           type: 'array',
@@ -173,6 +243,14 @@ export const Orders: CollectionConfig = {
               },
             },
             { name: 'currency', type: 'text', required: true, defaultValue: 'eur', admin: { width: '33%' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'deliveryFee', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents' } },
+            { name: 'discountTotal', label: 'Discount', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents, from a Stripe promotion code' } },
+            { name: 'vatIncluded', label: 'VAT included', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents, inside the total' } },
           ],
         },
         {

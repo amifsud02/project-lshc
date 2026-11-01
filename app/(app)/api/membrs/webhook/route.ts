@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   }
 
   // Redeliveries are harmless: only move forward from the state each event expects.
-  const expected = event.type === 'membership.refunded' ? ['paid', 'fulfilled'] : ['pending']
+  const expected = event.type === 'membership.refunded' ? ['paid', 'ready', 'shipped', 'fulfilled'] : ['pending']
   if (expected.includes(order.status as string)) {
     await payload.update({
       collection: 'orders',

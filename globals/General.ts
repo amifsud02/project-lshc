@@ -111,6 +111,69 @@ export const General: GlobalConfig = {
                                 description: 'Controls who can see the e-commerce shop. Takes effect within a minute of saving.',
                             },
                         },
+                        {
+                            type: 'collapsible',
+                            label: 'Collection and delivery',
+                            fields: [
+                                {
+                                    type: 'row',
+                                    fields: [
+                                        { name: 'collectionLabel', label: 'Collection option', type: 'text', defaultValue: 'Collect at the club' },
+                                        { name: 'readyIn', label: 'Ready in', type: 'text', defaultValue: '3–5 days', admin: { description: 'Shown to buyers, e.g. "3–5 days". Leave empty to hide.' } },
+                                    ],
+                                },
+                                {
+                                    name: 'collectionDetails',
+                                    label: 'Collection details',
+                                    type: 'text',
+                                    defaultValue: "At a training session. We'll email you when it's ready.",
+                                    admin: { description: 'Where and how buyers pick up their order.' },
+                                },
+                                {
+                                    name: 'deliveryEnabled',
+                                    label: 'Offer delivery',
+                                    type: 'checkbox',
+                                    defaultValue: false,
+                                    admin: { description: 'Lets buyers choose delivery to an address at checkout, for the fee below.' },
+                                },
+                                {
+                                    type: 'row',
+                                    admin: { condition: (_, sibling) => Boolean(sibling?.deliveryEnabled) },
+                                    fields: [
+                                        { name: 'deliveryFee', label: 'Delivery fee (cents)', type: 'number', min: 0, defaultValue: 450, admin: { description: 'e.g. 450 = €4.50' } },
+                                        { name: 'deliveryDetails', label: 'Delivery details', type: 'text', defaultValue: 'Malta & Gozo, 5–7 working days' },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            name: 'staffEmails',
+                            label: 'Send new-order alerts to',
+                            type: 'text',
+                            admin: { description: 'Email addresses of the people who handle orders, separated by commas. Leave empty for no alerts.' },
+                        },
+                        {
+                            type: 'collapsible',
+                            label: 'VAT and legal',
+                            fields: [
+                                {
+                                    name: 'vatRate',
+                                    label: 'VAT included in prices (%)',
+                                    type: 'number',
+                                    min: 0,
+                                    max: 100,
+                                    defaultValue: 0,
+                                    admin: { description: 'Shows the VAT inside each total, e.g. 18. Leave at 0 if the club is not VAT-registered.' },
+                                },
+                                {
+                                    type: 'row',
+                                    fields: [
+                                        { name: 'termsUrl', label: 'Terms of sale link', type: 'text', admin: { description: 'e.g. /terms-of-sale. Linked from checkout and receipts.' } },
+                                        { name: 'privacyUrl', label: 'Privacy policy link', type: 'text', admin: { description: 'e.g. /privacy' } },
+                                    ],
+                                },
+                            ],
+                        },
                     ]
                 }
             ]

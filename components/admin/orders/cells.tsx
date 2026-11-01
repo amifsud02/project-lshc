@@ -7,6 +7,8 @@ import { formatPrice } from '@/lib/shop/types'
 const STATUS: Record<string, { label: string; background: string; color: string }> = {
   pending: { label: 'Pending', background: 'var(--theme-warning-100)', color: 'var(--theme-warning-800)' },
   paid: { label: 'Paid', background: 'var(--theme-success-100)', color: 'var(--theme-success-750)' },
+  ready: { label: 'Ready to collect', background: 'var(--theme-success-100)', color: 'var(--theme-success-750)' },
+  shipped: { label: 'Shipped', background: 'var(--theme-success-100)', color: 'var(--theme-success-750)' },
   fulfilled: { label: 'Fulfilled', background: 'var(--theme-elevation-100)', color: 'var(--theme-elevation-800)' },
   cancelled: { label: 'Cancelled', background: 'var(--theme-error-100)', color: 'var(--theme-error-750)' },
   refunded: { label: 'Refunded', background: 'var(--theme-error-100)', color: 'var(--theme-error-750)' },
