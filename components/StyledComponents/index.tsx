@@ -24,6 +24,41 @@ export const ArticleContent = styled.div`
         margin-left: auto;
         margin-right: auto;
     }
+
+    > p + p {
+        margin-top: 14px;
+    }
+
+    > h2 {
+        max-width: 808px;
+        margin: 36px auto 12px;
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-transform: uppercase;
+        color: var(--color-ink);
+    }
+
+    > ul, > ol {
+        max-width: 808px;
+        margin: 0 auto 14px;
+        padding-left: 20px;
+        font-size: 18px;
+    }
+
+    > ul { list-style: disc; }
+    > ol { list-style: decimal; }
+
+    li { margin-bottom: 4px; }
+
+    a {
+        color: var(--color-club);
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+
+    strong { color: var(--color-ink); }
 `
 
 export const OtherArticles = styled.div`
