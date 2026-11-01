@@ -309,6 +309,12 @@ export interface Page {
         | AdvertisementBlock
         | NurseryProgrammeBlock
         | FaqBlock
+        | MediaTextBlock
+        | StatsBlock
+        | StepsBlock
+        | CtaBannerBlock
+        | NextMatchBlock
+        | LatestVideosBlock
         | AdSlotBlock
       )[]
     | null;
@@ -756,6 +762,135 @@ export interface FaqBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaTextBlock".
+ */
+export interface MediaTextBlock {
+  eyebrow?: string | null;
+  heading: string;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Optional. Without one, the text spans the page.
+   */
+  image?: (string | null) | Media;
+  imagePosition?: ('right' | 'left') | null;
+  linkLabel?: string | null;
+  linkUrl?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaText';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock".
+ */
+export interface StatsBlock {
+  heading?: string | null;
+  /**
+   * Two to four facts, e.g. "1998" / "Founded at De La Salle College". Only use figures you can stand behind.
+   */
+  items: {
+    /**
+     * e.g. 1998, 5–16, 6
+     */
+    value: string;
+    label: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock".
+ */
+export interface StepsBlock {
+  heading: string;
+  intro?: string | null;
+  /**
+   * Shown numbered, in order.
+   */
+  items: {
+    title: string;
+    body: string;
+    linkLabel?: string | null;
+    /**
+     * e.g. /academy
+     */
+    linkUrl?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'steps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBannerBlock".
+ */
+export interface CtaBannerBlock {
+  heading: string;
+  body?: string | null;
+  primary?: {
+    label?: string | null;
+    /**
+     * e.g. /academy or https://…
+     */
+    url?: string | null;
+  };
+  secondary?: {
+    label?: string | null;
+    /**
+     * e.g. /academy or https://…
+     */
+    url?: string | null;
+  };
+  tone?: ('navy' | 'light') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'ctaBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NextMatchBlock".
+ */
+export interface NextMatchBlock {
+  heading?: string | null;
+  /**
+   * Only this team’s next match. Leave empty for the next La Salle match of any team.
+   */
+  team?: (string | null) | Team;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'nextMatch';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LatestVideosBlock".
+ */
+export interface LatestVideosBlock {
+  heading?: string | null;
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'latestVideos';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2365,6 +2500,12 @@ export interface PagesSelect<T extends boolean = true> {
         advertisement?: T | AdvertisementBlockSelect<T>;
         nurseryProgramme?: T | NurseryProgrammeBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
+        mediaText?: T | MediaTextBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        steps?: T | StepsBlockSelect<T>;
+        ctaBanner?: T | CtaBannerBlockSelect<T>;
+        nextMatch?: T | NextMatchBlockSelect<T>;
+        latestVideos?: T | LatestVideosBlockSelect<T>;
         adSlot?: T | AdSlotBlockSelect<T>;
       };
   seoTitle?: T;
@@ -2626,6 +2767,99 @@ export interface FaqBlockSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaTextBlock_select".
+ */
+export interface MediaTextBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  image?: T;
+  imagePosition?: T;
+  linkLabel?: T;
+  linkUrl?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock_select".
+ */
+export interface StatsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock_select".
+ */
+export interface StepsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        linkLabel?: T;
+        linkUrl?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaBannerBlock_select".
+ */
+export interface CtaBannerBlockSelect<T extends boolean = true> {
+  heading?: T;
+  body?: T;
+  primary?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  secondary?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  tone?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NextMatchBlock_select".
+ */
+export interface NextMatchBlockSelect<T extends boolean = true> {
+  heading?: T;
+  team?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LatestVideosBlock_select".
+ */
+export interface LatestVideosBlockSelect<T extends boolean = true> {
+  heading?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }

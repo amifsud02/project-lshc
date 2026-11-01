@@ -13,18 +13,23 @@ import {
 } from '@/lib/data/videos'
 import { videoImage } from '@/lib/data/videoThumbnail'
 import { VIDEO_CATEGORIES, isVideoCategory, videoCategoryLabel } from '@/lib/data/videoCategories'
+import { SITE_URL } from '@/lib/seo/site'
+import type { Metadata, ResolvingMetadata } from 'next'
+import { siteOpenGraph } from '@/lib/utils/metadata'
 
 const title = 'La Salle TV - Highlights, interviews and full matches'
 const description =
   'Watch La Salle Handball on demand: match highlights, interviews, full games and behind-the-scenes footage from every team in the club.'
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL
+const baseSiteUrl = SITE_URL
 const canonical = `${baseSiteUrl}/tv`
 
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical },
-  openGraph: { title, description, url: canonical },
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
+  }
 }
 
 type SP = { category?: string | string[]; season?: string | string[] }

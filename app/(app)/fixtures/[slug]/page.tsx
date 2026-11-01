@@ -32,7 +32,7 @@ import { MatchCoverage, MatchDetails, isMatchReport } from '@/components/Fixture
 import { getMatchCoverage } from '@/lib/data/news'
 import type { News } from '@/payload-types'
 import { absoluteUrl, paths } from '@/lib/seo/site'
-import { sportsEventJsonLd } from '@/lib/seo/structuredData'
+import { breadcrumbJsonLd, sportsEventJsonLd } from '@/lib/seo/structuredData'
 
 export const revalidate = 60
 
@@ -202,8 +202,16 @@ export default async function FixturePage({ params }: Props) {
           homeTeam: fixture.homeTeam.name,
           awayTeam: fixture.awayTeam.name,
           competition: fixture.competition?.name,
+          status: doc.status,
         })}
       />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          ['Fixtures', paths.fixtures],
+          [title, paths.fixture(fixture.slug)],
+        ])}
+      />
+      <h1 className="sr-only">{title}</h1>
       <section>
         <FixturePageHeader fixture={fixture} />
       </section>

@@ -12,21 +12,30 @@ import {
 import { OtherArticles } from "@/components/StyledComponents";
 import Pagination from "@/components/News/Pagination/Pagination";
 import type { Metadata } from "next";
+import { SITE_URL } from '@/lib/seo/site'
+import type { ResolvingMetadata } from 'next'
+import { siteOpenGraph } from '@/lib/utils/metadata'
 
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 
 type Params = { category: string }
 type SP = { tag?: string | string[]; page?: string | string[] }
 
 export async function generateMetadata(
-    { params }: { params: Promise<Params> }
+    { params }: { params: Promise<Params> },
+    parent: ResolvingMetadata
 ): Promise<Metadata> {
     const { category } = await params;
     const cat = await getNewsCategoryBySlug(category);
     if (!cat) return {};
+    const title = `${cat.title} — News`;
+    const description = `${cat.title} from La Salle Handball Club in Malta: the latest posts, newest first.`;
+    const canonical = `${baseSiteUrl}/news/${cat.slug}`;
     return {
-        title: `${cat.title} — News`,
-        alternates: { canonical: `${baseSiteUrl}/news/${cat.slug}` },
+        title,
+        description,
+        alternates: { canonical },
+        openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
     };
 }
 
@@ -55,7 +64,7 @@ export default async function NewsCategoryPage({
 
     return (
         <>
-            <PageHeader pageName={cat.title} />
+            <PageHeader pageName={cat.title} asHeading />
 
             <section className="parent" style={{ paddingTop: 40, paddingBottom: 40 }}>
                 <div style={{ marginBottom: 20, display: "flex", gap: 10, flexWrap: "wrap" }}>

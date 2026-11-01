@@ -8,10 +8,11 @@ import NewsCard from "@/components/News/NewsCard/NewsCard";
 import { getNewsPage, getAllNewsTags, getNewsCategories } from "@/lib/data/news";
 import Pagination from "@/components/News/Pagination/Pagination";
 import { OtherArticles } from "@/components/StyledComponents";
+import { SITE_URL } from '@/lib/seo/site'
 
 const title = 'News'
 const description = 'Stay up to date with news from the La Salle Handball world: all fixtures, training sessions, and much more. Live La Salle Handball together with its protagonists!'
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 const canonical = `${baseSiteUrl}/news`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
@@ -43,7 +44,7 @@ export default async function NewsPage({
 
     return (
         <>
-            <PageHeader pageName="News" />
+            <PageHeader pageName="News" asHeading />
 
             <section className="parent" style={{ paddingTop: 40, paddingBottom: 40 }}>
                 <div style={{ marginBottom: 20, display: "flex", gap: 10, flexWrap: "wrap" }}>

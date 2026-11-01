@@ -182,7 +182,7 @@ const WomenTeam = () => {
 
   return (
       <>
-          <PageHeader pageName='La Salle Universal Air' />
+          <PageHeader pageName='La Salle Universal Air' asHeading />
           <section className="parent">
 
               <div className="tabs__wrapper">

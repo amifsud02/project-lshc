@@ -22,6 +22,12 @@ import { fixtureFromPayload, standingFromPayload } from '@/lib/utils/normalize/s
 import { Partners } from '../Partners/Partners'
 import NurseryProgramme from '@/components/Nursery/NurseryProgramme'
 import Faq from '@/components/Faq/Faq'
+import Stats from '@/components/Blocks/Stats'
+import Steps from '@/components/Blocks/Steps'
+import CtaBanner from '@/components/Blocks/CtaBanner'
+import MediaText from '@/components/Blocks/MediaText'
+import NextMatch from '@/components/Blocks/NextMatch'
+import LatestVideos from '@/components/Blocks/LatestVideos'
 import BlockTabs from './BlockTabs'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import { getGeneralGlobal } from '@/lib/utils/payload/globals'
@@ -481,6 +487,12 @@ const REGISTRY: Record<string, ComponentType<any>> = {
   tab: TabAdapter,
   nurseryProgramme: NurseryProgramme,
   faq: Faq,
+  stats: Stats,
+  steps: Steps,
+  ctaBanner: CtaBanner,
+  mediaText: MediaText,
+  nextMatch: NextMatch,
+  latestVideos: LatestVideos,
   adSlot: AdSlotAdapter,
   advertisement: AdvertisementAdapter,
 }

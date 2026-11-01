@@ -301,7 +301,7 @@ const MenFirstTeam = () => {
 
     return (
         <>
-            <PageHeader pageName='La Salle Karrettun' />
+            <PageHeader pageName='La Salle Karrettun' asHeading />
             <section className="parent">
 
                 <div className="tabs__wrapper">

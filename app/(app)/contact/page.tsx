@@ -5,12 +5,13 @@ import ContactForm from "./contact-form";
 import Footer from "@/components/Footer/Footer";
 import { Partners } from "@/components/Partners/Partners";
 import AdSense from "@/components/AdSense/AdSense";
+import { SITE_URL } from '@/lib/seo/site'
 
 export const revalidate = 60
 
 const title = 'Contact us'
-const description = 'Click here to reach out to our team regarding inquiries, job opportunities, future projects, or any other matters you find important.'
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const description = 'Contact La Salle Handball Club in Malta about playing, the Handball Academy, sponsorship or matches. Email info@lasallehandball.com.'
+const baseSiteUrl = SITE_URL;
 const canonical = `${baseSiteUrl}/contact`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
@@ -32,7 +33,7 @@ export async function generateMetadata(_: unknown, parent: ResolvingMetadata): P
 export default function ContactPage() {
   return (
     <>
-      <PageHeader pageName="Contact Us" />
+      <PageHeader pageName="Contact Us" asHeading />
       <section className="parent">
         <AdSense adSlot='4410526483'></AdSense>
       </section>

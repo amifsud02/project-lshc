@@ -1,3 +1,4 @@
+import { paths } from '@/lib/seo/site'
 import { shopSettingsFromPayload, type ShopSettings } from '@/lib/shop/settings'
 export type NavLink = {
   label: string
@@ -57,7 +58,8 @@ const hrefForDoc = (relationTo: string, doc: any): string => {
     return `/${slug}`
   }
   if (relationTo === 'news') {
-    return slug ? `/news/${slug}` : '/news'
+    // A post lives under its category; without a populated category, fall back to the news index.
+    return paths.news(doc ?? {}) ?? '/news'
   }
   return '/'
 }

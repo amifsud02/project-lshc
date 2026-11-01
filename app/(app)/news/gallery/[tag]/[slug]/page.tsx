@@ -6,6 +6,8 @@ import type { Gallery } from "@/payload-types";
 import { siteOpenGraph } from "@/lib/utils/metadata";
 import { seoDescription, seoImage, seoTitle, seoTitleText } from "@/lib/seo/meta";
 import { paths } from "@/lib/seo/site";
+import JsonLd from "@/components/Seo/JsonLd";
+import { breadcrumbJsonLd, imageGalleryJsonLd } from "@/lib/seo/structuredData";
 
 export const revalidate = 60
 
@@ -59,6 +61,28 @@ export default async function SingleGalleryPage({
     if (!data || getTagSlug(data.tag) !== tag) notFound();
 
     const images = await getGalleryImages(data.folder);
+    const path = paths.gallery(data) ?? `/news/gallery/${tag}/${slug}`;
+    const tagTitle = typeof data.tag === 'object' && data.tag ? data.tag.title : 'Galleries';
 
-    return <GalleryView data={data} images={images} />
+    return (
+        <>
+            <JsonLd
+                data={imageGalleryJsonLd({
+                    path,
+                    name: data.title,
+                    description: data.description,
+                    datePublished: data.publishedAt,
+                    images,
+                })}
+            />
+            <JsonLd
+                data={breadcrumbJsonLd([
+                    ['Galleries', '/news/gallery'],
+                    [tagTitle, `/news/gallery/${tag}`],
+                    [data.title, path],
+                ])}
+            />
+            <GalleryView data={data} images={images} />
+        </>
+    )
 }

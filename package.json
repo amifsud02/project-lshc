@@ -16,7 +16,8 @@
     "seed-memberships": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-memberships.ts",
     "check-membrs": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/check-membrs.ts",
     "migrate-media-to-bucket": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/migrate-media-to-bucket.ts",
-    "convert-media-to-webp": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/convert-media-to-webp.ts"
+    "convert-media-to-webp": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/convert-media-to-webp.ts",
+    "seed-guides": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-guides.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1157.0",

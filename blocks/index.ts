@@ -17,6 +17,12 @@ import { RichTextBlock } from './RichText'
 import { TabBlock } from './Tab'
 import { NurseryProgrammeBlock } from './NurseryProgramme'
 import { FaqBlock } from './Faq'
+import { StatsBlock } from './Stats'
+import { StepsBlock } from './Steps'
+import { CtaBannerBlock } from './CtaBanner'
+import { NextMatchBlock } from './NextMatch'
+import { LatestVideosBlock } from './LatestVideos'
+import { MediaTextBlock } from './MediaText'
 
 export const PageLayoutBlocks: Block[] = [
   HeroBlock,
@@ -35,6 +41,12 @@ export const PageLayoutBlocks: Block[] = [
   AdvertisementBlock,
   NurseryProgrammeBlock,
   FaqBlock,
+  MediaTextBlock,
+  StatsBlock,
+  StepsBlock,
+  CtaBannerBlock,
+  NextMatchBlock,
+  LatestVideosBlock,
   AdSlotBlock,
 ]
 
@@ -56,4 +68,10 @@ export {
   TabBlock,
   NurseryProgrammeBlock,
   FaqBlock,
+  StatsBlock,
+  StepsBlock,
+  CtaBannerBlock,
+  NextMatchBlock,
+  LatestVideosBlock,
+  MediaTextBlock,
 }

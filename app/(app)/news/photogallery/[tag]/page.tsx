@@ -11,6 +11,7 @@ import {
 } from "@/lib/data/galleries";
 import { OtherArticles } from "@/components/StyledComponents";
 import type { Metadata } from "next";
+import { SITE_URL } from '@/lib/seo/site'
 
 export const revalidate = 60
 
@@ -19,7 +20,7 @@ export function generateStaticParams() {
   return []
 }
 
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 
 type Params = { tag: string }
 

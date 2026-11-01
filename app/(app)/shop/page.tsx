@@ -3,10 +3,21 @@ import { getActiveProducts } from '@/lib/shop/products'
 import { requireShopCatalogueAccess } from '@/lib/shop/access'
 import ProductCard from '@/components/Shop/ProductCard'
 import { Card, CardContent } from '@/components/ui/card'
+import type { Metadata, ResolvingMetadata } from 'next'
+import { siteOpenGraph } from '@/lib/utils/metadata'
 
 export const revalidate = 60
 
-export const metadata = { title: 'Shop' }
+export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  const title = 'Shop'
+  const description = 'Official La Salle Handball Club kit and merchandise, collected free at the club in Malta.'
+  return {
+    title,
+    description,
+    alternates: { canonical: '/shop' },
+    openGraph: await siteOpenGraph(parent, { title, description, url: '/shop' }),
+  }
+}
 
 export default async function ShopPage() {
   await requireShopCatalogueAccess()
@@ -16,7 +27,7 @@ export default async function ShopPage() {
 
   return (
     <>
-      <PageHeader pageName="Shop" />
+      <PageHeader pageName="Shop" asHeading />
       <section className="parent">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-1">

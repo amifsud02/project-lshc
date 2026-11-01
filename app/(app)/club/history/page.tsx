@@ -3,12 +3,13 @@ import { siteOpenGraph } from "@/lib/utils/metadata";
 import Footer from "@/components/Footer/Footer";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { Partners }from "@/components/Partners/Partners";
+import { SITE_URL } from '@/lib/seo/site'
 
 export const revalidate = 60
 
 const title = 'Club history'
-const description = 'Malta&apos;s handball legends: EHF Cup contenders, national league champions, and more. Explore our rich history!'
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const description = "How La Salle Handball Club was founded at De La Salle College in 1998 by Alan Grima, and started Malta's first handball nursery."
+const baseSiteUrl = SITE_URL;
 const canonical = `${baseSiteUrl}/club/history`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
@@ -30,7 +31,7 @@ export async function generateMetadata(_: unknown, parent: ResolvingMetadata): P
 const History = () => {
   return (
     <>
-      <PageHeader pageName="Our History" />
+      <PageHeader pageName="Our History" asHeading />
       <section className="parent">
         <p className='information'>
           Alan Grima had been working as a Physical Education teacher at De La

@@ -35,6 +35,9 @@ export function organizationJsonLd(site: {
     telephone: site.phone,
     address: { '@type': 'PostalAddress', addressCountry: 'MT' },
     areaServed: { '@type': 'Country', name: 'Malta' },
+    // From the club history page: founded at De La Salle College in 1998 by Alan Grima.
+    foundingDate: '1998',
+    founder: { '@type': 'Person', name: 'Alan Grima' },
     sameAs: (site.sameAs ?? []).filter(Boolean),
   })
 }
@@ -130,6 +133,32 @@ export function websiteJsonLd(site: { name: string; description?: string }): Thi
   })
 }
 
+/** A photo gallery page: its photos (up to 50) as images of the gallery. */
+export function imageGalleryJsonLd(gallery: {
+  path: string
+  name: string
+  description?: string | null
+  datePublished?: string | null
+  images: { url?: string | null; alt?: string | null }[]
+}): Thing {
+  const url = absoluteUrl(gallery.path)
+  return compact({
+    '@context': 'https://schema.org',
+    '@type': 'ImageGallery',
+    '@id': `${url}#gallery`,
+    url,
+    name: gallery.name,
+    description: gallery.description ?? undefined,
+    datePublished: gallery.datePublished ?? undefined,
+    publisher: { '@id': ORGANIZATION_ID },
+    isPartOf: { '@id': WEBSITE_ID },
+    image: gallery.images
+      .filter((img) => img.url)
+      .slice(0, 50)
+      .map((img) => compact({ '@type': 'ImageObject', contentUrl: absoluteUrl(img.url!), caption: img.alt || undefined })),
+  })
+}
+
 /** A breadcrumb trail, Home first. Each crumb is [name, path]; the last is the current page. */
 export function breadcrumbJsonLd(crumbs: [name: string, path: string][]): Thing {
   return {
@@ -176,6 +205,9 @@ export function newsArticleJsonLd(article: {
   })
 }
 
+// schema.org's names for a match that was called off or moved; anything else is as scheduled.
+const EVENT_STATUS: Record<string, string> = { cancelled: 'EventCancelled', postponed: 'EventPostponed' }
+
 export function sportsEventJsonLd(match: {
   path: string
   name: string
@@ -186,6 +218,8 @@ export function sportsEventJsonLd(match: {
   awayTeam: string
   competition?: string
   image?: string
+  /** The fixture's status: Scheduled, Finished, Cancelled or Postponed. */
+  status?: string | null
 }): Thing {
   const url = absoluteUrl(match.path)
   const team = (name: string) => ({ '@type': 'SportsTeam', name, sport: 'Handball' })
@@ -198,7 +232,7 @@ export function sportsEventJsonLd(match: {
     description: match.description,
     sport: 'Handball',
     startDate: match.startDate,
-    eventStatus: 'https://schema.org/EventScheduled',
+    eventStatus: `https://schema.org/${EVENT_STATUS[String(match.status ?? '').toLowerCase()] ?? 'EventScheduled'}`,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: compact({
       '@type': 'Place',

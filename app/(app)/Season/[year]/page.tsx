@@ -1,19 +1,7 @@
-import PageHeader from "@/components/PageHeader/PageHeader";
+import { notFound } from 'next/navigation'
 
-export const revalidate = 60
-
-// Nothing is pre-built; each page renders on its first visit and is then cached (see `revalidate`).
-export function generateStaticParams() {
-  return []
+// A placeholder that never got content: it answers 404 so search engines don't index an empty page.
+// Season results live on /fixtures.
+export default function SeasonPage() {
+  notFound()
 }
-
-const Fixtures = () => {
-    return (
-        <>
-            <PageHeader pageName='Current Season'/>
-            <section className="parent"></section>
-        </>
-    )
-}
-
-export default Fixtures;

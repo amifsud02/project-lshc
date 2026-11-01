@@ -11,6 +11,9 @@ import {
 } from "@/lib/data/galleries";
 import { OtherArticles } from "@/components/StyledComponents";
 import type { Metadata } from "next";
+import { SITE_URL } from '@/lib/seo/site'
+import type { ResolvingMetadata } from 'next'
+import { siteOpenGraph } from '@/lib/utils/metadata'
 
 export const revalidate = 60
 
@@ -19,19 +22,25 @@ export function generateStaticParams() {
   return []
 }
 
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 
 type Params = { tag: string }
 
 export async function generateMetadata(
-    { params }: { params: Promise<Params> }
+    { params }: { params: Promise<Params> },
+    parent: ResolvingMetadata
 ): Promise<Metadata> {
     const { tag } = await params;
     const cat = await getGalleryCategoryBySlug(tag);
     if (!cat) return {};
+    const title = `${cat.title} galleries`;
+    const description = `${cat.title} photo galleries from La Salle Handball Club in Malta.`;
+    const canonical = `${baseSiteUrl}/news/gallery/${cat.slug}`;
     return {
-        title: `${cat.title} galleries`,
-        alternates: { canonical: `${baseSiteUrl}/news/gallery/${cat.slug}` },
+        title,
+        description,
+        alternates: { canonical },
+        openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
     };
 }
 

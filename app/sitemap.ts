@@ -25,7 +25,6 @@ const STATIC_ROUTES: ContentEntry[] = [
   '/fixtures',
   '/contact',
   '/club/history',
-  '/club/management',
   '/club/sponsors',
   '/teams/men-first-team/all',
   '/teams/women-first-team/all',

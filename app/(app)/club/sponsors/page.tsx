@@ -4,12 +4,13 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 import SponsorCard from "@/components/Sponsor/sponsorCard";
 import styles from "@/components/Sponsor/sponsors.module.css";
 import Footer from "@/components/Footer/Footer";
+import { SITE_URL } from '@/lib/seo/site'
 
 export const revalidate = 60
 
 const title = 'Sponsors'
 const description = 'Explore the valued partners and official sponsors of La Salle Handball Club, standing by our players in every match.'
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 const canonical = `${baseSiteUrl}/club/sponsors`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
@@ -31,7 +32,7 @@ export async function generateMetadata(_: unknown, parent: ResolvingMetadata): P
 const Sponsors = () => {
   return (
     <>
-      <PageHeader pageName="Our Partners" />
+      <PageHeader pageName="Our Partners" asHeading />
       <div className="parent">
         <div>
           <h2 style={{ fontSize: "1.5rem", fontWeight: "700" }}>

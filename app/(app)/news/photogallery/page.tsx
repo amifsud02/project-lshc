@@ -7,11 +7,12 @@ import Link from "next/link";
 import GalleryCard from "@/components/Gallery/GalleryCard";
 import { getGalleries, getGalleryCategories } from "@/lib/data/galleries";
 import { OtherArticles } from "@/components/StyledComponents";
+import { SITE_URL } from '@/lib/seo/site'
 
 export const revalidate = 60
 
 const title = 'Galleries';
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 // Same galleries as /news/gallery, which is the address search engines should list.
 const canonical = `${baseSiteUrl}/news/gallery`;
 
@@ -31,7 +32,7 @@ export default async function GalleryIndexPage() {
 
     return (
         <>
-            <PageHeader pageName="Galleries" />
+            <PageHeader pageName="Galleries" asHeading />
 
             <section className="parent" style={{ paddingTop: 40, paddingBottom: 40 }}>
                 <div style={{ marginBottom: 20, display: "flex", gap: 10, flexWrap: "wrap" }}>

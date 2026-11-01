@@ -18,7 +18,7 @@ const PageHeader = ({ pageName, backgroundImage }: PageProps) => {
             <div className='parent' style={{ position: 'relative', zIndex: 2 }}>
                 <div className={styles.pageHeaderInfo}>
                     {/* <div className={styles.pageMap}>Home • {pageName}</div> */}
-                    <div className={styles.pageTitle}>{pageName}</div>
+                    <h1 className={styles.pageTitle}>{pageName}</h1>
                 </div>
             </div>
         </div>

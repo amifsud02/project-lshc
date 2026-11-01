@@ -26,7 +26,7 @@ export default async function MembershipsPage() {
 
   return (
     <>
-      <PageHeader pageName="Memberships" />
+      <PageHeader pageName="Memberships" asHeading />
       <section className="parent">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-1">

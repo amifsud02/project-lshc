@@ -107,7 +107,7 @@ export default async function ProductPage({ params }: { params: Params }) {
         ]}
       />
       <TrackEvent name="view_item" params={{ currency: CURRENCY, value: gaItem.price, items: [gaItem] }} />
-      <PageHeader pageName={product.title} />
+      <PageHeader pageName={product.title} asHeading />
       <section className="parent">
         <div className="flex flex-col gap-6 lg:gap-8">
           <Breadcrumb>

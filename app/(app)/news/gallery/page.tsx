@@ -7,18 +7,21 @@ import Link from "next/link";
 import GalleryCard from "@/components/Gallery/GalleryCard";
 import { getGalleries, getGalleryCategories } from "@/lib/data/galleries";
 import { OtherArticles } from "@/components/StyledComponents";
+import { SITE_URL } from '@/lib/seo/site'
 
 export const revalidate = 60
 
 const title = 'Galleries';
-const baseSiteUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseSiteUrl = SITE_URL;
 const canonical = `${baseSiteUrl}/news/gallery`;
 
 export async function generateMetadata(_: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  const description = 'Photo galleries from La Salle Handball Club matches, tournaments and academy sessions in Malta.';
   return {
     title,
+    description,
     alternates: { canonical },
-    openGraph: await siteOpenGraph(parent, { title, url: canonical }),
+    openGraph: await siteOpenGraph(parent, { title, description, url: canonical }),
   };
 }
 
@@ -30,7 +33,7 @@ export default async function GalleryIndexPage() {
 
     return (
         <>
-            <PageHeader pageName="Galleries" />
+            <PageHeader pageName="Galleries" asHeading />
 
             <section className="parent" style={{ paddingTop: 40, paddingBottom: 40 }}>
                 <div style={{ marginBottom: 20, display: "flex", gap: 10, flexWrap: "wrap" }}>
