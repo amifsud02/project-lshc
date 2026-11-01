@@ -25,11 +25,12 @@ export const ArticleContent = styled.div`
         margin-right: auto;
     }
 
-    > p + p {
+    /* Rich text arrives wrapped in its own div, so these match descendants. */
+    p + p {
         margin-top: 14px;
     }
 
-    > h2 {
+    h2 {
         max-width: 808px;
         margin: 36px auto 12px;
         font-size: 24px;
@@ -39,15 +40,15 @@ export const ArticleContent = styled.div`
         color: var(--color-ink);
     }
 
-    > ul, > ol {
+    ul, ol {
         max-width: 808px;
         margin: 0 auto 14px;
         padding-left: 20px;
         font-size: 18px;
     }
 
-    > ul { list-style: disc; }
-    > ol { list-style: decimal; }
+    ul { list-style: disc; }
+    ol { list-style: decimal; }
 
     li { margin-bottom: 4px; }
 
