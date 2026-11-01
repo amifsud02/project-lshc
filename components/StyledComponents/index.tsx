@@ -31,8 +31,7 @@ export const ArticleContent = styled.div`
     }
 
     h2 {
-        max-width: 808px;
-        margin: 36px auto 12px;
+        margin: 36px 0 12px;
         font-size: 24px;
         font-weight: 800;
         line-height: 1.25;
@@ -41,8 +40,7 @@ export const ArticleContent = styled.div`
     }
 
     ul, ol {
-        max-width: 808px;
-        margin: 0 auto 14px;
+        margin: 0 0 14px;
         padding-left: 20px;
         font-size: 18px;
     }
