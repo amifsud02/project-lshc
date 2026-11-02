@@ -34,6 +34,7 @@ import { NurseryCategories } from "./collections/NurseryCategories";
 import { NurseryRegistrations } from "./collections/NurseryRegistrations";
 import { MagicLinkTokens } from "./collections/MagicLinkTokens";
 import { revalidateContentPlugin } from "./collections/hooks/revalidateContent";
+import { storeCachePlugin, storeSetup } from "./lib/shop/storeSetup";
 import { seo } from "./lib/seo/plugin";
 import { isStaff } from "./lib/auth/roles";
 import { sendgridAdapter } from "./lib/email/adapter";
@@ -116,6 +117,8 @@ export default buildConfig({
   plugins: [
     seo,
     revalidateContentPlugin,
+    storeSetup,
+    storeCachePlugin,
     s3Storage({
       collections: {
         // Served through /api/media/file — Railway buckets can't be made public.

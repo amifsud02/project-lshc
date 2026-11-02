@@ -45,9 +45,12 @@ import { LinkRowLabel as LinkRowLabel_9ffdab26313b8179aed2163664ce7339 } from '@
 import { MenuColumnRowLabel as MenuColumnRowLabel_9ffdab26313b8179aed2163664ce7339 } from '@/components/admin/MenuRowLabels'
 import { MenuLinkRowLabel as MenuLinkRowLabel_9ffdab26313b8179aed2163664ce7339 } from '@/components/admin/MenuRowLabels'
 import { EmailsNavLink as EmailsNavLink_f9f850d82e9249fbca14efb2040e4bb5 } from '@/components/admin/emails/EmailsNavLink'
+import { SetupNavLink as SetupNavLink_3c97b6acd879b5432b62e875f6141e30 } from '@/packages/payload-plugin-store-setup/src/components/SetupNavLink'
+import { SetupBanner as SetupBanner_dc6ba8dbd93a640bf45f098d805e7b4a } from '@/packages/payload-plugin-store-setup/src/components/SetupBanner'
 import { GoogleSignInButton as GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6 } from '@/components/admin/GoogleSignInButton'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { EmailsView as EmailsView_6fb95e5a2e9f2f3585d768bf510a33a4 } from '@/components/admin/emails/EmailsView'
+import { SetupView as SetupView_f55e2cf22db19cdd8f688a420163d89d } from '@/packages/payload-plugin-store-setup/src/components/SetupView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -99,8 +102,11 @@ export const importMap = {
   "@/components/admin/MenuRowLabels#MenuColumnRowLabel": MenuColumnRowLabel_9ffdab26313b8179aed2163664ce7339,
   "@/components/admin/MenuRowLabels#MenuLinkRowLabel": MenuLinkRowLabel_9ffdab26313b8179aed2163664ce7339,
   "@/components/admin/emails/EmailsNavLink#EmailsNavLink": EmailsNavLink_f9f850d82e9249fbca14efb2040e4bb5,
+  "@/packages/payload-plugin-store-setup/src/components/SetupNavLink#SetupNavLink": SetupNavLink_3c97b6acd879b5432b62e875f6141e30,
+  "@/packages/payload-plugin-store-setup/src/components/SetupBanner#SetupBanner": SetupBanner_dc6ba8dbd93a640bf45f098d805e7b4a,
   "@/components/admin/GoogleSignInButton#GoogleSignInButton": GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@/components/admin/emails/EmailsView#EmailsView": EmailsView_6fb95e5a2e9f2f3585d768bf510a33a4,
+  "@/packages/payload-plugin-store-setup/src/components/SetupView#SetupView": SetupView_f55e2cf22db19cdd8f688a420163d89d,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
