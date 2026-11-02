@@ -166,6 +166,13 @@ export const Orders: CollectionConfig = {
             },
             {
               type: 'row',
+              fields: [
+                { name: 'methodTitle', label: 'Shipping option', type: 'text', admin: { width: '50%', description: 'As the buyer saw it, e.g. "Standard delivery".' } },
+                { name: 'country', type: 'text', admin: { width: '50%', description: 'ISO code, e.g. MT' } },
+              ],
+            },
+            {
+              type: 'row',
               admin: { condition: (_, sibling) => sibling?.method === 'deliver' },
               fields: [
                 { name: 'addressLine1', label: 'Address', type: 'text', admin: { width: '50%' } },
@@ -249,8 +256,15 @@ export const Orders: CollectionConfig = {
           type: 'row',
           fields: [
             { name: 'deliveryFee', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents' } },
-            { name: 'discountTotal', label: 'Discount', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents, from a Stripe promotion code' } },
+            { name: 'discountTotal', label: 'Discount', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents, from a coupon or a Stripe promotion code' } },
             { name: 'vatIncluded', label: 'VAT included', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents, inside the total' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'couponCode', type: 'text', index: true, admin: { width: '33%', description: 'Store coupon used at checkout' } },
+            { name: 'taxAdded', label: 'Tax added', type: 'number', defaultValue: 0, admin: { width: '33%', description: 'Cents, on top of prices entered without tax' } },
           ],
         },
         {

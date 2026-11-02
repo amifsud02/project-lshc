@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { MAX_QUANTITY, useCart } from '@/lib/shop/cart'
-import { vatIncluded, type ShopSettings } from '@/lib/shop/settings'
+import { quote, type StoreRules } from '@/lib/shop/pricing'
 import { Input } from '@/components/ui/input'
 import { OptionChips, QuantityStepper } from '@/components/Shop/OptionControls'
 import { formatPrice, isPersonalised, isValidPhone, itemTotal, unitExtras } from '@/lib/shop/types'
@@ -19,21 +19,28 @@ import { usePriceSync } from '@/lib/shop/usePriceSync'
 import { CURRENCY, cartItemsToGa, gaValue, trackEvent } from '@/lib/analytics/gtag'
 
 const emptySubscribe = () => () => {}
+const NO_ITEMS: CartItem[] = []
 
-export default function CartView({ shop }: { shop: ShopSettings }) {
-  const items = useCart((s) => s.items)
-  const subtotal = useCart((s) => s.subtotal())
-  const removeItem = useCart((s) => s.removeItem)
-  const updateQuantity = useCart((s) => s.updateQuantity)
-  const setFieldValue = useCart((s) => s.setFieldValue)
-  const router = useRouter()
-  const [error, setError] = useState<string | null>(null)
+export default function CartView({ rules }: { rules: StoreRules }) {
   // Render cart-dependent UI only after hydration so server/client markup match
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
     () => false
   )
+  // The saved cart is only read in the browser, so the server render (and hydration) sees it empty.
+  const savedItems = useCart((s) => s.items)
+  const savedSubtotal = useCart((s) => s.subtotal())
+  const items = mounted ? savedItems : NO_ITEMS
+  const subtotal = mounted ? savedSubtotal : 0
+  const units = items.reduce((sum, item) => sum + item.quantity, 0)
+  // Shipping is listed but not chosen yet, so neither it nor its tax is in the total.
+  const preview = quote({ rules, subtotal, units, country: rules.defaultCountry, formatPrice, withShipping: false })
+  const removeItem = useCart((s) => s.removeItem)
+  const updateQuantity = useCart((s) => s.updateQuantity)
+  const setFieldValue = useCart((s) => s.setFieldValue)
+  const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
   const priceChanges = usePriceSync(mounted)
 
   // view_cart once per visit to the page, after the saved cart has loaded.
@@ -144,25 +151,30 @@ export default function CartView({ shop }: { shop: ShopSettings }) {
             </ul>
             <Separator />
             <dl className="flex flex-col gap-2 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Collection at the club</dt>
-                <dd className="font-medium">Free</dd>
-              </div>
-              {shop.delivery.enabled && (
+              {/* Shipping as a customer in the store's own country would see it at checkout. */}
+              {preview.options.map((o, i) => (
+                <div key={o.id} className="flex justify-between">
+                  <dt className="text-muted-foreground">{i === 0 ? o.title : `or ${o.title.charAt(0).toLowerCase()}${o.title.slice(1)}`}</dt>
+                  <dd className={i === 0 ? 'font-medium' : 'text-muted-foreground tabular-nums'}>{o.available ? (o.price ? formatPrice(o.price) : 'Free') : o.hint}</dd>
+                </div>
+              ))}
+              {preview.tax?.inclusive && (
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">or delivery</dt>
-                  <dd className="text-muted-foreground tabular-nums">{formatPrice(shop.delivery.fee)}</dd>
+                  <dt className="text-muted-foreground">
+                    Includes {preview.tax.name} ({preview.tax.rate}%)
+                  </dt>
+                  <dd className="text-muted-foreground tabular-nums">{formatPrice(preview.tax.amount)}</dd>
                 </div>
               )}
-              {shop.vatRate > 0 && (
+              {preview.tax && !preview.tax.inclusive && (
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Includes VAT ({shop.vatRate}%)</dt>
-                  <dd className="text-muted-foreground tabular-nums">{formatPrice(vatIncluded(subtotal, shop.vatRate))}</dd>
+                  <dt className="text-muted-foreground">{preview.tax.name}</dt>
+                  <dd className="text-muted-foreground">Added at checkout</dd>
                 </div>
               )}
             </dl>
             <div className="flex justify-between text-base font-semibold">
-              <span>Total</span>
+              <span>{preview.tax && !preview.tax.inclusive ? 'Subtotal' : 'Total'}</span>
               <span className="tabular-nums">{formatPrice(subtotal)}</span>
             </div>
             {error && (

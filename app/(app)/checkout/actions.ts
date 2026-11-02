@@ -5,17 +5,19 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { getStripe } from '@/lib/stripe/server'
 import { getProductById } from '@/lib/shop/products'
-import { hasBundleItems, isValidPhone, unitExtras, type CartItem, type CustomFieldDef } from '@/lib/shop/types'
+import { formatPrice, hasBundleItems, isValidPhone, unitExtras, type CartItem, type CustomFieldDef } from '@/lib/shop/types'
 import { StockDemand } from '@/lib/shop/stock'
 import { canViewShop } from '@/lib/shop/access'
 import { validateUnit } from '@/lib/shop/validation'
-import { deliveryFeeFor, vatIncluded, type FulfilmentMethod } from '@/lib/shop/settings'
-import { getGeneralGlobal } from '@/lib/utils/payload/globals'
+import { quote, type CouponTerms } from '@/lib/shop/pricing'
+import { getStoreRulesUncached, validateCoupon } from '@/lib/shop/storeRules'
 
 type Buyer = { email: string; firstName: string; lastName: string; phone: string }
 
 type Fulfilment = {
-  method: FulfilmentMethod
+  /** A shipping option from `quote()`. */
+  optionId?: string
+  country?: string
   addressLine1?: string
   addressLine2?: string
   locality?: string
@@ -28,6 +30,7 @@ type Input = {
   buyer: Buyer
   fulfilment: Fulfilment
   consent: { acceptTerms: boolean; marketingOptIn: boolean }
+  couponCode?: string
 }
 
 const clean = (value: unknown, max = 200) => String(value ?? '').trim().slice(0, max)
@@ -35,6 +38,17 @@ const clean = (value: unknown, max = 200) => String(value ?? '').trim().slice(0,
 type Result =
   | { ok: true; url: string }
   | { ok: false; error: string }
+
+/**
+ * Checks a coupon while the buyer is on the checkout page, so the summary can show the
+ * discount. `createCheckoutSession` checks it again against the real cart.
+ */
+export async function checkCoupon(input: { code: string; subtotal: number; email: string }): Promise<{ ok: true; coupon: CouponTerms } | { ok: false; error: string }> {
+  if (!(await canViewShop())) return { ok: false, error: 'The shop is currently unavailable.' }
+  const payload = await getPayload({ config })
+  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email ?? '') ? input.email : ''
+  return validateCoupon(payload, clean(input.code, 64), { subtotal: Math.max(0, Number(input.subtotal) || 0), email, formatPrice })
+}
 
 export async function createCheckoutSession(input: Input): Promise<Result> {
   const { items, buyer, consent } = input
@@ -59,25 +73,9 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
     return { ok: false, error: 'Please accept the terms of sale to continue.' }
   }
 
-  // Delivery is only offered while it's switched on in Site Settings; otherwise it's collection.
-  const { shop } = await getGeneralGlobal()
-  const method: FulfilmentMethod = input.fulfilment?.method === 'deliver' && shop.delivery.enabled ? 'deliver' : 'collect'
-  const fulfilment = {
-    method,
-    ...(method === 'deliver'
-      ? {
-          addressLine1: clean(input.fulfilment.addressLine1),
-          addressLine2: clean(input.fulfilment.addressLine2),
-          locality: clean(input.fulfilment.locality, 100),
-          postcode: clean(input.fulfilment.postcode, 20),
-        }
-      : {}),
-    note: clean(input.fulfilment?.note, 500) || undefined,
-  }
-  if (method === 'deliver' && (!fulfilment.addressLine1 || !fulfilment.locality)) {
-    return { ok: false, error: 'Please enter the delivery address and locality.' }
-  }
-  const deliveryFee = deliveryFeeFor(method, shop)
+  // Shipping options, coupons and tax: Store setup when configured, else Site Settings → Shop.
+  const rules = await getStoreRulesUncached()
+  const country = rules.countries.some((c) => c.value === input.fulfilment?.country) ? String(input.fulfilment.country) : rules.defaultCountry
 
   const stripe = getStripe()
   const payload = await getPayload({ config })
@@ -208,19 +206,63 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
   const short = demand.shortfall(stockOf)
   if (short) return { ok: false, error: `${short} Please change your cart and try again.` }
 
+  let coupon: CouponTerms | null = null
+  if (clean(input.couponCode)) {
+    const checked = await validateCoupon(payload, clean(input.couponCode, 64), { subtotal, email: buyer.email, formatPrice })
+    if (!checked.ok) return { ok: false, error: checked.error }
+    coupon = checked.coupon
+  }
+
+  const units = items.reduce((sum, item) => sum + item.quantity, 0)
+  const priced = quote({ rules, subtotal, units, country, optionId: input.fulfilment?.optionId, coupon, formatPrice })
+  const option = priced.selected
+  if (!option) return { ok: false, error: "Sorry, we don't ship to that country." }
+  // E.g. free shipping that no longer applies because the cart changed: say so rather than charge more.
+  if (input.fulfilment?.optionId && input.fulfilment.optionId !== option.id) {
+    return { ok: false, error: 'That delivery option is no longer available for this order. Please choose another.' }
+  }
+  const method = option.method
+  const fulfilment = {
+    method,
+    methodTitle: option.title,
+    country,
+    ...(method === 'deliver'
+      ? {
+          addressLine1: clean(input.fulfilment.addressLine1),
+          addressLine2: clean(input.fulfilment.addressLine2),
+          locality: clean(input.fulfilment.locality, 100),
+          postcode: clean(input.fulfilment.postcode, 20),
+        }
+      : {}),
+    note: clean(input.fulfilment?.note, 500) || undefined,
+  }
+  if (method === 'deliver' && (!fulfilment.addressLine1 || !fulfilment.locality)) {
+    return { ok: false, error: 'Please enter the delivery address and locality.' }
+  }
+  const deliveryFee = priced.shipping
+  const tax = priced.tax
+
   for (const [name, e] of extras) {
     stripeLineItems.push({ price_data: { currency: 'eur', product_data: { name }, unit_amount: e.amount }, quantity: e.count })
   }
 
   if (deliveryFee > 0) {
     stripeLineItems.push({
-      price_data: { currency: 'eur', product_data: { name: 'Delivery' }, unit_amount: deliveryFee },
+      price_data: { currency: 'eur', product_data: { name: option.title }, unit_amount: deliveryFee },
       quantity: 1,
     })
   }
 
-  // Before any promotion code; the webhook records what Stripe actually charged.
-  const total = subtotal + deliveryFee
+  // Prices entered without tax: the tax is its own line.
+  if (tax && !tax.inclusive && tax.amount > 0) {
+    stripeLineItems.push({
+      price_data: { currency: 'eur', product_data: { name: `${tax.name} (${tax.rate}%)` }, unit_amount: tax.amount },
+      quantity: 1,
+    })
+  }
+
+  // After a store coupon, before any Stripe promotion code; the webhook records what Stripe actually charged.
+  const total = priced.total
 
   let currentUserId: string | undefined
   try {
@@ -244,7 +286,10 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
       items: orderItems,
       subtotal,
       deliveryFee,
-      vatIncluded: vatIncluded(total, shop.vatRate),
+      discountTotal: priced.discount,
+      couponCode: coupon?.code,
+      vatIncluded: tax?.inclusive ? tax.amount : 0,
+      taxAdded: tax && !tax.inclusive ? tax.amount : 0,
       total,
       currency: 'eur',
     } as any,
@@ -254,12 +299,18 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
 
   let session: Awaited<ReturnType<typeof stripe.checkout.sessions.create>>
   try {
+    // A store coupon becomes a one-off Stripe coupon for exactly the discount worked out above.
+    // Stripe allows either discounts or promotion codes on a session, not both.
+    const discount =
+      priced.discount > 0
+        ? await stripe.coupons.create({ amount_off: priced.discount, currency: 'eur', duration: 'once', max_redemptions: 1, name: `Coupon ${coupon!.code.toUpperCase()}` })
+        : null
     session = await stripe.checkout.sessions.create({
       mode: 'payment',
       // No payment_method_types: Stripe offers whatever is switched on in the Dashboard,
       // including Apple Pay and Google Pay.
       line_items: stripeLineItems,
-      allow_promotion_codes: true,
+      ...(discount ? { discounts: [{ coupon: discount.id }] } : { allow_promotion_codes: true }),
       customer_email: buyer.email,
       metadata: { orderId: String(order.id), orderNumber: String(order.orderNumber ?? '') },
       success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,

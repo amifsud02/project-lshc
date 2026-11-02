@@ -88,7 +88,7 @@ export const General: GlobalConfig = {
                 {
                     label: 'Shop',
                     name: 'shop',
-                    description: 'These settings only affect the e-commerce shop. The rest of the site is always public.',
+                    description: 'These settings only affect the e-commerce shop. The rest of the site is always public. Once Store setup has shipping zones, its zones replace collection and delivery below at checkout; once its tax wizard is finished, its tax rates replace the VAT rate below.',
                     fields: [
                         {
                             name: 'visibility',

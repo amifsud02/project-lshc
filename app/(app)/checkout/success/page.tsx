@@ -62,10 +62,12 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
   // Anything charged on top of the items, e.g. the MEMBRS platform fee.
   const deliveryFee = order?.deliveryFee ?? 0
   const discount = order?.discountTotal ?? 0
-  const extra = order ? (order.total ?? 0) - (order.subtotal ?? order.total ?? 0) - deliveryFee + discount : 0
+  const taxAdded = order?.taxAdded ?? 0
+  const extra = order ? (order.total ?? 0) - (order.subtotal ?? order.total ?? 0) - deliveryFee + discount - taxAdded : 0
   const adjustments: [string, number][] = [
-    ...(deliveryFee > 0 ? [['Delivery', deliveryFee] as [string, number]] : []),
-    ...(discount > 0 ? [['Promo code', -discount] as [string, number]] : []),
+    ...(deliveryFee > 0 ? [[order?.fulfilment?.methodTitle || 'Delivery', deliveryFee] as [string, number]] : []),
+    ...(discount > 0 ? [[order?.couponCode ? `Coupon ${order.couponCode.toUpperCase()}` : 'Promo code', -discount] as [string, number]] : []),
+    ...(taxAdded > 0 ? [['Tax', taxAdded] as [string, number]] : []),
     ...(extra > 0 ? [[order.paymentProvider === 'membrs' ? 'MEMBRS platform fee' : 'Other charges', extra] as [string, number]] : []),
   ]
   // What happens next depends on how the buyer chose to get the order.

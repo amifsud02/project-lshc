@@ -91,6 +91,9 @@ export interface Config {
     'nursery-categories': NurseryCategory;
     'nursery-registrations': NurseryRegistration;
     'magic-link-tokens': MagicLinkToken;
+    'store-tax-rates': StoreTaxRate;
+    'store-shipping-zones': StoreShippingZone;
+    'store-coupons': StoreCoupon;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-folders': FolderInterface;
@@ -128,6 +131,9 @@ export interface Config {
     'nursery-categories': NurseryCategoriesSelect<false> | NurseryCategoriesSelect<true>;
     'nursery-registrations': NurseryRegistrationsSelect<false> | NurseryRegistrationsSelect<true>;
     'magic-link-tokens': MagicLinkTokensSelect<false> | MagicLinkTokensSelect<true>;
+    'store-tax-rates': StoreTaxRatesSelect<false> | StoreTaxRatesSelect<true>;
+    'store-shipping-zones': StoreShippingZonesSelect<false> | StoreShippingZonesSelect<true>;
+    'store-coupons': StoreCouponsSelect<false> | StoreCouponsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
@@ -143,12 +149,14 @@ export interface Config {
     header: Header;
     footer: Footer;
     general: General;
+    'store-settings': StoreSetting;
     'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     general: GeneralSelect<false> | GeneralSelect<true>;
+    'store-settings': StoreSettingsSelect<false> | StoreSettingsSelect<true>;
     'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
@@ -1447,6 +1455,14 @@ export interface Order {
    */
   fulfilment?: {
     method?: ('collect' | 'deliver') | null;
+    /**
+     * As the buyer saw it, e.g. "Standard delivery".
+     */
+    methodTitle?: string | null;
+    /**
+     * ISO code, e.g. MT
+     */
+    country?: string | null;
     addressLine1?: string | null;
     addressLine2?: string | null;
     locality?: string | null;
@@ -1501,13 +1517,21 @@ export interface Order {
    */
   deliveryFee?: number | null;
   /**
-   * Cents, from a Stripe promotion code
+   * Cents, from a coupon or a Stripe promotion code
    */
   discountTotal?: number | null;
   /**
    * Cents, inside the total
    */
   vatIncluded?: number | null;
+  /**
+   * Store coupon used at checkout
+   */
+  couponCode?: string | null;
+  /**
+   * Cents, on top of prices entered without tax
+   */
+  taxAdded?: number | null;
   /**
    * For MEMBRS orders this is the MEMBRS checkout id.
    */
@@ -2161,6 +2185,628 @@ export interface MagicLinkToken {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-tax-rates".
+ */
+export interface StoreTaxRate {
+  id: string;
+  /**
+   * Empty matches every country.
+   */
+  country?:
+    | (
+        | 'AF'
+        | 'AX'
+        | 'AL'
+        | 'DZ'
+        | 'AS'
+        | 'AD'
+        | 'AO'
+        | 'AI'
+        | 'AQ'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AW'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BY'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BM'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BV'
+        | 'BR'
+        | 'IO'
+        | 'VG'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CV'
+        | 'BQ'
+        | 'KY'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CX'
+        | 'CC'
+        | 'CO'
+        | 'KM'
+        | 'CG'
+        | 'CD'
+        | 'CK'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CW'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FK'
+        | 'FO'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GF'
+        | 'PF'
+        | 'TF'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'DE'
+        | 'GH'
+        | 'GI'
+        | 'GR'
+        | 'GL'
+        | 'GD'
+        | 'GP'
+        | 'GU'
+        | 'GT'
+        | 'GG'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HM'
+        | 'HN'
+        | 'HK'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IR'
+        | 'IQ'
+        | 'IE'
+        | 'IM'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JE'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MO'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MQ'
+        | 'MR'
+        | 'MU'
+        | 'YT'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MS'
+        | 'MA'
+        | 'MZ'
+        | 'MM'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NC'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'NU'
+        | 'NF'
+        | 'KP'
+        | 'MK'
+        | 'MP'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PS'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PN'
+        | 'PL'
+        | 'PT'
+        | 'PR'
+        | 'QA'
+        | 'RE'
+        | 'RO'
+        | 'RU'
+        | 'RW'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SX'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'GS'
+        | 'KR'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'BL'
+        | 'SH'
+        | 'KN'
+        | 'LC'
+        | 'MF'
+        | 'PM'
+        | 'VC'
+        | 'SD'
+        | 'SR'
+        | 'SJ'
+        | 'SE'
+        | 'CH'
+        | 'SY'
+        | 'TW'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TK'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TC'
+        | 'TV'
+        | 'UM'
+        | 'VI'
+        | 'UG'
+        | 'UA'
+        | 'AE'
+        | 'GB'
+        | 'US'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VA'
+        | 'VE'
+        | 'VN'
+        | 'WF'
+        | 'EH'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
+      )
+    | null;
+  state?: string | null;
+  /**
+   * Semicolon-separated, wildcards (*) and ranges (…) allowed.
+   */
+  postcodes?: string | null;
+  /**
+   * Semicolon-separated.
+   */
+  cities?: string | null;
+  rate: number;
+  name: string;
+  priority?: number | null;
+  /**
+   * “standard” or one of the classes in Store Settings → Tax.
+   */
+  taxClass?: string | null;
+  compound?: boolean | null;
+  shipping?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-shipping-zones".
+ */
+export interface StoreShippingZone {
+  id: string;
+  name: string;
+  order?: number | null;
+  /**
+   * Leave empty for “Locations not covered by your other zones”.
+   */
+  countries?:
+    | (
+        | 'AF'
+        | 'AX'
+        | 'AL'
+        | 'DZ'
+        | 'AS'
+        | 'AD'
+        | 'AO'
+        | 'AI'
+        | 'AQ'
+        | 'AG'
+        | 'AR'
+        | 'AM'
+        | 'AW'
+        | 'AU'
+        | 'AT'
+        | 'AZ'
+        | 'BS'
+        | 'BH'
+        | 'BD'
+        | 'BB'
+        | 'BY'
+        | 'BE'
+        | 'BZ'
+        | 'BJ'
+        | 'BM'
+        | 'BT'
+        | 'BO'
+        | 'BA'
+        | 'BW'
+        | 'BV'
+        | 'BR'
+        | 'IO'
+        | 'VG'
+        | 'BN'
+        | 'BG'
+        | 'BF'
+        | 'BI'
+        | 'KH'
+        | 'CM'
+        | 'CA'
+        | 'CV'
+        | 'BQ'
+        | 'KY'
+        | 'CF'
+        | 'TD'
+        | 'CL'
+        | 'CN'
+        | 'CX'
+        | 'CC'
+        | 'CO'
+        | 'KM'
+        | 'CG'
+        | 'CD'
+        | 'CK'
+        | 'CR'
+        | 'CI'
+        | 'HR'
+        | 'CU'
+        | 'CW'
+        | 'CY'
+        | 'CZ'
+        | 'DK'
+        | 'DJ'
+        | 'DM'
+        | 'DO'
+        | 'EC'
+        | 'EG'
+        | 'SV'
+        | 'GQ'
+        | 'ER'
+        | 'EE'
+        | 'SZ'
+        | 'ET'
+        | 'FK'
+        | 'FO'
+        | 'FJ'
+        | 'FI'
+        | 'FR'
+        | 'GF'
+        | 'PF'
+        | 'TF'
+        | 'GA'
+        | 'GM'
+        | 'GE'
+        | 'DE'
+        | 'GH'
+        | 'GI'
+        | 'GR'
+        | 'GL'
+        | 'GD'
+        | 'GP'
+        | 'GU'
+        | 'GT'
+        | 'GG'
+        | 'GN'
+        | 'GW'
+        | 'GY'
+        | 'HT'
+        | 'HM'
+        | 'HN'
+        | 'HK'
+        | 'HU'
+        | 'IS'
+        | 'IN'
+        | 'ID'
+        | 'IR'
+        | 'IQ'
+        | 'IE'
+        | 'IM'
+        | 'IL'
+        | 'IT'
+        | 'JM'
+        | 'JP'
+        | 'JE'
+        | 'JO'
+        | 'KZ'
+        | 'KE'
+        | 'KI'
+        | 'KW'
+        | 'KG'
+        | 'LA'
+        | 'LV'
+        | 'LB'
+        | 'LS'
+        | 'LR'
+        | 'LY'
+        | 'LI'
+        | 'LT'
+        | 'LU'
+        | 'MO'
+        | 'MG'
+        | 'MW'
+        | 'MY'
+        | 'MV'
+        | 'ML'
+        | 'MT'
+        | 'MH'
+        | 'MQ'
+        | 'MR'
+        | 'MU'
+        | 'YT'
+        | 'MX'
+        | 'FM'
+        | 'MD'
+        | 'MC'
+        | 'MN'
+        | 'ME'
+        | 'MS'
+        | 'MA'
+        | 'MZ'
+        | 'MM'
+        | 'NA'
+        | 'NR'
+        | 'NP'
+        | 'NL'
+        | 'NC'
+        | 'NZ'
+        | 'NI'
+        | 'NE'
+        | 'NG'
+        | 'NU'
+        | 'NF'
+        | 'KP'
+        | 'MK'
+        | 'MP'
+        | 'NO'
+        | 'OM'
+        | 'PK'
+        | 'PW'
+        | 'PS'
+        | 'PA'
+        | 'PG'
+        | 'PY'
+        | 'PE'
+        | 'PH'
+        | 'PN'
+        | 'PL'
+        | 'PT'
+        | 'PR'
+        | 'QA'
+        | 'RE'
+        | 'RO'
+        | 'RU'
+        | 'RW'
+        | 'WS'
+        | 'SM'
+        | 'ST'
+        | 'SA'
+        | 'SN'
+        | 'RS'
+        | 'SC'
+        | 'SL'
+        | 'SG'
+        | 'SX'
+        | 'SK'
+        | 'SI'
+        | 'SB'
+        | 'SO'
+        | 'ZA'
+        | 'GS'
+        | 'KR'
+        | 'SS'
+        | 'ES'
+        | 'LK'
+        | 'BL'
+        | 'SH'
+        | 'KN'
+        | 'LC'
+        | 'MF'
+        | 'PM'
+        | 'VC'
+        | 'SD'
+        | 'SR'
+        | 'SJ'
+        | 'SE'
+        | 'CH'
+        | 'SY'
+        | 'TW'
+        | 'TJ'
+        | 'TZ'
+        | 'TH'
+        | 'TL'
+        | 'TG'
+        | 'TK'
+        | 'TO'
+        | 'TT'
+        | 'TN'
+        | 'TR'
+        | 'TM'
+        | 'TC'
+        | 'TV'
+        | 'UM'
+        | 'VI'
+        | 'UG'
+        | 'UA'
+        | 'AE'
+        | 'GB'
+        | 'US'
+        | 'UY'
+        | 'UZ'
+        | 'VU'
+        | 'VA'
+        | 'VE'
+        | 'VN'
+        | 'WF'
+        | 'EH'
+        | 'YE'
+        | 'ZM'
+        | 'ZW'
+      )[]
+    | null;
+  /**
+   * Optional: limit to postcodes, one per line.
+   */
+  postcodes?: string | null;
+  methods?:
+    | (
+        | {
+            title?: string | null;
+            /**
+             * Minor units, e.g. 450 = 4.50.
+             */
+            cost?: number | null;
+            perItem?: number | null;
+            taxStatus?: ('taxable' | 'none') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'flat_rate';
+          }
+        | {
+            title?: string | null;
+            requires?: ('none' | 'coupon' | 'min_amount' | 'either' | 'both') | null;
+            minAmount?: number | null;
+            ignoreDiscounts?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'free_shipping';
+          }
+        | {
+            title?: string | null;
+            cost?: number | null;
+            /**
+             * Where and when to collect.
+             */
+            instructions?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'local_pickup';
+          }
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-coupons".
+ */
+export interface StoreCoupon {
+  id: string;
+  /**
+   * Codes are case-insensitive.
+   */
+  code: string;
+  description?: string | null;
+  discountType: 'percent' | 'fixed_cart' | 'fixed_product';
+  /**
+   * Percent, or minor units for fixed discounts.
+   */
+  amount: number;
+  freeShipping?: boolean | null;
+  expiresAt?: string | null;
+  minimumSpend?: number | null;
+  maximumSpend?: number | null;
+  individualUse?: boolean | null;
+  excludeSaleItems?: boolean | null;
+  /**
+   * Comma-separated; wildcards like *@club.org allowed.
+   */
+  allowedEmails?: string | null;
+  usageLimit?: number | null;
+  usageLimitPerUser?: number | null;
+  usageCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -2379,6 +3025,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'magic-link-tokens';
         value: string | MagicLinkToken;
+      } | null)
+    | ({
+        relationTo: 'store-tax-rates';
+        value: string | StoreTaxRate;
+      } | null)
+    | ({
+        relationTo: 'store-shipping-zones';
+        value: string | StoreShippingZone;
+      } | null)
+    | ({
+        relationTo: 'store-coupons';
+        value: string | StoreCoupon;
       } | null)
     | ({
         relationTo: 'payload-folders';
@@ -3234,6 +3892,8 @@ export interface OrdersSelect<T extends boolean = true> {
     | T
     | {
         method?: T;
+        methodTitle?: T;
+        country?: T;
         addressLine1?: T;
         addressLine2?: T;
         locality?: T;
@@ -3264,6 +3924,8 @@ export interface OrdersSelect<T extends boolean = true> {
   deliveryFee?: T;
   discountTotal?: T;
   vatIncluded?: T;
+  couponCode?: T;
+  taxAdded?: T;
   stripeCheckoutSessionId?: T;
   stripePaymentIntentId?: T;
   updatedAt?: T;
@@ -3631,6 +4293,91 @@ export interface MagicLinkTokensSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-tax-rates_select".
+ */
+export interface StoreTaxRatesSelect<T extends boolean = true> {
+  country?: T;
+  state?: T;
+  postcodes?: T;
+  cities?: T;
+  rate?: T;
+  name?: T;
+  priority?: T;
+  taxClass?: T;
+  compound?: T;
+  shipping?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-shipping-zones_select".
+ */
+export interface StoreShippingZonesSelect<T extends boolean = true> {
+  name?: T;
+  order?: T;
+  countries?: T;
+  postcodes?: T;
+  methods?:
+    | T
+    | {
+        flat_rate?:
+          | T
+          | {
+              title?: T;
+              cost?: T;
+              perItem?: T;
+              taxStatus?: T;
+              id?: T;
+              blockName?: T;
+            };
+        free_shipping?:
+          | T
+          | {
+              title?: T;
+              requires?: T;
+              minAmount?: T;
+              ignoreDiscounts?: T;
+              id?: T;
+              blockName?: T;
+            };
+        local_pickup?:
+          | T
+          | {
+              title?: T;
+              cost?: T;
+              instructions?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-coupons_select".
+ */
+export interface StoreCouponsSelect<T extends boolean = true> {
+  code?: T;
+  description?: T;
+  discountType?: T;
+  amount?: T;
+  freeShipping?: T;
+  expiresAt?: T;
+  minimumSpend?: T;
+  maximumSpend?: T;
+  individualUse?: T;
+  excludeSaleItems?: T;
+  allowedEmails?: T;
+  usageLimit?: T;
+  usageLimitPerUser?: T;
+  usageCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -3985,6 +4732,1545 @@ export interface General {
   createdAt?: string | null;
 }
 /**
+ * Everything the setup wizards configure. Run them again any time from Store setup.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-settings".
+ */
+export interface StoreSetting {
+  id: string;
+  profile?: {
+    storeName?: string | null;
+    setupFor?: ('starting' | 'selling' | 'client') | null;
+    sellingWhere?: ('online' | 'offline' | 'both') | null;
+    platforms?:
+      | (
+          | 'amazon'
+          | 'adobe_commerce'
+          | 'big_cartel'
+          | 'big_commerce'
+          | 'ebay'
+          | 'ecwid'
+          | 'etsy'
+          | 'facebook_marketplace'
+          | 'google_shopping'
+          | 'pinterest'
+          | 'shopify'
+          | 'square'
+          | 'squarespace'
+          | 'wix'
+          | 'wordpress'
+          | 'other'
+        )[]
+      | null;
+    revenue?: ('none' | 'up-to-2500' | '2500-10000' | '10000-50000' | '50000-250000' | 'more-than-250000') | null;
+    industry?:
+      | (
+          | 'clothing_and_accessories'
+          | 'health_and_beauty'
+          | 'food_and_drink'
+          | 'home_furniture_and_garden'
+          | 'education_and_learning'
+          | 'electronics_and_computers'
+          | 'arts_and_crafts'
+          | 'sports_and_recreation'
+          | 'clubs_and_memberships'
+          | 'other'
+        )
+      | null;
+    industryOther?: string | null;
+    productTypes?: ('physical' | 'downloads' | 'services' | 'memberships' | 'subscriptions' | 'bundles')[] | null;
+    completedAt?: string | null;
+  };
+  general?: {
+    address1?: string | null;
+    address2?: string | null;
+    city?: string | null;
+    postcode?: string | null;
+    state?: string | null;
+    country?:
+      | (
+          | 'AF'
+          | 'AX'
+          | 'AL'
+          | 'DZ'
+          | 'AS'
+          | 'AD'
+          | 'AO'
+          | 'AI'
+          | 'AQ'
+          | 'AG'
+          | 'AR'
+          | 'AM'
+          | 'AW'
+          | 'AU'
+          | 'AT'
+          | 'AZ'
+          | 'BS'
+          | 'BH'
+          | 'BD'
+          | 'BB'
+          | 'BY'
+          | 'BE'
+          | 'BZ'
+          | 'BJ'
+          | 'BM'
+          | 'BT'
+          | 'BO'
+          | 'BA'
+          | 'BW'
+          | 'BV'
+          | 'BR'
+          | 'IO'
+          | 'VG'
+          | 'BN'
+          | 'BG'
+          | 'BF'
+          | 'BI'
+          | 'KH'
+          | 'CM'
+          | 'CA'
+          | 'CV'
+          | 'BQ'
+          | 'KY'
+          | 'CF'
+          | 'TD'
+          | 'CL'
+          | 'CN'
+          | 'CX'
+          | 'CC'
+          | 'CO'
+          | 'KM'
+          | 'CG'
+          | 'CD'
+          | 'CK'
+          | 'CR'
+          | 'CI'
+          | 'HR'
+          | 'CU'
+          | 'CW'
+          | 'CY'
+          | 'CZ'
+          | 'DK'
+          | 'DJ'
+          | 'DM'
+          | 'DO'
+          | 'EC'
+          | 'EG'
+          | 'SV'
+          | 'GQ'
+          | 'ER'
+          | 'EE'
+          | 'SZ'
+          | 'ET'
+          | 'FK'
+          | 'FO'
+          | 'FJ'
+          | 'FI'
+          | 'FR'
+          | 'GF'
+          | 'PF'
+          | 'TF'
+          | 'GA'
+          | 'GM'
+          | 'GE'
+          | 'DE'
+          | 'GH'
+          | 'GI'
+          | 'GR'
+          | 'GL'
+          | 'GD'
+          | 'GP'
+          | 'GU'
+          | 'GT'
+          | 'GG'
+          | 'GN'
+          | 'GW'
+          | 'GY'
+          | 'HT'
+          | 'HM'
+          | 'HN'
+          | 'HK'
+          | 'HU'
+          | 'IS'
+          | 'IN'
+          | 'ID'
+          | 'IR'
+          | 'IQ'
+          | 'IE'
+          | 'IM'
+          | 'IL'
+          | 'IT'
+          | 'JM'
+          | 'JP'
+          | 'JE'
+          | 'JO'
+          | 'KZ'
+          | 'KE'
+          | 'KI'
+          | 'KW'
+          | 'KG'
+          | 'LA'
+          | 'LV'
+          | 'LB'
+          | 'LS'
+          | 'LR'
+          | 'LY'
+          | 'LI'
+          | 'LT'
+          | 'LU'
+          | 'MO'
+          | 'MG'
+          | 'MW'
+          | 'MY'
+          | 'MV'
+          | 'ML'
+          | 'MT'
+          | 'MH'
+          | 'MQ'
+          | 'MR'
+          | 'MU'
+          | 'YT'
+          | 'MX'
+          | 'FM'
+          | 'MD'
+          | 'MC'
+          | 'MN'
+          | 'ME'
+          | 'MS'
+          | 'MA'
+          | 'MZ'
+          | 'MM'
+          | 'NA'
+          | 'NR'
+          | 'NP'
+          | 'NL'
+          | 'NC'
+          | 'NZ'
+          | 'NI'
+          | 'NE'
+          | 'NG'
+          | 'NU'
+          | 'NF'
+          | 'KP'
+          | 'MK'
+          | 'MP'
+          | 'NO'
+          | 'OM'
+          | 'PK'
+          | 'PW'
+          | 'PS'
+          | 'PA'
+          | 'PG'
+          | 'PY'
+          | 'PE'
+          | 'PH'
+          | 'PN'
+          | 'PL'
+          | 'PT'
+          | 'PR'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RU'
+          | 'RW'
+          | 'WS'
+          | 'SM'
+          | 'ST'
+          | 'SA'
+          | 'SN'
+          | 'RS'
+          | 'SC'
+          | 'SL'
+          | 'SG'
+          | 'SX'
+          | 'SK'
+          | 'SI'
+          | 'SB'
+          | 'SO'
+          | 'ZA'
+          | 'GS'
+          | 'KR'
+          | 'SS'
+          | 'ES'
+          | 'LK'
+          | 'BL'
+          | 'SH'
+          | 'KN'
+          | 'LC'
+          | 'MF'
+          | 'PM'
+          | 'VC'
+          | 'SD'
+          | 'SR'
+          | 'SJ'
+          | 'SE'
+          | 'CH'
+          | 'SY'
+          | 'TW'
+          | 'TJ'
+          | 'TZ'
+          | 'TH'
+          | 'TL'
+          | 'TG'
+          | 'TK'
+          | 'TO'
+          | 'TT'
+          | 'TN'
+          | 'TR'
+          | 'TM'
+          | 'TC'
+          | 'TV'
+          | 'UM'
+          | 'VI'
+          | 'UG'
+          | 'UA'
+          | 'AE'
+          | 'GB'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VU'
+          | 'VA'
+          | 'VE'
+          | 'VN'
+          | 'WF'
+          | 'EH'
+          | 'YE'
+          | 'ZM'
+          | 'ZW'
+        )
+      | null;
+    sellingLocations?: ('all' | 'all_except' | 'specific') | null;
+    sellingExcept?:
+      | (
+          | 'AF'
+          | 'AX'
+          | 'AL'
+          | 'DZ'
+          | 'AS'
+          | 'AD'
+          | 'AO'
+          | 'AI'
+          | 'AQ'
+          | 'AG'
+          | 'AR'
+          | 'AM'
+          | 'AW'
+          | 'AU'
+          | 'AT'
+          | 'AZ'
+          | 'BS'
+          | 'BH'
+          | 'BD'
+          | 'BB'
+          | 'BY'
+          | 'BE'
+          | 'BZ'
+          | 'BJ'
+          | 'BM'
+          | 'BT'
+          | 'BO'
+          | 'BA'
+          | 'BW'
+          | 'BV'
+          | 'BR'
+          | 'IO'
+          | 'VG'
+          | 'BN'
+          | 'BG'
+          | 'BF'
+          | 'BI'
+          | 'KH'
+          | 'CM'
+          | 'CA'
+          | 'CV'
+          | 'BQ'
+          | 'KY'
+          | 'CF'
+          | 'TD'
+          | 'CL'
+          | 'CN'
+          | 'CX'
+          | 'CC'
+          | 'CO'
+          | 'KM'
+          | 'CG'
+          | 'CD'
+          | 'CK'
+          | 'CR'
+          | 'CI'
+          | 'HR'
+          | 'CU'
+          | 'CW'
+          | 'CY'
+          | 'CZ'
+          | 'DK'
+          | 'DJ'
+          | 'DM'
+          | 'DO'
+          | 'EC'
+          | 'EG'
+          | 'SV'
+          | 'GQ'
+          | 'ER'
+          | 'EE'
+          | 'SZ'
+          | 'ET'
+          | 'FK'
+          | 'FO'
+          | 'FJ'
+          | 'FI'
+          | 'FR'
+          | 'GF'
+          | 'PF'
+          | 'TF'
+          | 'GA'
+          | 'GM'
+          | 'GE'
+          | 'DE'
+          | 'GH'
+          | 'GI'
+          | 'GR'
+          | 'GL'
+          | 'GD'
+          | 'GP'
+          | 'GU'
+          | 'GT'
+          | 'GG'
+          | 'GN'
+          | 'GW'
+          | 'GY'
+          | 'HT'
+          | 'HM'
+          | 'HN'
+          | 'HK'
+          | 'HU'
+          | 'IS'
+          | 'IN'
+          | 'ID'
+          | 'IR'
+          | 'IQ'
+          | 'IE'
+          | 'IM'
+          | 'IL'
+          | 'IT'
+          | 'JM'
+          | 'JP'
+          | 'JE'
+          | 'JO'
+          | 'KZ'
+          | 'KE'
+          | 'KI'
+          | 'KW'
+          | 'KG'
+          | 'LA'
+          | 'LV'
+          | 'LB'
+          | 'LS'
+          | 'LR'
+          | 'LY'
+          | 'LI'
+          | 'LT'
+          | 'LU'
+          | 'MO'
+          | 'MG'
+          | 'MW'
+          | 'MY'
+          | 'MV'
+          | 'ML'
+          | 'MT'
+          | 'MH'
+          | 'MQ'
+          | 'MR'
+          | 'MU'
+          | 'YT'
+          | 'MX'
+          | 'FM'
+          | 'MD'
+          | 'MC'
+          | 'MN'
+          | 'ME'
+          | 'MS'
+          | 'MA'
+          | 'MZ'
+          | 'MM'
+          | 'NA'
+          | 'NR'
+          | 'NP'
+          | 'NL'
+          | 'NC'
+          | 'NZ'
+          | 'NI'
+          | 'NE'
+          | 'NG'
+          | 'NU'
+          | 'NF'
+          | 'KP'
+          | 'MK'
+          | 'MP'
+          | 'NO'
+          | 'OM'
+          | 'PK'
+          | 'PW'
+          | 'PS'
+          | 'PA'
+          | 'PG'
+          | 'PY'
+          | 'PE'
+          | 'PH'
+          | 'PN'
+          | 'PL'
+          | 'PT'
+          | 'PR'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RU'
+          | 'RW'
+          | 'WS'
+          | 'SM'
+          | 'ST'
+          | 'SA'
+          | 'SN'
+          | 'RS'
+          | 'SC'
+          | 'SL'
+          | 'SG'
+          | 'SX'
+          | 'SK'
+          | 'SI'
+          | 'SB'
+          | 'SO'
+          | 'ZA'
+          | 'GS'
+          | 'KR'
+          | 'SS'
+          | 'ES'
+          | 'LK'
+          | 'BL'
+          | 'SH'
+          | 'KN'
+          | 'LC'
+          | 'MF'
+          | 'PM'
+          | 'VC'
+          | 'SD'
+          | 'SR'
+          | 'SJ'
+          | 'SE'
+          | 'CH'
+          | 'SY'
+          | 'TW'
+          | 'TJ'
+          | 'TZ'
+          | 'TH'
+          | 'TL'
+          | 'TG'
+          | 'TK'
+          | 'TO'
+          | 'TT'
+          | 'TN'
+          | 'TR'
+          | 'TM'
+          | 'TC'
+          | 'TV'
+          | 'UM'
+          | 'VI'
+          | 'UG'
+          | 'UA'
+          | 'AE'
+          | 'GB'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VU'
+          | 'VA'
+          | 'VE'
+          | 'VN'
+          | 'WF'
+          | 'EH'
+          | 'YE'
+          | 'ZM'
+          | 'ZW'
+        )[]
+      | null;
+    sellingSpecific?:
+      | (
+          | 'AF'
+          | 'AX'
+          | 'AL'
+          | 'DZ'
+          | 'AS'
+          | 'AD'
+          | 'AO'
+          | 'AI'
+          | 'AQ'
+          | 'AG'
+          | 'AR'
+          | 'AM'
+          | 'AW'
+          | 'AU'
+          | 'AT'
+          | 'AZ'
+          | 'BS'
+          | 'BH'
+          | 'BD'
+          | 'BB'
+          | 'BY'
+          | 'BE'
+          | 'BZ'
+          | 'BJ'
+          | 'BM'
+          | 'BT'
+          | 'BO'
+          | 'BA'
+          | 'BW'
+          | 'BV'
+          | 'BR'
+          | 'IO'
+          | 'VG'
+          | 'BN'
+          | 'BG'
+          | 'BF'
+          | 'BI'
+          | 'KH'
+          | 'CM'
+          | 'CA'
+          | 'CV'
+          | 'BQ'
+          | 'KY'
+          | 'CF'
+          | 'TD'
+          | 'CL'
+          | 'CN'
+          | 'CX'
+          | 'CC'
+          | 'CO'
+          | 'KM'
+          | 'CG'
+          | 'CD'
+          | 'CK'
+          | 'CR'
+          | 'CI'
+          | 'HR'
+          | 'CU'
+          | 'CW'
+          | 'CY'
+          | 'CZ'
+          | 'DK'
+          | 'DJ'
+          | 'DM'
+          | 'DO'
+          | 'EC'
+          | 'EG'
+          | 'SV'
+          | 'GQ'
+          | 'ER'
+          | 'EE'
+          | 'SZ'
+          | 'ET'
+          | 'FK'
+          | 'FO'
+          | 'FJ'
+          | 'FI'
+          | 'FR'
+          | 'GF'
+          | 'PF'
+          | 'TF'
+          | 'GA'
+          | 'GM'
+          | 'GE'
+          | 'DE'
+          | 'GH'
+          | 'GI'
+          | 'GR'
+          | 'GL'
+          | 'GD'
+          | 'GP'
+          | 'GU'
+          | 'GT'
+          | 'GG'
+          | 'GN'
+          | 'GW'
+          | 'GY'
+          | 'HT'
+          | 'HM'
+          | 'HN'
+          | 'HK'
+          | 'HU'
+          | 'IS'
+          | 'IN'
+          | 'ID'
+          | 'IR'
+          | 'IQ'
+          | 'IE'
+          | 'IM'
+          | 'IL'
+          | 'IT'
+          | 'JM'
+          | 'JP'
+          | 'JE'
+          | 'JO'
+          | 'KZ'
+          | 'KE'
+          | 'KI'
+          | 'KW'
+          | 'KG'
+          | 'LA'
+          | 'LV'
+          | 'LB'
+          | 'LS'
+          | 'LR'
+          | 'LY'
+          | 'LI'
+          | 'LT'
+          | 'LU'
+          | 'MO'
+          | 'MG'
+          | 'MW'
+          | 'MY'
+          | 'MV'
+          | 'ML'
+          | 'MT'
+          | 'MH'
+          | 'MQ'
+          | 'MR'
+          | 'MU'
+          | 'YT'
+          | 'MX'
+          | 'FM'
+          | 'MD'
+          | 'MC'
+          | 'MN'
+          | 'ME'
+          | 'MS'
+          | 'MA'
+          | 'MZ'
+          | 'MM'
+          | 'NA'
+          | 'NR'
+          | 'NP'
+          | 'NL'
+          | 'NC'
+          | 'NZ'
+          | 'NI'
+          | 'NE'
+          | 'NG'
+          | 'NU'
+          | 'NF'
+          | 'KP'
+          | 'MK'
+          | 'MP'
+          | 'NO'
+          | 'OM'
+          | 'PK'
+          | 'PW'
+          | 'PS'
+          | 'PA'
+          | 'PG'
+          | 'PY'
+          | 'PE'
+          | 'PH'
+          | 'PN'
+          | 'PL'
+          | 'PT'
+          | 'PR'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RU'
+          | 'RW'
+          | 'WS'
+          | 'SM'
+          | 'ST'
+          | 'SA'
+          | 'SN'
+          | 'RS'
+          | 'SC'
+          | 'SL'
+          | 'SG'
+          | 'SX'
+          | 'SK'
+          | 'SI'
+          | 'SB'
+          | 'SO'
+          | 'ZA'
+          | 'GS'
+          | 'KR'
+          | 'SS'
+          | 'ES'
+          | 'LK'
+          | 'BL'
+          | 'SH'
+          | 'KN'
+          | 'LC'
+          | 'MF'
+          | 'PM'
+          | 'VC'
+          | 'SD'
+          | 'SR'
+          | 'SJ'
+          | 'SE'
+          | 'CH'
+          | 'SY'
+          | 'TW'
+          | 'TJ'
+          | 'TZ'
+          | 'TH'
+          | 'TL'
+          | 'TG'
+          | 'TK'
+          | 'TO'
+          | 'TT'
+          | 'TN'
+          | 'TR'
+          | 'TM'
+          | 'TC'
+          | 'TV'
+          | 'UM'
+          | 'VI'
+          | 'UG'
+          | 'UA'
+          | 'AE'
+          | 'GB'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VU'
+          | 'VA'
+          | 'VE'
+          | 'VN'
+          | 'WF'
+          | 'EH'
+          | 'YE'
+          | 'ZM'
+          | 'ZW'
+        )[]
+      | null;
+    shipTo?: ('all_selling' | 'all' | 'specific' | 'disabled') | null;
+    shipToSpecific?:
+      | (
+          | 'AF'
+          | 'AX'
+          | 'AL'
+          | 'DZ'
+          | 'AS'
+          | 'AD'
+          | 'AO'
+          | 'AI'
+          | 'AQ'
+          | 'AG'
+          | 'AR'
+          | 'AM'
+          | 'AW'
+          | 'AU'
+          | 'AT'
+          | 'AZ'
+          | 'BS'
+          | 'BH'
+          | 'BD'
+          | 'BB'
+          | 'BY'
+          | 'BE'
+          | 'BZ'
+          | 'BJ'
+          | 'BM'
+          | 'BT'
+          | 'BO'
+          | 'BA'
+          | 'BW'
+          | 'BV'
+          | 'BR'
+          | 'IO'
+          | 'VG'
+          | 'BN'
+          | 'BG'
+          | 'BF'
+          | 'BI'
+          | 'KH'
+          | 'CM'
+          | 'CA'
+          | 'CV'
+          | 'BQ'
+          | 'KY'
+          | 'CF'
+          | 'TD'
+          | 'CL'
+          | 'CN'
+          | 'CX'
+          | 'CC'
+          | 'CO'
+          | 'KM'
+          | 'CG'
+          | 'CD'
+          | 'CK'
+          | 'CR'
+          | 'CI'
+          | 'HR'
+          | 'CU'
+          | 'CW'
+          | 'CY'
+          | 'CZ'
+          | 'DK'
+          | 'DJ'
+          | 'DM'
+          | 'DO'
+          | 'EC'
+          | 'EG'
+          | 'SV'
+          | 'GQ'
+          | 'ER'
+          | 'EE'
+          | 'SZ'
+          | 'ET'
+          | 'FK'
+          | 'FO'
+          | 'FJ'
+          | 'FI'
+          | 'FR'
+          | 'GF'
+          | 'PF'
+          | 'TF'
+          | 'GA'
+          | 'GM'
+          | 'GE'
+          | 'DE'
+          | 'GH'
+          | 'GI'
+          | 'GR'
+          | 'GL'
+          | 'GD'
+          | 'GP'
+          | 'GU'
+          | 'GT'
+          | 'GG'
+          | 'GN'
+          | 'GW'
+          | 'GY'
+          | 'HT'
+          | 'HM'
+          | 'HN'
+          | 'HK'
+          | 'HU'
+          | 'IS'
+          | 'IN'
+          | 'ID'
+          | 'IR'
+          | 'IQ'
+          | 'IE'
+          | 'IM'
+          | 'IL'
+          | 'IT'
+          | 'JM'
+          | 'JP'
+          | 'JE'
+          | 'JO'
+          | 'KZ'
+          | 'KE'
+          | 'KI'
+          | 'KW'
+          | 'KG'
+          | 'LA'
+          | 'LV'
+          | 'LB'
+          | 'LS'
+          | 'LR'
+          | 'LY'
+          | 'LI'
+          | 'LT'
+          | 'LU'
+          | 'MO'
+          | 'MG'
+          | 'MW'
+          | 'MY'
+          | 'MV'
+          | 'ML'
+          | 'MT'
+          | 'MH'
+          | 'MQ'
+          | 'MR'
+          | 'MU'
+          | 'YT'
+          | 'MX'
+          | 'FM'
+          | 'MD'
+          | 'MC'
+          | 'MN'
+          | 'ME'
+          | 'MS'
+          | 'MA'
+          | 'MZ'
+          | 'MM'
+          | 'NA'
+          | 'NR'
+          | 'NP'
+          | 'NL'
+          | 'NC'
+          | 'NZ'
+          | 'NI'
+          | 'NE'
+          | 'NG'
+          | 'NU'
+          | 'NF'
+          | 'KP'
+          | 'MK'
+          | 'MP'
+          | 'NO'
+          | 'OM'
+          | 'PK'
+          | 'PW'
+          | 'PS'
+          | 'PA'
+          | 'PG'
+          | 'PY'
+          | 'PE'
+          | 'PH'
+          | 'PN'
+          | 'PL'
+          | 'PT'
+          | 'PR'
+          | 'QA'
+          | 'RE'
+          | 'RO'
+          | 'RU'
+          | 'RW'
+          | 'WS'
+          | 'SM'
+          | 'ST'
+          | 'SA'
+          | 'SN'
+          | 'RS'
+          | 'SC'
+          | 'SL'
+          | 'SG'
+          | 'SX'
+          | 'SK'
+          | 'SI'
+          | 'SB'
+          | 'SO'
+          | 'ZA'
+          | 'GS'
+          | 'KR'
+          | 'SS'
+          | 'ES'
+          | 'LK'
+          | 'BL'
+          | 'SH'
+          | 'KN'
+          | 'LC'
+          | 'MF'
+          | 'PM'
+          | 'VC'
+          | 'SD'
+          | 'SR'
+          | 'SJ'
+          | 'SE'
+          | 'CH'
+          | 'SY'
+          | 'TW'
+          | 'TJ'
+          | 'TZ'
+          | 'TH'
+          | 'TL'
+          | 'TG'
+          | 'TK'
+          | 'TO'
+          | 'TT'
+          | 'TN'
+          | 'TR'
+          | 'TM'
+          | 'TC'
+          | 'TV'
+          | 'UM'
+          | 'VI'
+          | 'UG'
+          | 'UA'
+          | 'AE'
+          | 'GB'
+          | 'US'
+          | 'UY'
+          | 'UZ'
+          | 'VU'
+          | 'VA'
+          | 'VE'
+          | 'VN'
+          | 'WF'
+          | 'EH'
+          | 'YE'
+          | 'ZM'
+          | 'ZW'
+        )[]
+      | null;
+    defaultCustomerLocation?: ('none' | 'base' | 'geolocation') | null;
+  };
+  currency?: {
+    code?:
+      | (
+          | 'AED'
+          | 'AFN'
+          | 'ALL'
+          | 'AMD'
+          | 'ANG'
+          | 'AOA'
+          | 'ARS'
+          | 'AUD'
+          | 'AWG'
+          | 'AZN'
+          | 'BAM'
+          | 'BBD'
+          | 'BDT'
+          | 'BGN'
+          | 'BHD'
+          | 'BIF'
+          | 'BMD'
+          | 'BND'
+          | 'BOB'
+          | 'BRL'
+          | 'BSD'
+          | 'BTN'
+          | 'BWP'
+          | 'BYN'
+          | 'BZD'
+          | 'CAD'
+          | 'CDF'
+          | 'CHF'
+          | 'CLP'
+          | 'CNY'
+          | 'COP'
+          | 'CRC'
+          | 'CUC'
+          | 'CUP'
+          | 'CVE'
+          | 'CZK'
+          | 'DJF'
+          | 'DKK'
+          | 'DOP'
+          | 'DZD'
+          | 'EGP'
+          | 'ERN'
+          | 'ETB'
+          | 'EUR'
+          | 'FJD'
+          | 'FKP'
+          | 'GBP'
+          | 'GEL'
+          | 'GHS'
+          | 'GIP'
+          | 'GMD'
+          | 'GNF'
+          | 'GTQ'
+          | 'GYD'
+          | 'HKD'
+          | 'HNL'
+          | 'HRK'
+          | 'HTG'
+          | 'HUF'
+          | 'IDR'
+          | 'ILS'
+          | 'INR'
+          | 'IQD'
+          | 'IRR'
+          | 'ISK'
+          | 'JMD'
+          | 'JOD'
+          | 'JPY'
+          | 'KES'
+          | 'KGS'
+          | 'KHR'
+          | 'KMF'
+          | 'KPW'
+          | 'KRW'
+          | 'KWD'
+          | 'KYD'
+          | 'KZT'
+          | 'LAK'
+          | 'LBP'
+          | 'LKR'
+          | 'LRD'
+          | 'LSL'
+          | 'LYD'
+          | 'MAD'
+          | 'MDL'
+          | 'MGA'
+          | 'MKD'
+          | 'MMK'
+          | 'MNT'
+          | 'MOP'
+          | 'MRU'
+          | 'MUR'
+          | 'MVR'
+          | 'MWK'
+          | 'MXN'
+          | 'MYR'
+          | 'MZN'
+          | 'NAD'
+          | 'NGN'
+          | 'NIO'
+          | 'NOK'
+          | 'NPR'
+          | 'NZD'
+          | 'OMR'
+          | 'PAB'
+          | 'PEN'
+          | 'PGK'
+          | 'PHP'
+          | 'PKR'
+          | 'PLN'
+          | 'PYG'
+          | 'QAR'
+          | 'RON'
+          | 'RSD'
+          | 'RUB'
+          | 'RWF'
+          | 'SAR'
+          | 'SBD'
+          | 'SCR'
+          | 'SDG'
+          | 'SEK'
+          | 'SGD'
+          | 'SHP'
+          | 'SLE'
+          | 'SLL'
+          | 'SOS'
+          | 'SRD'
+          | 'SSP'
+          | 'STN'
+          | 'SVC'
+          | 'SYP'
+          | 'SZL'
+          | 'THB'
+          | 'TJS'
+          | 'TMT'
+          | 'TND'
+          | 'TOP'
+          | 'TRY'
+          | 'TTD'
+          | 'TWD'
+          | 'TZS'
+          | 'UAH'
+          | 'UGX'
+          | 'USD'
+          | 'UYU'
+          | 'UZS'
+          | 'VES'
+          | 'VND'
+          | 'VUV'
+          | 'WST'
+          | 'XAF'
+          | 'XCD'
+          | 'XCG'
+          | 'XDR'
+          | 'XOF'
+          | 'XPF'
+          | 'XSU'
+          | 'YER'
+          | 'ZAR'
+          | 'ZMW'
+          | 'ZWG'
+          | 'ZWL'
+        )
+      | null;
+    position?: ('left' | 'right' | 'left_space' | 'right_space') | null;
+    thousandSeparator?: string | null;
+    decimalSeparator?: string | null;
+    decimals?: number | null;
+  };
+  products?: {
+    weightUnit?: ('kg' | 'g' | 'lbs' | 'oz') | null;
+    dimensionUnit?: ('m' | 'cm' | 'mm' | 'in' | 'yd') | null;
+    redirectToCart?: boolean | null;
+    enableReviews?: boolean | null;
+    verifiedOwnerLabel?: boolean | null;
+    verifiedOnly?: boolean | null;
+    enableRatings?: boolean | null;
+    ratingsRequired?: boolean | null;
+  };
+  inventory?: {
+    manageStock?: boolean | null;
+    /**
+     * How long stock stays reserved for an unpaid order. Leave empty to disable.
+     */
+    holdStockMinutes?: number | null;
+    notifyLowStock?: boolean | null;
+    notifyNoStock?: boolean | null;
+    notificationRecipient?: string | null;
+    lowStockThreshold?: number | null;
+    outOfStockThreshold?: number | null;
+    hideOutOfStock?: boolean | null;
+    stockFormat?: ('always' | 'low_amount' | 'no_amount') | null;
+  };
+  tax?: {
+    enabled?: boolean | null;
+    pricesIncludeTax?: ('yes' | 'no') | null;
+    basedOn?: ('shipping' | 'billing' | 'base') | null;
+    /**
+     * “inherit” uses the tax class of the items in the cart.
+     */
+    shippingTaxClass?: string | null;
+    roundAtSubtotal?: boolean | null;
+    classes?:
+      | {
+          name: string;
+          id?: string | null;
+        }[]
+      | null;
+    displayShop?: ('incl' | 'excl') | null;
+    displayCart?: ('incl' | 'excl') | null;
+    /**
+     * e.g. “incl. VAT”
+     */
+    priceSuffix?: string | null;
+    totalsDisplay?: ('single' | 'itemized') | null;
+  };
+  shipping?: {
+    enableCalculator?: boolean | null;
+    hideUntilAddress?: boolean | null;
+    destination?: ('shipping' | 'billing' | 'billing_only') | null;
+  };
+  payments?: {
+    stripe?: {
+      enabled?: boolean | null;
+      /**
+       * What customers see at checkout.
+       */
+      title?: string | null;
+      sortOrder?: number | null;
+      description?: string | null;
+      /**
+       * Shown on card statements. Up to 22 characters.
+       */
+      statementDescriptor?: string | null;
+      capture?: ('automatic' | 'manual') | null;
+      walletButtons?: boolean | null;
+    };
+    paypal?: {
+      enabled?: boolean | null;
+      /**
+       * What customers see at checkout.
+       */
+      title?: string | null;
+      sortOrder?: number | null;
+      description?: string | null;
+    };
+    bacs?: {
+      enabled?: boolean | null;
+      /**
+       * What customers see at checkout.
+       */
+      title?: string | null;
+      sortOrder?: number | null;
+      description?: string | null;
+      /**
+       * Added to the thank-you page and order emails.
+       */
+      instructions?: string | null;
+      accounts?:
+        | {
+            accountName?: string | null;
+            bankName?: string | null;
+            iban?: string | null;
+            bic?: string | null;
+            accountNumber?: string | null;
+            sortCode?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    cheque?: {
+      enabled?: boolean | null;
+      /**
+       * What customers see at checkout.
+       */
+      title?: string | null;
+      sortOrder?: number | null;
+      description?: string | null;
+      instructions?: string | null;
+    };
+    cod?: {
+      enabled?: boolean | null;
+      /**
+       * What customers see at checkout.
+       */
+      title?: string | null;
+      sortOrder?: number | null;
+      description?: string | null;
+      instructions?: string | null;
+      /**
+       * Leave empty to allow it with every method.
+       */
+      enableForMethods?: ('flat_rate' | 'free_shipping' | 'local_pickup')[] | null;
+      acceptVirtual?: boolean | null;
+    };
+  };
+  checkout?: {
+    guestCheckout?: boolean | null;
+    loginReminder?: boolean | null;
+    signupAtCheckout?: boolean | null;
+    signupOnAccountPage?: boolean | null;
+    sendPasswordLink?: boolean | null;
+    companyField?: ('hidden' | 'optional' | 'required') | null;
+    address2Field?: ('hidden' | 'optional' | 'required') | null;
+    phoneField?: ('hidden' | 'optional' | 'required') | null;
+    termsUrl?: string | null;
+    privacyUrl?: string | null;
+    checkoutPrivacyText?: string | null;
+    registrationPrivacyText?: string | null;
+    eraseOrdersOnRequest?: boolean | null;
+    eraseDownloadsOnRequest?: boolean | null;
+    /**
+     * Leave empty to keep forever.
+     */
+    inactiveAccountsValue?: number | null;
+    inactiveAccountsUnit?: ('days' | 'weeks' | 'months' | 'years') | null;
+    /**
+     * Leave empty to keep forever.
+     */
+    pendingOrdersValue?: number | null;
+    pendingOrdersUnit?: ('days' | 'weeks' | 'months' | 'years') | null;
+    /**
+     * Leave empty to keep forever.
+     */
+    failedOrdersValue?: number | null;
+    failedOrdersUnit?: ('days' | 'weeks' | 'months' | 'years') | null;
+    /**
+     * Leave empty to keep forever.
+     */
+    cancelledOrdersValue?: number | null;
+    cancelledOrdersUnit?: ('days' | 'weeks' | 'months' | 'years') | null;
+    /**
+     * Leave empty to keep forever.
+     */
+    completedOrdersValue?: number | null;
+    completedOrdersUnit?: ('days' | 'weeks' | 'months' | 'years') | null;
+  };
+  emails?: {
+    fromName?: string | null;
+    fromAddress?: string | null;
+    headerImage?: (string | null) | Media;
+    footerText?: string | null;
+    baseColor?: string | null;
+    backgroundColor?: string | null;
+    bodyColor?: string | null;
+    textColor?: string | null;
+    notifications?: {
+      /**
+       * Sent to you when an order is received.
+       */
+      newOrder?: {
+        enabled?: boolean | null;
+        /**
+         * Comma-separated. Empty sends to the store admin.
+         */
+        recipient?: string | null;
+      };
+      /**
+       * Sent to you when an order is cancelled.
+       */
+      cancelledOrder?: {
+        enabled?: boolean | null;
+        /**
+         * Comma-separated. Empty sends to the store admin.
+         */
+        recipient?: string | null;
+      };
+      /**
+       * Sent to you when a payment fails.
+       */
+      failedOrder?: {
+        enabled?: boolean | null;
+        /**
+         * Comma-separated. Empty sends to the store admin.
+         */
+        recipient?: string | null;
+      };
+      /**
+       * Sent while awaiting a bank transfer or cheque.
+       */
+      customerOnHold?: {
+        enabled?: boolean | null;
+      };
+      /**
+       * Sent once payment is received.
+       */
+      customerProcessing?: {
+        enabled?: boolean | null;
+      };
+      /**
+       * Sent when the order is shipped or collected.
+       */
+      customerCompleted?: {
+        enabled?: boolean | null;
+      };
+      /**
+       * Sent when an order is refunded.
+       */
+      customerRefunded?: {
+        enabled?: boolean | null;
+      };
+      /**
+       * Sent when you add a note for the customer.
+       */
+      customerNote?: {
+        enabled?: boolean | null;
+      };
+      /**
+       * Sent when a customer asks to reset their password.
+       */
+      customerResetPassword?: {
+        enabled?: boolean | null;
+      };
+      /**
+       * Sent when a customer creates an account.
+       */
+      customerNewAccount?: {
+        enabled?: boolean | null;
+      };
+    };
+  };
+  brand?: {
+    logo?: (string | null) | Media;
+    tagline?: string | null;
+    primaryColor?: string | null;
+    storeNotice?: {
+      enabled?: boolean | null;
+      text?: string | null;
+      dismissible?: boolean | null;
+    };
+  };
+  marketing?: {
+    couponsEnabled?: boolean | null;
+    sequentialDiscounts?: boolean | null;
+    newsletterOptIn?: boolean | null;
+    newsletterLabel?: string | null;
+  };
+  visibility?: {
+    mode?: ('coming_soon' | 'live') | null;
+    scope?: ('store' | 'site') | null;
+    message?: string | null;
+    /**
+     * Visitors with ?store-preview=<token> see the store while it is coming soon.
+     */
+    previewToken?: string | null;
+    launchedAt?: string | null;
+  };
+  setup?: {
+    tasks?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    taskListHidden?: boolean | null;
+    firstRunDone?: boolean | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs-stats".
  */
@@ -4165,6 +6451,302 @@ export interface GeneralSelect<T extends boolean = true> {
         vatRate?: T;
         termsUrl?: T;
         privacyUrl?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-settings_select".
+ */
+export interface StoreSettingsSelect<T extends boolean = true> {
+  profile?:
+    | T
+    | {
+        storeName?: T;
+        setupFor?: T;
+        sellingWhere?: T;
+        platforms?: T;
+        revenue?: T;
+        industry?: T;
+        industryOther?: T;
+        productTypes?: T;
+        completedAt?: T;
+      };
+  general?:
+    | T
+    | {
+        address1?: T;
+        address2?: T;
+        city?: T;
+        postcode?: T;
+        state?: T;
+        country?: T;
+        sellingLocations?: T;
+        sellingExcept?: T;
+        sellingSpecific?: T;
+        shipTo?: T;
+        shipToSpecific?: T;
+        defaultCustomerLocation?: T;
+      };
+  currency?:
+    | T
+    | {
+        code?: T;
+        position?: T;
+        thousandSeparator?: T;
+        decimalSeparator?: T;
+        decimals?: T;
+      };
+  products?:
+    | T
+    | {
+        weightUnit?: T;
+        dimensionUnit?: T;
+        redirectToCart?: T;
+        enableReviews?: T;
+        verifiedOwnerLabel?: T;
+        verifiedOnly?: T;
+        enableRatings?: T;
+        ratingsRequired?: T;
+      };
+  inventory?:
+    | T
+    | {
+        manageStock?: T;
+        holdStockMinutes?: T;
+        notifyLowStock?: T;
+        notifyNoStock?: T;
+        notificationRecipient?: T;
+        lowStockThreshold?: T;
+        outOfStockThreshold?: T;
+        hideOutOfStock?: T;
+        stockFormat?: T;
+      };
+  tax?:
+    | T
+    | {
+        enabled?: T;
+        pricesIncludeTax?: T;
+        basedOn?: T;
+        shippingTaxClass?: T;
+        roundAtSubtotal?: T;
+        classes?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        displayShop?: T;
+        displayCart?: T;
+        priceSuffix?: T;
+        totalsDisplay?: T;
+      };
+  shipping?:
+    | T
+    | {
+        enableCalculator?: T;
+        hideUntilAddress?: T;
+        destination?: T;
+      };
+  payments?:
+    | T
+    | {
+        stripe?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              sortOrder?: T;
+              description?: T;
+              statementDescriptor?: T;
+              capture?: T;
+              walletButtons?: T;
+            };
+        paypal?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              sortOrder?: T;
+              description?: T;
+            };
+        bacs?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              sortOrder?: T;
+              description?: T;
+              instructions?: T;
+              accounts?:
+                | T
+                | {
+                    accountName?: T;
+                    bankName?: T;
+                    iban?: T;
+                    bic?: T;
+                    accountNumber?: T;
+                    sortCode?: T;
+                    id?: T;
+                  };
+            };
+        cheque?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              sortOrder?: T;
+              description?: T;
+              instructions?: T;
+            };
+        cod?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              sortOrder?: T;
+              description?: T;
+              instructions?: T;
+              enableForMethods?: T;
+              acceptVirtual?: T;
+            };
+      };
+  checkout?:
+    | T
+    | {
+        guestCheckout?: T;
+        loginReminder?: T;
+        signupAtCheckout?: T;
+        signupOnAccountPage?: T;
+        sendPasswordLink?: T;
+        companyField?: T;
+        address2Field?: T;
+        phoneField?: T;
+        termsUrl?: T;
+        privacyUrl?: T;
+        checkoutPrivacyText?: T;
+        registrationPrivacyText?: T;
+        eraseOrdersOnRequest?: T;
+        eraseDownloadsOnRequest?: T;
+        inactiveAccountsValue?: T;
+        inactiveAccountsUnit?: T;
+        pendingOrdersValue?: T;
+        pendingOrdersUnit?: T;
+        failedOrdersValue?: T;
+        failedOrdersUnit?: T;
+        cancelledOrdersValue?: T;
+        cancelledOrdersUnit?: T;
+        completedOrdersValue?: T;
+        completedOrdersUnit?: T;
+      };
+  emails?:
+    | T
+    | {
+        fromName?: T;
+        fromAddress?: T;
+        headerImage?: T;
+        footerText?: T;
+        baseColor?: T;
+        backgroundColor?: T;
+        bodyColor?: T;
+        textColor?: T;
+        notifications?:
+          | T
+          | {
+              newOrder?:
+                | T
+                | {
+                    enabled?: T;
+                    recipient?: T;
+                  };
+              cancelledOrder?:
+                | T
+                | {
+                    enabled?: T;
+                    recipient?: T;
+                  };
+              failedOrder?:
+                | T
+                | {
+                    enabled?: T;
+                    recipient?: T;
+                  };
+              customerOnHold?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+              customerProcessing?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+              customerCompleted?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+              customerRefunded?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+              customerNote?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+              customerResetPassword?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+              customerNewAccount?:
+                | T
+                | {
+                    enabled?: T;
+                  };
+            };
+      };
+  brand?:
+    | T
+    | {
+        logo?: T;
+        tagline?: T;
+        primaryColor?: T;
+        storeNotice?:
+          | T
+          | {
+              enabled?: T;
+              text?: T;
+              dismissible?: T;
+            };
+      };
+  marketing?:
+    | T
+    | {
+        couponsEnabled?: T;
+        sequentialDiscounts?: T;
+        newsletterOptIn?: T;
+        newsletterLabel?: T;
+      };
+  visibility?:
+    | T
+    | {
+        mode?: T;
+        scope?: T;
+        message?: T;
+        previewToken?: T;
+        launchedAt?: T;
+      };
+  setup?:
+    | T
+    | {
+        tasks?: T;
+        taskListHidden?: T;
+        firstRunDone?: T;
       };
   updatedAt?: T;
   createdAt?: T;

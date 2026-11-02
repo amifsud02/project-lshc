@@ -30,7 +30,8 @@ import { seoDescription, seoImage, seoTitle, seoTitleText } from '@/lib/seo/meta
 import { paths } from '@/lib/seo/site'
 import { breadcrumbJsonLd, productJsonLd } from '@/lib/seo/structuredData'
 import { siteOpenGraph } from '@/lib/utils/metadata'
-import { getGeneralGlobal } from '@/lib/utils/payload/globals'
+import { getStoreRules } from '@/lib/shop/storeRules'
+import { matchZone } from '@/lib/shop/pricing'
 
 export const revalidate = 60
 
@@ -68,7 +69,10 @@ export default async function ProductPage({ params }: { params: Params }) {
   if (!product || !product.active) notFound()
 
   const included = product.unitTemplates.filter((t) => t.productId !== product.id)
-  const { shop } = await getGeneralGlobal()
+  const rules = await getStoreRules()
+  // How a buyer in the store's own country gets it, as offered at checkout.
+  const methods = matchZone(rules.zones, rules.defaultCountry)?.methods ?? []
+  const taxNote = !rules.tax ? '' : rules.tax.inclusive ? ' · VAT incl.' : ' + VAT'
 
   // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member,
   // unless one of our included products already asks for it (e.g. a T-shirt size).
@@ -157,7 +161,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-semibold">{formatPrice(product.price)}</span>
                     <span className="text-sm text-muted-foreground">
-                      {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} platform fee · VAT incl.` : 'All in · VAT incl.'}
+                      {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} platform fee${taxNote}` : `All in${taxNote}`}
                     </span>
                   </div>
                 </div>
@@ -192,22 +196,31 @@ export default async function ProductPage({ params }: { params: Params }) {
 
                 {product.type !== 'membership' && (
                   <ul className="flex flex-col gap-2 rounded-xl bg-muted/60 p-4 text-sm">
-                    <li className="flex items-start gap-3">
-                      <Store className="mt-0.5 size-4 shrink-0 text-primary" />
-                      <span>
-                        <strong className="font-semibold">Free collection</strong> · {shop.collection.details}
-                        {shop.collection.readyIn ? ` Usually ready in ${shop.collection.readyIn}.` : ''}
-                      </span>
-                    </li>
-                    {shop.delivery.enabled && (
-                      <li className="flex items-start gap-3">
-                        <Truck className="mt-0.5 size-4 shrink-0 text-primary" />
-                        <span>
-                          <strong className="font-semibold">Delivery {formatPrice(shop.delivery.fee)}</strong>
-                          {shop.delivery.details ? ` · ${shop.delivery.details}` : ''}
-                        </span>
-                      </li>
-                    )}
+                    {methods.map((m) => {
+                      const Icon = m.kind === 'local_pickup' ? Store : Truck
+                      const price =
+                        m.kind === 'free_shipping'
+                          ? m.requires === 'none'
+                            ? 'Free'
+                            : m.requires === 'coupon'
+                              ? 'Free with a coupon'
+                              : `Free over ${formatPrice(m.minAmount)}`
+                          : m.cost || (m.kind === 'flat_rate' && m.perItem)
+                            ? formatPrice(m.cost + (m.kind === 'flat_rate' ? m.perItem : 0))
+                            : 'Free'
+                      const details = m.kind === 'free_shipping' ? '' : m.details
+                      return (
+                        <li key={m.id} className="flex items-start gap-3">
+                          <Icon className="mt-0.5 size-4 shrink-0 text-primary" />
+                          <span>
+                            <strong className="font-semibold">
+                              {m.title} · {price}
+                            </strong>
+                            {details ? ` · ${details}` : ''}
+                          </span>
+                        </li>
+                      )
+                    })}
                   </ul>
                 )}
 

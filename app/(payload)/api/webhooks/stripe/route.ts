@@ -3,6 +3,7 @@ import type Stripe from 'stripe'
 import { getPayload, type Payload } from 'payload'
 import config from '@payload-config'
 import { getStripe } from '@/lib/stripe/server'
+import { recordCouponUse } from '@/lib/shop/storeRules'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -146,9 +147,14 @@ async function moveOrder(
   return true
 }
 
-/** Marks an order paid with what Stripe actually charged, which a promotion code may lower. */
-const markOrderPaid = (payload: Payload, orderId: string, session: Stripe.Checkout.Session) =>
-  moveOrder(payload, orderId, ['pending'], (order) => {
+/**
+ * Marks an order paid with what Stripe actually charged, which a promotion code may lower,
+ * and counts a use of its store coupon. Only the first paid event gets this far.
+ */
+async function markOrderPaid(payload: Payload, orderId: string, session: Stripe.Checkout.Session) {
+  let couponCode: string | undefined
+  const moved = await moveOrder(payload, orderId, ['pending'], (order) => {
+    couponCode = order.couponCode || undefined
     const charged = typeof session.amount_total === 'number' ? session.amount_total : undefined
     const discount = session.total_details?.amount_discount ?? 0
     const before = Number(order.total) || 0
@@ -162,7 +168,12 @@ const markOrderPaid = (payload: Payload, orderId: string, session: Stripe.Checko
             discountTotal: discount,
             // VAT is inside the price, so it shrinks with the discount.
             vatIncluded: before > 0 ? Math.round(((Number(order.vatIncluded) || 0) * charged) / before) : 0,
+            // A promotion code also comes off the tax line Stripe was given, roughly in proportion.
+            taxAdded: before > 0 ? Math.round(((Number(order.taxAdded) || 0) * charged) / before) : 0,
           }
         : {}),
     }
   })
+  if (moved) await recordCouponUse(payload, couponCode)
+  return moved
+}

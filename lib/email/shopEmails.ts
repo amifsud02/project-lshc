@@ -70,11 +70,13 @@ function totalRows(ctx: Context): Row[] {
   const o = ctx.order
   const delivery = Number(o.deliveryFee) || 0
   const discount = Number(o.discountTotal) || 0
-  const fee = (Number(o.total) || 0) - (Number(o.subtotal) || 0) - delivery + discount
+  const taxAdded = Number(o.taxAdded) || 0
+  const fee = (Number(o.total) || 0) - (Number(o.subtotal) || 0) - delivery + discount - taxAdded
   const rows: Row[] = []
-  if (o.fulfilment?.method === 'deliver') rows.push({ label: 'Delivery', amount: money(ctx, delivery) })
-  else if (o.paymentProvider !== 'membrs') rows.push({ label: 'Collection at the club', amount: 'Free' })
-  if (discount > 0) rows.push({ label: 'Promo code', amount: `−${money(ctx, discount)}` })
+  if (o.fulfilment?.method === 'deliver') rows.push({ label: o.fulfilment?.methodTitle || 'Delivery', amount: delivery ? money(ctx, delivery) : 'Free' })
+  else if (o.paymentProvider !== 'membrs') rows.push({ label: o.fulfilment?.methodTitle || 'Collection at the club', amount: delivery ? money(ctx, delivery) : 'Free' })
+  if (discount > 0) rows.push({ label: o.couponCode ? `Coupon ${String(o.couponCode).toUpperCase()}` : 'Promo code', amount: `−${money(ctx, discount)}` })
+  if (taxAdded > 0) rows.push({ label: 'Tax', amount: money(ctx, taxAdded) })
   if (fee > 0) rows.push({ label: o.paymentProvider === 'membrs' ? 'MEMBRS platform fee' : 'Other charges', amount: money(ctx, fee) })
   rows.push({ label: 'Total paid', amount: money(ctx, Number(o.total) || 0), strong: true })
   if (Number(o.vatIncluded) > 0) rows.push({ label: 'Includes VAT', amount: money(ctx, Number(o.vatIncluded)), muted: true })

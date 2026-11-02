@@ -47,8 +47,9 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
   const deliveryFee = Number(data.deliveryFee) || 0
   const discount = Number(data.discountTotal) || 0
   const vat = Number(data.vatIncluded) || 0
-  // Whatever the lines, delivery and discount don't explain, e.g. the MEMBRS platform fee.
-  const other = total - subtotal - deliveryFee + discount
+  const taxAdded = Number(data.taxAdded) || 0
+  // Whatever the lines, delivery, discount and tax don't explain, e.g. the MEMBRS platform fee.
+  const other = total - subtotal - deliveryFee + discount - taxAdded
   const fulfilment = data.fulfilment ?? {}
   const delivering = fulfilment.method === 'deliver'
   const address = [fulfilment.addressLine1, fulfilment.addressLine2, [fulfilment.locality, fulfilment.postcode].filter(Boolean).join(' ')]
@@ -200,14 +201,20 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
           <span style={{ textAlign: 'right' }}>{formatPrice(subtotal)}</span>
           {deliveryFee > 0 && (
             <>
-              <span style={muted}>Delivery</span>
+              <span style={muted}>{data.fulfilment?.methodTitle || 'Delivery'}</span>
               <span style={{ textAlign: 'right' }}>{formatPrice(deliveryFee)}</span>
             </>
           )}
           {discount > 0 && (
             <>
-              <span style={muted}>Promo code</span>
+              <span style={muted}>{data.couponCode ? `Coupon ${String(data.couponCode).toUpperCase()}` : 'Promo code'}</span>
               <span style={{ textAlign: 'right' }}>−{formatPrice(discount)}</span>
+            </>
+          )}
+          {taxAdded > 0 && (
+            <>
+              <span style={muted}>Tax</span>
+              <span style={{ textAlign: 'right' }}>{formatPrice(taxAdded)}</span>
             </>
           )}
           {other !== 0 && (
