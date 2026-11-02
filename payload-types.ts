@@ -3736,10 +3736,12 @@ export interface Header {
           url?: string | null;
           label: string;
         };
+        enableMegaMenu?: boolean | null;
         /**
-         * Optional sub-links shown on hover. Dropdowns cannot nest further — max depth is two.
+         * One or two sentences shown under the section title on the left of the panel.
          */
-        dropdown?:
+        description?: string | null;
+        descriptionLinks?:
           | {
               link: {
                 type?: ('reference' | 'custom') | null;
@@ -3759,6 +3761,91 @@ export interface Header {
               id?: string | null;
             }[]
           | null;
+        columns?:
+          | {
+              /**
+               * Optional, e.g. "Teams".
+               */
+              heading?: string | null;
+              links?:
+                | {
+                    link: {
+                      type?: ('reference' | 'custom') | null;
+                      newTab?: boolean | null;
+                      reference?:
+                        | ({
+                            relationTo: 'pages';
+                            value: string | Page;
+                          } | null)
+                        | ({
+                            relationTo: 'news';
+                            value: string | News;
+                          } | null);
+                      url?: string | null;
+                      label: string;
+                    };
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional item on the right of the panel: a small label, a heading, an image and a link.
+         */
+        featured?:
+          | {
+              /**
+               * Small label above the heading, e.g. "Academy".
+               */
+              tag?: string | null;
+              heading: string;
+              image?: (string | null) | Media;
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: string | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'news';
+                      value: string | News;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Up to two buttons at the right of the menu, next to the cart, e.g. "Become a member". On smaller laptops only the first one shows.
+   */
+  ctaButtons?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'news';
+                value: string | News;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
         id?: string | null;
       }[]
     | null;
@@ -3932,7 +4019,9 @@ export interface HeaderSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
-        dropdown?:
+        enableMegaMenu?: T;
+        description?: T;
+        descriptionLinks?:
           | T
           | {
               link?:
@@ -3945,6 +4034,58 @@ export interface HeaderSelect<T extends boolean = true> {
                     label?: T;
                   };
               id?: T;
+            };
+        columns?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                        };
+                    id?: T;
+                  };
+              id?: T;
+            };
+        featured?:
+          | T
+          | {
+              tag?: T;
+              heading?: T;
+              image?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  ctaButtons?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
             };
         id?: T;
       };

@@ -2,103 +2,86 @@
     position: absolute;
     top: 0;
     width: 100%;
-    background: rgb(0,13,36);
-    background: -moz-linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,0) 100%);
-    background: -webkit-linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,0) 100%);
-    background: linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,0) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000d24",endColorstr="#000d24",GradientType=1);
-    padding: 30px 0;
+    background: linear-gradient(180deg, rgba(0, 13, 36, 1) 0%, rgba(0, 13, 36, 0) 100%);
+    padding: 22px 0;
     z-index: 1000;
+    transition: background-color var(--duration-base) ease;
 }
-/* 
+
+/* With a panel open the bar turns club navy and joins the panel, as on inter.it. */
+.mainNavBG.solid {
+    background: var(--color-club);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Logo on the left, the menu in the middle, account, cart and buttons on the right (as on payloadcms.com). */
 .mainNav {
-    width: 80%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    color: white;   
-    height: 80px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-} */
-
-/* Default styles for the parent container */
-.mainNav {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%; /* Change to 100% to make it full-width by default */
-    max-width: 1280px;
-    margin: 0 auto; /* Change to 0 auto to center the container horizontally */
-    z-index: 100;
-  }
-  
-  /* Media query for larger screens */
-  @media (min-width: 768px) {
-    .mainNav {
-      width: 750px; /* Adjust the width for larger screens */
-      margin: 0 auto; /* Adjust the margin for larger screens */
-    }
-  }
-  
-  /* Media query for extra-large screens */
-  @media (min-width: 992px) {
-    .mainNav {
-      width: 970px; /* Adjust the width for extra-large screens */
-    }
-  }
-  
-  /* Media query for even larger screens */
-  @media (min-width: 1200px) {
-    .mainNav {
-      width: 1170px; /* Adjust the width for even larger screens */
-    }
-  }
-  
-
-.rightCluster {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
+    padding: 0 24px;
 }
 
-.navItems{
+@media (min-width: 1200px) {
+    .mainNav {
+        width: 1170px;
+        padding: 0;
+    }
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+}
+
+.logo {
+    justify-self: start;
+    display: block;
+    line-height: 0;
+}
+
+.navItems {
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 2px;
     margin: 0;
     padding: 0;
+    list-style: none;
 }
 
-.shopActions {
+.navItem {
     display: flex;
     align-items: center;
-    gap: 18px;
-    padding-left: 20px;
-    margin-left: 8px;
-    border-left: 1px solid rgba(255, 255, 255, 0.18);
-    height: 40px;
+    padding: 0 10px;
 }
 
-.shopActionLink {
-    color: #fff;
-    font-size: 13px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-decoration: none;
+@media (min-width: 1200px) {
+    .navItem { padding: 0 14px; }
+}
+
+.navLink {
     position: relative;
-    padding-bottom: 3px;
-    transition: opacity 0.2s ease;
+    padding: 12px 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
 }
 
-.shopActionLink::after {
+.navLink::after {
     content: '';
     position: absolute;
-    left: 0; right: 0; bottom: 0;
+    left: 0;
+    right: 0;
+    bottom: 4px;
     height: 2px;
     background: #fff;
     transform: scaleX(0);
@@ -106,138 +89,109 @@
     transition: transform 0.25s ease-out;
 }
 
-.shopActionLink:hover::after {
+.navItem:hover .navLink::after,
+.navLink.open::after,
+.navLink.active::after,
+.navLink:focus-visible::after {
     transform: scaleX(1);
     transform-origin: bottom left;
 }
 
-.shopActionDivider {
-    width: 1px;
-    height: 16px;
-    background: rgba(255, 255, 255, 0.22);
+.navLink:focus-visible,
+.chevronBtn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+    border-radius: 2px;
 }
 
-.navItem{
-    list-style: none;
-    padding: 20px;
-    font-size: 14px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.navLink{
-    display: inline-block;
-    position: relative;
-    padding: 10px 0;
-    color: white;
-}
-/* 
-.navLink.active::before{
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: calc(100% - 34px);
-    height: 2px;
-    background-color: #fff;
-}
-
-.navLink:after 
-{
-    content: '';
-    position: absolute;
-    width: calc(100% - 34px);
-    transform: scaleX(0);
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: white;
-    transform-origin: bottom right;
-    transition: transform 0.25s ease-out;
-} */
-
-/* Default styling for .navLink */
-.navLink::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  transform: scaleX(0);
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: white;
-  transform-origin: bottom right;
-  transition: transform 0.25s ease-out;
-}
-
-/* If .navLink has a child SVG, apply this style when .active */
-.navLink.hasSvgChild.active::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: calc(100% - 34px);
-  height: 2px;
-  background-color: #fff;
-}
-
-/* If .navLink does not have a child SVG, apply this style when .active */
-.navLink:not(.hasSvgChild).active::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #fff;
-}
-
-
-.navItemLink {
+.chevronBtn {
     display: flex;
-    flex-direction: row;
-    gap: 10px;
     align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    transition: transform var(--duration-base) ease, color var(--duration-base) ease;
 }
 
-.navItem:hover:not(:has(.dropdown)) .navLink:after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
-  }
+.chevronBtn:hover,
+.chevronOpen {
+    color: #fff;
+}
 
+.chevronOpen {
+    transform: rotate(180deg);
+}
 
-/* @media screen and (max-width: 1100px) {
-    .mainNav > div {
-        z-index: 1000;
-    }
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
 
-    .navItems{
-        flex-direction: column;
-        justify-content: center;
+.shopActions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-left: 18px;
+    margin-left: 6px;
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    height: 40px;
+}
 
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        
-        width: 100%;
-        height: 100%;
-        
-        background: rgb(0,13,36);
-        background: -moz-linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,1) 100%);
-        background: -webkit-linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,1) 100%);
-        background: linear-gradient(180deg, rgba(0,13,36,1) 0%, rgba(0,13,36,1) 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000d24",endColorstr="#000d24",GradientType=1);
-    }
+.shopActions:empty {
+    display: none;
+}
 
-    .navItem {
-        text-align: center;
-        font-size: 1.5rem;
-        padding: 10px;
-    }
+.buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    .chevron {
-        margin-right: -34px;
-    }
-    
-} */
+.button {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 18px;
+    border: 2px solid #fff;
+    border-radius: var(--radius-pill);
+    background: #fff;
+    color: var(--color-club);
+    font-size: var(--text-sm);
+    font-weight: 800;
+    white-space: nowrap;
+    transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
+}
+
+.button:hover {
+    background: transparent;
+    color: #fff;
+}
+
+.buttonOutline {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.buttonOutline:hover {
+    background: #fff;
+    color: var(--color-club);
+    border-color: #fff;
+}
+
+.button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+/* Smaller laptops: room for the first button only. */
+@media (max-width: 1199px) {
+    .actions .button:nth-child(2) { display: none; }
+}

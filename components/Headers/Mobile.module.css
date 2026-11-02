@@ -35,7 +35,7 @@
 .nav__wrapper.nav__bg {
   position: fixed;
   height: 100lvh;
-  background-color: var(--secondary-color);
+  background: var(--color-club);
 }
 
 .nav__top {
@@ -80,11 +80,28 @@
   height: min-content;
 }
 
-.mobile__dropdown > li {
-  margin-left: 25px;
-  padding: 2.5px;
-  font-size: 1.2rem;
+/* Long sections scroll inside the menu rather than off the screen. */
+.nav__menu.nav__open {
+  overflow-y: auto;
+  padding-bottom: 160px;
+}
+
+.group {
+  margin: 4px 0 14px 10px;
+}
+
+.groupHeading {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.mobile__dropdown > li {
+  padding: 5px 0;
+  font-size: 1.1rem;
   font-weight: 600;
   height: min-content;
 }
@@ -122,4 +139,26 @@
 .navItemLink.active,
 .active {
   color: white;
+}
+
+/* The accordion fills the menu's width, so the buttons below can too. */
+.nav__menu > div {
+  width: 100%;
+}
+
+/* The header buttons, full width under the menu (two classes to win over the desktop row). */
+.nav__menu .mobileButtons {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 0 10px;
+}
+
+.nav__menu .mobileButtons > a {
+  justify-content: center;
+  height: 48px;
+  font-size: 15px;
 }

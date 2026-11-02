@@ -9,6 +9,7 @@ export default async function SiteNavbar() {
     <Navbar
       logo={general.logoUrl}
       navItems={header.navItems}
+      buttons={header.buttons}
       shopPublic={general.shopVisibility === 'public'}
     />
   )

@@ -6,12 +6,25 @@ export type NavLink = {
   newTab?: boolean
 }
 
+export type MegaMenu = {
+  description?: string
+  descriptionLinks: NavLink[]
+  columns: { heading?: string; links: NavLink[] }[]
+  featured?: { tag?: string; heading: string; imageUrl?: string; link?: NavLink }
+}
+
 export type NavItem = NavLink & {
-  dropdown?: NavLink[]
+  mega?: MegaMenu
+}
+
+export type NavButton = NavLink & {
+  appearance: 'default' | 'outline'
 }
 
 export type NormalizedHeader = {
   navItems: NavItem[]
+  /** At most two buttons beside the cart. */
+  buttons: NavButton[]
 }
 
 export type NormalizedGeneral = {
@@ -98,20 +111,48 @@ export const generalFromPayload = (doc: any): NormalizedGeneral => {
   }
 }
 
+const resolveLinks = (rows: any[] | null | undefined): NavLink[] =>
+  (rows ?? []).map((row) => resolveLink(row?.link)).filter(Boolean) as NavLink[]
+
+const megaFromPayload = (item: any): MegaMenu | undefined => {
+  if (!item?.enableMegaMenu) return undefined
+  const columns = (item.columns ?? [])
+    .map((col: any) => ({ heading: col?.heading || undefined, links: resolveLinks(col?.links) }))
+    .filter((col: { links: NavLink[] }) => col.links.length > 0)
+  const card = item.featured?.[0]
+  const featured = card?.heading
+    ? {
+        tag: card.tag || undefined,
+        heading: card.heading,
+        imageUrl: mediaUrl(card.image),
+        link: resolveLink(card.link) ?? undefined,
+      }
+    : undefined
+  if (!columns.length && !featured) return undefined
+  return {
+    description: item.description || undefined,
+    descriptionLinks: resolveLinks(item.descriptionLinks),
+    columns,
+    featured,
+  }
+}
+
 export const headerFromPayload = (doc: any): NormalizedHeader => ({
   navItems: (doc?.menuLinks ?? [])
     .map((item: any) => {
       const top = resolveLink(item?.link)
       if (!top) return null
-      const dropdown = (item?.dropdown ?? [])
-        .map((d: any) => resolveLink(d?.link))
-        .filter(Boolean) as NavLink[]
-      return {
-        ...top,
-        dropdown: dropdown.length ? dropdown : undefined,
-      }
+      const mega = megaFromPayload(item)
+      return mega ? { ...top, mega } : top
     })
     .filter(Boolean) as NavItem[],
+  buttons: (doc?.ctaButtons ?? [])
+    .slice(0, 2)
+    .map((row: any) => {
+      const link = resolveLink(row?.link)
+      return link ? { ...link, appearance: row.link.appearance === 'outline' ? 'outline' : 'default' } : null
+    })
+    .filter(Boolean) as NavButton[],
 })
 
 export const footerFromPayload = (doc: any): NormalizedFooter => {

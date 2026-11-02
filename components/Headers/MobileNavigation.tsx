@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Mobile.module.css';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import type { NavItem } from './Header';
+import { HeaderButtons, itemHrefs, linkTargetProps, type NavButton, type NavItem } from './Header';
 import CartIcon from '@/components/Shop/CartIcon';
 import AccountIcon from '@/components/Shop/AccountIcon';
 import { ACCOUNTS_ENABLED } from '@/lib/features';
@@ -49,11 +49,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ header, active, children 
 export const MobileNavbar = ({
     logo,
     navItems,
+    buttons = [],
     isAuthed = false,
     shopEnabled = false,
 }: {
     logo?: string
     navItems?: NavItem[]
+    buttons?: NavButton[]
     isAuthed?: boolean
     shopEnabled?: boolean
 } = {}) => {
@@ -106,31 +108,39 @@ export const MobileNavbar = ({
                             isOpen && (
                                 <Accordion transition transitionTimeout={250}>
                                     {items.map((item) => {
-                                        if (item.dropdown?.length) {
-                                            // The parent's own page, unless one of its sub-links already goes there.
-                                            const links = item.dropdown.some((d) => d.href === item.href)
-                                                ? item.dropdown
-                                                : [item, ...item.dropdown]
+                                        if (item.mega) {
+                                            // The section's own page first, unless a column already links to it.
+                                            const hrefs = itemHrefs(item)
+                                            const hasOwn = hrefs.slice(1).includes(item.href)
+                                            const groups = [
+                                                ...(hasOwn ? [] : [{ heading: undefined, links: [{ ...item, label: 'Overview' }] }]),
+                                                ...item.mega.columns,
+                                            ]
                                             return (
                                                 <AccordionItem
                                                     key={item.label}
                                                     header={item.label}
-                                                    active={links.some((d) => d.href === pathname)}
+                                                    active={hrefs.includes(pathname)}
                                                 >
-                                                    <ul className={styles.mobile__dropdown}>
-                                                        {links.map((d) => (
-                                                            <li key={d.label}>
-                                                                <Link
-                                                                    className={pathname === d.href ? styles.active : undefined}
-                                                                    href={d.href}
-                                                                    onClick={() => setIsOpen(false)}
-                                                                    {...(d.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                                                                >
-                                                                    {d.label}
-                                                                </Link>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
+                                                    {groups.map((group, i) => (
+                                                        <div key={group.heading ?? i} className={styles.group}>
+                                                            {group.heading ? <p className={styles.groupHeading}>{group.heading}</p> : null}
+                                                            <ul className={styles.mobile__dropdown}>
+                                                                {group.links.map((d) => (
+                                                                    <li key={d.href + d.label}>
+                                                                        <Link
+                                                                            className={pathname === d.href ? styles.active : undefined}
+                                                                            href={d.href}
+                                                                            onClick={() => setIsOpen(false)}
+                                                                            {...linkTargetProps(d.newTab)}
+                                                                        >
+                                                                            {d.label}
+                                                                        </Link>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    ))}
                                                 </AccordionItem>
                                             )
                                         }
@@ -140,7 +150,7 @@ export const MobileNavbar = ({
                                                 className={pathname === item.href ? `${styles.navItemLink} ${styles.active} w-full` : `${styles.navItemLink} w-full`}
                                                 href={item.href}
                                                 onClick={() => setIsOpen(false)}
-                                                {...(item.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                                                {...linkTargetProps(item.newTab)}
                                             >
                                                 <p>{item.label}</p>
                                             </Link>
@@ -155,6 +165,7 @@ export const MobileNavbar = ({
                                             <p>{isAuthed ? 'My account' : 'Sign in'}</p>
                                         </Link>
                                     ) : null}
+                                    <HeaderButtons buttons={buttons} className={styles.mobileButtons} onClick={() => setIsOpen(false)} />
                                 </Accordion>
                             )
                         }

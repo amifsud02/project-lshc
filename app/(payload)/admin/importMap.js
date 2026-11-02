@@ -41,6 +41,9 @@ import { ItemsCell as ItemsCell_1b028d7023921476b5ac5828f19c13bd } from '@/compo
 import { OrderItemRowLabel as OrderItemRowLabel_bbea6f8da28c2ece34410ffd0c1cee8a } from '@/components/admin/orders/OrderItemRowLabel'
 import { MoneyCell as MoneyCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { LinkRowLabel as LinkRowLabel_9ffdab26313b8179aed2163664ce7339 } from '@/components/admin/MenuRowLabels'
+import { MenuColumnRowLabel as MenuColumnRowLabel_9ffdab26313b8179aed2163664ce7339 } from '@/components/admin/MenuRowLabels'
+import { MenuLinkRowLabel as MenuLinkRowLabel_9ffdab26313b8179aed2163664ce7339 } from '@/components/admin/MenuRowLabels'
 import { EmailsNavLink as EmailsNavLink_f9f850d82e9249fbca14efb2040e4bb5 } from '@/components/admin/emails/EmailsNavLink'
 import { GoogleSignInButton as GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6 } from '@/components/admin/GoogleSignInButton'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
@@ -92,6 +95,9 @@ export const importMap = {
   "@/components/admin/orders/OrderItemRowLabel#OrderItemRowLabel": OrderItemRowLabel_bbea6f8da28c2ece34410ffd0c1cee8a,
   "@/components/admin/orders/cells#MoneyCell": MoneyCell_1b028d7023921476b5ac5828f19c13bd,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
+  "@/components/admin/MenuRowLabels#LinkRowLabel": LinkRowLabel_9ffdab26313b8179aed2163664ce7339,
+  "@/components/admin/MenuRowLabels#MenuColumnRowLabel": MenuColumnRowLabel_9ffdab26313b8179aed2163664ce7339,
+  "@/components/admin/MenuRowLabels#MenuLinkRowLabel": MenuLinkRowLabel_9ffdab26313b8179aed2163664ce7339,
   "@/components/admin/emails/EmailsNavLink#EmailsNavLink": EmailsNavLink_f9f850d82e9249fbca14efb2040e4bb5,
   "@/components/admin/GoogleSignInButton#GoogleSignInButton": GoogleSignInButton_59fb4b1dac690503b3fdaa0fb454d5b6,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
