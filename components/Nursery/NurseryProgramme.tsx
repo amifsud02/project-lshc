@@ -5,6 +5,7 @@ import { getNurseryLetter, formatFee, formatLongDate, isRegistrationOpen } from 
 import { dayLabel, formatTimeRange, sortSessions } from '@/lib/nursery/schedule'
 import { academyJsonLd } from '@/lib/seo/structuredData'
 import type { NurseryCategory, Venue } from '@/payload-types'
+import NurseryNotice from './NurseryNotice'
 import PrintButton from './PrintButton'
 import '@/components/Shop/shop.css'
 import './nursery.css'
@@ -39,12 +40,28 @@ export default async function NurseryProgramme({ academyName, pagePath }: Props)
 
   if (!letter) {
     return (
-      <section className="parent shop nursery-programme">
-        <div className="nursery">
-          <p className="nursery__lede">
-            Next season&apos;s academy programme has not been published yet. Please check back
-            shortly.
-          </p>
+      <section className="parent nursery-programme">
+        <div className="nursery nursery--empty">
+          <NurseryNotice
+            tag="Next season"
+            title="The new programme is on its way"
+            actions={
+              <>
+                <Link href="/contact" className="btn btn--light">
+                  Contact the club
+                </Link>
+                <Link href="/play-handball" className="btn btn--ghost">
+                  Play handball in Malta
+                </Link>
+              </>
+            }
+          >
+            <p>
+              Training groups, times, venues and fees for next season will be published here soon,
+              and online registration opens at the same time. Questions in the meantime? Get in
+              touch and we&apos;ll help.
+            </p>
+          </NurseryNotice>
         </div>
       </section>
     )

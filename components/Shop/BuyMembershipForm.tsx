@@ -108,7 +108,7 @@ export default function BuyMembershipForm({ product, memberFields = [], serviceF
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={busy} className="h-12 w-full cursor-pointer rounded-lg text-base font-medium">
+      <Button type="submit" size="lg" disabled={busy} className="h-12 w-full cursor-pointer rounded-none text-base font-medium">
         {busy ? (
           'Starting secure payment…'
         ) : (

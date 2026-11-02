@@ -48,7 +48,7 @@ export default async function MembershipBenefitsPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               {shopIsPublic && (
-                <Link href="/memberships" className={cn(buttonVariants({ size: 'lg' }), 'rounded-lg')}>
+                <Link href="/memberships" className={cn(buttonVariants({ size: 'lg' }), 'rounded-none')}>
                   Become a member
                   <ArrowRight />
                 </Link>
@@ -56,7 +56,7 @@ export default async function MembershipBenefitsPage() {
               {ACCOUNTS_ENABLED && (
                 <Link
                   href="/account/membership/benefits"
-                  className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'rounded-lg')}
+                  className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'rounded-none')}
                 >
                   Members: see your codes
                 </Link>

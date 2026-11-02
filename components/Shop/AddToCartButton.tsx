@@ -138,7 +138,7 @@ export default function AddToCartButton({ product }: Props) {
         size="lg"
         onClick={onClick}
         disabled={busy || soldOut}
-        className="h-12 w-full cursor-pointer rounded-lg text-base font-medium"
+        className="h-12 w-full cursor-pointer rounded-none text-base font-medium"
       >
         {soldOut ? (
           'Sold out'

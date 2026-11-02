@@ -2,6 +2,7 @@
    holds only the letter layout, the schedule cards and the registration summary. */
 
 .nursery {
+  width: 100%;
   max-width: var(--measure-prose);
   margin: 0 auto;
   padding: 0 0 72px;
@@ -277,18 +278,66 @@
 
 .reg--closed { padding-top: 8px; }
 
-.reg__closed {
-  margin: 0 0 20px;
-  padding: 18px 20px;
-  border-radius: var(--radius-lg);
-  background: var(--color-paper);
-  border: 1px solid var(--color-rule-soft);
-  font-size: var(--text-md);
-  line-height: var(--leading-body);
-  color: var(--color-text);
+/* No programme yet / registration closed ----------------------------------- */
+
+.nursery--empty { padding-bottom: 24px; }
+
+.nursery-notice {
+  padding: 40px 44px 44px;
+  background: var(--gradient-brand, var(--color-club));
+  color: #fff;
 }
 
-.reg__closed-links { margin: 0; }
+.nursery-notice__tag {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.nursery-notice__title {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 36px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.nursery-notice__body {
+  max-width: 56ch;
+  margin-top: 16px;
+  font-size: var(--text-md);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.nursery-notice__body p { margin: 0; }
+
+.nursery-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.nursery-notice .btn--ghost {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+.nursery-notice .btn--ghost:hover:not(:disabled) {
+  border-color: #fff;
+  background: #fff;
+  color: var(--color-club);
+}
+
+@media (max-width: 600px) {
+  .nursery-notice { padding: 28px 22px 30px; }
+  .nursery-notice__actions .btn { flex: 1 1 100%; }
+}
 
 .reg-step {
   padding: 32px 0;

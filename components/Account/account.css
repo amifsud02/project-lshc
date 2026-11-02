@@ -264,7 +264,7 @@
   padding: 0 14px;
   font-size: 11.5px;
   letter-spacing: 0.06em;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 /* Stack rows into cards on small screens. */
