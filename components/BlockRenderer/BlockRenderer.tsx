@@ -21,6 +21,9 @@ import Standings from '@/components/Standings/Standings'
 import { fixtureFromPayload, standingFromPayload } from '@/lib/utils/normalize/sports'
 import { Partners } from '../Partners/Partners'
 import NurseryProgramme from '@/components/Nursery/NurseryProgramme'
+import LinkCards from '@/components/Blocks/LinkCards'
+import ContactSection from '@/components/Contact/ContactSection'
+import MemberBenefits from '@/components/Memberships/MemberBenefits'
 import Faq from '@/components/Faq/Faq'
 import Stats from '@/components/Blocks/Stats'
 import Steps from '@/components/Blocks/Steps'
@@ -493,6 +496,9 @@ const REGISTRY: Record<string, ComponentType<any>> = {
   mediaText: MediaText,
   nextMatch: NextMatch,
   latestVideos: LatestVideos,
+  linkCards: LinkCards,
+  contactForm: ContactSection,
+  memberBenefits: MemberBenefits,
   adSlot: AdSlotAdapter,
   advertisement: AdvertisementAdapter,
 }

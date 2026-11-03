@@ -12,7 +12,8 @@ export const fetchPage = async ({ slug: slugSegments = ['home'] }: PageParams): 
     const { isEnabled: draft } = await draftMode();
 
     const payload = await getPayload({ config })
-    const slug = slugSegments.at(-1);
+    // The whole path is the slug, so /club/history is the page with slug "club/history".
+    const slug = slugSegments.join('/');
 
     const slugConstraint: Where = slug ? {
         slug: {

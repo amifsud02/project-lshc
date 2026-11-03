@@ -83,7 +83,7 @@ export const SEED_PAGES: SeedPage[] = [
   },
   {
     title: 'Our History',
-    slug: 'history',
+    slug: 'club/history',
     seoTitle: 'History of La Salle Handball | La Salle Handball',
     seoDescription:
       'Malta’s handball legends: EHF Cup contenders, national league champions, and more. Explore our rich history!',

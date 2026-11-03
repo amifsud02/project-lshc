@@ -11,6 +11,7 @@ import {
 import { sortSessions } from '@/lib/nursery/schedule'
 import { buildFormConfig } from '@/lib/nursery/form'
 import NurseryNotice from '@/components/Nursery/NurseryNotice'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 import RegistrationForm, { type FormSeason } from './RegistrationForm'
 import { submitNurseryRegistration } from './actions'
 import '@/components/Shop/shop.css'
@@ -36,24 +37,9 @@ export default async function NurseryRegisterPage() {
         <section className="parent">
           <div className="reg reg--closed">
             <NurseryNotice
-              tag="Handball Academy"
-              title="Registration is closed"
-              actions={
-                <>
-                  <Link href="/academy" className="btn btn--light">
-                    About the academy
-                  </Link>
-                  <Link href="/contact" className="btn btn--ghost">
-                    Contact the club
-                  </Link>
-                </>
-              }
-            >
-              <p>
-                {config?.closedMessage ??
-                  'Online registration is closed at the moment. It opens again when the next season’s programme is published.'}
-              </p>
-            </NurseryNotice>
+              notice={(await getGeneralGlobal()).academy.registrationClosed}
+              text={config?.closedMessage}
+            />
           </div>
         </section>
       </>

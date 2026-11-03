@@ -23,14 +23,10 @@ const STATIC_ROUTES: ContentEntry[] = [
   '/news/gallery',
   '/tv',
   '/fixtures',
-  '/contact',
-  '/club/history',
-  '/club/sponsors',
   '/teams/men-first-team/all',
   '/teams/women-first-team/all',
   '/teams/u21-mens-team/all',
   '/teams/u21-womens-team/all',
-  '/teams/youth-teams',
 ].map((path) => ({ path }))
 
 const priorityFor = (path: string): number => {
@@ -61,7 +57,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const entry of [
     ...STATIC_ROUTES,
     ...(shopIsPublic ? [{ path: '/shop' }, { path: '/memberships' }] : []),
-    { path: '/membership/benefits' },
     ...groups.flat(),
   ]) {
     byPath.set(entry.path, { ...byPath.get(entry.path), ...entry })

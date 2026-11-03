@@ -4,6 +4,7 @@ import JsonLd from '@/components/Seo/JsonLd'
 import { getNurseryLetter, formatFee, formatLongDate, isRegistrationOpen } from '@/lib/nursery/data'
 import { dayLabel, formatTimeRange, sortSessions } from '@/lib/nursery/schedule'
 import { academyJsonLd } from '@/lib/seo/structuredData'
+import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 import type { NurseryCategory, Venue } from '@/payload-types'
 import NurseryNotice from './NurseryNotice'
 import PrintButton from './PrintButton'
@@ -42,26 +43,7 @@ export default async function NurseryProgramme({ academyName, pagePath }: Props)
     return (
       <section className="parent nursery-programme">
         <div className="nursery nursery--empty">
-          <NurseryNotice
-            tag="Next season"
-            title="The new programme is on its way"
-            actions={
-              <>
-                <Link href="/contact" className="btn btn--light">
-                  Contact the club
-                </Link>
-                <Link href="/play-handball" className="btn btn--ghost">
-                  Play handball in Malta
-                </Link>
-              </>
-            }
-          >
-            <p>
-              Training groups, times, venues and fees for next season will be published here soon,
-              and online registration opens at the same time. Questions in the meantime? Get in
-              touch and we&apos;ll help.
-            </p>
-          </NurseryNotice>
+          <NurseryNotice notice={(await getGeneralGlobal()).academy.noProgramme} />
         </div>
       </section>
     )

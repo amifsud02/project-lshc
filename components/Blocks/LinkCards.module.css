@@ -1,11 +1,19 @@
-.youth {
-  padding-block: 48px 72px;
+.section {
+  padding-block: 0 48px;
   display: flex;
   flex-direction: column;
   gap: 28px;
 }
 
+.heading {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
 .lead {
+  margin: 0;
   max-width: var(--measure-prose);
   font-size: var(--text-md);
   line-height: 1.7;
@@ -32,7 +40,7 @@
   transform: translateY(-2px);
 }
 
-.card h2 {
+.card h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 800;

@@ -1,22 +1,45 @@
-import type { ReactNode } from 'react'
+import Link from 'next/link'
+import type { AcademyNotice } from '@/lib/nursery/notices'
 
 type Props = {
-  /** Small label above the title, e.g. "Handball Academy". */
-  tag?: string
-  title: string
-  children: ReactNode
-  /** Buttons under the copy. */
-  actions?: ReactNode
+  notice: AcademyNotice
+  /** Replaces the notice's own text, e.g. a season's "registration closed" message. */
+  text?: string | null
 }
 
-/** A club-navy panel for the academy's in-between states: no programme yet, registration closed. */
-export default function NurseryNotice({ tag, title, children, actions }: Props) {
+const isExternal = (url: string) => /^https?:\/\//.test(url)
+
+/**
+ * A club-navy panel for the academy's in-between states (no programme yet, registration closed).
+ * Its wording and buttons are edited in Site Settings → Academy.
+ */
+export default function NurseryNotice({ notice, text }: Props) {
+  const body = text || notice.text
   return (
     <div className="nursery-notice">
-      {tag ? <p className="nursery-notice__tag">{tag}</p> : null}
-      <h2 className="nursery-notice__title">{title}</h2>
-      <div className="nursery-notice__body">{children}</div>
-      {actions ? <div className="nursery-notice__actions">{actions}</div> : null}
+      {notice.tag ? <p className="nursery-notice__tag">{notice.tag}</p> : null}
+      <h2 className="nursery-notice__title">{notice.title}</h2>
+      {body ? (
+        <div className="nursery-notice__body">
+          <p>{body}</p>
+        </div>
+      ) : null}
+      {notice.buttons.length ? (
+        <div className="nursery-notice__actions">
+          {notice.buttons.map((button) => {
+            const className = `btn ${button.style === 'outline' ? 'btn--ghost' : 'btn--light'}`
+            return isExternal(button.url) ? (
+              <a key={button.url} href={button.url} className={className} target="_blank" rel="noopener">
+                {button.label}
+              </a>
+            ) : (
+              <Link key={button.url} href={button.url} className={className}>
+                {button.label}
+              </Link>
+            )
+          })}
+        </div>
+      ) : null}
     </div>
   )
 }

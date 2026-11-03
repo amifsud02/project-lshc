@@ -298,6 +298,9 @@ export interface Page {
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
+  /**
+   * The page address. Use "/" for a page under a section, e.g. club/history.
+   */
   slug: string;
   layout?:
     | (
@@ -323,6 +326,9 @@ export interface Page {
         | CtaBannerBlock
         | NextMatchBlock
         | LatestVideosBlock
+        | LinkCardsBlock
+        | ContactFormBlock
+        | MemberBenefitsBlock
         | AdSlotBlock
       )[]
     | null;
@@ -746,7 +752,7 @@ export interface Advertisement {
  */
 export interface NurseryProgrammeBlock {
   /**
-   * Used in search results and AI answers. The registration button, schedule, venues and fees come from the active Nursery Season.
+   * Used in search results and AI answers. The registration button, schedule, venues and fees come from the active Nursery Season; the message shown while there is none is in Site Settings → Academy.
    */
   academyName?: string | null;
   id?: string | null;
@@ -899,6 +905,64 @@ export interface LatestVideosBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'latestVideos';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkCardsBlock".
+ */
+export interface LinkCardsBlock {
+  /**
+   * Optional heading above the cards.
+   */
+  heading?: string | null;
+  /**
+   * Optional paragraph above the cards.
+   */
+  intro?: string | null;
+  cards?:
+    | {
+        /**
+         * Small label above the title, e.g. "Ages 5–16".
+         */
+        eyebrow?: string | null;
+        title: string;
+        text?: string | null;
+        /**
+         * e.g. /academy or https://…
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'linkCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFormBlock".
+ */
+export interface ContactFormBlock {
+  heading?: string | null;
+  intro?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactForm';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MemberBenefitsBlock".
+ */
+export interface MemberBenefitsBlock {
+  /**
+   * Leave empty for "Discounts at N partner businesses". The partners themselves come from MEMBRS.
+   */
+  heading?: string | null;
+  intro?: string | null;
+  emptyText?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'memberBenefits';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3164,6 +3228,9 @@ export interface PagesSelect<T extends boolean = true> {
         ctaBanner?: T | CtaBannerBlockSelect<T>;
         nextMatch?: T | NextMatchBlockSelect<T>;
         latestVideos?: T | LatestVideosBlockSelect<T>;
+        linkCards?: T | LinkCardsBlockSelect<T>;
+        contactForm?: T | ContactFormBlockSelect<T>;
+        memberBenefits?: T | MemberBenefitsBlockSelect<T>;
         adSlot?: T | AdSlotBlockSelect<T>;
       };
   seoTitle?: T;
@@ -3518,6 +3585,46 @@ export interface NextMatchBlockSelect<T extends boolean = true> {
 export interface LatestVideosBlockSelect<T extends boolean = true> {
   heading?: T;
   limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkCardsBlock_select".
+ */
+export interface LinkCardsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  cards?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        text?: T;
+        url?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactFormBlock_select".
+ */
+export interface ContactFormBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MemberBenefitsBlock_select".
+ */
+export interface MemberBenefitsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  intro?: T;
+  emptyText?: T;
   id?: T;
   blockName?: T;
 }
@@ -4727,6 +4834,46 @@ export interface General {
      * e.g. /privacy
      */
     privacyUrl?: string | null;
+  };
+  academy?: {
+    /**
+     * Shown by the "Academy Programme" block (on /academy) while there is no active Nursery Season.
+     */
+    noProgramme?: {
+      tag?: string | null;
+      title?: string | null;
+      text?: string | null;
+      buttons?:
+        | {
+            label: string;
+            /**
+             * e.g. /contact
+             */
+            url: string;
+            style?: ('light' | 'outline') | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Shown on /academy/register while registration is closed. A season's own "closed" message replaces the text.
+     */
+    registrationClosed?: {
+      tag?: string | null;
+      title?: string | null;
+      text?: string | null;
+      buttons?:
+        | {
+            label: string;
+            /**
+             * e.g. /contact
+             */
+            url: string;
+            style?: ('light' | 'outline') | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -6451,6 +6598,40 @@ export interface GeneralSelect<T extends boolean = true> {
         vatRate?: T;
         termsUrl?: T;
         privacyUrl?: T;
+      };
+  academy?:
+    | T
+    | {
+        noProgramme?:
+          | T
+          | {
+              tag?: T;
+              title?: T;
+              text?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    id?: T;
+                  };
+            };
+        registrationClosed?:
+          | T
+          | {
+              tag?: T;
+              title?: T;
+              text?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    id?: T;
+                  };
+            };
       };
   updatedAt?: T;
   createdAt?: T;

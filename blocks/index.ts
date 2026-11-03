@@ -23,6 +23,9 @@ import { CtaBannerBlock } from './CtaBanner'
 import { NextMatchBlock } from './NextMatch'
 import { LatestVideosBlock } from './LatestVideos'
 import { MediaTextBlock } from './MediaText'
+import { LinkCardsBlock } from './LinkCards'
+import { ContactFormBlock } from './ContactForm'
+import { MemberBenefitsBlock } from './MemberBenefits'
 
 export const PageLayoutBlocks: Block[] = [
   HeroBlock,
@@ -47,6 +50,9 @@ export const PageLayoutBlocks: Block[] = [
   CtaBannerBlock,
   NextMatchBlock,
   LatestVideosBlock,
+  LinkCardsBlock,
+  ContactFormBlock,
+  MemberBenefitsBlock,
   AdSlotBlock,
 ]
 
@@ -74,4 +80,7 @@ export {
   NextMatchBlock,
   LatestVideosBlock,
   MediaTextBlock,
+  LinkCardsBlock,
+  ContactFormBlock,
+  MemberBenefitsBlock,
 }

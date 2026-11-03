@@ -1,6 +1,49 @@
 import { GlobalConfig } from "payload";
 import { revalidateGlobal } from "./hooks/revalidateGlobal";
 import { adminOnly } from '@/lib/auth/roles'
+import { ACADEMY_NOTICE_DEFAULTS, type AcademyNotice } from '@/lib/nursery/notices'
+
+/** One of the academy's in-between messages: a label, a title, a line of copy and up to two buttons. */
+const academyNotice = (name: keyof typeof ACADEMY_NOTICE_DEFAULTS, label: string, description: string) => {
+    const d: AcademyNotice = ACADEMY_NOTICE_DEFAULTS[name]
+    return {
+        name,
+        label,
+        type: 'group' as const,
+        admin: { description },
+        fields: [
+            { name: 'tag', label: 'Small label', type: 'text' as const, defaultValue: d.tag },
+            { name: 'title', type: 'text' as const, defaultValue: d.title },
+            { name: 'text', type: 'textarea' as const, defaultValue: d.text },
+            {
+                name: 'buttons',
+                type: 'array' as const,
+                maxRows: 2,
+                labels: { singular: 'Button', plural: 'Buttons' },
+                defaultValue: d.buttons,
+                fields: [
+                    {
+                        type: 'row' as const,
+                        fields: [
+                            { name: 'label', type: 'text' as const, required: true, admin: { width: '35%' } },
+                            { name: 'url', label: 'Link', type: 'text' as const, required: true, admin: { width: '40%', description: 'e.g. /contact' } },
+                            {
+                                name: 'style',
+                                type: 'select' as const,
+                                defaultValue: 'light',
+                                admin: { width: '25%' },
+                                options: [
+                                    { label: 'Filled', value: 'light' },
+                                    { label: 'Outline', value: 'outline' },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    }
+}
 
 export const General: GlobalConfig = {
     slug: 'general',
@@ -175,7 +218,23 @@ export const General: GlobalConfig = {
                             ],
                         },
                     ]
-                }
+                },
+                {
+                    label: 'Academy',
+                    name: 'academy',
+                    fields: [
+                        academyNotice(
+                            'noProgramme',
+                            'When no programme is published',
+                            'Shown by the "Academy Programme" block (on /academy) while there is no active Nursery Season.',
+                        ),
+                        academyNotice(
+                            'registrationClosed',
+                            'When registration is closed',
+                            'Shown on /academy/register while registration is closed. A season\'s own "closed" message replaces the text.',
+                        ),
+                    ],
+                },
             ]
         }
     ],

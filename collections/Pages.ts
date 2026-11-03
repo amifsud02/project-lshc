@@ -10,6 +10,24 @@ import {
 import { canEditCollection, collectionWriteAccess, publishedOrStaff } from '@/lib/auth/roles'
 import { seedPages } from '@/lib/seed/pages'
 
+/** Like Payload's slugify, but keeps "/" so a page can sit under a section, e.g. club/history. */
+const slugifyPath = ({ valueToSlugify }: { valueToSlugify?: unknown }) =>
+  typeof valueToSlugify === 'string'
+    ? valueToSlugify
+        .split('/')
+        .map((part) =>
+          part
+            .normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, ''),
+        )
+        .filter(Boolean)
+        .join('/') || undefined
+    : undefined
+
 const previewUrl = (slug?: string) =>
   `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/api/preview?path=${encodeURIComponent(
     `/${slug === 'home' ? '' : (slug ?? '')}`,
@@ -72,6 +90,14 @@ export const Pages: CollectionConfig = {
       required: true,
       position: 'sidebar',
       useAsSlug: 'title',
+      slugify: slugifyPath,
+      overrides: (field) => {
+        const slug = field.fields.find((f) => f.type === 'text' && f.name === 'slug')
+        if (slug?.type === 'text') {
+          slug.admin = { ...slug.admin, description: 'The page address. Use "/" for a page under a section, e.g. club/history.' }
+        }
+        return field
+      },
     }),
     {
       type: 'tabs',

@@ -14,7 +14,7 @@ export const NurseryProgrammeBlock: Block = {
       defaultValue: 'La Salle Handball Academy',
       admin: {
         description:
-          'Used in search results and AI answers. The registration button, schedule, venues and fees come from the active Nursery Season.',
+          'Used in search results and AI answers. The registration button, schedule, venues and fees come from the active Nursery Season; the message shown while there is none is in Site Settings → Academy.',
       },
     },
   ],

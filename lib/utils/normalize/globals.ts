@@ -1,5 +1,7 @@
 import { paths } from '@/lib/seo/site'
 import { shopSettingsFromPayload, type ShopSettings } from '@/lib/shop/settings'
+import { academyNoticeFromPayload, type AcademyNotice } from '@/lib/nursery/notices'
+
 export type NavLink = {
   label: string
   href: string
@@ -37,6 +39,7 @@ export type NormalizedGeneral = {
   postsPerPage: number
   shopVisibility: 'admins' | 'public'
   shop: ShopSettings
+  academy: { noProgramme: AcademyNotice; registrationClosed: AcademyNotice }
 }
 
 export type NormalizedFooter = {
@@ -108,6 +111,10 @@ export const generalFromPayload = (doc: any): NormalizedGeneral => {
     // Anything other than an explicit 'public' keeps the shop hidden.
     shopVisibility: doc?.shop?.visibility === 'public' ? 'public' : 'admins',
     shop: shopSettingsFromPayload(doc?.shop),
+    academy: {
+      noProgramme: academyNoticeFromPayload(doc?.academy?.noProgramme, 'noProgramme'),
+      registrationClosed: academyNoticeFromPayload(doc?.academy?.registrationClosed, 'registrationClosed'),
+    },
   }
 }
 
