@@ -9,7 +9,7 @@ const hasMegaMenu = (_: unknown, siblingData: { enableMegaMenu?: boolean }) => B
 
 /**
  * The main menu. Modelled on Payload's own site menu: each top item can open a full-width panel
- * with an intro, columns of grouped links and one featured item. The panel's look follows inter.it.
+ * with an intro and columns of grouped links.
  */
 export const Header: GlobalConfig = {
   slug: 'header',
@@ -78,21 +78,6 @@ export const Header: GlobalConfig = {
                 },
               ],
             },
-            {
-              // An array of at most one, so an empty card isn't validated (its link is required).
-              name: 'featured',
-              type: 'array',
-              label: 'Featured card',
-              labels: { singular: 'Featured card', plural: 'Featured card' },
-              maxRows: 1,
-              admin: { description: 'Optional item on the right of the panel: a small label, a heading, an image and a link.' },
-              fields: [
-                { name: 'tag', type: 'text', admin: { description: 'Small label above the heading, e.g. "Academy".' } },
-                { name: 'heading', type: 'text', required: true },
-                { name: 'image', type: 'upload', relationTo: 'media' },
-                link({ appearances: false }),
-              ],
-            },
           ],
         },
       ],
@@ -104,7 +89,7 @@ export const Header: GlobalConfig = {
       labels: { singular: 'Button', plural: 'Buttons' },
       maxRows: 2,
       admin: {
-        description: 'Up to two buttons at the right of the menu, next to the cart, e.g. "Become a member". On smaller laptops only the first one shows.',
+        description: 'Up to two buttons at the right of the menu, next to the cart, e.g. "Become a member". Only the first shows in the bar; the mobile menu lists both.',
         components: { RowLabel: `${LABELS}#LinkRowLabel` },
       },
       fields: [link({ appearances: ['default', 'outline'] })],

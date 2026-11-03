@@ -8,7 +8,7 @@
     transition: background-color var(--duration-base) ease;
 }
 
-/* With a panel open the bar turns club navy and joins the panel, as on inter.it. */
+/* With a panel open the bar turns club navy and joins the panel. */
 .mainNavBG.solid {
     background: var(--color-club);
     box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.12);

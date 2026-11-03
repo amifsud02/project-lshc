@@ -12,7 +12,6 @@ export type MegaMenu = {
   description?: string
   descriptionLinks: NavLink[]
   columns: { heading?: string; links: NavLink[] }[]
-  featured?: { tag?: string; heading: string; imageUrl?: string; link?: NavLink }
 }
 
 export type NavItem = NavLink & {
@@ -126,21 +125,11 @@ const megaFromPayload = (item: any): MegaMenu | undefined => {
   const columns = (item.columns ?? [])
     .map((col: any) => ({ heading: col?.heading || undefined, links: resolveLinks(col?.links) }))
     .filter((col: { links: NavLink[] }) => col.links.length > 0)
-  const card = item.featured?.[0]
-  const featured = card?.heading
-    ? {
-        tag: card.tag || undefined,
-        heading: card.heading,
-        imageUrl: mediaUrl(card.image),
-        link: resolveLink(card.link) ?? undefined,
-      }
-    : undefined
-  if (!columns.length && !featured) return undefined
+  if (!columns.length) return undefined
   return {
     description: item.description || undefined,
     descriptionLinks: resolveLinks(item.descriptionLinks),
     columns,
-    featured,
   }
 }
 

@@ -12,7 +12,7 @@ const isExternal = (link: NavLink) => link.newTab || /^https?:\/\//.test(link.hr
 
 /**
  * The full-width panel under the menu: a short intro and links on the left, then grouped
- * link columns and a featured card (payloadcms.com).
+ * link columns (payloadcms.com).
  */
 export default function MegaPanel({
     mega,
@@ -23,7 +23,6 @@ export default function MegaPanel({
     pathname: string
     focusFirst?: boolean
 }) {
-    const { featured } = mega
     return (
         <div
             id="mega-panel"
@@ -69,38 +68,7 @@ export default function MegaPanel({
                     ))}
                 </div>
 
-                {featured ? (
-                    <FeaturedCard featured={featured} />
-                ) : null}
             </div>
         </div>
-    )
-}
-
-function FeaturedCard({ featured }: { featured: NonNullable<MegaMenu['featured']> }) {
-    const body = (
-        <>
-            {featured.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- CMS media of any size; the card is small
-                <img src={featured.imageUrl} alt="" className={styles.cardImage} loading="lazy" />
-            ) : null}
-            <span className={styles.cardBody}>
-                {featured.tag ? <span className={styles.cardTag}>{featured.tag}</span> : null}
-                <span className={styles.cardHeading}>{featured.heading}</span>
-                {featured.link ? (
-                    <span className={styles.cardCta}>
-                        {featured.link.label}
-                        {isExternal(featured.link) ? <ArrowUpRight size={16} aria-hidden /> : <ArrowRight size={16} aria-hidden />}
-                    </span>
-                ) : null}
-            </span>
-        </>
-    )
-    return featured.link ? (
-        <Link href={featured.link.href} className={styles.card} {...targetProps(featured.link.newTab)}>
-            {body}
-        </Link>
-    ) : (
-        <div className={styles.card}>{body}</div>
     )
 }
