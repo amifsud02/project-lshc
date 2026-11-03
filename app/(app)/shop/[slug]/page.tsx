@@ -32,6 +32,7 @@ import { breadcrumbJsonLd, productJsonLd } from '@/lib/seo/structuredData'
 import { siteOpenGraph } from '@/lib/utils/metadata'
 import { getStoreRules } from '@/lib/shop/storeRules'
 import { matchZone } from '@/lib/shop/pricing'
+import { priceLabel } from '@/lib/shop/variants'
 
 export const revalidate = 60
 
@@ -159,7 +160,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                     {product.title}
                   </h2>
                   <div className="flex items-baseline gap-3">
-                    <span className="text-3xl font-semibold">{formatPrice(product.price)}</span>
+                    <span className="text-3xl font-semibold">{priceLabel(product.variants, product.price, formatPrice)}</span>
                     <span className="text-sm text-muted-foreground">
                       {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} platform fee${taxNote}` : `All in${taxNote}`}
                     </span>

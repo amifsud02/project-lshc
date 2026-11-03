@@ -3,7 +3,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { nanoid } from 'nanoid'
-import { itemTotal, type CartItem, type CartUnit, type CustomFieldDef, type ProductType } from './types'
+import { itemTotal, priceKey, type CartItem, type CartUnit, type CustomFieldDef, type ProductType } from './types'
 
 type AddInput = {
   productId: string
@@ -13,6 +13,8 @@ type AddInput = {
   imageUrl?: string
   unitPrice: number
   quantity: number
+  variantId?: string
+  variantTitle?: string
   /** Answers picked on the product page (e.g. a size), given to every unit of that product. */
   values?: Record<string, string>
   unitTemplates: Array<{
@@ -33,7 +35,7 @@ type CartState = {
   removeItem: (lineId: string) => void
   updateQuantity: (lineId: string, quantity: number) => void
   setFieldValue: (lineId: string, unitIdx: number, fieldName: string, value: string) => void
-  /** Applies today's prices; drops lines no longer for sale. Returns what changed. */
+  /** Applies today's prices (keyed by `priceKey`); drops lines no longer for sale. Returns what changed. */
   syncPrices: (current: Record<string, { price: number; available: boolean; imageUrl?: string }>) => PriceChange[]
   clear: () => void
   itemCount: () => number
@@ -77,6 +79,7 @@ export const useCart = create<CartState>()(
               imageUrl: input.imageUrl,
               unitPrice: input.unitPrice,
               quantity: input.quantity,
+              ...(input.variantId ? { variantId: input.variantId, variantTitle: input.variantTitle } : {}),
               units: buildUnits(input.unitTemplates, input.quantity, input.productId, input.values),
             },
           ],
@@ -111,14 +114,14 @@ export const useCart = create<CartState>()(
       syncPrices: (current) => {
         const changes: PriceChange[] = []
         const items = get().items.flatMap((item) => {
-          const now = current[item.productId]
+          const now = current[priceKey(item)]
           if (!now?.available) {
-            changes.push({ title: item.productTitle, from: item.unitPrice, to: null })
+            changes.push({ title: lineTitle(item), from: item.unitPrice, to: null })
             return []
           }
           const withImage = now.imageUrl && now.imageUrl !== item.imageUrl ? { ...item, imageUrl: now.imageUrl } : item
           if (now.price === item.unitPrice) return [withImage]
-          changes.push({ title: item.productTitle, from: item.unitPrice, to: now.price })
+          changes.push({ title: lineTitle(item), from: item.unitPrice, to: now.price })
           return [{ ...withImage, unitPrice: now.price }]
         })
         set({ items })
@@ -134,6 +137,8 @@ export const useCart = create<CartState>()(
     },
   ),
 )
+
+const lineTitle = (item: CartItem) => (item.variantTitle ? `${item.productTitle} (${item.variantTitle})` : item.productTitle)
 
 function uniqueTemplatesFromUnits(
   units: CartUnit[],

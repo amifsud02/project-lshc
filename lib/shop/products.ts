@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { CustomFieldDef, ProductType } from './types'
 import { buildUnitTemplates, normalizeCustomFields, type UnitTemplate } from './units'
+import { normalizeVariants, type ProductVariant, type VariantOption } from './variants'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import { getGeneralGlobal } from '@/lib/utils/payload/globals'
 import type { SeoMeta } from '@/lib/seo/meta'
@@ -18,8 +19,11 @@ export type ShopProduct = {
   imageUrl?: string
   /** More photos after the main image. */
   gallery: string[]
-  /** Left in stock for the whole product; undefined when not tracked. */
+  /** Left in stock for the whole product; undefined when not tracked (or tracked per variant). */
   stock?: number
+  /** Options (e.g. Size, Colour) and the active variants sold; empty for products without variants. */
+  variantOptions: VariantOption[]
+  variants: ProductVariant[]
   /** Set while the product takes pre-orders. */
   preorder?: { dispatchDate?: string }
   description?: unknown
@@ -72,6 +76,7 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
   const ownFields = normalizeCustomFields(doc.customFields)
   const membersCovered = Math.max(1, Number(doc.membership?.membersCovered) || 1)
   const unitTemplates = buildUnitTemplates(doc)
+  const { options: variantOptions, variants } = type === 'single' ? normalizeVariants(doc, mediaUrl) : { options: [], variants: [] }
 
   return {
     id: String(doc.id),
@@ -83,7 +88,10 @@ async function mapProduct(doc: any): Promise<ShopProduct> {
     // Falls back to the Fallback Image in Site Settings.
     imageUrl: mediaUrl(doc.image) ?? (await getGeneralGlobal()).fallbackImageUrl,
     gallery: (Array.isArray(doc.gallery) ? doc.gallery : []).map(mediaUrl).filter((url: string | undefined): url is string => Boolean(url)),
-    ...(typeof doc.stock === 'number' ? { stock: Math.max(0, doc.stock) } : {}),
+    // With variants, stock is counted per variant.
+    ...(typeof doc.stock === 'number' && !variantOptions.length ? { stock: Math.max(0, doc.stock) } : {}),
+    variantOptions,
+    variants,
     ...(doc.preorder?.enabled ? { preorder: { dispatchDate: doc.preorder.dispatchDate ?? undefined } } : {}),
     description: doc.description,
     customFields: ownFields,

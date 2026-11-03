@@ -284,7 +284,8 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
               {items.map((item) => (
                 <li key={item.lineId} className="flex justify-between gap-4 text-sm">
                   <span className="text-muted-foreground">
-                    {item.productTitle} × {item.quantity}
+                    {item.productTitle}
+                    {item.variantTitle ? ` (${item.variantTitle})` : ''} × {item.quantity}
                   </span>
                   <span className="font-medium tabular-nums">{formatPrice(itemTotal(item))}</span>
                 </li>

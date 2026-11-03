@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getCurrentPrices } from '@/app/(app)/cart/actions'
 import { useCart, type PriceChange } from './cart'
+import { priceKey } from './types'
 
 /**
  * Re-reads the cart's prices from the server once the saved cart has loaded, so the total the
@@ -14,7 +15,7 @@ export function usePriceSync(ready: boolean): PriceChange[] {
   const synced = useRef(false)
   useEffect(() => {
     if (!ready || synced.current) return
-    const ids = useCart.getState().items.map((item) => item.productId)
+    const ids = useCart.getState().items.map(priceKey)
     if (ids.length === 0) return
     synced.current = true
     getCurrentPrices(ids)

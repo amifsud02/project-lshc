@@ -44,7 +44,13 @@ export type CartItem = {
   unitPrice: number
   quantity: number
   units: CartUnit[]
+  /** Set when the product has variants: which one, e.g. "M / Black". */
+  variantId?: string
+  variantTitle?: string
 }
+
+/** Cart lines of the same product but different variants are priced separately. */
+export const priceKey = (item: Pick<CartItem, 'productId' | 'variantId'>) => (item.variantId ? `${item.productId}:${item.variantId}` : item.productId)
 
 /**
  * Asked once for every person a membership covers, ahead of the product's own

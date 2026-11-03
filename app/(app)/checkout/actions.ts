@@ -7,6 +7,7 @@ import { getStripe } from '@/lib/stripe/server'
 import { getProductById } from '@/lib/shop/products'
 import { formatPrice, hasBundleItems, isValidPhone, unitExtras, type CartItem, type CustomFieldDef } from '@/lib/shop/types'
 import { StockDemand } from '@/lib/shop/stock'
+import type { ProductVariant } from '@/lib/shop/variants'
 import { canViewShop } from '@/lib/shop/access'
 import { validateUnit } from '@/lib/shop/validation'
 import { quote, type CouponTerms } from '@/lib/shop/pricing'
@@ -88,6 +89,9 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
     quantity: number
     unitPrice: number
     customFieldValues: Record<string, string>
+    variantId?: string
+    variantTitle?: string
+    sku?: string
   }> = []
 
   const stripeLineItems: Array<{
@@ -101,7 +105,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
 
   let subtotal = 0
   const demand = new StockDemand()
-  const stockOf = new Map<string, { stock?: number; preorder?: unknown; customFields: CustomFieldDef[] }>()
+  const stockOf = new Map<string, { stock?: number; preorder?: unknown; customFields: CustomFieldDef[]; variants?: ProductVariant[] }>()
   // Paid extras such as a printed name, charged as their own Stripe lines: "Club Hoodie · Name on back".
   const extras = new Map<string, { amount: number; count: number }>()
   const addExtras = (title: string, fields: CustomFieldDef[], values: Record<string, string>) => {
@@ -120,7 +124,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
       return { ok: false, error: `"${item.productTitle}" is no longer available.` }
     }
 
-    stockOf.set(product.id, { stock: product.stock, preorder: product.preorder, customFields: product.customFields })
+    stockOf.set(product.id, { stock: product.stock, preorder: product.preorder, customFields: product.customFields, variants: product.variants })
 
     if (product.type === 'membership') {
       // Memberships are bought on their own product page and paid through MEMBRS.
@@ -175,28 +179,36 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
         quantity: item.quantity,
       })
     } else {
+      // Products with variants are bought as one of them, at its price; the cart says which.
+      const variant = product.variants.length ? product.variants.find((v) => v.id === item.variantId) : undefined
+      if (product.variants.length && !variant) {
+        return { ok: false, error: `"${product.title}"${item.variantTitle ? ` in ${item.variantTitle}` : ''} is no longer available. Please remove it and choose again.` }
+      }
+      const price = variant?.price ?? product.price
+      const lineName = variant ? `${product.title} — ${variant.title}` : product.title
       for (const unit of item.units) {
         const validationError = validateUnit({ customFields: product.customFields, values: unit.values })
         if (validationError) return { ok: false, error: `${product.title}: ${validationError}` }
         const extra = unitExtras({ customFields: product.customFields, values: unit.values ?? {} })
-        addExtras(product.title, product.customFields, unit.values ?? {})
+        addExtras(lineName, product.customFields, unit.values ?? {})
         subtotal += extra
-        demand.add(product.id, product.title, unit.values ?? {}, product.customFields)
+        demand.add(product.id, product.title, unit.values ?? {}, product.customFields, variant?.id)
         orderItems.push({
           productTitle: product.title,
           product: product.id,
           quantity: 1,
-          unitPrice: product.price + extra,
+          unitPrice: price + extra,
           customFieldValues: unit.values ?? {},
+          ...(variant ? { variantId: variant.id, variantTitle: variant.title, sku: variant.sku } : {}),
         })
       }
-      const totalForLine = product.price * item.quantity
+      const totalForLine = price * item.quantity
       subtotal += totalForLine
       stripeLineItems.push({
         price_data: {
           currency: 'eur',
-          product_data: { name: product.title },
-          unit_amount: product.price,
+          product_data: { name: lineName },
+          unit_amount: price,
         },
         quantity: item.quantity,
       })

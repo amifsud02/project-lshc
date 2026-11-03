@@ -141,7 +141,8 @@ export default function CartView({ rules }: { rules: StoreRules }) {
               {items.map((item) => (
                 <li key={item.lineId} className="flex justify-between gap-4 text-sm">
                   <span className="text-muted-foreground">
-                    {item.productTitle} × {item.quantity}
+                    {item.productTitle}
+                    {item.variantTitle ? ` (${item.variantTitle})` : ''} × {item.quantity}
                   </span>
                   <span className="font-medium tabular-nums">
                     {formatPrice(itemTotal(item))}
@@ -246,6 +247,7 @@ function CartLine({
               <Link href={href} className="text-base font-semibold hover:underline">
                 {item.productTitle}
               </Link>
+              {item.variantTitle && <p className="text-sm font-medium text-foreground">{item.variantTitle}</p>}
               <p className="text-sm text-muted-foreground tabular-nums">
                 {formatPrice(item.unitPrice)} each · {kind}
                 {item.units.some((u) => unitExtras(u) > 0)

@@ -3,6 +3,7 @@ import type { CustomFieldDef } from './types'
 /** An order line as saved (see the Orders collection). */
 export type OrderLine = {
   productTitle?: string | null
+  variantTitle?: string | null
   product?: unknown
   bundleParentLineId?: string | null
   membershipSeason?: string | null
@@ -93,7 +94,7 @@ export function summarizeOrder(items: OrderLine[], questions: ProductQuestions =
   const toLine = (line: OrderLine): SummaryLine => {
     const quantity = line.quantity ?? 1
     return {
-      title: line.productTitle ?? '',
+      title: line.variantTitle ? `${line.productTitle ?? ''} — ${line.variantTitle}` : (line.productTitle ?? ''),
       answers: answersFor(valuesOf(line.customFieldValues), fieldsFor(line)),
       quantity,
       lineTotal: (line.unitPrice ?? 0) * quantity,

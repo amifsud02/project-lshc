@@ -54,7 +54,11 @@ export const Orders: CollectionConfig = {
 
         if (became('paid')) {
           await createMembershipsForOrder(doc, req)
-          await decrementStockForOrder(req.payload, doc, req)
+          const oversold = await decrementStockForOrder(req.payload, doc, req)
+          if (oversold.length) {
+            req.payload.logger.warn({ msg: `[orders] ${doc?.orderNumber} oversold: ${oversold.join('; ')}` })
+            await req.payload.update({ collection: 'orders', id: doc.id, data: { stockWarning: oversold.join('\n') } as any, req, overrideAccess: true })
+          }
           await send('confirmation')
           await send('staff')
         }
@@ -111,6 +115,17 @@ export const Orders: CollectionConfig = {
       },
     },
     { name: 'paidAt', type: 'date', admin: { position: 'sidebar', readOnly: true } },
+    {
+      name: 'stockWarning',
+      label: 'Oversold',
+      type: 'textarea',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => Boolean(data?.stockWarning),
+        description: 'There was less in stock than this order took when it was paid. Restock or contact the buyer.',
+      },
+    },
     {
       name: 'refundedTotal',
       label: 'Refunded',
@@ -212,6 +227,14 @@ export const Orders: CollectionConfig = {
           },
           fields: [
             { name: 'productTitle', type: 'text', required: true },
+            {
+              type: 'row',
+              fields: [
+                { name: 'variantTitle', label: 'Variant', type: 'text', admin: { width: '33%', description: 'e.g. M / Black' } },
+                { name: 'sku', label: 'SKU', type: 'text', admin: { width: '33%' } },
+                { name: 'variantId', type: 'text', admin: { width: '33%', readOnly: true } },
+              ],
+            },
             { name: 'product', type: 'relationship', relationTo: 'products' },
             {
               name: 'bundleParentLineId',

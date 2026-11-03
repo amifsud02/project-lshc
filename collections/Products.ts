@@ -2,6 +2,7 @@ import { slugField, type CollectionConfig } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
 import { isChoice } from '@/lib/shop/units'
 import { checkMembrsPlan } from './hooks/checkMembrsPlan'
+import { productVariants } from './hooks/productVariants'
 
 export const Products: CollectionConfig = {
   slug: 'products',
@@ -17,7 +18,7 @@ export const Products: CollectionConfig = {
     update: collectionWriteAccess('products'),
   },
   hooks: {
-    beforeChange: [checkMembrsPlan],
+    beforeChange: [productVariants, checkMembrsPlan],
   },
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -51,8 +52,8 @@ export const Products: CollectionConfig = {
       min: 0,
       admin: {
         position: 'sidebar',
-        condition: (_, siblingData) => siblingData?.type !== 'membership',
-        description: "How many are left. Leave empty if you don't track stock, or track it per size in the questions below.",
+        condition: (_, siblingData) => siblingData?.type !== 'membership' && !(siblingData?.variants?.length > 0),
+        description: "How many are left. Leave empty if you don't track stock, or track it per variant or per size below.",
       },
     },
     {
@@ -198,6 +199,117 @@ export const Products: CollectionConfig = {
                   min: 0,
                   admin: { width: '33%', description: "Left in stock. Empty if you don't track it." },
                 },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
+      label: 'Variants',
+      admin: {
+        initCollapsed: true,
+        condition: (_, siblingData) => siblingData?.type === 'single',
+        description:
+          'Sell the product in several versions, e.g. sizes and colours, each with its own SKU, price, stock and photo. Buyers pick one on the product page.',
+      },
+      fields: [
+        {
+          name: 'variantOptions',
+          label: 'Options',
+          type: 'array',
+          maxRows: 3,
+          labels: { singular: 'Option', plural: 'Options' },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'name', type: 'text', required: true, admin: { width: '30%', placeholder: 'e.g. Size' } },
+                {
+                  name: 'values',
+                  type: 'text',
+                  hasMany: true,
+                  required: true,
+                  admin: { width: '70%', description: 'Type a value and press Enter, e.g. S, M, L. Shown to buyers in this order.' },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'generateVariants',
+          label: 'Create any missing variants when saving',
+          type: 'checkbox',
+          admin: { description: 'Adds a row for every combination of the options above that is not listed yet.' },
+        },
+        {
+          name: 'variants',
+          type: 'array',
+          labels: { singular: 'Variant', plural: 'Variants' },
+          admin: {
+            components: { RowLabel: '@/components/admin/VariantRowLabel#VariantRowLabel' },
+            description: 'One row per version sold. Untick Active to stop selling one without losing its stock count.',
+          },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'option1',
+                  label: 'Option 1',
+                  type: 'text',
+                  admin: {
+                    width: '33%',
+                    condition: (data) => (data?.variantOptions?.length ?? 0) >= 1,
+                    description: "Value of the product's option 1, e.g. M",
+                  },
+                },
+                {
+                  name: 'option2',
+                  label: 'Option 2',
+                  type: 'text',
+                  admin: {
+                    width: '33%',
+                    condition: (data) => (data?.variantOptions?.length ?? 0) >= 2,
+                    description: "Value of the product's option 2, e.g. M",
+                  },
+                },
+                {
+                  name: 'option3',
+                  label: 'Option 3',
+                  type: 'text',
+                  admin: {
+                    width: '33%',
+                    condition: (data) => (data?.variantOptions?.length ?? 0) >= 3,
+                    description: "Value of the product's option 3, e.g. M",
+                  },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'sku', label: 'SKU', type: 'text', admin: { width: '33%' } },
+                {
+                  name: 'price',
+                  type: 'number',
+                  min: 0,
+                  admin: { width: '33%', description: 'Cents. Leave empty to use the product price.' },
+                },
+                {
+                  name: 'stock',
+                  type: 'number',
+                  min: 0,
+                  admin: { width: '33%', description: "Left in stock. Empty if you don't track it." },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'image', type: 'upload', relationTo: 'media', admin: { width: '66%', description: 'Shown when this variant is picked.' } },
+                { name: 'active', type: 'checkbox', defaultValue: true, admin: { width: '33%' } },
               ],
             },
           ],

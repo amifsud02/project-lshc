@@ -33,6 +33,7 @@ import { SeedPages as SeedPages_cd3154deb36673600052bac05f1ed156 } from '@/compo
 import { LineupRowLabel as LineupRowLabel_56d562825069ba798bf2defdb9848a17 } from '@/components/admin/LineupRowLabel'
 import { MhaFixturesSync as MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d } from '@/components/admin/MhaFixturesSync'
 import { MatchSummariesAction as MatchSummariesAction_af7fb5cb323b2bd56f9c15aa5d4eb1aa } from '@/components/admin/MatchSummariesAction'
+import { VariantRowLabel as VariantRowLabel_f2e0186a1e5214d5a008355b5b71717b } from '@/components/admin/VariantRowLabel'
 import { StatusCell as StatusCell_1b028d7023921476b5ac5828f19c13bd } from '@/components/admin/orders/cells'
 import { RefundPanel as RefundPanel_f2bffdb2ef428c476df4d9ce4ae49437 } from '@/components/admin/orders/RefundPanel'
 import { OrderSummary as OrderSummary_69683ddc191d04d12c6cfe0164b7f013 } from '@/components/admin/orders/OrderSummary'
@@ -90,6 +91,7 @@ export const importMap = {
   "@/components/admin/LineupRowLabel#LineupRowLabel": LineupRowLabel_56d562825069ba798bf2defdb9848a17,
   "@/components/admin/MhaFixturesSync#MhaFixturesSync": MhaFixturesSync_4e98e0108b15c07a51f3fe347708462d,
   "@/components/admin/MatchSummariesAction#MatchSummariesAction": MatchSummariesAction_af7fb5cb323b2bd56f9c15aa5d4eb1aa,
+  "@/components/admin/VariantRowLabel#VariantRowLabel": VariantRowLabel_f2e0186a1e5214d5a008355b5b71717b,
   "@/components/admin/orders/cells#StatusCell": StatusCell_1b028d7023921476b5ac5828f19c13bd,
   "@/components/admin/orders/RefundPanel#RefundPanel": RefundPanel_f2bffdb2ef428c476df4d9ce4ae49437,
   "@/components/admin/orders/OrderSummary#OrderSummary": OrderSummary_69683ddc191d04d12c6cfe0164b7f013,

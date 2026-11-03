@@ -1372,7 +1372,7 @@ export interface Product {
   type: 'single' | 'bundle' | 'membership';
   active?: boolean | null;
   /**
-   * How many are left. Leave empty if you don't track stock, or track it per size in the questions below.
+   * How many are left. Leave empty if you don't track stock, or track it per variant or per size below.
    */
   stock?: number | null;
   preorder?: {
@@ -1461,6 +1461,54 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  variantOptions?:
+    | {
+        name: string;
+        /**
+         * Type a value and press Enter, e.g. S, M, L. Shown to buyers in this order.
+         */
+        values: string[];
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Adds a row for every combination of the options above that is not listed yet.
+   */
+  generateVariants?: boolean | null;
+  /**
+   * One row per version sold. Untick Active to stop selling one without losing its stock count.
+   */
+  variants?:
+    | {
+        /**
+         * Value of the product's option 1, e.g. M
+         */
+        option1?: string | null;
+        /**
+         * Value of the product's option 2, e.g. M
+         */
+        option2?: string | null;
+        /**
+         * Value of the product's option 3, e.g. M
+         */
+        option3?: string | null;
+        sku?: string | null;
+        /**
+         * Cents. Leave empty to use the product price.
+         */
+        price?: number | null;
+        /**
+         * Left in stock. Empty if you don't track it.
+         */
+        stock?: number | null;
+        /**
+         * Shown when this variant is picked.
+         */
+        image?: (string | null) | Media;
+        active?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Products that make up this bundle, or that come with this membership. On a membership a row can instead be a choice, e.g. a T-shirt or a hoodie: each member picks one when buying.
    */
@@ -1511,6 +1559,10 @@ export interface Order {
   paymentProvider?: ('club' | 'membrs') | null;
   paidAt?: string | null;
   /**
+   * There was less in stock than this order took when it was paid. Restock or contact the buyer.
+   */
+  stockWarning?: string | null;
+  /**
    * Cents, as confirmed by Stripe
    */
   refundedTotal?: number | null;
@@ -1543,6 +1595,12 @@ export interface Order {
   };
   items: {
     productTitle: string;
+    /**
+     * e.g. M / Black
+     */
+    variantTitle?: string | null;
+    sku?: string | null;
+    variantId?: string | null;
     product?: (string | null) | Product;
     /**
      * Set when this line was expanded from a bundle cart line.
@@ -3966,6 +4024,27 @@ export interface ProductsSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  variantOptions?:
+    | T
+    | {
+        name?: T;
+        values?: T;
+        id?: T;
+      };
+  generateVariants?: T;
+  variants?:
+    | T
+    | {
+        option1?: T;
+        option2?: T;
+        option3?: T;
+        sku?: T;
+        price?: T;
+        stock?: T;
+        image?: T;
+        active?: T;
+        id?: T;
+      };
   bundleItems?:
     | T
     | {
@@ -3995,6 +4074,7 @@ export interface OrdersSelect<T extends boolean = true> {
   status?: T;
   paymentProvider?: T;
   paidAt?: T;
+  stockWarning?: T;
   refundedTotal?: T;
   customerName?: T;
   customerEmail?: T;
@@ -4022,6 +4102,9 @@ export interface OrdersSelect<T extends boolean = true> {
     | T
     | {
         productTitle?: T;
+        variantTitle?: T;
+        sku?: T;
+        variantId?: T;
         product?: T;
         bundleParentLineId?: T;
         membershipSeason?: T;

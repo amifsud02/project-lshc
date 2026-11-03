@@ -25,6 +25,7 @@ export const OrderItemRowLabel = () => {
   const answers = Object.values(rest)
     .filter((v) => v != null && String(v).trim() !== '')
     .join(', ')
-  const title = data?.productTitle || `Item ${String((rowNumber ?? 0) + 1).padStart(2, '0')}`
+  const title =
+    [data?.productTitle, data?.variantTitle].filter(Boolean).join(' — ') || `Item ${String((rowNumber ?? 0) + 1).padStart(2, '0')}`
   return <span>{[title, member || answers].filter(Boolean).join(' · ')}</span>
 }

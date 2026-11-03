@@ -53,7 +53,11 @@ const toLshcProduct = async (p: WizardProductInput, req: PayloadRequest) => ({
   type: 'single',
   price: p.salePrice ?? p.regularPrice,
   active: p.status === 'published',
-  ...(p.manageStock && p.stockQuantity != null ? { stock: p.stockQuantity } : {}),
+  ...(p.manageStock && p.stockQuantity != null && p.type !== 'variable' ? { stock: p.stockQuantity } : {}),
+  // A variable product's attributes become real variants, one per combination (stock left to set per variant).
+  ...(p.type === 'variable' && p.attributes?.length
+    ? { variantOptions: p.attributes.slice(0, 3).map((a) => ({ name: a.name, values: a.values })), generateVariants: true }
+    : {}),
   ...(p.shortDescription ? { description: paragraph(p.shortDescription) } : {}),
 })
 
