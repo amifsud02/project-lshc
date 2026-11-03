@@ -47,7 +47,7 @@ export async function sendMagicLinkEmail({
 
   const html = `
     <div style="background:#f5f5f5;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:#000d24;">
-      <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e6e8ee;">
+      <div style="max-width:520px;margin:0 auto;background:#ffffff;overflow:hidden;border:1px solid #e6e8ee;">
         <div style="background:linear-gradient(95deg,#01296f 10%,#000d24 90%);padding:22px 28px;color:#ffffff;font-weight:800;font-size:15px;letter-spacing:0.14em;text-transform:uppercase;">
           La Salle Handball
         </div>
@@ -57,7 +57,7 @@ export async function sendMagicLinkEmail({
             Tap the button below to sign in. No password needed. The link works once and expires in ${minutes} minutes.
           </p>
           <p style="margin:0 0 26px;">
-            <a href="${safeUrl}" style="display:inline-block;background:#01296f;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:10px;">
+            <a href="${safeUrl}" style="display:inline-block;background:#01296f;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 24px;">
               Sign in to La Salle Handball
             </a>
           </p>

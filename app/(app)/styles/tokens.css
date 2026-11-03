@@ -73,14 +73,6 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* ---- Radius ---- */
-  --radius-sm: 7px;
-  --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 14px;
-  --radius-2xl: 18px;
-  --radius-pill: 999px;
-
   /* ---- Elevation ---- */
   --shadow-card: 0 18px 48px -34px rgba(0, 13, 36, 0.35);
   --shadow-pop: 0 18px 36px -20px rgba(0, 13, 36, 0.3);

@@ -15,7 +15,7 @@ type Props = {
 export default function ProductCard({ product }: Props) {
   return (
     <Link href={`/shop/${product.slug}`} className="group flex flex-col gap-3">
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
@@ -30,7 +30,7 @@ export default function ProductCard({ product }: Props) {
           </div>
         )}
         {product.type !== 'single' && (
-          <Badge className="absolute left-4 top-4 rounded-full bg-background/90 px-2.5 py-0.5 text-xs text-primary">
+          <Badge className="absolute left-4 top-4 bg-background/90 px-2.5 py-0.5 text-xs text-primary">
             {product.type === 'membership' ? 'Membership' : 'Bundle'}
           </Badge>
         )}

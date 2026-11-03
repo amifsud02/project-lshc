@@ -6,7 +6,7 @@ import { formatPrice } from '@/lib/shop/types'
 export default function PriceChanges({ changes }: { changes: PriceChange[] }) {
   if (changes.length === 0) return null
   return (
-    <div role="status" className="flex gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+    <div role="status" className="flex gap-3 border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
       <Info className="mt-0.5 size-4 shrink-0" />
       <ul className="flex flex-col gap-1">
         {changes.map((c) => (

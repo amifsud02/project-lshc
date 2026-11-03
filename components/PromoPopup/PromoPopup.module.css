@@ -5,7 +5,6 @@
   margin: auto;
   padding: 0;
   border: 0;
-  border-radius: var(--radius-2xl);
   background: var(--color-paper);
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -67,7 +66,6 @@
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -94,7 +92,6 @@
 .badge {
   align-self: flex-start;
   padding: 6px 10px;
-  border-radius: var(--radius-pill);
   background: var(--color-accent-soft);
   color: var(--color-club);
   font-size: var(--text-xs);
@@ -146,7 +143,6 @@
   gap: var(--space-4);
   padding: 14px 16px;
   border: 1px solid var(--color-rule-soft);
-  border-radius: var(--radius-lg);
   background: var(--color-paper-soft);
 }
 
@@ -193,7 +189,6 @@
   min-height: var(--control-height);
   padding: 0 18px;
   border: 1px solid var(--color-input-border);
-  border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text);
   font-family: inherit;
@@ -226,7 +221,6 @@
     width: 100%;
     max-height: 92dvh;
     margin: auto 0 0;
-    border-radius: 22px 22px 0 0;
   }
 
   .dialog[open] {

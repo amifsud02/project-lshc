@@ -19,7 +19,7 @@ export function UnitForm({
 }) {
   if (unit.customFields.length === 0) return null
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-muted/60 p-4">
+    <div className="flex flex-col gap-3 bg-muted/60 p-4">
       <p className="text-sm font-semibold">
         {unit.productTitle}
         {total > 1 ? ` · #${index + 1}` : ''}
@@ -57,7 +57,7 @@ export function ChoiceForm({
 }) {
   const picked = choices.find((c) => c.productId === productId)
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-muted/60 p-4">
+    <div className="flex flex-col gap-3 bg-muted/60 p-4">
       <p className="text-sm font-semibold">
         {title}
         <span className="text-destructive"> *</span>
@@ -71,7 +71,7 @@ export function ChoiceForm({
         {choices.map((choice) => (
           <Label
             key={choice.productId}
-            className="cursor-pointer gap-3 rounded-lg border border-input bg-background p-3 has-[[data-checked]]:border-primary has-[[data-checked]]:ring-1 has-[[data-checked]]:ring-primary"
+            className="cursor-pointer gap-3 border border-input bg-background p-3 has-[[data-checked]]:border-primary has-[[data-checked]]:ring-1 has-[[data-checked]]:ring-primary"
           >
             <RadioGroupItem value={choice.productId} />
             {choice.productTitle}
@@ -111,7 +111,7 @@ export function FieldInput({
       </span>
       {field.kind === 'select' ? (
         <select
-          className="h-8 w-full rounded-lg border border-input bg-background px-2.5 py-0 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="h-8 w-full border border-input bg-background px-2.5 py-0 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >

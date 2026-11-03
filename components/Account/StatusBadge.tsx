@@ -11,7 +11,7 @@ const tones = {
 
 export default function StatusBadge({ status, label }: { status: string; label: string }) {
   return (
-    <Badge className={cn('gap-1.5 rounded-full border-none px-2.5 py-0.5', tones[statusTone(status)])}>
+    <Badge className={cn('gap-1.5 border-none px-2.5 py-0.5', tones[statusTone(status)])}>
       <span className="size-1.5 rounded-full bg-current" />
       {label}
     </Badge>

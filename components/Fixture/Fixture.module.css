@@ -95,7 +95,6 @@
 .matchScore span {
   color: white;
   background: var(--accent-color);
-  border-radius: 5px;
   padding: 7.5px 10px;
 }
 

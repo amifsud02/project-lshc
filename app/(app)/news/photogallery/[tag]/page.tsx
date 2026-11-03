@@ -87,7 +87,6 @@ export default async function GalleryTagPage({
 function chipStyle(active: boolean): React.CSSProperties {
     return {
         padding: "8px 12px",
-        borderRadius: 999,
         border: "1px solid rgba(0,0,0,0.15)",
         background: active ? "rgba(0,0,0,0.06)" : "transparent",
         fontWeight: 600,

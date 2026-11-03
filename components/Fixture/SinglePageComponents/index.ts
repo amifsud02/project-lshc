@@ -187,7 +187,6 @@ export const TimeScore = styled.div`
     font-size: 22px;
     font-family: var(--font-manrope), sans-serif !important;
     padding: 10px 16px;
-    border-radius: 6px;
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.25);
 
@@ -201,7 +200,6 @@ export const TimeScoreV2 = styled.div`
     text-align: center;
     font-weight: 700;
     padding: 7.5px 10px;
-    border-radius: 6px;
     color: white;
     background: rgba(1, 41, 111, 0.8)
 `;

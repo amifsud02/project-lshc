@@ -10,7 +10,7 @@ export default function ProductGallery({ images, title }: { images: string[]; ti
   const main = images[current]
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
         {main ? (
           <Image src={main} alt={title} fill priority sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" />
         ) : (
@@ -29,7 +29,7 @@ export default function ProductGallery({ images, title }: { images: string[]; ti
               aria-pressed={i === current}
               onClick={() => setCurrent(i)}
               className={cn(
-                'relative size-20 cursor-pointer overflow-hidden rounded-lg border-2 bg-muted transition-colors',
+                'relative size-20 cursor-pointer overflow-hidden border-2 bg-muted transition-colors',
                 i === current ? 'border-primary' : 'border-transparent hover:border-primary/40',
               )}
             >

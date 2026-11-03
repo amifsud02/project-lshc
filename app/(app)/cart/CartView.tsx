@@ -181,7 +181,7 @@ export default function CartView({ rules }: { rules: StoreRules }) {
             {error && (
               <p
                 role="alert"
-                className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="bg-destructive/10 px-3 py-2 text-sm text-destructive"
               >
                 {error}
               </p>
@@ -229,7 +229,7 @@ function CartLine({
       <CardContent className="flex gap-4">
         <Link
           href={href}
-          className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted"
+          className="relative size-20 shrink-0 overflow-hidden bg-muted"
           aria-label={item.productTitle}
         >
           {item.imageUrl ? (

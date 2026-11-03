@@ -147,7 +147,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
           ) : (
             <Card>
               <CardContent className="flex flex-col items-start gap-3">
-                <Badge variant="secondary" className="rounded-full px-3 py-0.5">
+                <Badge variant="secondary" className="px-3 py-0.5">
                   Processing
                 </Badge>
                 <p className="text-lg font-semibold">We&apos;re confirming your payment…</p>

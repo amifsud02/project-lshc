@@ -44,7 +44,6 @@
   overflow: hidden;
   border: 0;
   padding: 0;
-  border-radius: 4px;
   background: var(--gallery-tile, #1b2742);
   cursor: pointer;
 }

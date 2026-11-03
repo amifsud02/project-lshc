@@ -50,12 +50,12 @@ export default function PartnerList({
                       src={partner.logo_url}
                       alt=""
                       loading="lazy"
-                      className="size-12 shrink-0 rounded-xl border bg-white object-contain p-1"
+                      className="size-12 shrink-0 border bg-white object-contain p-1"
                     />
                   ) : (
                     <span
                       aria-hidden
-                      className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary"
+                      className="flex size-12 shrink-0 items-center justify-center bg-primary/10 text-sm font-bold text-primary"
                     >
                       {initials(partner.name)}
                     </span>
@@ -70,7 +70,7 @@ export default function PartnerList({
                     )}
                   </div>
                   {best && (
-                    <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
+                    <span className="shrink-0 bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
                       {valueLabel(best)}
                     </span>
                   )}

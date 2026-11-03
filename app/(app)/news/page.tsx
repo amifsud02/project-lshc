@@ -88,7 +88,6 @@ export default async function NewsPage({
 function chipStyle(active: boolean): React.CSSProperties {
     return {
         padding: "8px 12px",
-        borderRadius: 999,
         border: "1px solid rgba(0,0,0,0.15)",
         background: active ? "rgba(0,0,0,0.06)" : "transparent",
         fontWeight: 600,
@@ -100,7 +99,6 @@ function chipStyle(active: boolean): React.CSSProperties {
 function tagChipStyle(active: boolean): React.CSSProperties {
     return {
         padding: "6px 10px",
-        borderRadius: 999,
         border: "1px solid rgba(0,0,0,0.1)",
         background: active ? "rgba(0,0,0,0.05)" : "transparent",
         fontWeight: 500,

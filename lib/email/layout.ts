@@ -39,13 +39,13 @@ export const paragraph = (text: string) => `<p style="margin:0 0 14px;font-size:
 
 /** A tinted box for the one thing the reader needs to do or know next. */
 export const callout = (title: string, body: string) =>
-  `<div style="background:#eef1f7;border-radius:8px;padding:14px 16px;margin:18px 0;">
+  `<div style="background:#eef1f7;padding:14px 16px;margin:18px 0;">
   <div style="font-size:14px;font-weight:700;color:${NAVY};margin-bottom:4px;">${escapeHtml(title)}</div>
   <div style="font-size:14px;line-height:1.5;color:${INK};">${escapeHtml(body)}</div>
 </div>`
 
 export const button = (label: string, href: string) =>
-  `<a href="${escapeHtml(href)}" style="display:inline-block;background:${NAVY};color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:11px 18px;border-radius:8px;margin:6px 0 4px;">${escapeHtml(label)}</a>`
+  `<a href="${escapeHtml(href)}" style="display:inline-block;background:${NAVY};color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:11px 18px;margin:6px 0 4px;">${escapeHtml(label)}</a>`
 
 export const keyValues = (pairs: [string, string][]) =>
   `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 14px;">${pairs
@@ -72,7 +72,7 @@ export const renderLayout = ({ preheader, heading, body, footer, siteUrl, clubNa
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preheader)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f6;padding:24px 12px;">
 <tr><td align="center">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:10px;overflow:hidden;border:1px solid ${LINE};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;overflow:hidden;border:1px solid ${LINE};">
     <tr><td style="background:${NAVY};padding:16px 24px;">
       <table role="presentation" cellpadding="0" cellspacing="0"><tr>
         <td style="padding-right:12px;"><img src="${escapeHtml(siteUrl)}/lshc.png" width="40" height="40" alt="" style="display:block;border-radius:50%;background:#ffffff;"></td>

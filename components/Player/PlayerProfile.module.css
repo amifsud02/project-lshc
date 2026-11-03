@@ -28,7 +28,6 @@
   width: 100%;
   max-width: 140px;
   aspect-ratio: 4 / 5;
-  border-radius: 12px;
   overflow: hidden;
   background: var(--gradient-brand);
 }
@@ -65,7 +64,6 @@
   padding: 12px 14px;
   background: var(--color-paper);
   border: 1px solid var(--color-rule-soft);
-  border-radius: 8px;
 }
 
 .fact dt {
@@ -108,7 +106,6 @@
   padding: 16px;
   background: var(--color-paper);
   border: 1px solid var(--color-rule-soft);
-  border-radius: 8px;
   text-align: center;
 }
 
@@ -129,7 +126,6 @@
   overflow-x: auto;
   background: var(--color-paper);
   border: 1px solid var(--color-rule-soft);
-  border-radius: 8px;
 }
 
 .table {

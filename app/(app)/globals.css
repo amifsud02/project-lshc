@@ -80,7 +80,6 @@ main {
 @layer base {
   select {
     cursor: pointer;
-    border-radius: 5px;
     padding: 10px;
   }
 }
@@ -499,7 +498,6 @@ body::-webkit-scrollbar {
   color: var(--accent-color);
   height: 40px;
   width: 40px;
-  border-radius: 5px;
 
   line-height: 1;
 
@@ -612,7 +610,7 @@ body::-webkit-scrollbar {
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.75rem;
+  --radius: 0rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);

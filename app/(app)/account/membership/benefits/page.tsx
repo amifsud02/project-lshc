@@ -38,7 +38,7 @@ export default async function AccountMembershipBenefitsPage() {
           </p>
           <ul className="mb-8 flex flex-col gap-2">
             {memberships.map((m) => (
-              <li key={m.id} className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3">
+              <li key={m.id} className="flex items-center gap-3 border bg-card px-4 py-3">
                 <BadgeCheck className="size-5 shrink-0 text-primary" />
                 <span className="flex flex-col">
                   <span className="text-sm font-semibold">{titleOf(m.product) || `Membership ${m.season}`}</span>

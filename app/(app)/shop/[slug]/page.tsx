@@ -147,9 +147,9 @@ export default async function ProductPage({ params }: { params: Params }) {
             </div>
 
             <div className="lg:col-span-5">
-              <div className="sticky top-8 flex flex-col gap-6 rounded-2xl border bg-card p-6 md:p-8">
+              <div className="sticky top-8 flex flex-col gap-6 border bg-card p-6 md:p-8">
                 <div className="flex flex-col gap-3">
-                  <Badge variant="secondary" className="w-fit rounded-full px-3 py-0.5">
+                  <Badge variant="secondary" className="w-fit px-3 py-0.5">
                     {product.type === 'membership'
                       ? `Membership ${product.membership?.season ?? ''}`.trim()
                       : product.type === 'bundle'
@@ -174,7 +174,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 ) : null}
 
                 {product.type !== 'single' && included.length > 0 && (
-                  <div className="flex flex-col gap-3 rounded-xl bg-muted/60 p-4">
+                  <div className="flex flex-col gap-3 bg-muted/60 p-4">
                     <p className="text-sm font-semibold text-foreground">What&apos;s included</p>
                     <ul className="flex flex-col gap-2">
                       {included.map((t, i) => (
@@ -196,7 +196,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 )}
 
                 {product.type !== 'membership' && (
-                  <ul className="flex flex-col gap-2 rounded-xl bg-muted/60 p-4 text-sm">
+                  <ul className="flex flex-col gap-2 bg-muted/60 p-4 text-sm">
                     {methods.map((m) => {
                       const Icon = m.kind === 'local_pickup' ? Store : Truck
                       const price =

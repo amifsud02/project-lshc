@@ -164,7 +164,7 @@ export default function AddToCartButton({ product }: Props) {
         </label>
       ))}
       {preorder && (
-        <p className="rounded-lg bg-primary/5 px-3 py-2 text-sm text-primary">
+        <p className="bg-primary/5 px-3 py-2 text-sm text-primary">
           <strong>Pre-order.</strong> {dispatch ? `Expected by ${dispatch}.` : 'We email you when it arrives.'}
         </p>
       )}
@@ -177,7 +177,7 @@ export default function AddToCartButton({ product }: Props) {
         ) : null}
       </div>
       {error && (
-        <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p role="alert" className="bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}

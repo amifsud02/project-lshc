@@ -29,7 +29,6 @@
   padding: 22px 24px;
   background: #fff;
   border: 1px solid var(--color-rule-soft);
-  border-radius: 14px;
   box-shadow: var(--shadow-card);
 }
 
@@ -47,7 +46,6 @@
   background: #fff;
   border: 1px solid var(--color-rule-soft);
   border-left: 4px solid var(--color-text-muted);
-  border-radius: 12px;
   color: #32384a;
   line-height: 1.6;
 }
@@ -58,7 +56,6 @@
   margin-bottom: 16px;
   background: #fff;
   border: 1px solid var(--color-rule-soft);
-  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -88,7 +85,6 @@
 .nursery__group-full {
   margin-left: auto;
   padding: 2px 8px;
-  border-radius: 999px;
   background: rgba(194, 52, 52, 0.1);
   color: var(--color-danger);
   font-size: 12px;
@@ -144,7 +140,6 @@
   padding: 18px 20px;
   background: #fff;
   border: 1px solid var(--color-rule-soft);
-  border-radius: 12px;
 }
 
 .nursery__venue-name {
@@ -187,7 +182,6 @@
   padding: 20px;
   background: #fff;
   border: 1px solid var(--color-rule-soft);
-  border-radius: 12px;
 }
 
 .nursery__fee-price {
@@ -350,7 +344,6 @@
   margin: 0;
   padding: 16px 18px;
   border: 1.5px dashed var(--color-input-border);
-  border-radius: var(--radius-lg);
   font-size: var(--text-base);
   line-height: 1.55;
   color: var(--color-text-muted);
@@ -364,7 +357,6 @@
   padding: 16px 18px;
   margin-bottom: 12px;
   border: 1px solid var(--color-rule-soft);
-  border-radius: var(--radius-lg);
   background: var(--color-paper);
   font-size: 14px;
   line-height: 1.6;
@@ -377,7 +369,6 @@
 .reg-summary {
   margin-top: 24px;
   padding: 22px;
-  border-radius: var(--radius-xl);
   background: var(--color-paper);
   border: 1px solid var(--color-rule-soft);
   box-shadow: var(--shadow-card);
@@ -424,7 +415,6 @@
   padding: 8px 14px;
   background: #fff;
   border: 1.5px solid var(--color-input-border);
-  border-radius: 10px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 15px;
   font-weight: 600;
@@ -436,7 +426,6 @@
   padding: 20px 22px;
   background: #fff;
   border: 1px solid var(--color-rule-soft);
-  border-radius: 14px;
   box-shadow: var(--shadow-card);
 }
 

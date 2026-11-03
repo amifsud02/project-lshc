@@ -35,7 +35,7 @@ export function OptionChips({
             title={soldOut ? `${o.label} is sold out` : undefined}
             onClick={() => onChange(o.value)}
             className={cn(
-              'cursor-pointer rounded-lg border font-medium transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+              'cursor-pointer border font-medium transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
               size === 'sm' ? 'min-w-9 px-2.5 py-1 text-xs' : 'min-w-11 px-3.5 py-2 text-sm',
               soldOut
                 ? 'cursor-not-allowed border-dashed border-input bg-muted/50 text-muted-foreground line-through'
@@ -69,7 +69,7 @@ export function QuantityStepper({
   const btn =
     'flex size-10 cursor-pointer items-center justify-center text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40'
   return (
-    <div role="group" aria-label={label} className="inline-flex w-fit items-center overflow-hidden rounded-lg border border-input bg-background">
+    <div role="group" aria-label={label} className="inline-flex w-fit items-center overflow-hidden border border-input bg-background">
       <button type="button" className={btn} aria-label="Decrease quantity" disabled={value <= min} onClick={() => onChange(value - 1)}>
         <Minus className="size-4" />
       </button>

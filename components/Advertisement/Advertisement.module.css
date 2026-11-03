@@ -29,7 +29,6 @@
 .link {
   display: block;
   overflow: hidden;
-  border-radius: var(--radius-lg);
   background: var(--color-paper-soft);
 }
 

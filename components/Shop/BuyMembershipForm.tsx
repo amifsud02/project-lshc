@@ -103,7 +103,7 @@ export default function BuyMembershipForm({ product, memberFields = [], serviceF
       )}
 
       {error && (
-        <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p role="alert" className="bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}

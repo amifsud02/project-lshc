@@ -200,7 +200,7 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
                     setCountry(e.target.value)
                     setOptionId(undefined)
                   }}
-                  className="h-9 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  className="h-9 w-full border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
                   {rules.countries.map((c) => (
                     <option key={c.value} value={c.value}>
@@ -211,7 +211,7 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
               </div>
             )}
             {priced.options.length === 0 ? (
-              <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <p role="alert" className="bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 Sorry, we don&apos;t ship to this country yet.
               </p>
             ) : (
@@ -228,7 +228,7 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
                       disabled={!o.available}
                       onClick={() => setOptionId(o.id)}
                       className={cn(
-                        'flex cursor-pointer items-start gap-3 rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-60',
+                        'flex cursor-pointer items-start gap-3 border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-60',
                         on ? 'border-primary ring-1 ring-primary' : 'border-input hover:border-primary/50',
                       )}
                     >
@@ -267,7 +267,7 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="e.g. Collecting for my daughter, U14 girls"
-                className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="w-full border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               />,
               undefined,
               false,
@@ -295,7 +295,7 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
             {rules.coupons && (
               <div className="flex flex-col gap-2">
                 {coupon ? (
-                  <div className="flex items-center justify-between gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-2 bg-muted px-3 py-2 text-sm">
                     <span className="flex items-center gap-2">
                       <Tag className="size-3.5 text-primary" />
                       <span className="font-medium uppercase">{coupon.code}</span>
@@ -385,7 +385,7 @@ export default function CheckoutView({ defaults, shop, rules }: Props) {
               <span>Email me club news and shop offers.</span>
             </label>
             {error && (
-              <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <p role="alert" className="bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 {error}
               </p>
             )}

@@ -19,7 +19,6 @@ const hrefFor = (basePath: string, page: number, query: Props['query']) => {
 
 const linkStyle: React.CSSProperties = {
   padding: '10px 16px',
-  borderRadius: 999,
   border: '1px solid rgba(0,0,0,0.15)',
   fontWeight: 600,
   fontSize: 12,

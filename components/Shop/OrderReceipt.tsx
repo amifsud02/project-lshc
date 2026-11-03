@@ -68,7 +68,7 @@ export default function OrderReceipt({
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <Badge variant="secondary" className="rounded-full px-3 py-0.5">
+            <Badge variant="secondary" className="px-3 py-0.5">
               {statusLabel}
             </Badge>
             {dateLabel && <span className="text-xs text-muted-foreground">{dateLabel}</span>}
