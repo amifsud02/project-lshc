@@ -1064,6 +1064,10 @@ export interface Player {
    * Other club squads this player turns out for, e.g. HMS as well as La Salle. The fixtures sync adds a squad here when the player appears in its line-up.
    */
   otherTeams?: (string | Team)[] | null;
+  /**
+   * The squad pages this player is listed on, under /teams. A player without a position is listed under "Players".
+   */
+  squads?: ('men-first-team' | 'women-first-team' | 'u21-mens-team' | 'u21-womens-team')[] | null;
   profilePicture?: (string | null) | Media;
   /**
    * Shows this player at /players/<slug>, with their season stats and recent matches, and links their name from match line-ups. Only for adult players who agree to it; never for anyone under 18.
@@ -3760,6 +3764,7 @@ export interface PlayersSelect<T extends boolean = true> {
   position?: T;
   team?: T;
   otherTeams?: T;
+  squads?: T;
   profilePicture?: T;
   profilePage?: T;
   slug?: T;

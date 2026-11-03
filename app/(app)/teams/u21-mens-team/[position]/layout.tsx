@@ -2,8 +2,8 @@ import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from 'next/navigation'
 import { SQUAD_POSITIONS, squadMetadata } from '@/lib/seo/teams'
 
-// The page itself is a client component, so the caching settings live here: nothing is pre-built,
-// each position renders on its first visit and is then cached.
+// Nothing is pre-built: each position renders on its first visit and is then cached. Player
+// changes in Payload clear the cache straight away.
 export const revalidate = 3600
 
 export function generateStaticParams() {

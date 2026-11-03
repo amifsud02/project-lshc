@@ -1,6 +1,7 @@
 import type { CollectionConfig, Field } from 'payload'
 import { collectionWriteAccess } from '@/lib/auth/roles'
 import { buildPlayerSlug } from '@/lib/players/profile'
+import { SQUAD_OPTIONS } from '@/lib/players/squads'
 
 const statFields: Field[] = [
   { name: 'appearances', type: 'number' },
@@ -118,6 +119,17 @@ export const Players: CollectionConfig = {
       admin: {
         description:
           'Other club squads this player turns out for, e.g. HMS as well as La Salle. The fixtures sync adds a squad here when the player appears in its line-up.',
+      },
+    },
+    {
+      name: 'squads',
+      label: 'Squad pages',
+      type: 'select',
+      hasMany: true,
+      index: true,
+      options: SQUAD_OPTIONS,
+      admin: {
+        description: 'The squad pages this player is listed on, under /teams. A player without a position is listed under "Players".',
       },
     },
     {
