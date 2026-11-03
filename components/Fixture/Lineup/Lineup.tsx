@@ -84,11 +84,12 @@ type Props = {
   awayTeam: NormalizedTeam
   homeLineup: NormalizedLineupRow[]
   awayLineup: NormalizedLineupRow[]
+  isFinished: boolean
 }
 
-export default function Lineup({ homeTeam, awayTeam, homeLineup, awayLineup }: Props) {
+export default function Lineup({ homeTeam, awayTeam, homeLineup, awayLineup, isFinished }: Props) {
   if (!homeLineup.length && !awayLineup.length) {
-    return <p className={styles.empty}>Line Up Not Available</p>
+    return isFinished ? <p className={styles.empty}>Line Up Not Available</p> : null
   }
 
   return (

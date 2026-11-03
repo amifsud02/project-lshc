@@ -1,8 +1,7 @@
 import Link from 'next/link'
 
 import NewsCard from '@/components/News/NewsCard/NewsCard'
-import type { Fixture, News } from '@/payload-types'
-import { venueName } from '@/lib/fixtures/venues'
+import type { News } from '@/payload-types'
 import { paths } from '@/lib/seo/site'
 import type { NormalizedFixture } from '@/lib/utils/normalize/sports'
 import styles from './MatchInfo.module.css'
@@ -11,56 +10,6 @@ const part = (iso: string, options: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Malta', ...options }).format(new Date(iso))
 
 const matchDate = (iso: string) => part(iso, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-
-/** The MHA sync stores a missing throw-off time as midnight. */
-const throwOff = (iso: string) => {
-  const time = part(iso, { hour: '2-digit', minute: '2-digit', hour12: false })
-  return time === '00:00' ? 'To be confirmed' : time
-}
-
-/** Competition, date, throw-off and venue, as text search engines and readers can use. */
-export function MatchDetails({ fixture, status }: { fixture: NormalizedFixture; status?: Fixture['status'] }) {
-  const venue = fixture.venue && fixture.venue !== 'TBC' ? venueName(fixture.venue) : 'To be confirmed'
-
-  return (
-    <section className={styles.section} aria-labelledby="match-details">
-      <h2 id="match-details" className={styles.title}>
-        Match details
-      </h2>
-      <dl className={styles.details}>
-        {fixture.competition?.name ? (
-          <div className={styles.detail}>
-            <dt>Competition</dt>
-            <dd>{fixture.competition.name}</dd>
-          </div>
-        ) : null}
-        <div className={styles.detail}>
-          <dt>Date</dt>
-          <dd>{matchDate(fixture.startDate)}</dd>
-        </div>
-        {fixture.isFinished ? null : (
-          <div className={styles.detail}>
-            <dt>Throw-off</dt>
-            <dd className="numbers">{throwOff(fixture.startDate)}</dd>
-          </div>
-        )}
-        <div className={styles.detail}>
-          <dt>Venue</dt>
-          <dd>{venue}</dd>
-        </div>
-        {status === 'Postponed' || status === 'Cancelled' ? (
-          <div className={styles.detail}>
-            <dt>Status</dt>
-            <dd>{status}</dd>
-          </div>
-        ) : null}
-      </dl>
-      <Link href={paths.fixtures} className={styles.more}>
-        All La Salle fixtures and results
-      </Link>
-    </section>
-  )
-}
 
 const categorySlug = (post: News) => (typeof post.category === 'object' ? post.category?.slug : undefined)
 

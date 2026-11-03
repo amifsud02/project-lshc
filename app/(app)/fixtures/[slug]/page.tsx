@@ -28,9 +28,9 @@ import {
 } from '@/lib/utils/normalize/sports'
 import { cachedFind } from '@/lib/utils/payload/cached'
 import JsonLd from '@/components/Seo/JsonLd'
-import { MatchCoverage, MatchDetails, isMatchReport } from '@/components/Fixture/MatchInfo/MatchInfo'
+import { MatchCoverage, isMatchReport } from '@/components/Fixture/MatchInfo/MatchInfo'
 import { getMatchCoverage } from '@/lib/data/news'
-import type { News } from '@/payload-types'
+import type { Fixture, News } from '@/payload-types'
 import { absoluteUrl, paths } from '@/lib/seo/site'
 import { breadcrumbJsonLd, sportsEventJsonLd } from '@/lib/seo/structuredData'
 
@@ -134,9 +134,10 @@ const TeamCrest = ({ team }: { team: NormalizedFixture['homeTeam'] }) =>
     <TeamLogoPlaceholder aria-hidden>{teamInitials(team.name)}</TeamLogoPlaceholder>
   )
 
-const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
+const FixturePageHeader = ({ fixture, status }: { fixture: NormalizedFixture; status?: Fixture['status'] }) => {
   const { date, time } = formatDateTime(fixture.startDate)
-  const isUpcoming = new Date(fixture.startDate) >= new Date()
+  const isCalledOff = status === 'Postponed' || status === 'Cancelled'
+  const isUpcoming = !isCalledOff && new Date(fixture.startDate) >= new Date()
 
   return (
     <header>
@@ -144,6 +145,7 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
         <div className="parent fixtures-page">
           <HeaderContent>
             <Top>
+              {fixture.competition?.name ? <div>{fixture.competition.name}</div> : null}
               <div className="numbers">{date}</div>
               {fixture.venue ? (
                 <div style={{ display: 'inline-flex' }}>
@@ -159,7 +161,8 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
               </Team>
 
               <TimeScore className="numbers">
-                {fixture.isFinished ? `${fixture.homeScore} - ${fixture.awayScore}` : time}
+                {/* The MHA sync stores a missing throw-off time as midnight. */}
+                {fixture.isFinished ? `${fixture.homeScore} - ${fixture.awayScore}` : time === '00:00' ? 'TBC' : time}
               </TimeScore>
 
               <Team $isSecond={true}>
@@ -167,6 +170,12 @@ const FixturePageHeader = ({ fixture }: { fixture: NormalizedFixture }) => {
                 <TeamCrest team={fixture.awayTeam} />
               </Team>
             </Middle>
+
+            {isCalledOff ? (
+              <Bottom>
+                <h2>Match {status.toLowerCase()}</h2>
+              </Bottom>
+            ) : null}
 
             {isUpcoming ? (
               <Bottom className="numbers">
@@ -189,6 +198,7 @@ export default async function FixturePage({ params }: Props) {
   const fixture = fixtureFromPayload(doc)
   const coverage = await getMatchCoverage(doc)
   const { title, description } = describeFixture(fixture, coverage)
+  const hasLineups = fixture.homeLineup.length > 0 || fixture.awayLineup.length > 0
 
   return (
     <>
@@ -213,19 +223,22 @@ export default async function FixturePage({ params }: Props) {
       />
       <h1 className="sr-only">{title}</h1>
       <section>
-        <FixturePageHeader fixture={fixture} />
+        <FixturePageHeader fixture={fixture} status={doc.status} />
       </section>
 
-      <article className="parent">
-        <MatchDetails fixture={fixture} status={doc.status} />
-        <MatchCoverage posts={coverage} />
-        <Lineup
-          homeTeam={fixture.homeTeam}
-          awayTeam={fixture.awayTeam}
-          homeLineup={fixture.homeLineup}
-          awayLineup={fixture.awayLineup}
-        />
-      </article>
+      {/* Before the match there may be nothing to show under the header. */}
+      {coverage.length || hasLineups || fixture.isFinished ? (
+        <article className="parent">
+          <MatchCoverage posts={coverage} />
+          <Lineup
+            homeTeam={fixture.homeTeam}
+            awayTeam={fixture.awayTeam}
+            homeLineup={fixture.homeLineup}
+            awayLineup={fixture.awayLineup}
+            isFinished={fixture.isFinished}
+          />
+        </article>
+      ) : null}
     </>
   )
 }

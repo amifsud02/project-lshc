@@ -11,42 +11,6 @@
   margin-bottom: 16px;
 }
 
-.details {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
-  margin: 0;
-}
-
-.detail {
-  padding: 12px 14px;
-  background: var(--color-paper);
-  border: 1px solid var(--color-rule-soft);
-  border-radius: 8px;
-}
-
-.detail dt {
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.detail dd {
-  margin: 4px 0 0;
-  font-size: var(--text-md);
-  font-weight: 700;
-  color: var(--color-ink);
-}
-
-.more {
-  display: inline-block;
-  margin-top: 12px;
-  font-weight: 600;
-  color: var(--color-club);
-}
-
 .coverage {
   display: grid;
   grid-template-columns: 1fr;
@@ -69,7 +33,6 @@
   text-transform: uppercase;
   color: white;
   background: var(--color-club);
-  border-radius: 999px;
 }
 
 .matchLink {
@@ -84,7 +47,6 @@
   background: var(--color-paper);
   border: 1px solid var(--color-rule-soft);
   border-left: 4px solid var(--color-club);
-  border-radius: 8px;
   color: var(--color-text);
 }
 
