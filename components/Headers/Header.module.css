@@ -3,7 +3,7 @@
     top: 0;
     width: 100%;
     background: linear-gradient(180deg, rgba(0, 13, 36, 1) 0%, rgba(0, 13, 36, 0) 100%);
-    padding: 22px 0;
+    padding: 12px 0;
     z-index: 1000;
     transition: background-color var(--duration-base) ease;
 }
@@ -69,10 +69,8 @@
     position: relative;
     padding: 12px 0;
     color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+    font-size: 15px;
+    font-weight: 500;
     white-space: nowrap;
 }
 
@@ -110,7 +108,7 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    margin-left: 4px;
+    margin-left: 2px;
     padding: 0;
     border: 0;
     background: none;
@@ -138,10 +136,7 @@
     display: flex;
     align-items: center;
     gap: 18px;
-    padding-left: 18px;
-    margin-left: 6px;
-    border-left: 1px solid rgba(255, 255, 255, 0.18);
-    height: 40px;
+    height: 36px;
 }
 
 .shopActions:empty {
@@ -157,16 +152,14 @@
 .button {
     display: inline-flex;
     align-items: center;
-    height: 40px;
-    padding: 0 18px;
+    height: 36px;
+    padding: 0 16px;
     border: 2px solid #fff;
     border-radius: 0;
     background: #fff;
     color: var(--color-club);
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
     white-space: nowrap;
     transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
 }
@@ -193,7 +186,19 @@
     outline-offset: 3px;
 }
 
-/* Smaller laptops: room for the first button only. */
-@media (max-width: 1199px) {
-    .actions .button:nth-child(2) { display: none; }
+/* One button in the bar; the mobile menu still lists them all. */
+.actions .button:nth-child(n + 2) {
+    display: none;
+}
+
+/* With a mouse the panels open on hover, so the chevrons only appear for keyboard users. Touch screens keep them. */
+@media (hover: hover) {
+    .chevronBtn:not(:focus-visible) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
 }

@@ -15,7 +15,7 @@ import MegaPanel from './MegaPanel';
 
 export type { NavButton, NavItem, NavLink };
 
-/** The one or two buttons beside the cart; the mobile menu shows them full width. */
+/** The buttons beside the cart: only the first shows on desktop, the mobile menu shows all of them full width. */
 export function HeaderButtons({ buttons, className, onClick }: { buttons: NavButton[]; className?: string; onClick?: () => void }) {
     if (!buttons.length) return null
     return (
@@ -126,7 +126,7 @@ export function DesktopNavbar({
         >
             <div className={styles.mainNav}>
                 <Link href={'/'} className={styles.logo} onMouseEnter={close} aria-label="La Salle Handball Club home">
-                    <Image src={logoSrc} width={75} height={75} alt="" className="w-[75px] h-[75px]" loading='eager' unoptimized/>
+                    <Image src={logoSrc} width={52} height={52} alt="" className="w-[52px] h-[52px]" loading='eager' unoptimized/>
                 </Link>
 
                 <nav aria-label="Main" className={styles.menu}>
@@ -143,7 +143,7 @@ export function DesktopNavbar({
                 </div>
             </div>
 
-            {openItem?.mega ? <MegaPanel key={openItem.label} item={openItem} mega={openItem.mega} pathname={pathname} focusFirst={open?.focus} /> : null}
+            {openItem?.mega ? <MegaPanel key={openItem.label} mega={openItem.mega} pathname={pathname} focusFirst={open?.focus} /> : null}
         </header>
     )
 }

@@ -31,7 +31,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ header, active, children 
         header={
             <>
                 <span className={active ? styles.active : undefined}>{header}</span>
-                <ChevronDown size={35} className={`${active ? styles.active : ''} ${styles.chevron}`} />
+                <ChevronDown size={24} className={`${active ? styles.active : ''} ${styles.chevron}`} />
             </>
         }
         className={styles.item}
@@ -86,7 +86,7 @@ export const MobileNavbar = ({
 
                     <div className={styles.nav__top}>
                         <div className={styles.nav__brand}>
-                            <Link href={'/'} onClick={() => setIsOpen(false)}><Image src={logoSrc} alt="LSHC Logo" width={75} height={75} unoptimized /></Link>
+                            <Link href={'/'} onClick={() => setIsOpen(false)}><Image src={logoSrc} alt="LSHC Logo" width={52} height={52} unoptimized /></Link>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: '#fff' }}>
                             {ACCOUNTS_ENABLED ? <AccountIcon isAuthed={isAuthed} /> : null}
@@ -98,7 +98,7 @@ export const MobileNavbar = ({
                                 onClick={() => setIsOpen(!isOpen)}
                                 style={{ display: 'flex', background: 'none', border: 0, padding: 0, cursor: 'pointer' }}
                             >
-                                {isOpen ? <X color='white' size={40} /> : <Menu color='white' size={40} />}
+                                {isOpen ? <X color='white' size={28} /> : <Menu color='white' size={28} />}
                             </button>
                         </div>
                     </div>

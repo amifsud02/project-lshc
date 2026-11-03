@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import styles from './MegaPanel.module.css'
-import type { MegaMenu, NavItem, NavLink } from '@/lib/utils/normalize/globals';
+import type { MegaMenu, NavLink } from '@/lib/utils/normalize/globals';
 
 const targetProps = (newTab?: boolean) =>
     newTab ? { target: '_blank' as const, rel: 'noopener noreferrer' } : {}
@@ -11,16 +11,14 @@ const targetProps = (newTab?: boolean) =>
 const isExternal = (link: NavLink) => link.newTab || /^https?:\/\//.test(link.href)
 
 /**
- * The full-width panel under the menu: the section's title, intro and links on the left
- * (inter.it), then grouped link columns and a featured card (payloadcms.com).
+ * The full-width panel under the menu: a short intro and links on the left, then grouped
+ * link columns and a featured card (payloadcms.com).
  */
 export default function MegaPanel({
-    item,
     mega,
     pathname,
     focusFirst = false,
 }: {
-    item: NavItem
     mega: MegaMenu
     pathname: string
     focusFirst?: boolean
@@ -34,7 +32,6 @@ export default function MegaPanel({
         >
             <div className={styles.inner}>
                 <div className={styles.intro}>
-                    <p className={styles.title}>{item.label}</p>
                     {mega.description ? <p className={styles.description}>{mega.description}</p> : null}
                     {mega.descriptionLinks.length ? (
                         <ul className={styles.introLinks}>
