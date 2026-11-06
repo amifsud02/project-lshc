@@ -88,7 +88,7 @@ export const Team = styled.div<{ $isSecond: boolean }>`
     @media (min-width: 768px) {
         gap: 30px;
         flex-direction: ${props => (props.$isSecond ? 'row-reverse' : 'row')};
-        justify-content: ${props => (props.$isSecond ? 'flex-start' : 'flex-end')};
+        justify-content: ${props => (props.$isSecond ? 'flex-end' : 'flex-end')};
         text-align: ${props => (props.$isSecond ? 'left' : 'right')};
     }
 `;
