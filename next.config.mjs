@@ -1,10 +1,14 @@
+import { existsSync, readFileSync } from 'node:fs';
 import { withPayload } from "@payloadcms/next/withPayload";
+
+// Written by the Dockerfile. Absent in local development, where no deployment id is needed.
+const deploymentIdFile = `${import.meta.dirname}/.deployment-id`;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // Lets Next spot a browser still running the previous deploy and reload it instead of
-    // calling server actions that no longer exist. Railway sets this at build and run time.
-    deploymentId: process.env.RAILWAY_GIT_COMMIT_SHA,
+    // calling server actions that no longer exist. It has to match at build and run time.
+    deploymentId: existsSync(deploymentIdFile) ? readFileSync(deploymentIdFile, 'utf8').trim() : undefined,
     compiler: {
         styledComponents: true,
     },

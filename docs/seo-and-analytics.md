@@ -78,8 +78,8 @@ move around the site).
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | — | Search Console verification meta tag |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | — | Bing Webmaster Tools verification meta tag |
 
-`NEXT_PUBLIC_*` values are built into the site, so on Railway they must also be passed as build
-args (see the `Dockerfile`).
+`NEXT_PUBLIC_*` values are built into the site, so on Dokploy they must also be set as
+build-time arguments (see the `Dockerfile`).
 
 ### Consent Mode
 

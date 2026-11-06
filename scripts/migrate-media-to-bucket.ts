@@ -5,7 +5,7 @@ import config from '../payload.config'
 import { MEDIA_PREFIX, mediaBucket as bucket, mediaFileKey, mediaS3Client } from '../lib/media/storage'
 
 /**
- * Copies every Media file from Cloudinary into the Railway bucket, at the same key the
+ * Copies every Media file from Cloudinary into the media bucket, at the same key the
  * S3 adapter uses for new uploads (media/<filename>), so no documents need changing.
  *
  * The old Cloudinary adapter stored each file under the public ID

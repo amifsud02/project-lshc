@@ -7,8 +7,8 @@ export const MATCH_SUMMARIES_QUEUE = 'match-summaries'
 
 /**
  * Nightly job that writes a draft weekly round-up of La Salle's matches once the week
- * is complete (see matchSummaries.ts). Payload queues it at 21:00 server time (UTC on
- * Railway, i.e. 22:00/23:00 in Malta), so a weekend's round-up is usually ready on
+ * is complete (see matchSummaries.ts). Payload queues it at 21:00 server time (UTC in the
+ * container, i.e. 22:00/23:00 in Malta), so a weekend's round-up is usually ready on
  * Sunday night, and never runs more than one at a time; matches already covered are
  * skipped, so a re-run is harmless.
  */

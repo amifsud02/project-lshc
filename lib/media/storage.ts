@@ -2,12 +2,11 @@ import { GetObjectCommand, S3Client, type S3ClientConfig } from '@aws-sdk/client
 import { getFileKey } from '@payloadcms/plugin-cloud-storage/utilities'
 
 /**
- * Media files live in a Railway storage bucket under `media/`. Railway buckets are
- * private, so files are served through Payload at /api/media/file/<filename>,
- * which streams them from the bucket.
+ * Media files live under `media/` in a bucket on the media-storage stack in Dokploy
+ * (MaxIO, S3-compatible). It has no public domain, so files are served through Payload
+ * at /api/media/file/<filename>, which streams them from the bucket.
  *
- * The AWS_* variables are the ones Railway adds when a service is connected to the
- * bucket with the "AWS SDK (Generic)" style.
+ * The AWS_* variables are set on the web service in Dokploy.
  */
 
 export const MEDIA_PREFIX = 'media'
@@ -17,7 +16,7 @@ export const mediaBucket = process.env.AWS_S3_BUCKET_NAME || ''
 export const mediaS3Config: S3ClientConfig = {
   endpoint: process.env.AWS_ENDPOINT_URL,
   region: process.env.AWS_DEFAULT_REGION || 'auto',
-  // Buckets created before Railway switched to virtual-hosted URLs need path-style.
+  // MaxIO is reached by its Docker hostname, which can't take a bucket subdomain.
   forcePathStyle: process.env.AWS_S3_FORCE_PATH_STYLE === 'true',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',

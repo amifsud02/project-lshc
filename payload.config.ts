@@ -98,7 +98,7 @@ export default buildConfig({
   sharp,
   jobs: {
     tasks: [matchSummariesTask, resultChecksTask],
-    // Runs scheduled tasks on the long-running Railway server. Crons start when Payload
+    // Runs scheduled tasks on the long-running server. Crons start when Payload
     // boots with `cron: true` (instrumentation.ts). Off outside production unless
     // PAYLOAD_JOBS_AUTORUN=true, so local dev never writes posts on its own.
     autoRun: [
@@ -121,7 +121,7 @@ export default buildConfig({
     storeCachePlugin,
     s3Storage({
       collections: {
-        // Served through /api/media/file — Railway buckets can't be made public.
+        // Served through /api/media/file — the bucket is private and has no public domain.
         media: { prefix: MEDIA_PREFIX },
       },
       bucket: mediaBucket,

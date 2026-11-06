@@ -29,6 +29,6 @@ export async function GET(request: NextRequest) {
   const path = request.nextUrl.searchParams.get('path') ?? '/'
   const safePath = path.startsWith('/') && !path.startsWith('//') ? path : '/'
   // A relative Location keeps the browser on the host it asked for. `request.nextUrl.origin` is
-  // the container's own address behind Railway's proxy (http://localhost:8080), not the public domain.
+  // the container's own address behind Traefik (http://localhost:8080), not the public domain.
   return new NextResponse(null, { status: 307, headers: { Location: safePath } })
 }
