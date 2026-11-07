@@ -70,6 +70,22 @@ export class MembrsError extends Error {
   }
 }
 
+/**
+ * Splits a failed MEMBRS checkout into what the buyer may read and what staff need to know. Buyers
+ * only see what they can fix themselves (their details, something selling out). Anything else, such
+ * as the club's payments not being set up, is for the order in the CMS; buyerMessage is then null.
+ */
+export function explainCheckoutFailure(err: unknown): { buyerMessage: string | null; staffReason: string } {
+  if (!(err instanceof MembrsError)) {
+    return { buyerMessage: null, staffReason: err instanceof Error ? err.message : String(err) }
+  }
+  const fields = Object.entries(err.errors ?? {})
+  const memberField = fields.find(([field]) => field.startsWith('members.'))?.[1][0]
+  if (memberField) return { buyerMessage: memberField, staffReason: memberField }
+  if (err.status === 409) return { buyerMessage: err.message, staffReason: err.message }
+  return { buyerMessage: null, staffReason: fields[0]?.[1][0] ?? err.message }
+}
+
 async function membrs<T>(path: string, init: RequestInit = {}): Promise<T> {
   const baseUrl = process.env.MEMBRS_API_URL
   const apiKey = process.env.MEMBRS_API_KEY

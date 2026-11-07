@@ -1562,6 +1562,7 @@ export interface Order {
    * There was less in stock than this order took when it was paid. Restock or contact the buyer.
    */
   stockWarning?: string | null;
+  paymentError?: string | null;
   /**
    * Cents, as confirmed by Stripe
    */
@@ -4075,6 +4076,7 @@ export interface OrdersSelect<T extends boolean = true> {
   paymentProvider?: T;
   paidAt?: T;
   stockWarning?: T;
+  paymentError?: T;
   refundedTotal?: T;
   customerName?: T;
   customerEmail?: T;
