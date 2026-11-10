@@ -12,7 +12,7 @@ type Props = { heading?: string | null; intro?: string | null; emptyText?: strin
 
 /**
  * The "Member benefits" page block: every partner business and what members get there, from
- * MEMBRS. Codes are taken out here: members see them in their account (/account/membership/benefits).
+ * Rypple. Codes are taken out here: members see them in their account (/account/membership/benefits).
  */
 export default async function MemberBenefits({ heading, intro, emptyText }: Props) {
   let partners: MembrsPartner[] | null = null

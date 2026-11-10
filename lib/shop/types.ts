@@ -61,7 +61,7 @@ export const MEMBER_FIELDS: CustomFieldDef[] = [
   { name: 'firstName', label: 'First name', kind: 'text', required: true },
   { name: 'lastName', label: 'Last name', kind: 'text', required: true },
   { name: 'mobile', label: 'Mobile number', kind: 'phone', required: true },
-  // Each member gets their own MEMBRS account and digital card, so everyone needs an email.
+  // Each member gets their own Rypple account and digital card, so everyone needs an email.
   { name: 'email', label: 'Email', kind: 'email', required: true },
 ]
 

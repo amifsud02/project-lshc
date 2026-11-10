@@ -8,7 +8,7 @@ export const MemberBenefitsBlock: Block = {
     {
       name: 'heading',
       type: 'text',
-      admin: { description: 'Leave empty for "Discounts at N partner businesses". The partners themselves come from MEMBRS.' },
+      admin: { description: 'Leave empty for "Discounts at N partner businesses". The partners themselves come from Rypple.' },
     },
     {
       name: 'intro',

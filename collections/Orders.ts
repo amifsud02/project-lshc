@@ -106,12 +106,12 @@ export const Orders: CollectionConfig = {
       defaultValue: 'club',
       options: [
         { label: 'Club Stripe', value: 'club' },
-        { label: 'MEMBRS', value: 'membrs' },
+        { label: 'Rypple', value: 'membrs' },
       ],
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Memberships are paid through MEMBRS; everything else through the club shop.',
+        description: 'Memberships are paid through Rypple; everything else through the club shop.',
       },
     },
     { name: 'paidAt', type: 'date', admin: { position: 'sidebar', readOnly: true } },
@@ -294,7 +294,7 @@ export const Orders: CollectionConfig = {
           name: 'stripeCheckoutSessionId',
           type: 'text',
           index: true,
-          admin: { readOnly: true, description: 'For MEMBRS orders this is the MEMBRS checkout id.' },
+          admin: { readOnly: true, description: 'For Rypple orders this is the Rypple checkout id.' },
         },
         { name: 'stripePaymentIntentId', type: 'text', admin: { readOnly: true } },
       ],

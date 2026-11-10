@@ -50,7 +50,7 @@ move around the site).
 | `view_item` | A shop product page is shown | `items`, `value` |
 | `add_to_cart` / `remove_from_cart` | Cart changes | `items`, `value` |
 | `view_cart` | The cart page is shown | `items`, `value` |
-| `begin_checkout` | The checkout page is shown, or a membership is sent to MEMBRS (`checkout_provider: membrs`) | `items`, `value` |
+| `begin_checkout` | The checkout page is shown, or a membership is sent to Rypple (`checkout_provider: membrs`) | `items`, `value` |
 | `add_payment_info` | "Pay with card" is pressed | `payment_type` |
 | `purchase` | A paid order's confirmation page (once per order) | `transaction_id`, `value`, `items` |
 | `generate_lead` | Contact form sent, or nursery registration submitted | `form_name`, `enquiry_type`, `age_group`, `payment_method` |

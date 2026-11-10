@@ -955,7 +955,7 @@ export interface ContactFormBlock {
  */
 export interface MemberBenefitsBlock {
   /**
-   * Leave empty for "Discounts at N partner businesses". The partners themselves come from MEMBRS.
+   * Leave empty for "Discounts at N partner businesses". The partners themselves come from Rypple.
    */
   heading?: string | null;
   intro?: string | null;
@@ -1399,7 +1399,7 @@ export interface Product {
      */
     membersCovered?: number | null;
     /**
-     * The MEMBRS plan this membership is sold as. Payment is taken by MEMBRS and each member gets a MEMBRS account and digital card. An active membership is checked against the plan on save: price and members covered must match, and any size question on an included product must only offer sizes MEMBRS has. Products included with the plan that nothing here asks about get a picker per member.
+     * The Rypple plan this membership is sold as. Payment is taken by Rypple and each member gets a Rypple account and digital card. An active membership is checked against the plan on save: price and members covered must match, and any size question on an included product must only offer sizes Rypple has. Products included with the plan that nothing here asks about get a picker per member.
      */
     membrsPlanId?: number | null;
   };
@@ -1554,7 +1554,7 @@ export interface Order {
    */
   status: 'pending' | 'paid' | 'ready' | 'shipped' | 'fulfilled' | 'cancelled' | 'refunded';
   /**
-   * Memberships are paid through MEMBRS; everything else through the club shop.
+   * Memberships are paid through Rypple; everything else through the club shop.
    */
   paymentProvider?: ('club' | 'membrs') | null;
   paidAt?: string | null;
@@ -1659,7 +1659,7 @@ export interface Order {
    */
   taxAdded?: number | null;
   /**
-   * For MEMBRS orders this is the MEMBRS checkout id.
+   * For Rypple orders this is the Rypple checkout id.
    */
   stripeCheckoutSessionId?: string | null;
   stripePaymentIntentId?: string | null;

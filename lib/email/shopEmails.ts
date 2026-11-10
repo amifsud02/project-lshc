@@ -77,7 +77,7 @@ function totalRows(ctx: Context): Row[] {
   else if (o.paymentProvider !== 'membrs') rows.push({ label: o.fulfilment?.methodTitle || 'Collection at the club', amount: delivery ? money(ctx, delivery) : 'Free' })
   if (discount > 0) rows.push({ label: o.couponCode ? `Coupon ${String(o.couponCode).toUpperCase()}` : 'Promo code', amount: `−${money(ctx, discount)}` })
   if (taxAdded > 0) rows.push({ label: 'Tax', amount: money(ctx, taxAdded) })
-  if (fee > 0) rows.push({ label: o.paymentProvider === 'membrs' ? 'MEMBRS platform fee' : 'Other charges', amount: money(ctx, fee) })
+  if (fee > 0) rows.push({ label: o.paymentProvider === 'membrs' ? 'Rypple platform fee' : 'Other charges', amount: money(ctx, fee) })
   rows.push({ label: 'Total paid', amount: money(ctx, Number(o.total) || 0), strong: true })
   if (Number(o.vatIncluded) > 0) rows.push({ label: 'Includes VAT', amount: money(ctx, Number(o.vatIncluded)), muted: true })
   return rows
@@ -90,7 +90,7 @@ const addressOf = (o: any) =>
 
 function nextStep(ctx: Context): [string, string] {
   const o = ctx.order
-  if (o.paymentProvider === 'membrs') return ['Your membership card', 'MEMBRS emails each member their digital card. Show it at the club to use member benefits.']
+  if (o.paymentProvider === 'membrs') return ['Your membership card', 'Rypple emails each member their digital card. Show it at the club to use member benefits.']
   if (o.fulfilment?.method === 'deliver') return ['Delivery', `We'll deliver to ${addressOf(o)}${ctx.shop.delivery.details ? ` (${ctx.shop.delivery.details})` : ''} and email you when it's on its way.`]
   return [
     'Collecting your order',
@@ -102,7 +102,7 @@ function nextStep(ctx: Context): [string, string] {
 function legalFooter(ctx: Context): string[] {
   return [
     [ctx.clubName, 'Malta', ctx.contactEmail].filter(Boolean).join(' · '),
-    // Goods carry the 14-day right to cancel; memberships are handled by MEMBRS' own terms.
+    // Goods carry the 14-day right to cancel; memberships are handled by Rypple's own terms.
     ...(ctx.order.paymentProvider === 'membrs'
       ? []
       : ["You can cancel items that aren't personalised within 14 days of receiving them. Reply to this email to do so. Personalised items can't be returned."]),
@@ -136,7 +136,7 @@ function build(ctx: Context, kind: ShopEmailKind): RenderedEmail {
       }
     }
     case 'staff': {
-      const method = o.paymentProvider === 'membrs' ? 'Membership (MEMBRS)' : o.fulfilment?.method === 'deliver' ? `Deliver to ${addressOf(o)}` : 'Collect at the club'
+      const method = o.paymentProvider === 'membrs' ? 'Membership (Rypple)' : o.fulfilment?.method === 'deliver' ? `Deliver to ${addressOf(o)}` : 'Collect at the club'
       const pairs: [string, string][] = [
         ['Buyer', String(o.customerName || o.customerEmail)],
         ['Contact', [o.customerEmail, o.customerPhone].filter(Boolean).join(' · ')],

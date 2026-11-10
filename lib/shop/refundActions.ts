@@ -21,7 +21,7 @@ export async function refundOrder(orderId: string, amountCents: number): Promise
   const order: any = await payload.findByID({ collection: 'orders', id: orderId, depth: 0 }).catch(() => null)
   if (!order) return { ok: false, message: 'Order not found.' }
   if (order.paymentProvider !== 'club' || !order.stripePaymentIntentId) {
-    return { ok: false, message: 'This order was not paid through the club’s Stripe. Refund it where it was paid (e.g. MEMBRS).' }
+    return { ok: false, message: 'This order was not paid through the club’s Stripe. Refund it where it was paid (e.g. Rypple).' }
   }
   if (!REFUNDABLE.includes(order.status)) return { ok: false, message: `A ${order.status} order can't be refunded.` }
 

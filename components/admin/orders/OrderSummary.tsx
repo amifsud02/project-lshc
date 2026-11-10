@@ -48,7 +48,7 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
   const discount = Number(data.discountTotal) || 0
   const vat = Number(data.vatIncluded) || 0
   const taxAdded = Number(data.taxAdded) || 0
-  // Whatever the lines, delivery, discount and tax don't explain, e.g. the MEMBRS platform fee.
+  // Whatever the lines, delivery, discount and tax don't explain, e.g. the Rypple platform fee.
   const other = total - subtotal - deliveryFee + discount - taxAdded
   const fulfilment = data.fulfilment ?? {}
   const delivering = fulfilment.method === 'deliver'
@@ -219,7 +219,7 @@ export const OrderSummary: UIFieldServerComponent = async ({ data, payload }) =>
           )}
           {other !== 0 && (
             <>
-              <span style={muted}>{data.paymentProvider === 'membrs' ? 'MEMBRS platform fee' : 'Other charges'}</span>
+              <span style={muted}>{data.paymentProvider === 'membrs' ? 'Rypple platform fee' : 'Other charges'}</span>
               <span style={{ textAlign: 'right' }}>{formatPrice(other)}</span>
             </>
           )}

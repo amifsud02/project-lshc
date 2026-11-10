@@ -6,9 +6,9 @@ import { checkMembrsCompatibility } from '../lib/membrs/compatibility'
 import { buildUnitTemplates } from '../lib/shop/units'
 
 /**
- * Checks every membership product against its MEMBRS plan: price, members covered, sizes and
- * stock. Plans can change in MEMBRS after a product is saved here, so run this after editing
- * plans in MEMBRS. Exits with 1 when an active membership can't be sold as set up.
+ * Checks every membership product against its Rypple plan: price, members covered, sizes and
+ * stock. Plans can change in Rypple after a product is saved here, so run this after editing
+ * plans in Rypple. Exits with 1 when an active membership can't be sold as set up.
  *
  *   pnpm check-membrs
  */
@@ -38,14 +38,14 @@ for (const doc of docs as any[]) {
   if (doc.active && errors.length) broken++
 
   const state = errors.length ? 'NOT OK' : 'OK'
-  console.log(`\n${state}  ${doc.title}${doc.active ? '' : ' (inactive)'}  →  ${plan ? `MEMBRS plan ${plan.id} "${plan.name}"` : 'no MEMBRS plan'}`)
+  console.log(`\n${state}  ${doc.title}${doc.active ? '' : ' (inactive)'}  →  ${plan ? `Rypple plan ${plan.id} "${plan.name}"` : 'no Rypple plan'}`)
   for (const e of errors) console.log(`  ✗ ${e}`)
   for (const w of warnings) console.log(`  ! ${w}`)
   for (const p of pickers) console.log(`  · Members pick "${p.name}" (${p.variants.map((v) => v.name).join(', ')}) on the form.`)
 }
 
 const unused = plans.filter((plan) => !docs.some((d: any) => Number(d.membership?.membrsPlanId) === plan.id))
-for (const plan of unused) console.log(`\n·  MEMBRS plan ${plan.id} "${plan.name}" isn't sold on the website.`)
+for (const plan of unused) console.log(`\n·  Rypple plan ${plan.id} "${plan.name}" isn't sold on the website.`)
 
-console.log(broken ? `\n${broken} active membership(s) can't be sold as set up.` : '\nAll active memberships match MEMBRS.')
+console.log(broken ? `\n${broken} active membership(s) can't be sold as set up.` : '\nAll active memberships match Rypple.')
 process.exit(broken ? 1 : 0)

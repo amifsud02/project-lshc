@@ -28,7 +28,7 @@ type Result = { ok: true; url: string } | { ok: false; error: string }
 /**
  * Memberships are bought on their own, straight from the product page: we record the order
  * here (so it shows in the club's orders and member register once paid) and send the buyer to
- * MEMBRS to pay. MEMBRS's webhook marks the order paid (see /api/membrs/webhook).
+ * Rypple to pay. Rypple's webhook marks the order paid (see /api/membrs/webhook).
  */
 export async function buyMembership({ productId, units }: Input): Promise<Result> {
   if (!(await canViewShop())) return { ok: false, error: 'The shop is currently unavailable.' }
@@ -71,7 +71,7 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
   }
   const { errors } = checkMembrsCompatibility(product, plan)
   if (!plan || errors.length) {
-    console.error('[membrs] membership does not match its MEMBRS plan', { planId, product: product.id, errors })
+    console.error('[membrs] membership does not match its Rypple plan', { planId, product: product.id, errors })
     return { ok: false, error: 'This membership is not available online yet.' }
   }
 
@@ -84,7 +84,7 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
   const members = []
   for (const [i, unit] of memberUnits.entries()) {
     const { firstName = '', lastName = '', email = '' } = unit.values
-    // Answers given for a choice never pick a MEMBRS variant: MEMBRS doesn't know about choices.
+    // Answers given for a choice never pick a Rypple variant: Rypple doesn't know about choices.
     const answers = extraUnits
       .filter((_, j) => j % memberCount === i && !templates[memberCount + j].choices)
       .flatMap((u) => Object.values(u.values))
@@ -140,7 +140,7 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
         }
       }),
       subtotal: product.price,
-      // MEMBRS adds its platform fee on top when the buyer pays it.
+      // Rypple adds its platform fee on top when the buyer pays it.
       total: product.price + serviceFeeCents(plan),
       currency: 'eur',
     } as any,

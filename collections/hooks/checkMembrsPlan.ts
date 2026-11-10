@@ -4,8 +4,8 @@ import { checkMembrsCompatibility } from '@/lib/membrs/compatibility'
 import { buildUnitTemplates } from '@/lib/shop/units'
 
 /**
- * An active membership must match the MEMBRS plan it is sold as (members covered, price, sizes),
- * otherwise checkout fails or charges something else. If MEMBRS can't be reached the save goes
+ * An active membership must match the Rypple plan it is sold as (members covered, price, sizes),
+ * otherwise checkout fails or charges something else. If Rypple can't be reached the save goes
  * through; `pnpm check-membrs` reports on every membership.
  */
 export const checkMembrsPlan: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
@@ -31,7 +31,7 @@ export const checkMembrsPlan: CollectionBeforeChangeHook = async ({ data, origin
     try {
       plan = await getMembrsPlan(planId)
     } catch (err) {
-      req.payload.logger.warn({ err, planId }, 'Could not reach MEMBRS to check the membership plan')
+      req.payload.logger.warn({ err, planId }, 'Could not reach Rypple to check the membership plan')
       return data
     }
   }

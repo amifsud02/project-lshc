@@ -2,9 +2,9 @@ import crypto from 'node:crypto'
 import type { CustomFieldDef } from '@/lib/shop/types'
 
 /**
- * MEMBRS sells and manages the club's memberships: our site collects each member's details,
- * MEMBRS takes the payment (Stripe) and gives every member an account and digital card.
- * See the MEMBRS "Selling memberships from your own website" guide.
+ * Rypple sells and manages the club's memberships: our site collects each member's details,
+ * Rypple takes the payment (Stripe) and gives every member an account and digital card.
+ * See the Rypple "Selling memberships from your own website" guide.
  */
 
 export type MembrsVariant = { id: number; name: string; sku: string | null; price: string; in_stock: boolean }
@@ -12,7 +12,7 @@ export type MembrsPlan = {
   id: number
   name: string
   price: string
-  /** Charged on top of `price` when MEMBRS's fee is paid by the buyer ("0.00" otherwise). */
+  /** Charged on top of `price` when Rypple's fee is paid by the buyer ("0.00" otherwise). */
   service_fee?: string
   currency?: string
   members_covered: number
@@ -86,7 +86,7 @@ async function membrs<T>(path: string, init: RequestInit = {}): Promise<T> {
     },
   })
   const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new MembrsError(body.message ?? `MEMBRS request failed (${res.status})`, res.status, body.errors)
+  if (!res.ok) throw new MembrsError(body.message ?? `Rypple request failed (${res.status})`, res.status, body.errors)
   return body.data as T
 }
 
@@ -100,7 +100,7 @@ export const getMembrsPlan = async (planId: number, revalidate?: number): Promis
 /** The club's partner merchants and the discounts its members get there, codes included. */
 export const getMembrsPartners = async (revalidate?: number) => {
   const partners = await membrs<MembrsPartner[]>('/partners', revalidate ? { next: { revalidate } } : {})
-  // MEMBRS without cloud storage serves logos from its own host ("/api/files/…").
+  // Rypple without cloud storage serves logos from its own host ("/api/files/…").
   const base = process.env.MEMBRS_API_URL?.replace(/\/$/, '') ?? ''
   return partners.map((p) => ({ ...p, logo_url: p.logo_url?.startsWith('/') ? `${base}${p.logo_url}` : p.logo_url }))
 }

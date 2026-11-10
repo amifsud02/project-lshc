@@ -116,11 +116,11 @@ export const Products: CollectionConfig = {
         },
         {
           name: 'membrsPlanId',
-          label: 'MEMBRS plan ID',
+          label: 'Rypple plan ID',
           type: 'number',
           admin: {
             description:
-              'The MEMBRS plan this membership is sold as. Payment is taken by MEMBRS and each member gets a MEMBRS account and digital card. An active membership is checked against the plan on save: price and members covered must match, and any size question on an included product must only offer sizes MEMBRS has. Products included with the plan that nothing here asks about get a picker per member.',
+              'The Rypple plan this membership is sold as. Payment is taken by Rypple and each member gets a Rypple account and digital card. An active membership is checked against the plan on save: price and members covered must match, and any size question on an included product must only offer sizes Rypple has. Products included with the plan that nothing here asks about get a picker per member.',
           },
         },
       ],

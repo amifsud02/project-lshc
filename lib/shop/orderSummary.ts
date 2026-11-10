@@ -77,8 +77,8 @@ const humanize = (key: string) => {
 const answersFor = (values: Record<string, string>, fields: CustomFieldDef[] = []): Answer[] =>
   Object.entries(values).map(([key, value]) => {
     const field = fields.find((f) => f.name === key)
-    // Pickers for products included with a MEMBRS plan aren't one of our products' questions.
-    const label = field?.label ?? (/^membrsProduct\d+$/.test(key) ? 'MEMBRS item' : humanize(key))
+    // Pickers for products included with a Rypple plan aren't one of our products' questions.
+    const label = field?.label ?? (/^membrsProduct\d+$/.test(key) ? 'Rypple item' : humanize(key))
     return {
       label: label.replace(/\s*\(e\.g\.[^)]*\)$/, ''),
       value: field?.options?.find((o) => o.value === value)?.label ?? value,

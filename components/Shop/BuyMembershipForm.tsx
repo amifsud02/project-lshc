@@ -12,15 +12,15 @@ import { CURRENCY, toGaItem, trackEvent } from '@/lib/analytics/gtag'
 
 type Props = {
   product: ShopProduct
-  /** Extra questions for every member, e.g. which variant of a product included with the MEMBRS plan. */
+  /** Extra questions for every member, e.g. which variant of a product included with the Rypple plan. */
   memberFields?: CustomFieldDef[]
-  /** MEMBRS's platform fee in cents when the buyer pays it, charged on top of the price. */
+  /** Rypple's platform fee in cents when the buyer pays it, charged on top of the price. */
   serviceFee?: number
 }
 
 /**
  * Memberships skip the cart: the buyer fills in each member's details here and goes straight
- * to payment, which MEMBRS takes. Every member then gets a MEMBRS account and digital card.
+ * to payment, which Rypple takes. Every member then gets a Rypple account and digital card.
  */
 export default function BuyMembershipForm({ product, memberFields = [], serviceFee = 0 }: Props) {
   const membersCovered = product.membership?.membersCovered ?? 1
@@ -68,7 +68,7 @@ export default function BuyMembershipForm({ product, memberFields = [], serviceF
       units: templates.map((_, i) => ({ productId: productIds[i], values: values[i] })),
     })
     if (result.ok) {
-      // Payment happens on MEMBRS, so the purchase itself can't be seen from here.
+      // Payment happens on Rypple, so the purchase itself can't be seen from here.
       const item = toGaItem({ id: product.id, title: product.title, type: product.type, price: product.price + serviceFee })
       trackEvent('begin_checkout', { currency: CURRENCY, value: item.price, items: [item], checkout_provider: 'membrs' })
       window.location.assign(result.url)
@@ -120,7 +120,7 @@ export default function BuyMembershipForm({ product, memberFields = [], serviceF
       </Button>
       <p className="flex items-start gap-2 text-xs text-muted-foreground">
         <BadgeCheck className="mt-0.5 size-3.5 shrink-0" />
-        Payment is handled by MEMBRS, the club&apos;s membership partner. Each member receives a MEMBRS account with
+        Payment is handled by Rypple, the club&apos;s membership partner. Each member receives a Rypple account with
         their digital membership card and member discounts.
       </p>
     </form>

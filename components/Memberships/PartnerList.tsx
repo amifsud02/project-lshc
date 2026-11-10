@@ -44,7 +44,7 @@ export default function PartnerList({
               <CardContent className="flex h-full flex-col gap-4">
                 <div className="flex items-start gap-3">
                   {partner.logo_url ? (
-                    // Logos are hosted by MEMBRS, wherever its storage lives.
+                    // Logos are hosted by Rypple, wherever its storage lives.
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={partner.logo_url}

@@ -133,7 +133,7 @@ export async function POST(req: Request) {
 /**
  * Moves an order to a new status only from the statuses given, so a late or repeated event
  * (an expiry after payment, a duplicate delivery) can't undo a later state. Mirrors the
- * MEMBRS webhook. Returns whether the order was updated.
+ * Rypple webhook. Returns whether the order was updated.
  */
 async function moveOrder(
   payload: Payload,

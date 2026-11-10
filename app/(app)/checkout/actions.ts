@@ -127,7 +127,7 @@ export async function createCheckoutSession(input: Input): Promise<Result> {
     stockOf.set(product.id, { stock: product.stock, preorder: product.preorder, customFields: product.customFields, variants: product.variants })
 
     if (product.type === 'membership') {
-      // Memberships are bought on their own product page and paid through MEMBRS.
+      // Memberships are bought on their own product page and paid through Rypple.
       return { ok: false, error: `"${product.title}" is bought on its own. Please remove it from your cart and use "Buy membership" on its page.` }
     }
 

@@ -3,7 +3,7 @@ import config from '@payload-config'
 import { verifyMembrsWebhook } from '@/lib/membrs/client'
 
 /**
- * MEMBRS tells us when a membership order is paid, refunded or abandoned. Updating the order's
+ * Rypple tells us when a membership order is paid, refunded or abandoned. Updating the order's
  * status runs the usual Orders hooks: a paid order fills the member register and emails a receipt.
  */
 export async function POST(req: Request) {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   })
   const order = docs[0]
   if (!order || (order as any).stripeCheckoutSessionId !== event.data.id) {
-    // Unknown order: acknowledge so MEMBRS doesn't keep retrying something we can't match.
+    // Unknown order: acknowledge so Rypple doesn't keep retrying something we can't match.
     console.warn('[membrs] webhook for unknown order', event.data.reference)
     return Response.json({ ignored: true })
   }

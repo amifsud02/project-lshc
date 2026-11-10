@@ -3,18 +3,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 /**
- * End-to-end check of selling a membership through MEMBRS, against locally running apps:
- *   club site (CLUB_URL, default http://localhost:3001) and MEMBRS (MEMBRS_API_URL, default http://localhost:8000),
- * with MEMBRS using Stripe test keys and `stripe listen --forward-to <MEMBRS_API_URL>/webhooks/stripe` running.
+ * End-to-end check of selling a membership through Rypple, against locally running apps:
+ *   club site (CLUB_URL, default http://localhost:3001) and Rypple (MEMBRS_API_URL, default http://localhost:8000),
+ * with Rypple using Stripe test keys and `stripe listen --forward-to <MEMBRS_API_URL>/webhooks/stripe` running.
  *
  * Buys a couple membership with T-shirts on the club site, pays on Stripe Checkout with Stripe's
- * test card, then checks the order came back paid and a member can open their MEMBRS account.
+ * test card, then checks the order came back paid and a member can open their Rypple account.
  * A screenshot of every step is written to SCREENSHOT_DIR.
  */
 
 const CLUB_URL = process.env.CLUB_URL ?? 'http://localhost:3001'
 const MEMBRS_API_URL = process.env.MEMBRS_API_URL ?? 'http://localhost:8000'
-const MEMBRS_LOG = process.env.MEMBRS_LOG // MEMBRS laravel.log, where MAIL_MAILER=log writes emails
+const MEMBRS_LOG = process.env.MEMBRS_LOG // Rypple laravel.log, where MAIL_MAILER=log writes emails
 const PRODUCT_SLUG = process.env.PRODUCT_SLUG ?? 'couple-membership-with-merchandise-2026-2027'
 const SCREENSHOT_DIR = process.env.SCREENSHOT_DIR ?? path.join(__dirname, '..', 'test-results', 'membrs-flow')
 
@@ -34,7 +34,7 @@ async function shot(page: Page, name: string) {
 test.describe.configure({ mode: 'serial' })
 test.use({ viewport: { width: 1280, height: 900 } })
 
-test('a couple membership bought on the club site is paid through MEMBRS', async ({ page }) => {
+test('a couple membership bought on the club site is paid through Rypple', async ({ page }) => {
   test.setTimeout(180_000)
 
   // 1. The club shop lists the membership.
@@ -63,7 +63,7 @@ test('a couple membership bought on the club site is paid through MEMBRS', async
   }
   await shot(page, 'club-membership-form-filled')
 
-  // 3. Straight to Stripe Checkout, run by MEMBRS.
+  // 3. Straight to Stripe Checkout, run by Rypple.
   await form.getByRole('button', { name: /Buy membership/ }).click()
   await page.waitForURL(/checkout\.stripe\.com/, { timeout: 30_000 })
   await expect(page.getByText('€50.00').first()).toBeVisible({ timeout: 30_000 })
@@ -95,7 +95,7 @@ test('a couple membership bought on the club site is paid through MEMBRS', async
   await expect(page.getByText(/LSH-/).first()).toBeVisible()
   await shot(page, 'club-order-confirmed')
 
-  // 6. MEMBRS → club webhook marks the order paid (the club's own hooks then fill its member register).
+  // 6. Rypple → club webhook marks the order paid (the club's own hooks then fill its member register).
   await expect
     .poll(
       async () => {
@@ -106,7 +106,7 @@ test('a couple membership bought on the club site is paid through MEMBRS', async
     )
     .toBe(true)
 
-  // 7. The first member follows the emailed link to set up their MEMBRS account.
+  // 7. The first member follows the emailed link to set up their Rypple account.
   test.skip(!MEMBRS_LOG, 'Set MEMBRS_LOG to follow the account setup email')
   let setupUrl: string | undefined
   await expect
@@ -138,7 +138,7 @@ test('a couple membership bought on the club site is paid through MEMBRS', async
   await expect(page.getByText(/Couple Membership with Merchandise/).first()).toBeVisible()
   await shot(page, 'membrs-member-dashboard')
 
-  // 8. The club's admins see both members' sales in the MEMBRS organisation panel.
+  // 8. The club's admins see both members' sales in the Rypple organisation panel.
   const orgEmail = process.env.MEMBRS_ORG_EMAIL
   const orgPassword = process.env.MEMBRS_ORG_PASSWORD
   test.skip(!orgEmail || !orgPassword, 'Set MEMBRS_ORG_EMAIL / MEMBRS_ORG_PASSWORD to check the organisation panel')

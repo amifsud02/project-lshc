@@ -59,7 +59,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
         })),
       ]
     : []
-  // Anything charged on top of the items, e.g. the MEMBRS platform fee.
+  // Anything charged on top of the items, e.g. the Rypple platform fee.
   const deliveryFee = order?.deliveryFee ?? 0
   const discount = order?.discountTotal ?? 0
   const taxAdded = order?.taxAdded ?? 0
@@ -68,14 +68,14 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
     ...(deliveryFee > 0 ? [[order?.fulfilment?.methodTitle || 'Delivery', deliveryFee] as [string, number]] : []),
     ...(discount > 0 ? [[order?.couponCode ? `Coupon ${order.couponCode.toUpperCase()}` : 'Promo code', -discount] as [string, number]] : []),
     ...(taxAdded > 0 ? [['Tax', taxAdded] as [string, number]] : []),
-    ...(extra > 0 ? [[order.paymentProvider === 'membrs' ? 'MEMBRS platform fee' : 'Other charges', extra] as [string, number]] : []),
+    ...(extra > 0 ? [[order.paymentProvider === 'membrs' ? 'Rypple platform fee' : 'Other charges', extra] as [string, number]] : []),
   ]
   // What happens next depends on how the buyer chose to get the order.
   const { shop } = await getGeneralGlobal()
   const fulfilment = order?.fulfilment ?? {}
   const nextSteps =
     order?.paymentProvider === 'membrs'
-      ? 'Your digital membership card arrives by email from MEMBRS.'
+      ? 'Your digital membership card arrives by email from Rypple.'
       : fulfilment.method === 'deliver'
         ? `We'll deliver to ${[fulfilment.addressLine1, fulfilment.locality].filter(Boolean).join(', ')}${shop.delivery.details ? ` (${shop.delivery.details})` : ''} and email you when it's on its way.`
         : `We'll email you when it's ready to collect${shop.collection.readyIn ? `, usually within ${shop.collection.readyIn}` : ''}. ${shop.collection.details} Bring your order number.`

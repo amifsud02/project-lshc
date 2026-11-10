@@ -75,7 +75,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   const methods = matchZone(rules.zones, rules.defaultCountry)?.methods ?? []
   const taxNote = !rules.tax ? '' : rules.tax.inclusive ? ' · VAT incl.' : ' + VAT'
 
-  // Products that come with a MEMBRS plan (e.g. a merchandise pack) need a pick per member,
+  // Products that come with a Rypple plan (e.g. a merchandise pack) need a pick per member,
   // unless one of our included products already asks for it (e.g. a T-shirt size).
   let memberFields: CustomFieldDef[] = []
   let serviceFee = 0
@@ -161,9 +161,11 @@ export default async function ProductPage({ params }: { params: Params }) {
                   </h2>
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-semibold">{priceLabel(product.variants, product.price, formatPrice)}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} platform fee${taxNote}` : `All in${taxNote}`}
-                    </span>
+                    {(serviceFee > 0 || taxNote) && (
+                      <span className="text-sm text-muted-foreground">
+                        {serviceFee > 0 ? `+ ${formatPrice(serviceFee)} platform fee${taxNote}` : taxNote.replace(/^ · /, '')}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -229,7 +231,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                   <div className="flex items-center gap-3">
                     <Lock className="size-4 text-muted-foreground" />
                     <span className="text-sm font-medium">
-                      {product.type === 'membership' ? 'Secure payment through MEMBRS' : 'Secure payment by Stripe'}
+                      {product.type === 'membership' ? 'Secure payment through Rypple' : 'Secure payment by Stripe'}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
