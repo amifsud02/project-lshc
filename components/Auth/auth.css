@@ -77,18 +77,10 @@
   .auth-form__row { grid-template-columns: 1fr 1fr; }
 }
 
-.auth-form__footer {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 4px;
-}
-
-.auth-note {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--color-text-muted);
+/* A quieter alternative to the main button, same size as the "New here?" line. */
+.auth-form__alt {
+  align-self: center;
+  font-size: 14px;
 }
 
 .auth-switch {

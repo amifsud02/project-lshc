@@ -139,7 +139,6 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
             <button
               type="button"
               className="btn-text"
-              style={{ alignSelf: 'center' }}
               onClick={() => {
                 setSentTo(null)
                 setError(null)
@@ -158,8 +157,8 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
       <h2 className="auth-card__title">{text.title}</h2>
       <p className="auth-card__lead">{text.lead}</p>
 
-      {googleError ? <Alert tone="error">{googleError}</Alert> : null}
-      {linkError ? <Alert tone="error">{linkError}</Alert> : null}
+      {googleError ? <ErrorAlert>{googleError}</ErrorAlert> : null}
+      {linkError ? <ErrorAlert>{linkError}</ErrorAlert> : null}
 
       {googleEnabled ? (
         <>
@@ -178,7 +177,7 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
         </>
       ) : null}
 
-      <form onSubmit={onSubmit} className="auth-form" noValidate={false}>
+      <form onSubmit={onSubmit} className="auth-form">
         {mode === 'register' ? (
           <div className="auth-form__row">
             <label className="field">
@@ -267,25 +266,18 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
           {busy ? 'One moment…' : method === 'password' ? 'Sign in' : text.submit}
         </button>
 
-        <div className="auth-form__footer">
-          {method === 'link' ? (
-            <p className="auth-note">
-              We will email you a one-time link. No password needed.
-            </p>
-          ) : null}
-          {mode === 'login' ? (
-            <button
-              type="button"
-              className="btn-text"
-              onClick={() => {
-                setError(null)
-                setMethod((m) => (m === 'link' ? 'password' : 'link'))
-              }}
-            >
-              {method === 'link' ? 'Sign in with a password instead' : 'Email me a sign-in link instead'}
-            </button>
-          ) : null}
-        </div>
+        {mode === 'login' ? (
+          <button
+            type="button"
+            className="btn-text auth-form__alt"
+            onClick={() => {
+              setError(null)
+              setMethod((m) => (m === 'link' ? 'password' : 'link'))
+            }}
+          >
+            {method === 'link' ? 'Sign in with a password instead' : 'Email me a sign-in link instead'}
+          </button>
+        ) : null}
       </form>
 
       <p className="auth-switch">
@@ -304,9 +296,9 @@ export default function AuthForm({ mode, redirectTo, googleEnabled, googleError,
   )
 }
 
-function Alert({ tone, children }: { tone: 'error' | 'info'; children: React.ReactNode }) {
+function ErrorAlert({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`alert alert--${tone}`} role={tone === 'error' ? 'alert' : 'status'}>
+    <div className="alert alert--error" role="alert">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="10" />
         <path d="M12 8v4M12 16h.01" />
