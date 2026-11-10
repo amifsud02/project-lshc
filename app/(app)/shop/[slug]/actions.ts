@@ -5,10 +5,10 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import {
   createMembrsCheckout,
+  explainCheckoutFailure,
   getMembrsPlan,
   includedProductFieldName,
   includedProducts as getIncludedProducts,
-  MembrsError,
   serviceFeeCents,
 } from '@/lib/membrs/client'
 import { checkMembrsCompatibility, sameText } from '@/lib/membrs/compatibility'
@@ -165,12 +165,14 @@ export async function buyMembership({ productId, units }: Input): Promise<Result
 
     return { ok: true, url: checkout.checkout_url! }
   } catch (err) {
-    await payload.update({ collection: 'orders', id: order.id, data: { status: 'cancelled' } as any })
-    if (err instanceof MembrsError && err.status === 422) {
-      const first = Object.values(err.errors ?? {})[0]?.[0]
-      return { ok: false, error: first ?? err.message }
-    }
+    const { buyerMessage, staffReason } = explainCheckoutFailure(err)
+    await payload.update({
+      collection: 'orders',
+      id: order.id,
+      data: { status: 'cancelled', paymentError: staffReason } as any,
+    })
+    if (buyerMessage) return { ok: false, error: buyerMessage }
     console.error('[membrs] checkout failed', err)
-    return { ok: false, error: 'We could not start the payment. Please try again.' }
+    return { ok: false, error: 'Memberships are temporarily unavailable. Please try again shortly.' }
   }
 }

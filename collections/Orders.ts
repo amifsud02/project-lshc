@@ -127,6 +127,19 @@ export const Orders: CollectionConfig = {
       },
     },
     {
+      name: 'paymentError',
+      label: 'Why payment failed',
+      type: 'textarea',
+      // Customers can read their own orders over REST, and this is written for staff.
+      access: { read: ({ req: { user } }) => hasRole(user, 'admin', 'shop-manager') },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        condition: (data) => Boolean(data?.paymentError),
+        description: 'The buyer saw a general message. This is what went wrong.',
+      },
+    },
+    {
       name: 'refundedTotal',
       label: 'Refunded',
       type: 'number',
